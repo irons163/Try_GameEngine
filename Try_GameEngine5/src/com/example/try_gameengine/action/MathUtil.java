@@ -22,6 +22,13 @@ public class MathUtil {
 		BALL_INIT_SPEEDX = initspeedX;
 	}
 	
+	public float genTotalSpeed(){
+		double speedTotalPOW = (float) (Math.pow(this.speedX, 2) + Math.pow(
+				this.speedY, 2));
+		float speedTotal = (float) Math.sqrt(speedTotalPOW);
+		return speedTotal;
+	}
+	
 	public void setXY(float speedX, float speedY){
 		this.speedX = speedX;
 		this.speedY = speedY;

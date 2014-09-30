@@ -115,13 +115,18 @@ public class ScriptPaser {
 	public void trigger(Sprite sprite){		
 		if(command.equals(move)){
 			if(triggerCount!=0 && triggerCount%triggerLimit==0){
+				scriptTriggerLisener.onTriggerBefforeCommand();
 				sprite.move(dx, dy);
+				scriptTriggerLisener.onTriggerAffterCommand();
 				if(triggerCount==triggerLimit*triggerCycle)
 					canGoNextScriptLine = true;
 			}		
 		}else if(command.equals(pause)){
-			if(triggerCount==triggerLimit)
+			if(triggerCount==triggerLimit){
+				scriptTriggerLisener.onTriggerBefforeCommand();
+				scriptTriggerLisener.onTriggerAffterCommand();
 				canGoNextScriptLine = true;
+			}
 		}
 		
 		triggerCount++;
@@ -145,5 +150,37 @@ public class ScriptPaser {
 	
 	public float getDy(){
 		return dy;
+	}
+	
+	public void setDx(float dx){
+		this.dx = dx;
+	}
+	
+	public void setDy(float dy){
+		this.dy = dy;
+	}
+	
+	public interface ScriptTriggerLisener{
+		void onTriggerBefforeCommand();
+		void onTriggerAffterCommand();
+	}
+	
+	ScriptTriggerLisener scriptTriggerLisener = new ScriptTriggerLisener() {
+		
+		@Override
+		public void onTriggerBefforeCommand() {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void onTriggerAffterCommand() {
+			// TODO Auto-generated method stub
+			
+		}
+	};
+	
+	public void setScriptTriggerLisener(ScriptTriggerLisener scriptTriggerLisener){
+		this.scriptTriggerLisener = scriptTriggerLisener;
 	}
 }
