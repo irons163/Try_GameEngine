@@ -227,10 +227,6 @@ public class MovementActionItemBaseReugularFPS extends MovementActionItem{
 				isCycleFinish = false;
 			}
 		}
-		
-		
-		
-		doReset();
 	}
 	
 	public String name;

@@ -17,7 +17,9 @@ public class RotationOnceController implements IRotationController{
 			origineDx = info.getDx();
 			origineDy = info.getDy();
 			
-			MathUtil mathUtil = new MathUtil(20, 0);
+			MathUtil mathUtil = new MathUtil(origineDx, origineDy);
+			float totalSpeed = mathUtil.genTotalSpeed();
+			mathUtil.setINITSPEEDX(totalSpeed);
 			mathUtil.genAngle();
 			mathUtil.genSpeedByRotate(rotation);
 			
