@@ -17,6 +17,8 @@ public class ScriptPaser {
 	String dir = "Dir";
 	String loop = "Loop";
 	
+	boolean isScriptFinish = false;
+	
 	private String getScript(Context context, String scriptName){
 		String s = FileUtil.readFileFromAssetsF(context, scriptName);
 		return s;
@@ -57,6 +59,8 @@ public class ScriptPaser {
 		if(canGoNextScriptLine){
 		
 		if(lineIndex == strLines.length){
+			command = "";
+			isScriptFinish = true;
 			return;
 		}
 			
@@ -145,5 +149,9 @@ public class ScriptPaser {
 	
 	public float getDy(){
 		return dy;
+	}
+	
+	public boolean isScriptFinish(){
+		return isScriptFinish;
 	}
 }

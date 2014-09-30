@@ -120,6 +120,7 @@ public abstract class MovementAction {
 				action.cancelMove();
 				Log.e("action", "cancel");
 			}
+			this.thread.interrupt();
 		}else{
 			cancelMove();
 		}
