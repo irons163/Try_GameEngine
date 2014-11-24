@@ -214,6 +214,9 @@ public class MovementActionItemBaseReugularFPS extends MovementActionItem{
 				doReset();		
 				if(actionListener!=null)
 					actionListener.actionFinish();
+				synchronized (MovementActionItemBaseReugularFPS.this) {
+					MovementActionItemBaseReugularFPS.this.notifyAll();
+				}
 			}else if(resumeFrameCount==lastTriggerFrameNum+info.getDelay()){
 				doRotation();
 				doGravity();

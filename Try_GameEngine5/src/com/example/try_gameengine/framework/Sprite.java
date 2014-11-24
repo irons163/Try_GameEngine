@@ -25,6 +25,12 @@ public class Sprite extends ALayer {
 	
 	protected RectF moveRage;
 	
+	private int frameWidth;
+	private int frameHeight;
+	private int length;
+	private int[] frameSequence;
+	private  int frameIndex; 
+	
 	public Sprite(Bitmap bitmap, int w, int h, boolean autoAdd) {
 		super(bitmap, w, h, autoAdd);
 		actions = new Hashtable<String, Sprite.SpriteAction>();// 用Hashtable保存動作集合
@@ -100,6 +106,22 @@ public class Sprite extends ALayer {
 		setInitHeight(bitmap.getHeight());
 	}
 	
+	public void setBitmapAndFrameWH(Bitmap bitmap,int frameWidth ,int frameHeight ){
+		this.bitmap = bitmap;
+		this.frameWidth = frameWidth;
+		this.frameHeight = frameHeight;
+		this.w = frameWidth;
+		this.h = frameHeight;
+		this.length = (bitmap.getWidth()/frameWidth)*(bitmap.getHeight()/frameHeight);
+	}
+	
+	public void setFrameSequence(int[] sequence)
+	{			
+		this.frameSequence = sequence;
+		frameIndex = 0;
+		currentFrame = sequence[0];
+	}
+	
 	public void setMovementAction(MovementAction movementAction){
 		this.action = movementAction;
 	}
@@ -130,20 +152,41 @@ public class Sprite extends ALayer {
 //				bitmap = currentAction.bitmapFrames[frameIdx];
 //			}
 //		} 
-		src.left = (int) (currentFrame * w * scale);// 左端寬度：當前幀乘上幀的寬度再乘上圖片縮放率
-		src.top = 0;
-		src.right = (int) (src.left + w * scale);// 右端寬度：左端寬度加上(幀的寬度乘上圖片縮放率)
-		src.bottom = h;
-//		dst.left = (int) x - w / 2;
-//		dst.top = (int) y - h / 2;
+		if(length>0){
+			paint(canvas,paint);
+		}else{
+			src.left = (int) (currentFrame * w * scale);// 左端寬度：當前幀乘上幀的寬度再乘上圖片縮放率
+			src.top = 0;
+			src.right = (int) (src.left + w * scale);// 右端寬度：左端寬度加上(幀的寬度乘上圖片縮放率)
+			src.bottom = h;
+//			dst.left = (int) x - w / 2;
+//			dst.top = (int) y - h / 2;
+			dst.left = (float) (centerX - w / 2);
+			dst.top = (float) (centerY - h / 2);
+			dst.right = (float) (dst.left + w * scale);
+			dst.bottom = (float) (dst.top + h * scale);
+//			canvas.drawBitmap(bitmap, src, dst, paint);
+			canvas.drawBitmap(bitmap, src, dst, paint);
+
+//			Log.e("time2", a+""+"XX"+System.currentTimeMillis());
+		}
+
+	}
+	
+	public void paint(Canvas canvas,Paint paint)
+	{
+		canvas.save();
+		float x = getX();
+		float y = getY();
+		canvas.clipRect(x, y, x+frameWidth, y+frameHeight);
+		canvas.drawBitmap(bitmap, x-(currentFrame%(bitmap.getWidth()/frameWidth))*frameWidth, 
+				y - (currentFrame/(bitmap.getWidth()/frameWidth))*frameHeight, paint);
+		canvas.restore();
+		
 		dst.left = (float) (centerX - w / 2);
 		dst.top = (float) (centerY - h / 2);
 		dst.right = (float) (dst.left + w * scale);
 		dst.bottom = (float) (dst.top + h * scale);
-//		canvas.drawBitmap(bitmap, src, dst, paint);
-		canvas.drawBitmap(bitmap, src, dst, paint);
-
-//		Log.e("time2", a+""+"XX"+System.currentTimeMillis());
 	}
 
 	/**
@@ -195,6 +238,29 @@ public class Sprite extends ALayer {
 	public void addActionFPS(String name, Bitmap[] bitmapFrames, int[] frameTriggerTimes, float scale, boolean isLoop, IActionListener actionListener) {
 		SpriteAction sp = new SpriteActionBaseFPS();
 		sp.bitmapFrames = bitmapFrames;// 幀圖片集合
+		sp.frameTime = frameTriggerTimes;//每一幀切換的時間
+		sp.isLoop = isLoop;
+		sp.name = name;
+		sp.scale = scale;
+		sp.actionListener = actionListener;
+		actions.put(name, sp);
+	}
+	
+	public void addActionFPSFrame(String name, int[] sequence, int[] frameTriggerTimes) {
+		addActionFPSFrame(name, sequence, frameTriggerTimes, 1.0f, true, new DefaultActionListener());
+	}
+	
+	public void addActionFPSFrame(String name, int[] sequence, int[] frameTriggerTimes, boolean isLoop) {
+		addActionFPSFrame(name, sequence, frameTriggerTimes, 1.0f, isLoop, new DefaultActionListener());
+	}
+	
+	public void addActionFPSFrame(String name, int[] sequence, int[] frameTriggerTimes, boolean isLoop, IActionListener actionListener) {
+		addActionFPSFrame(name, sequence, frameTriggerTimes, 1.0f, isLoop, actionListener);
+	}
+	
+	public void addActionFPSFrame(String name, int[] sequence, int[] frameTriggerTimes, float scale, boolean isLoop, IActionListener actionListener) {
+		SpriteAction sp = new SpriteActionBaseFPS();
+		sp.frames = sequence;// 幀圖片集合
 		sp.frameTime = frameTriggerTimes;//每一幀切換的時間
 		sp.isLoop = isLoop;
 		sp.name = name;
@@ -287,8 +353,7 @@ public class Sprite extends ALayer {
 		
 		public void nextFrame() {
 			if (System.currentTimeMillis() > updateTime) {
-				frameIdx++;
-				frameIdx %= frames.length;
+				nextFrameBySequence();
 				updateTime = System.currentTimeMillis() + frameTime[frameIdx];
 			}
 		}
@@ -338,6 +403,22 @@ public class Sprite extends ALayer {
 		public void initUpdateTime(){
 			updateTime = System.currentTimeMillis() + frameTime[frameIdx];
 		}
+		
+		public void nextFrameBySequence()
+		{
+			if(frames == null)
+			{
+				currentFrame++;
+				if(currentFrame > length-1)
+					currentFrame = 0;
+			}else
+			{
+				frameIdx++;
+				if(frameIdx > frames.length-1)
+					frameIdx = 0;
+				currentFrame = frames[frameIdx];
+			}
+		}
 	}
 	
 	class SpriteActionBaseFPS extends SpriteAction{
@@ -345,10 +426,32 @@ public class Sprite extends ALayer {
 		
 		@Override
 		public void nextFrame() {
-			if (System.currentTimeMillis() > updateTime) {
-				frameIdx++;
-				frameIdx %= frames.length;
-				updateTime = System.currentTimeMillis() + frameTime[frameIdx];
+			if (triggerCount >= updateTime && !isStop) {
+				actionListener.beforeChangeFrame(frameIdx+1);
+//				frameIdx++;
+//				frameIdx %= bitmapFrames.length;
+				
+				if(!isLoop && frameIdx==frames.length-1){
+					nextFrameBySequence();
+					triggerCount=0;
+					isStop = true;
+					actionListener.actionFinish();
+				}else{
+					
+					nextFrameBySequence();
+					
+					
+					triggerCount=0;
+					updateTime = frameTime[frameIdx];
+					
+//					int w = bitmap.getWidth();
+//					int h = bitmap.getHeight();
+//					
+//					setWidth(bitmap.getWidth());
+//					setHeight(bitmap.getHeight());
+					int periousId = frameIdx-1<0 ? frames.length+(frameIdx-1) : frameIdx-1;
+					actionListener.afterChangeFrame(periousId);
+				}
 			}
 		}
 		

@@ -82,7 +82,25 @@ public class ScriptPaser {
 					Random random = new Random();
 					int min = Integer.parseInt(range[0]);
 					int max = Integer.parseInt(range[1]);
-					dx = random.nextInt( max - min ) + min;
+					dx = random.nextInt( max - min +1 ) + min;
+					
+					if(range.length>2){
+						int minLinit = Integer.parseInt(range[2]);
+						if(Math.abs(dx) < minLinit){
+							if(dx>0){
+								dx += minLinit;
+							}else if(dx<0){
+								dx -= minLinit;
+							}else{
+								int type = random.nextInt(2);
+								if(type==0){
+									dx += minLinit;
+								}else{
+									dx -= minLinit;
+								}
+							}
+						}
+					}
 //					dx = Float.parseFloat(random);
 				}
 				
@@ -140,6 +158,32 @@ public class ScriptPaser {
 		}
 	}
 	
+	public void triggerAndDoCommandInSprite(){		
+		if(command.equals(move)){
+			if(triggerCount!=0 && triggerCount%triggerLimit==0){
+				scriptTriggerLisener.onTriggerBefforeCommand();
+//				sprite.move(dx, dy);
+				scriptTriggerDoCommandLisener.onCommandMove(dx, dy);
+				scriptTriggerLisener.onTriggerAffterCommand();
+				if(triggerCount==triggerLimit*triggerCycle)
+					canGoNextScriptLine = true;
+			}		
+		}else if(command.equals(pause)){
+			if(triggerCount==triggerLimit){
+				scriptTriggerLisener.onTriggerBefforeCommand();
+				scriptTriggerDoCommandLisener.onCommandPause();
+				scriptTriggerLisener.onTriggerAffterCommand();
+				canGoNextScriptLine = true;
+			}
+		}
+		
+		triggerCount++;
+		
+		if(canGoNextScriptLine){
+			triggerCount=0;
+		}
+	}
+	
 	public boolean isPause(){
 		return command.equals(pause);
 	}
@@ -173,6 +217,11 @@ public class ScriptPaser {
 		void onTriggerAffterCommand();
 	}
 	
+	public interface ScriptTriggerDoCommandLisener{
+		void onCommandMove(float dx, float dy);
+		void onCommandPause();
+	}
+	
 	ScriptTriggerLisener scriptTriggerLisener = new ScriptTriggerLisener() {
 		
 		@Override
@@ -188,7 +237,26 @@ public class ScriptPaser {
 		}
 	};
 	
+	ScriptTriggerDoCommandLisener scriptTriggerDoCommandLisener = new ScriptTriggerDoCommandLisener() {
+		
+		@Override
+		public void onCommandMove(float dx, float dy) {
+			// TODO Auto-generated method stub
+			
+		}
+		
+		@Override
+		public void onCommandPause() {
+			// TODO Auto-generated method stub
+			
+		}
+	};
+	
 	public void setScriptTriggerLisener(ScriptTriggerLisener scriptTriggerLisener){
 		this.scriptTriggerLisener = scriptTriggerLisener;
+	}
+	
+	public void setScriptTriggerDoCommandLisener(ScriptTriggerDoCommandLisener scriptTriggerDoCommandLisener){
+		this.scriptTriggerDoCommandLisener = scriptTriggerDoCommandLisener;
 	}
 }
