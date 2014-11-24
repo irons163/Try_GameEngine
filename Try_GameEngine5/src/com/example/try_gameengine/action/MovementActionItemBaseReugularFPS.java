@@ -142,7 +142,7 @@ public class MovementActionItemBaseReugularFPS extends MovementActionItem{
 			
 			if(!isLoop && isCycleFinish){
 				isStop = true;
-				doReset();			
+				doReset();		
 				if(actionListener!=null)
 					actionListener.actionFinish();
 			}else if(resumeFrameCount==lastTriggerFrameNum+info.getDelay()){
