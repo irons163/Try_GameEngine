@@ -27,6 +27,8 @@ public abstract class MovementAction {
 	
 	public boolean isLoop = false;
 	
+	public boolean isSigleThread = false;
+	
 	public MovementAction addMovementAction(MovementAction action) {
 		throw new UnsupportedOperationException();
 	}
@@ -130,8 +132,8 @@ public abstract class MovementAction {
 			action.cancelMove();
 		}
 		
-		this.thread.interrupt();
-		
+		if(!isSigleThread)
+			this.thread.interrupt();
 	}
 	
 	void pause(){
@@ -183,5 +185,9 @@ public abstract class MovementAction {
 	
 	public void setIsLoop(boolean isLoop){
 		this.getAction().isLoop = isLoop;
+	}
+	
+	public void setIsSingleThread(boolean isSigleThread){
+		this.isSigleThread = isSigleThread;
 	}
 }

@@ -8,7 +8,9 @@ import com.example.try_gameengine.assemble.AssembleViewConfig.DirectionConfig;
 
 import android.R;
 import android.content.Context;
+import android.graphics.Color;
 import android.view.View;
+import android.view.animation.AlphaAnimation;
 import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
 
@@ -18,6 +20,8 @@ public class AssembleView {
 	private Context context;
 	private List<AssembleView> assembleViews = new ArrayList<AssembleView>();  
 	private AssembleViewConfig config;
+	private int viewId = -1;
+	private boolean isForceMainLayout = false;
 	
 	enum RelationViewType{
 		NONE, ABOVE, BELOW, LEFT_OF, RIGHT_OF
@@ -63,11 +67,13 @@ public class AssembleView {
 //		assembleViews.add(assembleView);
 //	}
 	
+	RelativeLayout relativeLayoutMain;
+	
 	public View generateViews(){
-		if(assembleViews.size()==0)
+		if(assembleViews.size()==0 && !isForceMainLayout)
 			return view;
 		
-		RelativeLayout relativeLayoutMain = new RelativeLayout(context);
+		relativeLayoutMain = new RelativeLayout(context);
 //		RelativeLayout.LayoutParams layoutParams2 = createLayoutViewParams(config);
 			
 		// layoutParams2.addRule(RelativeLayout.BELOW, 105);
@@ -109,6 +115,10 @@ public class AssembleView {
 		}
 		
 		
+//		((RelativeLayout.LayoutParams)view.getLayoutParams()).getRules();
+		
+//		layoutParams2.addRule(Color.WHITE, );
+		
 //		if(config.persentX > 0 || config.persentY > 0){
 //			
 //			view.set
@@ -119,24 +129,32 @@ public class AssembleView {
 			
 		if(this.view.getId()==-1)
 			this.view.setId(1);
+		
+		if(assembleView.viewId<0){
+			viewId = assembleView.resId;
+		}else{
+			viewId = assembleView.viewId;
+			assembleView.view.setId(viewId);
+		}
+		
 		switch (assembleView.relationViewType) {
 		case ABOVE:
 			RelativeLayout.LayoutParams layoutParams = (LayoutParams) this.view.getLayoutParams();
-			layoutParams.addRule(RelativeLayout.ABOVE, assembleView.resId);
+			layoutParams.addRule(RelativeLayout.ABOVE, viewId);
 			this.view.setLayoutParams(layoutParams);
 			break;
 		case BELOW:
 			layoutParams = (LayoutParams) this.view.getLayoutParams();
-			layoutParams.addRule(RelativeLayout.BELOW, assembleView.resId);
+			layoutParams.addRule(RelativeLayout.BELOW, viewId);
 			this.view.setLayoutParams(layoutParams);
 //			layoutParams2.addRule(RelativeLayout.BELOW, this.view.getId()==-1 ? 1 : this.view.getId());
 //			layoutParams2.addRule(RelativeLayout.BELOW, this.view.getId());
 			break;
 		case LEFT_OF:
-			layoutParams2.addRule(RelativeLayout.LEFT_OF, assembleView.resId);
+			layoutParams2.addRule(RelativeLayout.LEFT_OF, viewId);
 			break;
 		case RIGHT_OF:
-			layoutParams2.addRule(RelativeLayout.RIGHT_OF, assembleView.resId);
+			layoutParams2.addRule(RelativeLayout.RIGHT_OF, viewId);
 			break;
 		default:
 			break;
@@ -183,7 +201,32 @@ public class AssembleView {
 		return view;
 	}
 	
+	public void setId(int viewId){
+		this.viewId = viewId;
+	}
+	
+	public void setForceMainLayout(boolean isForceMainLayout){
+		this.isForceMainLayout = isForceMainLayout;
+	}
+	
 	public List<AssembleView> getSubAssembelViews(){
 		return assembleViews;
+	}
+	
+	public View addExtraView(AssembleView assembleView, int res){
+		if(relativeLayoutMain!=null){
+//			assembleView.relationViewType = RelationViewType.BELOW;
+//			assembleView.resId = resId;
+			
+			View view = settingViewParams(assembleView, assembleView.config);
+//			AlphaAnimation alpha = new AlphaAnimation(0.5F, 0.5F);
+//			alpha.setDuration(0); // Make animation instant
+//			alpha.setFillAfter(true); // Tell it to persist after the animation ends
+			// And then on your layout
+//			view.startAnimation(alpha);
+			
+			relativeLayoutMain.addView(view);
+		}
+		return relativeLayoutMain;
 	}
 }

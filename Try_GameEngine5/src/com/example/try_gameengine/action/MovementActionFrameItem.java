@@ -146,38 +146,6 @@ public class MovementActionFrameItem extends MovementAction{
 		
 	}
 	
-	private void frameTriggerStart(){
-		IActionListener actionListener = null;
-		if (!isStop) {
-			actionListener.beforeChangeFrame(resumeFrameIndex+1);
-			if(resumeFrameIndex==0)
-				resumeFrameIndex++;
-			if(resumeFrameCount>frameTimes[resumeFrameIndex]){	
-				resumeFrameIndex++;
-				resumeFrameIndex %= frameTimes.length;
-				resumeFrameCount = 0;
-			}
-			
-			if(!isLoop && resumeFrameIndex==0){
-				isStop = true;
-				doReset();
-				actionListener.actionFinish();
-			}else if(resumeFrameCount==frameTimes[resumeFrameIndex]){
-				updateTime = System.currentTimeMillis() + frameTimes[resumeFrameIndex];	
-				doRotation();
-				doGravity();
-				timerOnTickListener.onTick(dx, dy);		
-				int periousId = resumeFrameIndex-1<0 ? frameTimes.length+(resumeFrameIndex-1) : resumeFrameIndex-1;
-				actionListener.afterChangeFrame(periousId);
-			}
-			resumeFrameCount++;
-//			if(resumeFrameCount==frameTimes[resumeFrameIndex])
-//				resumeFrameCount = 0;
-		}
-		
-		doReset();
-	}
-	
 	public String name;
 	
 	private long updateTime;
@@ -185,34 +153,6 @@ public class MovementActionFrameItem extends MovementAction{
 	public int frameIdx;
 	
 	public boolean isStop = false;
-	
-	private void irregularFrameStart(){
-		
-		IActionListener actionListener = null;
-	
-			if (System.currentTimeMillis() > updateTime && !isStop) {
-				actionListener.beforeChangeFrame(frameIdx+1);
-				frameIdx++;
-				frameIdx %= frameTimes.length;
-				
-				if(!isLoop && frameIdx==0){
-					isStop = true;
-					doReset();
-					actionListener.actionFinish();
-				}else{
-					updateTime = System.currentTimeMillis() + frameTimes[frameIdx];
-					
-					doRotation();
-					doGravity();
-					timerOnTickListener.onTick(dx, dy);
-					
-					int periousId = frameIdx-1<0 ? frameTimes.length+(frameIdx-1) : frameIdx-1;
-					actionListener.afterChangeFrame(periousId);
-				}
-		}
-		
-		
-	}
 	
 	@Override
 	protected MovementAction initTimer(){

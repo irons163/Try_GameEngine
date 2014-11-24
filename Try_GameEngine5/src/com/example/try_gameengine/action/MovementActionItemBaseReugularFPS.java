@@ -5,12 +5,7 @@ import java.util.List;
 
 import com.example.try_gameengine.action.listener.IActionListener;
 
-import android.os.CountDownTimer;
-import android.os.Looper;
-import android.util.Log;
-
-public class MovementActionItemBaseReugularFPS extends MovementActionItem{
-	CountDownTimer countDownTimer; 
+public class MovementActionItemBaseReugularFPS extends MovementActionItem{ 
 	long millisTotal;
 	long millisDelay;
 	float dx;
@@ -108,11 +103,6 @@ public class MovementActionItemBaseReugularFPS extends MovementActionItem{
 		}
 	}
 	
-	private void nextFrameTrigger(){
-		myTrigger.trigger();
-		nextframeTrigger.trigger();
-	}
-	
 	FrameTrigger nextframeTrigger;
 	FrameTrigger myTrigger = new FrameTrigger() {
 		
@@ -132,65 +122,6 @@ public class MovementActionItemBaseReugularFPS extends MovementActionItem{
 	
 	public void setActionListener(IActionListener actionListener){
 		this.actionListener = actionListener;
-	}
-	
-	private void frameStart(){
-		Thread thread = new Thread(new Runnable() {		
-			@Override
-			public void run() {
-				// TODO Auto-generated method stub
-				
-				for(; resumeFrameIndex < frameTimes.length; resumeFrameIndex++){
-					actionListener.beforeChangeFrame(resumeFrameIndex+1);
-						try {
-							Thread.sleep(frameTimes[resumeFrameIndex]);
-						} catch (InterruptedException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-					
-					doRotation();
-					doGravity();
-					timerOnTickListener.onTick(dx, dy);
-					resumeFrameCount = 0;
-				}
-				
-				doReset();
-				actionListener.actionFinish();
-			}
-		});
-		
-		thread.start();
-		
-	}
-	
-	private void frameTriggerStart(){
-		if (!isStop) {
-			actionListener.beforeChangeFrame(resumeFrameIndex+1);
-			if(resumeFrameCount>frameTimes[resumeFrameIndex]){	
-				resumeFrameIndex++;
-				resumeFrameIndex %= frameTimes.length;
-				resumeFrameCount = 0;
-				if(resumeFrameIndex==0)
-					isCycleFinish = true;
-			}
-			
-			if(!isLoop && isCycleFinish){
-				isStop = true;
-				doReset();
-				actionListener.actionFinish();
-			}else if(resumeFrameCount==frameTimes[resumeFrameIndex]){
-				updateTime = System.currentTimeMillis() + frameTimes[resumeFrameIndex];	
-				doRotation();
-				doGravity();
-				timerOnTickListener.onTick(dx, dy);
-				resumeFrameCount++;
-				int periousId = resumeFrameIndex-1<0 ? frameTimes.length+(resumeFrameIndex-1) : resumeFrameIndex-1;
-				actionListener.afterChangeFrame(periousId);
-			}
-		}
-		
-		doReset();
 	}
 	
 	private int lastTriggerFrameNum;
@@ -237,33 +168,6 @@ public class MovementActionItemBaseReugularFPS extends MovementActionItem{
 	
 	public boolean isStop = false;
 	public boolean isCycleFinish = false;
-	
-	private void irregularFrameStart(){
-		
-		IActionListener actionListener = null;
-
-			if (System.currentTimeMillis() > updateTime && !isStop) {
-				actionListener.beforeChangeFrame(frameIdx+1);
-				frameIdx++;
-				frameIdx %= frameTimes.length;
-				
-				if(!isLoop && frameIdx==0){
-					isStop = true;
-					doReset();
-					actionListener.actionFinish();
-				}else{
-					updateTime = System.currentTimeMillis() + frameTimes[frameIdx];				
-					doRotation();
-					doGravity();
-					timerOnTickListener.onTick(dx, dy);
-					
-					int periousId = frameIdx-1<0 ? frameTimes.length+(frameIdx-1) : frameIdx-1;
-					actionListener.afterChangeFrame(periousId);
-				}
-		}
-		
-		
-	}
 	
 	@Override
 	protected MovementAction initTimer(){
