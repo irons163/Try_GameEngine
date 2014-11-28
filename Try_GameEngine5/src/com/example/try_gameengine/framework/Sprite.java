@@ -5,9 +5,11 @@ import java.util.Hashtable;
 import com.example.try_gameengine.action.MovementAction;
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.graphics.Rect;
 import android.graphics.RectF;
 import android.util.Log;
 
@@ -25,15 +27,24 @@ public class Sprite extends ALayer {
 	
 	protected RectF moveRage;
 	
-	private int frameWidth;
-	private int frameHeight;
+	private int bitmapOrginalFrameWidth;
+	private int bitmapOrginalFrameHeight;
+	private float frameWidth;
+	private float frameHeight;
 	private int length;
 	private int[] frameSequence;
 	private  int frameIndex; 
 	
+	protected boolean isCollisionRectFEnable = false;
+	protected RectF collisionRectF;
+	private float collisionRectFWidth, collisionRectFHeight;
+	private float collisionOffsetX, collisionOffsetY;
+	
 	public Sprite(Bitmap bitmap, int w, int h, boolean autoAdd) {
 		super(bitmap, w, h, autoAdd);
 		actions = new Hashtable<String, Sprite.SpriteAction>();// 用Hashtable保存動作集合
+		
+		initCollisionRectF();
 	}
 	
 	public Sprite(Bitmap bitmap, int scale, boolean autoAdd) {
@@ -47,6 +58,7 @@ public class Sprite extends ALayer {
 		setHeight(resizedBitmap.getHeight());
 	     actions = new Hashtable<String, Sprite.SpriteAction>();
 
+	     initCollisionRectF();
 	}
 	
 	public Sprite(Bitmap bitmap, int resId, int w, int h, float scale, boolean autoAdd) {
@@ -58,6 +70,7 @@ public class Sprite extends ALayer {
 	    Bitmap resizedBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
 		actions = new Hashtable<String, Sprite.SpriteAction>();
 
+		initCollisionRectF();
 	}
 	
 	public Sprite(Bitmap bitmap, float x, float y, int scale, boolean autoAdd) {
@@ -72,6 +85,8 @@ public class Sprite extends ALayer {
 	     actions = new Hashtable<String, Sprite.SpriteAction>();
 
 	     setPosition(x, y);
+	     
+	     initCollisionRectF();
 	}
 	
 	public Sprite(Bitmap bitmap, float x, float y, int resId, int w, int h, float scale, boolean autoAdd) {
@@ -84,8 +99,11 @@ public class Sprite extends ALayer {
 		actions = new Hashtable<String, Sprite.SpriteAction>();
 
 		setPosition(x, y);
+		
+		initCollisionRectF();
 	}
 	
+	//It has bug for centerX == x, if use this, need setWH and setPosition again! 
 	public Sprite(float x, float y, boolean autoAdd) {
 		super(0, 0, autoAdd);
 //		this.scale = scale;
@@ -98,6 +116,27 @@ public class Sprite extends ALayer {
 	     actions = new Hashtable<String, Sprite.SpriteAction>();
 
 	     setPosition(x, y);
+	     
+	     initCollisionRectF();
+	}
+	
+	private void initCollisionRectF(){
+		collisionRectFWidth = w;
+		collisionRectFHeight = h;
+		collisionRectF = new RectF(getX()+collisionOffsetX, getY()+collisionOffsetY, getX()+collisionOffsetX+collisionRectFWidth, getY()+collisionOffsetY+collisionRectFHeight);
+	}
+	
+	public void setCollisionOffsetX(float collisionOffsetX){
+		this.collisionOffsetX = collisionOffsetX;
+	}
+	
+	public void setCollisionOffsetY(float collisionOffsetY){
+		this.collisionOffsetY = collisionOffsetY;
+	}
+	
+	public void setCollisionOffsetXY(float collisionOffsetX, float collisionOffsetY){
+		this.collisionOffsetX = collisionOffsetX;
+		this.collisionOffsetY = collisionOffsetY;
 	}
 	
 	public void setBitmapAndAutoChangeWH(Bitmap bitmap){
@@ -108,10 +147,12 @@ public class Sprite extends ALayer {
 	
 	public void setBitmapAndFrameWH(Bitmap bitmap,int frameWidth ,int frameHeight ){
 		this.bitmap = bitmap;
+		this.bitmapOrginalFrameWidth = frameWidth;
+		this.bitmapOrginalFrameHeight = frameHeight;
 		this.frameWidth = frameWidth;
 		this.frameHeight = frameHeight;
-		this.w = frameWidth;
-		this.h = frameHeight;
+		setWidth(frameWidth);
+		setHeight(frameHeight);
 		this.length = (bitmap.getWidth()/frameWidth)*(bitmap.getHeight()/frameHeight);
 	}
 	
@@ -128,6 +169,7 @@ public class Sprite extends ALayer {
 	
 	public void setAction(String actionName) {
 		frameIdx = 0;
+		currentFrame = 0;
 		currentAction = actions.get(actionName);
 		currentAction.initUpdateTime();
 		scale = currentAction.scale;
@@ -165,6 +207,7 @@ public class Sprite extends ALayer {
 			dst.top = (float) (centerY - h / 2);
 			dst.right = (float) (dst.left + w * scale);
 			dst.bottom = (float) (dst.top + h * scale);
+			customBitampSRCandDST(src, dst);
 //			canvas.drawBitmap(bitmap, src, dst, paint);
 			canvas.drawBitmap(bitmap, src, dst, paint);
 
@@ -173,14 +216,92 @@ public class Sprite extends ALayer {
 
 	}
 	
+	public void customBitampSRCandDST(Rect src, RectF dst){
+		
+	}
+	
+	public Matrix spriteMatrix;
+	public boolean drawWithoutClip = false;
 	public void paint(Canvas canvas,Paint paint)
 	{
+//		canvas.save();
+//		float x = getX();
+//		float y = getY();
+//		canvas.clipRect(x, y, x+frameWidth, y+frameHeight);
+//		canvas.drawBitmap(bitmap, x-(currentFrame%(bitmap.getWidth()/frameWidth))*frameWidth, 
+//				y - (currentFrame/(bitmap.getWidth()/frameWidth))*frameHeight, paint);
+//		canvas.restore();
+		
 		canvas.save();
 		float x = getX();
 		float y = getY();
-		canvas.clipRect(x, y, x+frameWidth, y+frameHeight);
-		canvas.drawBitmap(bitmap, x-(currentFrame%(bitmap.getWidth()/frameWidth))*frameWidth, 
-				y - (currentFrame/(bitmap.getWidth()/frameWidth))*frameHeight, paint);
+		
+		if(spriteMatrix!=null){
+//			canvas.clipRect(x, y, x+frameWidth, y+frameHeight);
+//			canvas.drawBitmap(bitmap, spriteMatrix, paint);
+			canvas.setMatrix(spriteMatrix);
+			canvas.clipRect(x, y, x+frameWidth, y+frameHeight);
+//			canvas.drawBitmap(bitmap, x, y, paint);
+			canvas.drawBitmap(bitmap, x-(currentFrame%(bitmap.getWidth()/(int)frameWidth))*frameWidth, 
+					y - (currentFrame/(bitmap.getWidth()/(int)frameWidth))*frameHeight, paint);
+		}else if(!drawWithoutClip){
+			canvas.clipRect(x, y, x+frameWidth, y+frameHeight);
+			canvas.drawBitmap(bitmap, x-(currentFrame%(bitmap.getWidth()/(int)frameWidth))*frameWidth, 
+					y - (currentFrame/(bitmap.getWidth()/(int)frameWidth))*frameHeight, paint);
+		}else{
+//			canvas.clipRect(x, y, x+frameWidth, y+frameHeight);
+//			RectF d = new RectF(x-(currentFrame%(bitmap.getWidth()/frameWidth))*frameWidth, 
+//					y - (currentFrame/(bitmap.getWidth()/frameWidth))*frameHeight,x-(currentFrame%(bitmap.getWidth()/frameWidth))*frameWidth+bitmap.getWidth(), 
+//					y - (currentFrame/(bitmap.getWidth()/frameWidth))*frameHeight+bitmap.getHeight());
+//			canvas.clipRect(d);
+//			spriteMatrix.mapRect(d, d);
+//			canvas.clipRect(x, y, x+frameWidth, y+frameHeight);
+			
+			
+			canvas.setMatrix(spriteMatrix);
+//			if(spriteMatrix!=null)
+//				canvas.scale(0.9f, 0.9f);
+			
+//			canvas.concat(spriteMatrix);
+//			spriteMatrix.setRectToRect(new RectF(0, 0, bitmap.getWidth(), bitmap.getHeight()), d, Matrix.ScaleToFit.START);
+//			Bitmap newBit = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), spriteMatrix, true);
+			
+//			canvas.drawBitmap(bitmap, new Rect((int)(currentFrame%(bitmap.getWidth()/bitmapOrginalFrameWidth))*bitmapOrginalFrameWidth
+//					, (int)(currentFrame/(bitmap.getWidth()/bitmapOrginalFrameWidth))*bitmapOrginalFrameHeight
+//					,(int)(currentFrame%(bitmap.getWidth()/bitmapOrginalFrameWidth))*bitmapOrginalFrameWidth+bitmapOrginalFrameWidth
+//					, (int)(currentFrame/(bitmap.getWidth()/bitmapOrginalFrameWidth))*bitmapOrginalFrameHeight+bitmapOrginalFrameHeight)
+//			, new RectF(x+bitmapOrginalFrameWidth/2.0f-frameWidth/2.0f
+//					, y+bitmapOrginalFrameHeight-frameHeight
+//					, x+bitmapOrginalFrameWidth/2.0f+frameWidth/2.0f
+//					, y+bitmapOrginalFrameHeight)
+//			, paint);
+			
+//			canvas.drawBitmap(bitmap, new Rect((int)(currentFrame%(bitmap.getWidth()/bitmapOrginalFrameWidth))*bitmapOrginalFrameWidth
+//					, (int)(currentFrame/(bitmap.getWidth()/bitmapOrginalFrameWidth))*bitmapOrginalFrameHeight
+//					,(int)(currentFrame%(bitmap.getWidth()/bitmapOrginalFrameWidth))*bitmapOrginalFrameWidth+bitmapOrginalFrameWidth
+//					, (int)(currentFrame/(bitmap.getWidth()/bitmapOrginalFrameWidth))*bitmapOrginalFrameHeight+bitmapOrginalFrameHeight)
+//			, new RectF(x
+//					, y+bitmapOrginalFrameHeight-frameHeight
+//					, x+frameWidth
+//					, y+bitmapOrginalFrameHeight)
+//			, paint);
+			
+			canvas.drawBitmap(bitmap, new Rect((int)(currentFrame%(bitmap.getWidth()/bitmapOrginalFrameWidth))*bitmapOrginalFrameWidth
+					, (int)(currentFrame/(bitmap.getWidth()/bitmapOrginalFrameWidth))*bitmapOrginalFrameHeight
+					,(int)(currentFrame%(bitmap.getWidth()/bitmapOrginalFrameWidth))*bitmapOrginalFrameWidth+bitmapOrginalFrameWidth
+					, (int)(currentFrame/(bitmap.getWidth()/bitmapOrginalFrameWidth))*bitmapOrginalFrameHeight+bitmapOrginalFrameHeight)
+			, new RectF(x
+					, y
+					, x+frameWidth
+					, y+frameHeight)
+			, paint);
+			
+//			canvas.drawBitmap(bitmap, x-(currentFrame%(bitmap.getWidth()/frameWidth))*frameWidth, 
+//					y - (currentFrame/(bitmap.getWidth()/frameWidth))*frameHeight, paint);
+//			canvas.drawBitmap(bitmap, x, y, paint);
+//			canvas.setMatrix(null);
+//			canvas.drawBitmap(bitmap, spriteMatrix, paint);
+		}
 		canvas.restore();
 		
 		dst.left = (float) (centerX - w / 2);
@@ -333,6 +454,115 @@ public class Sprite extends ALayer {
 	
 	public boolean isNeedRemoveInstance(){
 		return getX()<0 || getX() > CommonUtil.screenWidth || getY() < 0 || getY() > CommonUtil.screenHeight;
+	}
+	
+	public void setCollisionRectF(RectF collisionRectF){
+		this.collisionRectF = collisionRectF;
+	}
+	
+	public void setCollisionRectF(float left, float top, float right, float bottom){
+		if(!isCollisionRectFEnable)
+			return;
+		if(collisionRectF==null)
+			collisionRectF = new RectF(left, top, right, bottom);
+		else
+			collisionRectF.set(left, top, right, bottom);
+	}
+	
+	public RectF getCollisionRectF(){
+		return collisionRectF;
+	}
+	
+	public void setCollisionRectFEnable(boolean isCollisionRectFEnable){
+		this.isCollisionRectFEnable = isCollisionRectFEnable;
+	}
+	
+	public boolean isCollisionRectFEnable(){
+		return isCollisionRectFEnable;
+	}
+	
+	public void setCollisionRectFWidth(float collisionRectFWidth){
+		this.collisionRectFWidth = collisionRectFWidth;
+	}
+	
+	public void setCollisionRectFHeight(float collisionRectFHeight){
+		this.collisionRectFHeight = collisionRectFHeight;
+	}
+	
+	public void setCollisionRectFWH(float collisionRectFWidth, float collisionRectFHeight){
+		this.collisionRectFWidth = collisionRectFWidth;
+		this.collisionRectFHeight = collisionRectFHeight;
+	}
+	
+	public float getFrameWidth(){
+		return frameWidth;
+	}
+	
+	public void setFrameWidth(float frameWidth){
+		this.frameWidth = frameWidth;
+	}
+	
+	public float getFrameHeight(){
+		return frameHeight;
+	}
+	
+	public void setFrameHeight(float frameHeight){
+		this.frameHeight = frameHeight;
+	}
+	
+	public void resetFrameWH(){
+		this.frameWidth = bitmapOrginalFrameWidth;
+		this.frameHeight = bitmapOrginalFrameHeight;
+	}
+	
+	public int getBitmapOrginalFrameWidth(){
+		return bitmapOrginalFrameWidth;
+	}
+	
+	public int getBitmapOrginalFrameHright(){
+		return bitmapOrginalFrameHeight;
+	}
+	
+	@Override
+	public void setX(float x) {
+		// TODO Auto-generated method stub
+		super.setX(x);
+		
+		setCollisionRectF(getX()+collisionOffsetX, getY()+collisionOffsetY, getX()+collisionOffsetX+collisionRectFWidth, getY()+collisionOffsetY+collisionRectFHeight);
+	}
+	
+	@Override
+	public void setY(float y) {
+		// TODO Auto-generated method stub
+		super.setY(y);
+		
+		setCollisionRectF(getX()+collisionOffsetX, getY()+collisionOffsetY, getX()+collisionOffsetX+collisionRectFWidth, getY()+collisionOffsetY+collisionRectFHeight);
+	}
+	
+	@Override
+	public void setPosition(float x, float y) {
+		// TODO Auto-generated method stub
+		super.setPosition(x, y);
+		
+		setCollisionRectF(getX()+collisionOffsetX, getY()+collisionOffsetY, getX()+collisionOffsetX+collisionRectFWidth, getY()+collisionOffsetY+collisionRectFHeight);
+	}
+	
+	@Override
+	public void setWidth(int w) {
+		// TODO Auto-generated method stub
+		super.setWidth(w);
+		collisionOffsetX = (float)w/this.w*collisionOffsetX;
+		collisionRectFWidth = (float)w/this.w*collisionRectFWidth;
+		setCollisionRectF(getX()+collisionOffsetX, getY()+collisionOffsetY, getX()+collisionOffsetX+collisionRectFWidth, getY()+collisionOffsetY+collisionRectFHeight);
+	}
+	
+	@Override
+	public void setHeight(int h) {
+		// TODO Auto-generated method stub
+		super.setHeight(h);
+		collisionOffsetY = (float)h/this.h*collisionOffsetY;
+		collisionRectFHeight = (float)h/this.h*collisionRectFHeight;
+		setCollisionRectF(getX()+collisionOffsetX, getY()+collisionOffsetY, getX()+collisionOffsetX+collisionRectFWidth, getY()+collisionOffsetY+collisionRectFHeight);
 	}
 
 	class SpriteAction {

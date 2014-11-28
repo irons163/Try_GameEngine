@@ -20,7 +20,7 @@ public class GameModel implements IGameModel{
 	protected int[][] allExistPoints;
 //	protected Iterator<MyEnemy> allExistPointsIterator;
 	private SurfaceHolder surfaceHolder;
-	private boolean isGameStop = false;
+	protected boolean isGameStop = false;
 	private boolean isGameReallyStop = false;
 	private boolean isSurfaceCreated = false;
 	
