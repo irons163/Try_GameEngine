@@ -105,21 +105,25 @@ public class GameModel implements IGameModel{
 	Canvas canvas;
 	
 	private void draw(){
-//		try {
+		try {
 			canvas = surfaceHolder.lockCanvas();
 
 			canvas.drawColor(Color.BLACK);
 
 			doDraw(canvas);
-//		 } 
-//		catch (Exception e) {
-//	            Log.v("GameModel", "draw Error");
-//	        } finally {
-//	            if (canvas != null)
-//	            	surfaceHolder.unlockCanvasAndPost(canvas);
-//	     }
-			if (canvas != null)
-            	surfaceHolder.unlockCanvasAndPost(canvas);
+		} 
+		catch (Exception e) {      
+	            if(!isGameStop){
+	            	Log.e("GameModel", "draw Error");
+	            	throw new RuntimeException();
+	            }
+	    } 
+		finally {
+	            if (canvas != null)
+	            	surfaceHolder.unlockCanvasAndPost(canvas);
+		}
+//			if (canvas != null)
+//            	surfaceHolder.unlockCanvasAndPost(canvas);
 	}
 	
 	protected void doDraw(Canvas canvas){
