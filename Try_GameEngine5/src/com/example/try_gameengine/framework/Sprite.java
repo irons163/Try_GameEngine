@@ -3,6 +3,7 @@ package com.example.try_gameengine.framework;
 import java.util.Hashtable;
 
 import com.example.try_gameengine.action.MovementAction;
+import com.example.try_gameengine.framework.Config.DestanceType;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -167,6 +168,10 @@ public class Sprite extends ALayer {
 		this.action = movementAction;
 	}
 	
+	public MovementAction getMovementAction(){
+		return action;
+	}
+	
 	public void setAction(String actionName) {
 		frameIdx = 0;
 		currentFrame = 0;
@@ -197,6 +202,10 @@ public class Sprite extends ALayer {
 		if(length>0){
 			paint(canvas,paint);
 		}else{
+			if(spriteMatrix!=null){
+				canvas.setMatrix(spriteMatrix);
+			}
+			
 			src.left = (int) (currentFrame * w * scale);// 左端寬度：當前幀乘上幀的寬度再乘上圖片縮放率
 			src.top = 0;
 			src.right = (int) (src.left + w * scale);// 右端寬度：左端寬度加上(幀的寬度乘上圖片縮放率)
@@ -213,6 +222,7 @@ public class Sprite extends ALayer {
 
 //			Log.e("time2", a+""+"XX"+System.currentTimeMillis());
 		}
+		
 
 	}
 	
@@ -222,6 +232,7 @@ public class Sprite extends ALayer {
 	
 	public Matrix spriteMatrix;
 	public boolean drawWithoutClip = false;
+	public float drawOffsetX;
 	public void paint(Canvas canvas,Paint paint)
 	{
 //		canvas.save();
@@ -240,13 +251,13 @@ public class Sprite extends ALayer {
 //			canvas.clipRect(x, y, x+frameWidth, y+frameHeight);
 //			canvas.drawBitmap(bitmap, spriteMatrix, paint);
 			canvas.setMatrix(spriteMatrix);
-			canvas.clipRect(x, y, x+frameWidth, y+frameHeight);
+			canvas.clipRect(x+drawOffsetX, y, x+frameWidth+drawOffsetX, y+frameHeight);
 //			canvas.drawBitmap(bitmap, x, y, paint);
-			canvas.drawBitmap(bitmap, x-(currentFrame%(bitmap.getWidth()/(int)frameWidth))*frameWidth, 
+			canvas.drawBitmap(bitmap, x-(currentFrame%(bitmap.getWidth()/(int)frameWidth))*frameWidth+drawOffsetX, 
 					y - (currentFrame/(bitmap.getWidth()/(int)frameWidth))*frameHeight, paint);
 		}else if(!drawWithoutClip){
-			canvas.clipRect(x, y, x+frameWidth, y+frameHeight);
-			canvas.drawBitmap(bitmap, x-(currentFrame%(bitmap.getWidth()/(int)frameWidth))*frameWidth, 
+			canvas.clipRect(x+drawOffsetX, y, x+frameWidth+drawOffsetX, y+frameHeight);
+			canvas.drawBitmap(bitmap, x-(currentFrame%(bitmap.getWidth()/(int)frameWidth))*frameWidth+drawOffsetX, 
 					y - (currentFrame/(bitmap.getWidth()/(int)frameWidth))*frameHeight, paint);
 		}else{
 //			canvas.clipRect(x, y, x+frameWidth, y+frameHeight);
@@ -286,13 +297,13 @@ public class Sprite extends ALayer {
 //					, y+bitmapOrginalFrameHeight)
 //			, paint);
 			
-			canvas.drawBitmap(bitmap, new Rect((int)(currentFrame%(bitmap.getWidth()/bitmapOrginalFrameWidth))*bitmapOrginalFrameWidth
+			canvas.drawBitmap(bitmap, new Rect((int)(currentFrame%(bitmap.getWidth()/bitmapOrginalFrameWidth))*bitmapOrginalFrameWidth+(int)drawOffsetX
 					, (int)(currentFrame/(bitmap.getWidth()/bitmapOrginalFrameWidth))*bitmapOrginalFrameHeight
-					,(int)(currentFrame%(bitmap.getWidth()/bitmapOrginalFrameWidth))*bitmapOrginalFrameWidth+bitmapOrginalFrameWidth
+					,(int)(currentFrame%(bitmap.getWidth()/bitmapOrginalFrameWidth))*bitmapOrginalFrameWidth+bitmapOrginalFrameWidth+(int)drawOffsetX
 					, (int)(currentFrame/(bitmap.getWidth()/bitmapOrginalFrameWidth))*bitmapOrginalFrameHeight+bitmapOrginalFrameHeight)
-			, new RectF(x
+			, new RectF(x+drawOffsetX
 					, y
-					, x+frameWidth
+					, x+frameWidth+drawOffsetX
 					, y+frameHeight)
 			, paint);
 			
@@ -403,6 +414,25 @@ public class Sprite extends ALayer {
 	}
 	
 	public void move(float dx, float dy) {
+		if(Config.destanceType == DestanceType.DpToPx){
+			dx = CommonUtil.convertDpToPixel(dx);
+			dy = CommonUtil.convertDpToPixel(dy);
+		}else if(Config.destanceType == DestanceType.PxToDp){
+			dx = CommonUtil.convertPixelsToDp(dx);
+			dy = CommonUtil.convertPixelsToDp(dy);
+		}else if(Config.destanceType == DestanceType.ScreenPersent){
+			dx = CommonUtil.converDxWithDefaultScreenPersentToCurrentScreenPersent(dx);
+			dy = CommonUtil.converDyWithDefaultScreenPersentToCurrentScreenPersent(dy);
+		}
+		
+		moveXY(dx, dy);
+	} 
+	
+	public void moveWithPx(float dx, float dy){
+		moveXY(dx, dy);
+	}
+	
+	private void moveXY(float dx, float dy) {	
 		if(moveRage==null){
 			setX(getCenterX() + dx - w/2);
 			setY(getCenterY() + dy - h/2);
@@ -430,7 +460,7 @@ public class Sprite extends ALayer {
 //		for(ALayer layer : layers){
 //			((Sprite)layer).move(dx, dy);
 //		}
-	} 
+	}
 	
 	public void frameTrig(){
 		
@@ -565,7 +595,7 @@ public class Sprite extends ALayer {
 		setCollisionRectF(getX()+collisionOffsetX, getY()+collisionOffsetY, getX()+collisionOffsetX+collisionRectFWidth, getY()+collisionOffsetY+collisionRectFHeight);
 	}
 
-	class SpriteAction {
+	public class SpriteAction {
 		public int[] frames;
 		public int[] frameTime;
 
@@ -651,7 +681,7 @@ public class Sprite extends ALayer {
 		}
 	}
 	
-	class SpriteActionBaseFPS extends SpriteAction{
+	public class SpriteActionBaseFPS extends SpriteAction{
 		private int triggerCount;
 		
 		@Override

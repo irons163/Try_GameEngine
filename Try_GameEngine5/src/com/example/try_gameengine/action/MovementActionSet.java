@@ -59,6 +59,8 @@ public class MovementActionSet extends MovementAction {
 								} catch (InterruptedException e) {
 									// TODO Auto-generated catch block
 									e.printStackTrace();
+//									throw new RuntimeException();
+									Thread.currentThread().interrupt();
 								}
 							}
 	
@@ -174,5 +176,12 @@ public class MovementActionSet extends MovementAction {
 		for (MovementAction action : this.actions) {
 			action.trigger();
 		}
+	}
+	
+	@Override
+	void cancelAllMove() {
+		// TODO Auto-generated method stub
+		isLoop = false;
+		super.cancelAllMove();
 	}
 }
