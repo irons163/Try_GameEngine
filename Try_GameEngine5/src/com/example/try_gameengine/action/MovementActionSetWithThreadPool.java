@@ -7,6 +7,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.RunnableFuture;
 
+import android.util.Log;
+
 public class MovementActionSetWithThreadPool extends MovementAction {
 	private boolean isActionFinish = true;
 	private MovementActionInfo info;
@@ -47,17 +49,22 @@ public class MovementActionSetWithThreadPool extends MovementAction {
 		if (isActionFinish) {
 //			isActionFinish = false;
 			
+			Log.e("MovementActionSetWithThreadPool", "[MovementAction]:action start");
 			
 			future = executor.submit(new Runnable() {
 				@Override
 				public void run(){
 					// TODO Auto-generated method stub
+					
+					Log.e("MovementActionSetWithThreadPool", "[MovementAction]:future start");
+					
 					List<MovementAction> actionss = actions;
 					actionListener.actionStart();
 					do{
 						if(isActionFinish){
 							
-						
+							Log.e("MovementActionSetWithThreadPool", "[MovementAction]:future start2");
+							
 						isActionFinish = false;
 						for(MovementAction action : actions){
 							if(isStop){
@@ -66,6 +73,8 @@ public class MovementActionSetWithThreadPool extends MovementAction {
 							}
 							cancelAction = action;
 							action.start();
+							
+							Log.e("MovementActionSetWithThreadPool", "[MovementAction]:child action start");
 							
 //							if(!isStop)
 //							synchronized (action.getAction()) {
