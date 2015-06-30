@@ -2,6 +2,9 @@ package com.example.try_gameengine.action;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import com.example.try_gameengine.action.listener.DefaultActionListener;
 import com.example.try_gameengine.action.listener.IActionListener;
@@ -28,6 +31,8 @@ public abstract class MovementAction {
 	public boolean isLoop = false;
 	
 	public boolean isSigleThread = false;
+	
+	static ExecutorService executor = Executors.newFixedThreadPool(20);
 	
 	public MovementAction addMovementAction(MovementAction action) {
 		throw new UnsupportedOperationException();
@@ -122,6 +127,7 @@ public abstract class MovementAction {
 				action.cancelMove();
 				Log.e("action", "cancel");
 			}
+			if(this.thread!=null)
 			this.thread.interrupt();
 		}else{
 			cancelMove();
@@ -132,6 +138,14 @@ public abstract class MovementAction {
 		for(MovementAction action : cancelAction.getAction().actions){
 			action.cancelMove();
 		}
+		
+//		if(cancelAction.getAction().actions.size()!=0){
+//			for(MovementAction action : cancelAction.getAction().actions){
+//				action.cancelMove();
+//			}
+//		}else{
+//			cancelAction.cancelMove();
+//		}
 		
 		if(!isSigleThread)
 			this.thread.interrupt();

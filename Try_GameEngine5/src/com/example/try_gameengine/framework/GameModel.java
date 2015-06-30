@@ -20,9 +20,15 @@ public class GameModel implements IGameModel{
 	protected int[][] allExistPoints;
 //	protected Iterator<MyEnemy> allExistPointsIterator;
 	private SurfaceHolder surfaceHolder;
-	private boolean isGameStop = false;
+	protected boolean isGameStop = false;
 	private boolean isGameReallyStop = false;
 	private boolean isSurfaceCreated = false;
+	private long startTime, endTime;
+	private long interval;
+	private long startTimeForShowFPS;
+	private boolean timeLock = false;
+	private long fpsCounter;
+	float fps;
 	
 	public GameModel(Context context, Data data) {
 		// TODO Auto-generated constructor stub
@@ -105,21 +111,54 @@ public class GameModel implements IGameModel{
 	Canvas canvas;
 	
 	private void draw(){
-//		try {
+		try {
 			canvas = surfaceHolder.lockCanvas();
 
 			canvas.drawColor(Color.BLACK);
 
 			doDraw(canvas);
-//		 } 
-//		catch (Exception e) {
-//	            Log.v("GameModel", "draw Error");
-//	        } finally {
-//	            if (canvas != null)
-//	            	surfaceHolder.unlockCanvasAndPost(canvas);
-//	     }
-			if (canvas != null)
-            	surfaceHolder.unlockCanvasAndPost(canvas);
+			
+			if(Config.showFPS){
+				
+				fpsCounter++;
+				endTime = System.currentTimeMillis();
+				if(endTime - startTimeForShowFPS >= 1000){
+					
+					fps = fpsCounter*(1000.0f/(endTime - startTimeForShowFPS));
+					fpsCounter = 0;
+					timeLock = false;
+				}	
+				Paint paint = new Paint();
+				paint.setTextSize(50);
+				canvas.drawText(String.format("%.1f", fps), 100, 50, paint);
+			}
+			
+			if(Config.enableFPSInterval){
+				endTime = System.currentTimeMillis();
+				interval = endTime - startTime; 
+				long frameInterval = (long) (1000.0f/Config.fps);
+				if (interval < frameInterval) {  
+		            try {  
+		                // because we render it before, so we should sleep twice time interval  
+		                Thread.sleep(frameInterval - interval);  
+		            } catch (final Exception e) {  
+		            }  
+				}
+			}
+		} 
+		catch (Exception e) {      
+	            if(!isGameStop){
+	            	Log.e("GameModel", "draw Error");
+	            	throw new RuntimeException();
+//	            	e.printStackTrace();
+	            }
+	    } 
+		finally {
+	            if (canvas != null)
+	            	surfaceHolder.unlockCanvasAndPost(canvas);
+		}
+//			if (canvas != null)
+//            	surfaceHolder.unlockCanvasAndPost(canvas);
 	}
 	
 	protected void doDraw(Canvas canvas){
@@ -133,6 +172,21 @@ public class GameModel implements IGameModel{
 		public void run() {
 			// TODO Auto-generated method stub
 			while(isGameRun){
+				if(surfaceHolder==null) //when game secen start, the surfaceHolder may not stand by.
+					continue;
+				if(Config.enableFPSInterval){
+					startTime = System.currentTimeMillis();
+					if(!timeLock){		
+						startTimeForShowFPS = startTime;
+						timeLock = true;
+					}				
+				}else if(Config.showFPS){
+					if(!timeLock){		
+						startTimeForShowFPS = System.currentTimeMillis();
+						timeLock = true;
+					}	
+				}
+				
 				process();
 				draw();
 				if(isGameStop){
@@ -181,7 +235,8 @@ public class GameModel implements IGameModel{
 		if(!gameThread.isAlive())
 			gameThread.start();
 		isSurfaceCreated = true;
-		if(isGameReallyStop=true){
+//		if(isGameReallyStop=true){
+		if(isGameReallyStop){
 			isGameReallyStop = false;
 			r();
 		}

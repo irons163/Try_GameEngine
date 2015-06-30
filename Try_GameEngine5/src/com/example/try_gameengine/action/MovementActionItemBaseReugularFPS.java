@@ -124,7 +124,7 @@ public class MovementActionItemBaseReugularFPS extends MovementActionItem{
 		this.actionListener = actionListener;
 	}
 	
-	private int lastTriggerFrameNum;
+	private long lastTriggerFrameNum;
 	
 	private void frameTriggerFPSStart(){
 		if (!isStop) {
@@ -153,6 +153,12 @@ public class MovementActionItemBaseReugularFPS extends MovementActionItem{
 				doGravity();
 				timerOnTickListener.onTick(dx, dy);		
 				lastTriggerFrameNum += info.getDelay();
+				
+			// add by 150228. if the delay change by main app, the function: else if(resumeFrameCount==lastTriggerFrameNum+info.getDelay() maybe make problem.
+			}else if(resumeFrameCount>lastTriggerFrameNum+info.getDelay()){ 
+//				resumeFrameCount--;
+//				lastTriggerFrameNum++;
+				lastTriggerFrameNum = resumeFrameCount+1-info.getDelay();
 			}
 			
 			if(isCycleFinish){

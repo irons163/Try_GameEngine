@@ -183,6 +183,17 @@ public class MathUtil {
 		}
 		return hitCornerAngle;
 	}
+	
+	public float getNewAngleTowardsPointF(float targetX, float targetY,
+			float ballCenterX, float ballCenterY) {
+		float hitCornerAngle = ((float) ((Math.atan2((-1)
+				* (targetY - ballCenterY), (targetX - ballCenterX)))
+				/ Math.PI * 180));
+		if (hitCornerAngle < 0) {
+			hitCornerAngle = 360 + hitCornerAngle;
+		}
+		return hitCornerAngle;
+	}
 
 	public enum CollisionLoc {
 		None, Left, Top, Right, Bottom, CornerLT, CornerRT, CornerLB, CornerRB
