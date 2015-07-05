@@ -553,6 +553,12 @@ public class Sprite extends ALayer {
 		return bitmapOrginalFrameHeight;
 	}
 	
+	public void runMovementAction(MovementAction movementAction){
+		movementAction.initMovementAction();
+		movementAction.start();
+		setMovementAction(movementAction);
+	}
+	
 	@Override
 	public void setX(float x) {
 		// TODO Auto-generated method stub

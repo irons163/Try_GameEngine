@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.example.try_gameengine.action.listener.IActionListener;
 
-public class MovementActionItemBaseReugularFPS extends MovementActionItem{ 
+public class MovementActionItemBaseReugularFPS extends MovementAction{ 
 	long millisTotal;
 	long millisDelay;
 	float dx;
@@ -21,7 +21,7 @@ public class MovementActionItemBaseReugularFPS extends MovementActionItem{
 	}
 	
 	public MovementActionItemBaseReugularFPS(long millisTotal, long millisDelay, final int dx, final int dy, String description){
-		super(millisTotal, millisDelay, dx, dy, description);
+//		super(millisTotal, millisDelay, dx, dy, description);
 		
 		this.millisTotal = millisTotal;
 		this.millisDelay = millisDelay;
@@ -33,7 +33,7 @@ public class MovementActionItemBaseReugularFPS extends MovementActionItem{
 	}
 	
 	public MovementActionItemBaseReugularFPS(MovementActionInfo info){
-		super(info);
+//		super(info);
 		millisTotal = info.getTotal();
 		millisDelay = info.getDelay();
 		dx = info.getDx();
@@ -45,7 +45,7 @@ public class MovementActionItemBaseReugularFPS extends MovementActionItem{
 	}
 	
 	public MovementActionItemBaseReugularFPS(long[] frameTimes, final int dx, final int dy, String description){
-		super(0, 0, dx, dy, description);
+//		super(0, 0, dx, dy, description);
 		
 		this.frameTimes = frameTimes;
 		this.dx = dx;

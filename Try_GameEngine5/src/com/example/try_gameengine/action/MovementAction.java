@@ -32,7 +32,7 @@ public abstract class MovementAction {
 	
 	public boolean isSigleThread = false;
 	
-	static ExecutorService executor = Executors.newFixedThreadPool(20);
+	static ExecutorService executor = Executors.newFixedThreadPool(10);
 	
 	public MovementAction addMovementAction(MovementAction action) {
 		throw new UnsupportedOperationException();
@@ -147,7 +147,7 @@ public abstract class MovementAction {
 //			cancelAction.cancelMove();
 //		}
 		
-		if(!isSigleThread)
+		if(!isSigleThread && this.thread!=null)
 			this.thread.interrupt();
 	}
 	
@@ -204,5 +204,11 @@ public abstract class MovementAction {
 	
 	public void setIsSingleThread(boolean isSigleThread){
 		this.isSigleThread = isSigleThread;
+	}
+	
+	public void modifyWithSpriteXY(float spriteX, float spriteY){
+		for(MovementActionInfo movementActionInfo : currentInfoList){
+			movementActionInfo.modifyInfoWithSpriteXY(spriteX, spriteY);
+		}
 	}
 }

@@ -60,6 +60,7 @@ public class MovementActionSetWithThreadPool extends MovementAction {
 					
 					List<MovementAction> actionss = actions;
 					actionListener.actionStart();
+					
 					do{
 						if(isActionFinish){
 							
@@ -76,25 +77,26 @@ public class MovementActionSetWithThreadPool extends MovementAction {
 							
 							Log.e("MovementActionSetWithThreadPool", "[MovementAction]:child action start");
 							
-//							if(!isStop)
-//							synchronized (action.getAction()) {
-//								try {
-//									action.getAction().wait();
-//								} catch (InterruptedException e) {
-//									// TODO Auto-generated catch block
-//									e.printStackTrace();
-//									isLoop = false;
-//								}
-//							}
-	
 							if(!isStop)
-								isLoop = false;
+							synchronized (action.getAction()) {
+								try {
+									action.getAction().wait();
+								} catch (InterruptedException e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+									Log.e("MovementActionThreadPool", "ThreadPoolChildThreadInterrupt");
+								}
+							}
+	
+//							if(!isStop)
+//								isLoop = false;
 //							try {
 //								Thread.sleep(50000000);
 //							} catch (InterruptedException e) {
 //								// TODO Auto-generated catch block
 //								e.printStackTrace();
-//								Thread.currentThread().interrupt();
+//								Thread.interrupted();
+//								Log.e("MovementActionThreadPool", "ThreadPoolChildThreadInterrupt");
 //								return;
 //							}
 							
@@ -104,9 +106,9 @@ public class MovementActionSetWithThreadPool extends MovementAction {
 						}
 					}while(isLoop);
 					
-//					synchronized (MovementActionSetWithThreadPool.this) {
-//						MovementActionSetWithThreadPool.this.notifyAll();
-//					}
+					synchronized (MovementActionSetWithThreadPool.this) {
+						MovementActionSetWithThreadPool.this.notifyAll();
+					}
 					isActionFinish = true;
 					actionListener.actionFinish();
 				}
@@ -224,7 +226,7 @@ public class MovementActionSetWithThreadPool extends MovementAction {
 		isStop = true;
 		isLoop = false;
 		future.cancel(true);
-//		((Thread)future).interrupt();
+		
 //		executor.shutdown();
 		super.cancelAllMove();
 	}

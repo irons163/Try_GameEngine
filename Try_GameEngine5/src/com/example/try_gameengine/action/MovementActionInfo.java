@@ -1,5 +1,8 @@
 package com.example.try_gameengine.action;
 
+import javax.xml.datatype.Duration;
+
+import com.example.try_gameengine.framework.Config;
 import com.example.try_gameengine.framework.Sprite;
 
 public class MovementActionInfo {
@@ -13,6 +16,8 @@ public class MovementActionInfo {
 	private Sprite sprite;
 	private String spriteActionName;
 	private boolean isLoop = false;
+	private boolean isSettingTargetXY = false;
+	private float targetX, targetY;
 	
 	public MovementActionInfo(long total, long delay, float dx, float dy){
 		this(total, delay, dx, dy, null);
@@ -133,7 +138,27 @@ public class MovementActionInfo {
 	public void isLoop(boolean isLoop) {
 		this.isLoop = isLoop;
 	}
+	
+	public void setTargetXY(float targetX, float targetY){
+		this.targetX = targetX;
+		this.targetY = targetY;
+		isSettingTargetXY = true;
+	}
 
+	public void modifyInfoWithSpriteXY(float spriteX, float spriteY) {
+		if(isSettingTargetXY){
+			float distanceX = targetX - spriteX;
+			float distanceY = targetY - spriteY;
+			float fps = Config.fps;
+			float perFrame = 1000.0f/total/fps;
+			float perMoveX = distanceX * perFrame;
+			float perMoveY = distanceY * perFrame;
+			delay = (long)(perFrame*1000);
+			dx = perMoveX;
+			dy = perMoveY;
+		}
+	}
+	
 	@Override
 	public boolean equals(Object obj) {  
         if (obj == null) return false;  

@@ -5,7 +5,7 @@ import java.util.List;
 
 import android.util.Log;
 
-import com.rits.cloning.Cloner;
+//import com.rits.cloning.Cloner;
 
 public class MovementActionSetWithOutThread extends MovementAction {
 	private boolean isActionFinish = true;
