@@ -3,6 +3,8 @@ package com.example.try_gameengine.action;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.example.try_gameengine.action.visitor.IMovementActionVisitor;
+
 public class SimultaneouslyMovementActionSet extends MovementAction {
 	private boolean isActionFinish = true;
 	private MovementActionInfo info;
@@ -199,6 +201,14 @@ public class SimultaneouslyMovementActionSet extends MovementAction {
 		// TODO Auto-generated method stub
 		for(MovementAction action : actions){
 			action.getAction().pause();
+		}
+	}
+
+	@Override
+	public void accept(IMovementActionVisitor movementActionVisitor){
+		movementActionVisitor.visitComposite(this);
+		for(MovementAction movementAction : actions){
+			movementAction.accept(movementActionVisitor);
 		}
 	}
 	

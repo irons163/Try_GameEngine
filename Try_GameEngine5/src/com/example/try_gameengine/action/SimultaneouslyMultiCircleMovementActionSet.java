@@ -3,6 +3,7 @@ package com.example.try_gameengine.action;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.example.try_gameengine.action.visitor.IMovementActionVisitor;
 import com.example.try_gameengine.framework.Sprite;
 
 import android.graphics.PointF;
@@ -232,7 +233,13 @@ public class SimultaneouslyMultiCircleMovementActionSet extends MovementAction {
 		}
 	}
 	
-	
+	@Override
+	public void accept(IMovementActionVisitor movementActionVisitor){
+		movementActionVisitor.visitComposite(this);
+		for(MovementAction movementAction : actions){
+			movementAction.accept(movementActionVisitor);
+		}
+	}
 }
 
 class Mediator{

@@ -8,6 +8,7 @@ import java.util.concurrent.Executors;
 
 import com.example.try_gameengine.action.listener.DefaultActionListener;
 import com.example.try_gameengine.action.listener.IActionListener;
+import com.example.try_gameengine.action.visitor.IMovementActionVisitor;
 
 import android.os.CountDownTimer;
 import android.util.Log;
@@ -32,7 +33,7 @@ public abstract class MovementAction {
 	
 	public boolean isSigleThread = false;
 	
-	protected static ExecutorService executor = Executors.newFixedThreadPool(15);
+	protected static ExecutorService executor = Executors.newFixedThreadPool(20);
 	
 	String name="";
 	
@@ -40,6 +41,8 @@ public abstract class MovementAction {
 	
 	// contans set, decorator, item
 	protected List<MovementAction> allMovementActoinList = new ArrayList<MovementAction>();
+	
+	public boolean isRepeatSpriteActionIfMovementActionRepeat = true;
 	
 	public MovementAction addMovementAction(MovementAction action) {
 		throw new UnsupportedOperationException();
@@ -219,6 +222,8 @@ public abstract class MovementAction {
 	public List<MovementAction> allMovementActoinList() {
 		return allMovementActoinList;
 	}
+	
+	public abstract void accept(IMovementActionVisitor movementActionVisitor);
 	
 	IMovementActionMemento movementActionMemento=null;
 	

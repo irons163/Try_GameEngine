@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.example.try_gameengine.action.listener.IActionListener;
+import com.example.try_gameengine.action.visitor.IMovementActionVisitor;
 
 import android.os.CountDownTimer;
 import android.os.Looper;
@@ -399,5 +400,10 @@ public class MovementActionRegularFrameItem extends MovementAction{
 		info.setTotal(millisTotal);
 		initTimer();
 		start();
+	}
+	
+	@Override
+	public void accept(IMovementActionVisitor movementActionVisitor){
+		movementActionVisitor.visitLeaf(this);
 	}
 }

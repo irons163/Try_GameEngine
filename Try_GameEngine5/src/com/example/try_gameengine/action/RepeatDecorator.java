@@ -12,7 +12,7 @@ import com.example.try_gameengine.action.MovementAction.TimerOnTickListener;
 import android.util.Log;
 
 public class RepeatDecorator extends MovementDecorator {
-	private MovementAction action;
+	
 	private long count;
 	private boolean isTheOuterActionForInitMovementAction;
 	
@@ -40,7 +40,7 @@ public class RepeatDecorator extends MovementDecorator {
 	}
 	
 	private MovementAction createStartActionBlock(){
-		return MAction.runBlock(new MAction.MActionBlock() {
+		return MAction.runBlockNoDelay(new MAction.MActionBlock() {
 			
 			@Override
 			public void runBlock() {
@@ -52,9 +52,10 @@ public class RepeatDecorator extends MovementDecorator {
 	
 	private void runRepeat(){
 		while(count>0 || isLoop){
-			action.getAction().start();
+			
 			synchronized (action.getAction()) {
 				try {		
+					action.getAction().start();
 					action.getAction().wait();
 				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
@@ -66,6 +67,9 @@ public class RepeatDecorator extends MovementDecorator {
 				movementAction.restoreMovementActionMemento(null);
 			}
 			count--;
+		}
+		synchronized (RepeatDecorator.this) {
+			RepeatDecorator.this.notifyAll();
 		}
 	}
 

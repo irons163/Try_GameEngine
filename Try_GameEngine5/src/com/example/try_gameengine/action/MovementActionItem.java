@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.example.try_gameengine.action.listener.IActionListener;
+import com.example.try_gameengine.action.visitor.IMovementActionVisitor;
 
 import android.os.CountDownTimer;
 import android.os.Handler;
@@ -352,4 +353,8 @@ public class MovementActionItem extends MovementAction{
 		return isActionFinish;
 	}
 	
+	@Override
+	public void accept(IMovementActionVisitor movementActionVisitor){
+		movementActionVisitor.visitLeaf(this);
+	}
 }

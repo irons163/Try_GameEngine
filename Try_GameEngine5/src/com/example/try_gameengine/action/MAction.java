@@ -3,6 +3,9 @@ package com.example.try_gameengine.action;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.example.try_gameengine.action.visitor.IMovementActionVisitor;
+import com.example.try_gameengine.action.visitor.MovementActionNoRepeatSpriteActionVisitor;
+import com.example.try_gameengine.action.visitor.MovementActionObjectStructure;
 import com.example.try_gameengine.framework.Config;
 import com.example.try_gameengine.framework.Sprite;
 import com.rits.cloning.Cloner;
@@ -65,6 +68,15 @@ public class MAction {
 //		MovementAction movementActionsetWithThreadPool = new MovementActionSetWithThreadPool();
 		MovementAction repeatAction = new RepeatDecorator(movementAction, count);
 //		movementActionsetWithThreadPool.addMovementAction(repeatAction);
+		return repeatAction;
+	}
+	
+	public static MovementAction repeatFasterWithoutRepeatSpriteAction(MovementAction movementAction, long count){
+		MovementAction repeatAction = new RepeatDecorator(movementAction, count);
+		MovementActionObjectStructure objectStructure = new MovementActionObjectStructure();
+		objectStructure.setRoot(repeatAction);
+		IMovementActionVisitor movementActionVisitor = new MovementActionNoRepeatSpriteActionVisitor();
+		objectStructure.handleRequest(movementActionVisitor);
 		return repeatAction;
 	}
 	
@@ -140,6 +152,14 @@ public class MAction {
 		void cancelMove() {
 			// TODO Auto-generated method stub
 //			super.cancelMove();
+			synchronized (MovementActionBlock.this) {
+				MovementActionBlock.this.notifyAll();
+			}
+		}
+		
+		@Override
+		public void accept(IMovementActionVisitor movementActionVisitor){
+			movementActionVisitor.visitLeaf(this);
 		}
 	}
 	
@@ -170,6 +190,15 @@ public class MAction {
 					}
 				}
 			});
+		}
+		
+		@Override
+		void cancelMove() {
+			// TODO Auto-generated method stub
+//			super.cancelMove();
+			synchronized (MovementActionNoDelayBlock.this) {
+				MovementActionNoDelayBlock.this.notifyAll();
+			}
 		}
 	}
 }

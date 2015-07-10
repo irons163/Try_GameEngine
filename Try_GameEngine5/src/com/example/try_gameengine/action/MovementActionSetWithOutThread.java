@@ -3,6 +3,8 @@ package com.example.try_gameengine.action;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.example.try_gameengine.action.visitor.IMovementActionVisitor;
+
 import android.util.Log;
 
 //import com.rits.cloning.Cloner;
@@ -182,5 +184,13 @@ public class MovementActionSetWithOutThread extends MovementAction {
 		
 //		if(!isSigleThread)
 //			this.thread.interrupt();
+	}
+	
+	@Override
+	public void accept(IMovementActionVisitor movementActionVisitor){
+		movementActionVisitor.visitComposite(this);
+		for(MovementAction movementAction : actions){
+			movementAction.accept(movementActionVisitor);
+		}
 	}
 }

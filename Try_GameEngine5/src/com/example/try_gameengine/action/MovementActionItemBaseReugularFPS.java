@@ -10,6 +10,7 @@ import com.example.try_gameengine.action.MovementAction.MovementActionMementoImp
 import com.example.try_gameengine.action.MovementAction.TimerOnTickListener;
 import com.example.try_gameengine.action.MovementActionSetWithThreadPool.MovementActionSetWithThreadPoolMementoImpl;
 import com.example.try_gameengine.action.listener.IActionListener;
+import com.example.try_gameengine.action.visitor.IMovementActionVisitor;
 
 public class MovementActionItemBaseReugularFPS extends MovementAction{ 
 	long millisTotal;
@@ -34,6 +35,7 @@ public class MovementActionItemBaseReugularFPS extends MovementAction{
 	int pauseFrameCounter;	
 	FrameTrigger nextframeTrigger;
 	private long lastTriggerFrameNum;
+	private boolean isEnableSetSpriteAction = true;
 	
 	public MovementActionItemBaseReugularFPS(long millisTotal, long millisDelay, final int dx, final int dy){
 		this(millisTotal, millisDelay, dx, dy, "MovementItem");
@@ -93,11 +95,13 @@ public class MovementActionItemBaseReugularFPS extends MovementAction{
 		pauseFrameCounter = 0;
 		isStop = false;
 		isCycleFinish = false;
-		if(info.getSprite()!=null)
+		if(!isEnableSetSpriteAction)
+			isEnableSetSpriteAction = isRepeatSpriteActionIfMovementActionRepeat;
+		if(info.getSprite()!=null && isEnableSetSpriteAction)
 			info.getSprite().setAction(info.getSpriteActionName());
 		
 		triggerEnable = true;
-	
+		isEnableSetSpriteAction = isRepeatSpriteActionIfMovementActionRepeat;
 	}
 	
 	
@@ -111,6 +115,7 @@ public class MovementActionItemBaseReugularFPS extends MovementAction{
 	@Override
 	public void trigger(){
 		if(triggerEnable && pauseFrameCounter==pauseFrameNum){
+			
 			pauseFrameNum = 0;
 			pauseFrameCounter = 0;
 			myTrigger.trigger();
@@ -146,6 +151,7 @@ public class MovementActionItemBaseReugularFPS extends MovementAction{
 	
 	private void frameTriggerFPSStart(){
 		if (!isStop) {
+			synchronized (MovementActionItemBaseReugularFPS.this) {
 			if(resumeFrameCount>=info.getDelay()){	
 				if(resumeFrameCount==info.getTotal())
 					isCycleFinish = true;
@@ -160,12 +166,12 @@ public class MovementActionItemBaseReugularFPS extends MovementAction{
 			
 			if(!isLoop && isCycleFinish){
 				isStop = true;
-				doReset();		
+				doReset();	
+				triggerEnable = false;
 				if(actionListener!=null)
 					actionListener.actionFinish();
-				synchronized (MovementActionItemBaseReugularFPS.this) {
-					MovementActionItemBaseReugularFPS.this.notifyAll();
-				}
+				
+				MovementActionItemBaseReugularFPS.this.notifyAll();
 			}else if(resumeFrameCount==lastTriggerFrameNum+info.getDelay()){
 				doRotation();
 				doGravity();
@@ -183,6 +189,8 @@ public class MovementActionItemBaseReugularFPS extends MovementAction{
 				if(actionListener!=null)
 					actionListener.actionCycleFinish();
 				isCycleFinish = false;
+			}
+			
 			}
 		}else{
 			synchronized (MovementActionItemBaseReugularFPS.this) {
@@ -327,11 +335,13 @@ public class MovementActionItemBaseReugularFPS extends MovementAction{
 		this.pauseFrameCounter = mementoImpl.pauseFrameCounter;
 		this.nextframeTrigger = mementoImpl.nextframeTrigger;
 		this.lastTriggerFrameNum = mementoImpl.lastTriggerFrameNum;
+//		this.isEnableSetSpriteAction = mementoImpl.isEnableSetSpriteAction;
 		
 		if(this.info!=null){
 			this.info.restoreMovementActionMemento(null);
 		}
 		doReset();
+
 	}
 	
 	protected static class MovementActionItemBaseReugularFPSMementoImpl extends MovementActionMementoImpl{
@@ -358,6 +368,7 @@ public class MovementActionItemBaseReugularFPS extends MovementAction{
 		int pauseFrameCounter;	
 		FrameTrigger nextframeTrigger;
 		private long lastTriggerFrameNum;
+//		private boolean isEnableSetSpriteAction = true;
 		
 		public MovementActionItemBaseReugularFPSMementoImpl(
 				List<MovementAction> actions, Thread thread,
@@ -406,7 +417,13 @@ public class MovementActionItemBaseReugularFPS extends MovementAction{
 			this.pauseFrameCounter = pauseFrameCounter;
 			this.nextframeTrigger = nextframeTrigger;
 			this.lastTriggerFrameNum = lastTriggerFrameNum;
+//			this.isEnableSetSpriteAction = isEnableSetSpriteAction;
 		}
 			
+	}
+	
+	@Override
+	public void accept(IMovementActionVisitor movementActionVisitor){
+		movementActionVisitor.visitLeaf(this);
 	}
 }

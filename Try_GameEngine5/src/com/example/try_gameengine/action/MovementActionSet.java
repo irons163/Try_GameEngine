@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 //import com.rits.cloning.Cloner;
 
+import com.example.try_gameengine.action.visitor.IMovementActionVisitor;
+
 public class MovementActionSet extends MovementAction {
 	private boolean isActionFinish = true;
 	private MovementActionInfo info;
@@ -183,5 +185,13 @@ public class MovementActionSet extends MovementAction {
 		// TODO Auto-generated method stub
 		isLoop = false;
 		super.cancelAllMove();
+	}
+	
+	@Override
+	public void accept(IMovementActionVisitor movementActionVisitor){
+		movementActionVisitor.visitComposite(this);
+		for(MovementAction movementAction : actions){
+			movementAction.accept(movementActionVisitor);
+		}
 	}
 }

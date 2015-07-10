@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.example.try_gameengine.action.listener.IActionListener;
+import com.example.try_gameengine.action.visitor.IMovementActionVisitor;
 
 import android.os.Looper;
 import android.util.Log;
@@ -252,5 +253,10 @@ public class MovementActionFrameItemSingleThread extends MovementAction{
 		info.setTotal(millisTotal);
 		initTimer();
 		start();
+	}
+	
+	@Override
+	public void accept(IMovementActionVisitor movementActionVisitor){
+		movementActionVisitor.visitLeaf(this);
 	}
 }

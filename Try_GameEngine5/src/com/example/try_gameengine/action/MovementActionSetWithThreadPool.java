@@ -10,6 +10,7 @@ import java.util.concurrent.RunnableFuture;
 import com.example.try_gameengine.action.CopyMoveDecorator.CopyMoveDecoratorMementoImpl;
 import com.example.try_gameengine.action.MovementAction.MovementActionMementoImpl;
 import com.example.try_gameengine.action.MovementAction.TimerOnTickListener;
+import com.example.try_gameengine.action.visitor.IMovementActionVisitor;
 
 import android.R.bool;
 import android.util.Log;
@@ -299,5 +300,13 @@ public class MovementActionSetWithThreadPool extends MovementAction {
 			this.future = future;
 		}
 			
+	}
+	
+	@Override
+	public void accept(IMovementActionVisitor movementActionVisitor){
+		movementActionVisitor.visitComposite(this);
+		for(MovementAction movementAction : actions){
+			movementAction.accept(movementActionVisitor);
+		}
 	}
 }
