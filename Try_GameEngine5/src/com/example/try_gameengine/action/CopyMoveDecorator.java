@@ -4,14 +4,18 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import com.example.try_gameengine.action.MovementAction.MovementActionMementoImpl;
+import com.example.try_gameengine.action.MovementAction.TimerOnTickListener;
+
 import android.util.Log;
 
 public class CopyMoveDecorator extends MovementDecorator {
 	private MovementAction action;
-	boolean doing = false;
+//	boolean doing = false;
 
 	public CopyMoveDecorator(MovementAction action) {
 		this.action = action;
+		allMovementActoinList.add(this);
 		this.copyMovementActionList = action.copyMovementActionList;
 	}
 
@@ -101,7 +105,7 @@ public class CopyMoveDecorator extends MovementDecorator {
 	@Override
 	public void doIn() {
 		action.doIn();
-		doing = true;
+//		doing = true;
 		copyMovementActionList.clear();
 
 		int i = 0;
@@ -122,5 +126,44 @@ public class CopyMoveDecorator extends MovementDecorator {
 		for (MovementAction movementItem : this.getAction().movementItemList) {
 			movementItem.initTimer();
 		}
+	}
+	
+	public IMovementActionMemento createMovementActionMemento(){
+		movementActionMemento = new CopyMoveDecoratorMementoImpl(actions, thread, timerOnTickListener, description, copyMovementActionList, currentInfoList, movementItemList, totalCopyMovementActionList, isCancelFocusAppendPart, isFinish, isLoop, isSigleThread, name, cancelAction, allMovementActoinList, action);
+		return movementActionMemento;
+	}
+	
+	public void restoreMovementActionMemento(IMovementActionMemento movementActionMemento){
+//		MovementActionMementoImpl mementoImpl = (MovementActionMementoImpl) movementActionMemento;
+		super.restoreMovementActionMemento(this.movementActionMemento);
+		CopyMoveDecoratorMementoImpl mementoImpl = (CopyMoveDecoratorMementoImpl) this.movementActionMemento;
+		this.action = mementoImpl.action;
+	}
+	
+	protected static class CopyMoveDecoratorMementoImpl extends MovementActionMementoImpl{
+	
+		private MovementAction action; //Decorator
+		
+		public CopyMoveDecoratorMementoImpl(List<MovementAction> actions,
+				Thread thread, TimerOnTickListener timerOnTickListener,
+				String description,
+				List<MovementAction> copyMovementActionList,
+				List<MovementActionInfo> currentInfoList,
+				List<MovementAction> movementItemList,
+				List<MovementAction> totalCopyMovementActionList,
+				boolean isCancelFocusAppendPart, boolean isFinish,
+				boolean isLoop, boolean isSigleThread, String name,
+				MovementAction cancelAction, List<MovementAction> allMovementActoinList, MovementAction action) {
+			super(actions, thread, timerOnTickListener, description, copyMovementActionList, currentInfoList, movementItemList, totalCopyMovementActionList, isCancelFocusAppendPart, isFinish, isLoop, isSigleThread, name, cancelAction, allMovementActoinList);
+			this.action = action;
+		}
+
+		public MovementAction getAction() {
+			return action;
+		}
+
+		public void setAction(MovementAction action) {
+			this.action = action;
+		}			
 	}
 }

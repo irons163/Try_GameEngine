@@ -2,7 +2,13 @@ package com.example.try_gameengine.action;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Future;
 
+import android.util.Log;
+
+import com.example.try_gameengine.action.MovementAction.MovementActionMementoImpl;
+import com.example.try_gameengine.action.MovementAction.TimerOnTickListener;
+import com.example.try_gameengine.action.MovementActionSetWithThreadPool.MovementActionSetWithThreadPoolMementoImpl;
 import com.example.try_gameengine.action.listener.IActionListener;
 
 public class MovementActionItemBaseReugularFPS extends MovementAction{ 
@@ -14,7 +20,20 @@ public class MovementActionItemBaseReugularFPS extends MovementAction{
 	long resumeTotal;
 	long resetTotal;
 	IRotationController rotationController;
-	IGravityController gravityController;
+	IGravityController gravityController;	
+	public String name;	
+	private long updateTime;	
+	public int frameIdx;	
+	public boolean isStop = false;
+	public boolean isCycleFinish = false;	
+	boolean triggerEnable = false;	
+	long[] frameTimes;
+	int resumeFrameIndex;
+	int resumeFrameCount;	
+	long pauseFrameNum;
+	int pauseFrameCounter;	
+	FrameTrigger nextframeTrigger;
+	private long lastTriggerFrameNum;
 	
 	public MovementActionItemBaseReugularFPS(long millisTotal, long millisDelay, final int dx, final int dy){
 		this(millisTotal, millisDelay, dx, dy, "MovementItem");
@@ -61,13 +80,13 @@ public class MovementActionItemBaseReugularFPS extends MovementAction{
 
 	}
 
-	boolean triggerEnable = false;
+	
 	
 	@Override
 	public void start() {
 		// TODO Auto-generated method stub
 
-		triggerEnable = true;
+		
 		resumeFrameIndex = 0;
 		resumeFrameCount = 0;
 		pauseFrameNum = 0;
@@ -76,18 +95,18 @@ public class MovementActionItemBaseReugularFPS extends MovementAction{
 		isCycleFinish = false;
 		if(info.getSprite()!=null)
 			info.getSprite().setAction(info.getSpriteActionName());
+		
+		triggerEnable = true;
+	
 	}
 	
-	long[] frameTimes;
-	int resumeFrameIndex;
-	int resumeFrameCount;
+	
 	
 	public interface FrameTrigger{
 		public void trigger();
 	}
 	
-	long pauseFrameNum;
-	int pauseFrameCounter;
+	
 	
 	@Override
 	public void trigger(){
@@ -103,7 +122,6 @@ public class MovementActionItemBaseReugularFPS extends MovementAction{
 		}
 	}
 	
-	FrameTrigger nextframeTrigger;
 	FrameTrigger myTrigger = new FrameTrigger() {
 		
 		@Override
@@ -124,7 +142,7 @@ public class MovementActionItemBaseReugularFPS extends MovementAction{
 		this.actionListener = actionListener;
 	}
 	
-	private long lastTriggerFrameNum;
+	
 	
 	private void frameTriggerFPSStart(){
 		if (!isStop) {
@@ -166,17 +184,14 @@ public class MovementActionItemBaseReugularFPS extends MovementAction{
 					actionListener.actionCycleFinish();
 				isCycleFinish = false;
 			}
+		}else{
+			synchronized (MovementActionItemBaseReugularFPS.this) {
+				MovementActionItemBaseReugularFPS.this.notifyAll();
+			}
 		}
 	}
 	
-	public String name;
-	
-	private long updateTime;
-	
-	public int frameIdx;
-	
-	public boolean isStop = false;
-	public boolean isCycleFinish = false;
+
 	
 	@Override
 	protected MovementAction initTimer(){
@@ -268,10 +283,130 @@ public class MovementActionItemBaseReugularFPS extends MovementAction{
 	@Override
 	public void cancelMove(){
 		isStop = true;
+		synchronized (MovementActionItemBaseReugularFPS.this) {
+			MovementActionItemBaseReugularFPS.this.notifyAll();
+		}
 	}
 	
 	@Override
 	void pause(){	
 		pauseFrameNum = millisDelay;
+	}
+	
+	public IMovementActionMemento createMovementActionMemento(){
+		movementActionMemento = new MovementActionItemBaseReugularFPSMementoImpl(actions, thread, timerOnTickListener, name, copyMovementActionList, currentInfoList, movementItemList, totalCopyMovementActionList, isCycleFinish, isCycleFinish, isCycleFinish, isCycleFinish, name, cancelAction, allMovementActoinList, millisTotal, millisDelay, dx, dy, info, resumeTotal, resetTotal, rotationController, gravityController, name, updateTime, frameIdx, isStop, isCycleFinish, triggerEnable, frameTimes, resumeFrameIndex, resumeFrameCount, pauseFrameNum, pauseFrameCounter, nextframeTrigger, lastTriggerFrameNum);
+		if(this.info!=null){
+			this.info.createIMovementActionInfoMemento();
+		}
+		return movementActionMemento;
+	}
+	
+	public void restoreMovementActionMemento(IMovementActionMemento movementActionMemento){
+//		MovementActionMementoImpl mementoImpl = (MovementActionMementoImpl) movementActionMemento;
+		super.restoreMovementActionMemento(this.movementActionMemento);
+		MovementActionItemBaseReugularFPSMementoImpl mementoImpl = (MovementActionItemBaseReugularFPSMementoImpl) this.movementActionMemento;
+		this.millisTotal = mementoImpl.millisTotal;
+		this.millisDelay = mementoImpl.millisDelay;
+		this.dx = mementoImpl.dx;
+		this.dy = mementoImpl.dy;
+		this.info = mementoImpl.info;
+		this.resumeTotal = mementoImpl.resumeTotal;
+		this.resetTotal = mementoImpl.resetTotal;
+		this.rotationController = mementoImpl.rotationController;
+		this.gravityController = mementoImpl.gravityController;
+		this.name = mementoImpl.name;
+		this.updateTime = mementoImpl.updateTime;
+		this.frameIdx = mementoImpl.frameIdx;
+		this.isStop = mementoImpl.isStop;
+		this.isCycleFinish = mementoImpl.isCycleFinish;
+		this.triggerEnable = mementoImpl.triggerEnable;
+		this.frameTimes = mementoImpl.frameTimes;
+		this.resumeFrameIndex = mementoImpl.resumeFrameIndex;
+		this.resumeFrameCount = mementoImpl.resumeFrameCount;
+		this.pauseFrameNum = mementoImpl.pauseFrameNum;
+		this.pauseFrameCounter = mementoImpl.pauseFrameCounter;
+		this.nextframeTrigger = mementoImpl.nextframeTrigger;
+		this.lastTriggerFrameNum = mementoImpl.lastTriggerFrameNum;
+		
+		if(this.info!=null){
+			this.info.restoreMovementActionMemento(null);
+		}
+		doReset();
+	}
+	
+	protected static class MovementActionItemBaseReugularFPSMementoImpl extends MovementActionMementoImpl{
+	
+		long millisTotal;
+		long millisDelay;
+		float dx;
+		float dy;
+		MovementActionInfo info;
+		long resumeTotal;
+		long resetTotal;
+		IRotationController rotationController;
+		IGravityController gravityController;	
+		public String name;	
+		private long updateTime;	
+		public int frameIdx;	
+		public boolean isStop = false;
+		public boolean isCycleFinish = false;	
+		boolean triggerEnable = false;	
+		long[] frameTimes;
+		int resumeFrameIndex;
+		int resumeFrameCount;	
+		long pauseFrameNum;
+		int pauseFrameCounter;	
+		FrameTrigger nextframeTrigger;
+		private long lastTriggerFrameNum;
+		
+		public MovementActionItemBaseReugularFPSMementoImpl(
+				List<MovementAction> actions, Thread thread,
+				TimerOnTickListener timerOnTickListener, String description,
+				List<MovementAction> copyMovementActionList,
+				List<MovementActionInfo> currentInfoList,
+				List<MovementAction> movementItemList,
+				List<MovementAction> totalCopyMovementActionList,
+				boolean isCancelFocusAppendPart, boolean isFinish,
+				boolean isLoop, boolean isSigleThread, String name,
+				MovementAction cancelAction,
+				List<MovementAction> allMovementActoinList, long millisTotal,
+				long millisDelay, float dx, float dy, MovementActionInfo info,
+				long resumeTotal, long resetTotal,
+				IRotationController rotationController,
+				IGravityController gravityController, String name2,
+				long updateTime, int frameIdx, boolean isStop,
+				boolean isCycleFinish, boolean triggerEnable,
+				long[] frameTimes, int resumeFrameIndex, int resumeFrameCount,
+				long pauseFrameNum, int pauseFrameCounter,
+				FrameTrigger nextframeTrigger, long lastTriggerFrameNum) {
+			super(actions, thread, timerOnTickListener, description,
+					copyMovementActionList, currentInfoList, movementItemList,
+					totalCopyMovementActionList, isCancelFocusAppendPart,
+					isFinish, isLoop, isSigleThread, name, cancelAction,
+					allMovementActoinList);
+			this.millisTotal = millisTotal;
+			this.millisDelay = millisDelay;
+			this.dx = dx;
+			this.dy = dy;
+			this.info = info;
+			this.resumeTotal = resumeTotal;
+			this.resetTotal = resetTotal;
+			this.rotationController = rotationController;
+			this.gravityController = gravityController;
+			name = name2;
+			this.updateTime = updateTime;
+			this.frameIdx = frameIdx;
+			this.isStop = isStop;
+			this.isCycleFinish = isCycleFinish;
+			this.triggerEnable = triggerEnable;
+			this.frameTimes = frameTimes;
+			this.resumeFrameIndex = resumeFrameIndex;
+			this.resumeFrameCount = resumeFrameCount;
+			this.pauseFrameNum = pauseFrameNum;
+			this.pauseFrameCounter = pauseFrameCounter;
+			this.nextframeTrigger = nextframeTrigger;
+			this.lastTriggerFrameNum = lastTriggerFrameNum;
+		}
+			
 	}
 }

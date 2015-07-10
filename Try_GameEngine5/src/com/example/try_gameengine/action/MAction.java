@@ -61,16 +61,11 @@ public class MAction {
 		return movementActionsetWithThreadPool;
 	}
 	
-	public static MovementAction repeatFaster(MovementAction movementAction, int count){
-		MovementAction movementActionsetWithThreadPool = new MovementActionSetWithThreadPool();
-		Cloner cloner=new Cloner();
-		cloner.setDumpClonedClasses(true);
-		cloner.dontCloneInstanceOf(Sprite.class);
-		for(int i = 0; i < count; i++){
-			MovementAction clone=cloner.deepClone(movementAction);
-			movementActionsetWithThreadPool.addMovementAction(clone);
-		}
-		return movementActionsetWithThreadPool;
+	public static MovementAction repeatFaster(MovementAction movementAction, long count){
+//		MovementAction movementActionsetWithThreadPool = new MovementActionSetWithThreadPool();
+		MovementAction repeatAction = new RepeatDecorator(movementAction, count);
+//		movementActionsetWithThreadPool.addMovementAction(repeatAction);
+		return repeatAction;
 	}
 	
 	public static MovementAction repeatForever(MovementAction movementAction){
@@ -82,8 +77,22 @@ public class MAction {
 		return new MovementActionBlock(block);
 	}
 	
+	public static MovementAction runBlockNoDelay(MActionBlock block){
+		
+		return new MovementActionNoDelayBlock(block);
+	}
+	
+	public static MovementAction sequence(MovementAction[] movementActions){
+		MovementAction movementActionsetWithThreadPool = new MovementActionSetWithThreadPool();
+
+		for(int i = 0; i < movementActions.length; i++){
+			movementActionsetWithThreadPool.addMovementAction(movementActions[i]);
+		}
+		return movementActionsetWithThreadPool;
+	}
+	
 	static class MovementActionBlock extends MovementAction{
-		private MActionBlock block;
+		protected MActionBlock block;
 		
 		public MovementActionBlock(MActionBlock block){
 			this.block = block;
@@ -92,13 +101,18 @@ public class MAction {
 		@Override
 		public void trigger() {
 			// TODO Auto-generated method stub
-			
+			if(isFinish){
+				synchronized (MovementActionBlock.this) {
+					MovementActionBlock.this.notifyAll();
+				}
+			}
 		}
 		
 		@Override
 		public void start() {
 			// TODO Auto-generated method stub
 			block.runBlock();
+			isFinish = true;
 		}
 		
 		@Override
@@ -122,5 +136,40 @@ public class MAction {
 			return infos;
 		}
 		
+		@Override
+		void cancelMove() {
+			// TODO Auto-generated method stub
+//			super.cancelMove();
+		}
+	}
+	
+	static class MovementActionNoDelayBlock extends MovementActionBlock{
+
+		public MovementActionNoDelayBlock(MActionBlock block) {
+			super(block);
+			// TODO Auto-generated constructor stub
+		}
+		
+		@Override
+		public void trigger() {
+			// TODO Auto-generated method stub
+			
+		}
+		
+		@Override
+		public void start() {
+			// TODO Auto-generated method stub
+			block.runBlock();
+			executor.submit(new Runnable() {
+				
+				@Override
+				public void run() {
+					// TODO Auto-generated method stub
+					synchronized (MovementActionNoDelayBlock.this) {
+						MovementActionNoDelayBlock.this.notifyAll();
+					}
+				}
+			});
+		}
 	}
 }

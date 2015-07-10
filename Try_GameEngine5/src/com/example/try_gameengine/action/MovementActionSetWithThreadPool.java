@@ -7,6 +7,11 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.RunnableFuture;
 
+import com.example.try_gameengine.action.CopyMoveDecorator.CopyMoveDecoratorMementoImpl;
+import com.example.try_gameengine.action.MovementAction.MovementActionMementoImpl;
+import com.example.try_gameengine.action.MovementAction.TimerOnTickListener;
+
+import android.R.bool;
 import android.util.Log;
 
 public class MovementActionSetWithThreadPool extends MovementAction {
@@ -73,12 +78,12 @@ public class MovementActionSetWithThreadPool extends MovementAction {
 								break;
 							}
 							cancelAction = action;
-							action.start();
 							
-							Log.e("MovementActionSetWithThreadPool", "[MovementAction]:child action start");
 							
 							if(!isStop)
 							synchronized (action.getAction()) {
+								action.start();
+								Log.e("MovementActionSetWithThreadPool", "[MovementAction]:child action start");
 								try {
 									action.getAction().wait();
 								} catch (InterruptedException e) {
@@ -87,6 +92,9 @@ public class MovementActionSetWithThreadPool extends MovementAction {
 									Log.e("MovementActionThreadPool", "ThreadPoolChildThreadInterrupt");
 								}
 							}
+							
+							if(isStop)
+								break;
 	
 //							if(!isStop)
 //								isLoop = false;
@@ -114,10 +122,15 @@ public class MovementActionSetWithThreadPool extends MovementAction {
 				}
 			});
 			
-			
-
-//			thread.start();
-
+//			synchronized (MovementActionSetWithThreadPool.this.getAction()) {
+//				try {
+//					MovementActionSetWithThreadPool.this.getAction().wait();
+//				} catch (InterruptedException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//					Log.e("MovementActionThreadPool", "ThreadPoolChildThreadInterrupt");
+//				}
+//			}
 			
 		}
 	}
@@ -239,6 +252,52 @@ public class MovementActionSetWithThreadPool extends MovementAction {
 		future.cancel(true);
 //		((Thread)future).interrupt();
 //		executor.shutdown();
-		super.cancelMove();
+//		super.cancelMove();
+		super.cancelAllMove();
+	}
+	
+	public IMovementActionMemento createMovementActionMemento(){
+		movementActionMemento = new MovementActionSetWithThreadPoolMementoImpl(actions, thread, timerOnTickListener, description, copyMovementActionList, currentInfoList, movementItemList, totalCopyMovementActionList, isActionFinish, isActionFinish, isActionFinish, isActionFinish, name, cancelAction, allMovementActoinList, isActionFinish, info, isStop, future);
+		return movementActionMemento;
+	}
+	
+	public void restoreMovementActionMemento(IMovementActionMemento movementActionMemento){
+//		MovementActionMementoImpl mementoImpl = (MovementActionMementoImpl) movementActionMemento;
+		super.restoreMovementActionMemento(this.movementActionMemento);
+		MovementActionSetWithThreadPoolMementoImpl mementoImpl = (MovementActionSetWithThreadPoolMementoImpl) this.movementActionMemento;
+		this.isActionFinish = mementoImpl.isActionFinish;
+	}
+	
+	protected static class MovementActionSetWithThreadPoolMementoImpl extends MovementActionMementoImpl{
+	
+		private boolean isActionFinish;
+		private MovementActionInfo info;
+		private boolean isStop;
+		private Future future;
+		
+		public MovementActionSetWithThreadPoolMementoImpl(List<MovementAction> actions,
+				Thread thread, TimerOnTickListener timerOnTickListener,
+				String description,
+				List<MovementAction> copyMovementActionList,
+				List<MovementActionInfo> currentInfoList,
+				List<MovementAction> movementItemList,
+				List<MovementAction> totalCopyMovementActionList,
+				boolean isCancelFocusAppendPart, boolean isFinish,
+				boolean isLoop, boolean isSigleThread, String name,
+				MovementAction cancelAction,
+				List<MovementAction> allMovementActoinList,
+				boolean isActionFinish, MovementActionInfo info,
+				boolean isStop, Future future) {
+			super(actions, thread, timerOnTickListener, description,
+					copyMovementActionList, currentInfoList, movementItemList,
+					totalCopyMovementActionList, isCancelFocusAppendPart,
+					isFinish, isLoop, isSigleThread, name, cancelAction,
+					allMovementActoinList);
+			this.isActionFinish = isActionFinish;
+			this.info = info;
+			this.isStop = isStop;
+			this.future = future;
+		}
+			
 	}
 }

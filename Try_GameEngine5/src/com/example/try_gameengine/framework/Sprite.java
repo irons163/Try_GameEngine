@@ -554,6 +554,7 @@ public class Sprite extends ALayer {
 	}
 	
 	public void runMovementAction(MovementAction movementAction){
+		movementAction.modifyWithSpriteXY(getX(), getY());
 		movementAction.initMovementAction();
 		movementAction.start();
 		setMovementAction(movementAction);

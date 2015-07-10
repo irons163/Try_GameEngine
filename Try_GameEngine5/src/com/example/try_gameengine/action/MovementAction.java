@@ -32,7 +32,14 @@ public abstract class MovementAction {
 	
 	public boolean isSigleThread = false;
 	
-	static ExecutorService executor = Executors.newFixedThreadPool(10);
+	protected static ExecutorService executor = Executors.newFixedThreadPool(15);
+	
+	String name="";
+	
+	protected MovementAction cancelAction;
+	
+	// contans set, decorator, item
+	protected List<MovementAction> allMovementActoinList = new ArrayList<MovementAction>();
 	
 	public MovementAction addMovementAction(MovementAction action) {
 		throw new UnsupportedOperationException();
@@ -119,8 +126,6 @@ public abstract class MovementAction {
 		this.isCancelFocusAppendPart = isCancelFocusAppendPart;
 	}
 	
-	protected MovementAction cancelAction;
-	
 	void cancelAllMove(){
 		if(this.getAction().actions.size()!=0){
 			for(MovementAction action : this.getAction().actions){
@@ -166,7 +171,6 @@ public abstract class MovementAction {
 		return cancelAction.getAction().isFinish();
 	}
 	
-	String name="";
 	public void setName(String name){
 		this.name = name;
 	}
@@ -194,9 +198,9 @@ public abstract class MovementAction {
 	
 	protected IActionListener actionListener = new DefaultActionListener();
 	
-	public IActionListener getActionListener(){
+	public IActionListener getActionListener(){ 
 		return actionListener;
-	}
+	} 
 	
 	public void setIsLoop(boolean isLoop){
 		this.getAction().isLoop = isLoop;
@@ -209,6 +213,225 @@ public abstract class MovementAction {
 	public void modifyWithSpriteXY(float spriteX, float spriteY){
 		for(MovementActionInfo movementActionInfo : currentInfoList){
 			movementActionInfo.modifyInfoWithSpriteXY(spriteX, spriteY);
+		}
+	}
+	
+	public List<MovementAction> allMovementActoinList() {
+		return allMovementActoinList;
+	}
+	
+	IMovementActionMemento movementActionMemento=null;
+	
+	//not use yet
+	public IMovementActionMemento createMovementActionMemento(){
+		movementActionMemento = new MovementActionMementoImpl(actions, thread, timerOnTickListener, description, copyMovementActionList, currentInfoList, movementItemList, totalCopyMovementActionList, isCancelFocusAppendPart, isFinish, isLoop, isSigleThread, name, cancelAction, allMovementActoinList);
+		return movementActionMemento;
+	}
+	
+	public void restoreMovementActionMemento(IMovementActionMemento movementActionMemento){
+//		MovementActionMementoImpl mementoImpl = (MovementActionMementoImpl) movementActionMemento;
+		MovementActionMementoImpl mementoImpl = (MovementActionMementoImpl) this.movementActionMemento;
+		this.actions = mementoImpl.getActions();
+		this.thread = mementoImpl.thread;
+		this.timerOnTickListener = mementoImpl.timerOnTickListener;
+		this.description = mementoImpl.description;
+		this.copyMovementActionList = mementoImpl.copyMovementActionList;
+		this.currentInfoList = mementoImpl.currentInfoList;
+		this.movementItemList = mementoImpl.movementItemList;
+		this.totalCopyMovementActionList = mementoImpl.totalCopyMovementActionList;
+		this.isCancelFocusAppendPart = mementoImpl.isCancelFocusAppendPart;
+		this.isFinish = mementoImpl.isFinish;
+		this.isLoop = mementoImpl.isLoop;
+		this.isSigleThread = mementoImpl.isSigleThread;
+		this.name = mementoImpl.name;
+		this.cancelAction = mementoImpl.cancelAction;
+		this.allMovementActoinList = mementoImpl.allMovementActoinList;
+	}
+	
+	protected static class MovementActionMementoImpl implements IMovementActionMemento{
+		private List<MovementAction> actions;
+		private Thread thread;
+		private TimerOnTickListener timerOnTickListener;
+		private String description = "Unknown Movement";
+		private List<MovementAction> copyMovementActionList;
+		private List<MovementActionInfo> currentInfoList;
+		
+		private List<MovementAction> movementItemList;
+		
+		private List<MovementAction> totalCopyMovementActionList;
+		
+		private boolean isCancelFocusAppendPart;
+		
+		private boolean isFinish;
+		
+		private boolean isLoop;
+		
+		private boolean isSigleThread;
+		
+		private String name;
+
+		private MovementAction cancelAction;
+		
+		protected List<MovementAction> allMovementActoinList;
+		
+		public MovementActionMementoImpl(List<MovementAction> actions,
+				Thread thread, TimerOnTickListener timerOnTickListener,
+				String description,
+				List<MovementAction> copyMovementActionList,
+				List<MovementActionInfo> currentInfoList,
+				List<MovementAction> movementItemList,
+				List<MovementAction> totalCopyMovementActionList,
+				boolean isCancelFocusAppendPart, boolean isFinish,
+				boolean isLoop, boolean isSigleThread, String name,
+				MovementAction cancelAction, List<MovementAction> allMovementActoinList) {
+			super();
+			this.actions = actions;
+			this.thread = thread;
+			this.timerOnTickListener = timerOnTickListener;
+			this.description = description;
+			this.copyMovementActionList = copyMovementActionList;
+			this.currentInfoList = currentInfoList;
+			this.movementItemList = movementItemList;
+			this.totalCopyMovementActionList = totalCopyMovementActionList;
+			this.isCancelFocusAppendPart = isCancelFocusAppendPart;
+			this.isFinish = isFinish;
+			this.isLoop = isLoop;
+			this.isSigleThread = isSigleThread;
+			this.name = name;
+			this.cancelAction = cancelAction;
+			this.allMovementActoinList = allMovementActoinList;
+		}
+
+		public List<MovementAction> getActions() {
+			return actions;
+		}
+
+		public void setActions(List<MovementAction> actions) {
+			this.actions = actions;
+		}
+
+		public Thread getThread() {
+			return thread;
+		}
+
+		public void setThread(Thread thread) {
+			this.thread = thread;
+		}
+
+		public TimerOnTickListener getTimerOnTickListener() {
+			return timerOnTickListener;
+		}
+
+		public void setTimerOnTickListener(TimerOnTickListener timerOnTickListener) {
+			this.timerOnTickListener = timerOnTickListener;
+		}
+
+		public String getDescription() {
+			return description;
+		}
+
+		public void setDescription(String description) {
+			this.description = description;
+		}
+
+		public List<MovementAction> getCopyMovementActionList() {
+			return copyMovementActionList;
+		}
+
+		public void setCopyMovementActionList(
+				List<MovementAction> copyMovementActionList) {
+			this.copyMovementActionList = copyMovementActionList;
+		}
+
+		public List<MovementActionInfo> getCurrentInfoList() {
+			return currentInfoList;
+		}
+
+		public void setCurrentInfoList(List<MovementActionInfo> currentInfoList) {
+			this.currentInfoList = currentInfoList;
+		}
+
+		public List<MovementAction> getMovementItemList() {
+			return movementItemList;
+		}
+
+		public void setMovementItemList(List<MovementAction> movementItemList) {
+			this.movementItemList = movementItemList;
+		}
+
+		public List<MovementAction> getTotalCopyMovementActionList() {
+			return totalCopyMovementActionList;
+		}
+
+		public void setTotalCopyMovementActionList(
+				List<MovementAction> totalCopyMovementActionList) {
+			this.totalCopyMovementActionList = totalCopyMovementActionList;
+		}
+
+		public boolean isCancelFocusAppendPart() {
+			return isCancelFocusAppendPart;
+		}
+
+		public void setCancelFocusAppendPart(boolean isCancelFocusAppendPart) {
+			this.isCancelFocusAppendPart = isCancelFocusAppendPart;
+		}
+
+		public boolean isFinish() {
+			return isFinish;
+		}
+
+		public void setFinish(boolean isFinish) {
+			this.isFinish = isFinish;
+		}
+
+		public boolean isLoop() {
+			return isLoop;
+		}
+
+		public void setLoop(boolean isLoop) {
+			this.isLoop = isLoop;
+		}
+
+		public boolean isSigleThread() {
+			return isSigleThread;
+		}
+
+		public void setSigleThread(boolean isSigleThread) {
+			this.isSigleThread = isSigleThread;
+		}
+
+		public String getName() {
+			return name;
+		}
+
+		public void setName(String name) {
+			this.name = name;
+		}
+
+		public MovementAction getCancelAction() {
+			return cancelAction;
+		}
+
+		public void setCancelAction(MovementAction cancelAction) {
+			this.cancelAction = cancelAction;
+		}
+
+		public List<MovementAction> getAllMovementActoinList() {
+			return allMovementActoinList;
+		}
+
+		public void setAllMovementActoinList(List<MovementAction> allMovementActoinList) {
+			this.allMovementActoinList = allMovementActoinList;
+		}	
+		
+		protected void setThreadPool(int nThreads){
+			executor.shutdown();
+			if(nThreads<=0){
+				executor = Executors.newCachedThreadPool();
+			}else{
+				executor = Executors.newFixedThreadPool(nThreads);
+			}
+			
 		}
 	}
 }
