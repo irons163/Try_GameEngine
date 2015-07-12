@@ -7,15 +7,15 @@ import com.example.try_gameengine.framework.Config;
 import com.example.try_gameengine.framework.Sprite;
 
 public class MovementActionInfo {
-	private long total;
-	private long delay;
-	private float dx, dy;
-	private String description;
-	private IRotationController rotationController;
-	private IGravityController gravityController;
-	private boolean enableGravity;
-	private Sprite sprite;
-	private String spriteActionName;
+	protected long total;
+	protected long delay;
+	protected float dx, dy;
+	protected String description;
+	protected IRotationController rotationController;
+	protected IGravityController gravityController;
+	protected boolean enableGravity;
+	protected Sprite sprite;
+	protected String spriteActionName;
 	private boolean isLoop = false;
 	private boolean isSettingTargetXY = false;
 	private float targetX, targetY;

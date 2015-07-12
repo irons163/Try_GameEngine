@@ -278,6 +278,7 @@ public class MovementActionItemBaseReugularFPS extends MovementAction{
 		// TODO Auto-generated method stub
 		List<MovementActionInfo> infos = new ArrayList<MovementActionInfo>();
 		infos.add(this.info);
+		currentInfoList.add(this.info);
 		return infos;
 	}
 	

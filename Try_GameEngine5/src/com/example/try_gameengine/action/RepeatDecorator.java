@@ -20,7 +20,9 @@ public class RepeatDecorator extends MovementDecorator {
 		this.action = action;
 		this.count = count;
 		allMovementActoinList.add(this);
-		this.copyMovementActionList = action.copyMovementActionList;		
+		this.copyMovementActionList = action.copyMovementActionList;
+		
+//		getCurrentInfoList();
 	}
 
 	private MovementActionInfo coreCalculationMovementActionInfo(

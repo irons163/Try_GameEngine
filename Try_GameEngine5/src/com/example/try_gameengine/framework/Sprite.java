@@ -378,6 +378,33 @@ public class Sprite extends ALayer {
 		actions.put(name, sp);
 	}
 	
+	public void runActionFPSFrame(String name, int[] sequence, int[] frameTriggerTimes) {
+		runActionFPSFrame(name, sequence, frameTriggerTimes, 1.0f, true, new DefaultActionListener());
+	}
+	
+	public void runActionFPSFrame(String name, int[] sequence, int[] frameTriggerTimes, boolean isLoop) {
+		runActionFPSFrame(name, sequence, frameTriggerTimes, 1.0f, isLoop, new DefaultActionListener());
+	}
+	
+	public void runActionFPSFrame(String name, int[] sequence, int[] frameTriggerTimes, boolean isLoop, IActionListener actionListener) {
+		runActionFPSFrame(name, sequence, frameTriggerTimes, 1.0f, isLoop, actionListener);
+	}
+	
+	public void runActionFPSFrame(String name, int[] sequence, int[] frameTriggerTimes, float scale, boolean isLoop, IActionListener actionListener) {
+		SpriteAction sp = new SpriteActionBaseFPS();
+		sp.frames = sequence;// 幀圖片集合
+		sp.frameTime = frameTriggerTimes;//每一幀切換的時間
+		sp.isLoop = isLoop;
+		if(name!=null)
+			sp.name = name;
+		else
+			sp.name = "";
+		sp.scale = scale;
+		sp.actionListener = actionListener;
+		actions.put(sp.name, sp);
+		setAction(sp.name);
+	}
+	
 	public void addActionFPSFrame(String name, int[] sequence, int[] frameTriggerTimes) {
 		addActionFPSFrame(name, sequence, frameTriggerTimes, 1.0f, true, new DefaultActionListener());
 	}
@@ -554,6 +581,7 @@ public class Sprite extends ALayer {
 	}
 	
 	public void runMovementAction(MovementAction movementAction){
+		movementAction.getCurrentInfoList();
 		movementAction.modifyWithSpriteXY(getX(), getY());
 		movementAction.initMovementAction();
 		movementAction.start();

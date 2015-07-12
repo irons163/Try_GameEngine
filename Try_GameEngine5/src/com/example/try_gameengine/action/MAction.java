@@ -41,7 +41,7 @@ public class MAction {
 	}
 	
 	public static MovementAction moveTo(float targetX, float targetY, long durationMs){	
-		MovementActionInfo movementActionInfo = new MovementActionInfo(durationMs, 50, 0, 0, "L", null, false);
+		MovementActionInfo movementActionInfo = new MovementActionFPSInfo(durationMs, 50, 0, 0, "L", null, false);
 		movementActionInfo.setTargetXY(targetX, targetY);
 		return new MovementActionItemBaseReugularFPS(movementActionInfo);
 	}

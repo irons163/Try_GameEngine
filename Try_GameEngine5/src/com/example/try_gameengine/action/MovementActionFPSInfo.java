@@ -12,15 +12,15 @@ import com.example.try_gameengine.framework.Config;
 import com.example.try_gameengine.framework.Sprite;
 
 public class MovementActionFPSInfo extends MovementActionInfo{
-	private long total;
-	private long delay;
-	private float dx, dy;
-	private String description;
-	private IRotationController rotationController;
-	private IGravityController gravityController;
-	private boolean enableGravity;
-	private Sprite sprite;
-	private String spriteActionName;
+//	private long total;
+//	private long delay;
+//	private float dx, dy;
+//	private String description;
+//	private IRotationController rotationController;
+//	private IGravityController gravityController;
+//	private boolean enableGravity;
+//	private Sprite sprite;
+//	private String spriteActionName;
 	private boolean isLoop = false;
 	private boolean isSettingTargetXY = false;
 	private float targetX, targetY;
@@ -50,6 +50,13 @@ public class MovementActionFPSInfo extends MovementActionInfo{
 	}
 
 	@Override
+	public void setTargetXY(float targetX, float targetY){
+		this.targetX = targetX;
+		this.targetY = targetY;
+		isSettingTargetXY = true;
+	}
+	
+	@Override
 	public void modifyInfoWithSpriteXY(float spriteX, float spriteY) {
 		if(isSettingTargetXY){
 			float distanceX = targetX - spriteX;
@@ -59,7 +66,9 @@ public class MovementActionFPSInfo extends MovementActionInfo{
 			float perFrame = 1000.0f/total/fps;
 			float perMoveX = distanceX * perFrame;
 			float perMoveY = distanceY * perFrame;
-			delay = (long)(perFrame*1000);
+//			delay = (long)(perFrame*1000);
+			total = (long) (total/1000.0f*fps);
+			delay = 1;
 			dx = perMoveX;
 			dy = perMoveY;
 			
