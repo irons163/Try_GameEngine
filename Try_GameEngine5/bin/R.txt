@@ -5,10 +5,12 @@ int drawable blue_point 0x7f020001
 int drawable brown_point 0x7f020002
 int drawable green_point 0x7f020003
 int drawable ic_launcher 0x7f020004
-int drawable orange_point 0x7f020005
-int drawable red_point 0x7f020006
-int drawable white_point 0x7f020007
-int drawable yellow_point 0x7f020008
+int drawable left_keyboard_btn 0x7f020005
+int drawable orange_point 0x7f020006
+int drawable red_point 0x7f020007
+int drawable right_keyboard_btn 0x7f020008
+int drawable white_point 0x7f020009
+int drawable yellow_point 0x7f02000a
 int id action_settings 0x7f080000
 int layout activity_main 0x7f030000
 int menu main 0x7f070000

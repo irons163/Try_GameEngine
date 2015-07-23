@@ -26,6 +26,8 @@ public class BitmapUtil {
 	public static Bitmap blackPoint;
 	public static Bitmap whitePoint;
 	public static Bitmap bluePoint;
+	public static Bitmap leftKey;
+	public static Bitmap rightKey;
 	
 	public static void initBitmapForTest(){
 		initBitmap();
@@ -40,6 +42,10 @@ public class BitmapUtil {
 		whitePoint = BitmapFactory.decodeResource(context.getResources(), 
 				R.drawable.white_point);
 		bluePoint = createSpecificSizeBitmap(context.getResources().getDrawable(R.drawable.blue_point), 200, 200);
+		leftKey = BitmapFactory.decodeResource(context.getResources(), 
+				R.drawable.left_keyboard_btn);
+		rightKey = BitmapFactory.decodeResource(context.getResources(), 
+				R.drawable.right_keyboard_btn);
 	}
 	
 	public static Bitmap createSpecificSizeBitmap(Drawable drawable, int width, int height) {

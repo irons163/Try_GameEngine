@@ -7,6 +7,7 @@ import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.View;
 
+import com.example.try_gameengine.framework.BitmapUtil;
 import com.example.try_gameengine.framework.Data;
 import com.example.try_gameengine.framework.GameController;
 import com.example.try_gameengine.framework.GameModel;
@@ -14,10 +15,12 @@ import com.example.try_gameengine.framework.GameView;
 import com.example.try_gameengine.framework.IGameController;
 import com.example.try_gameengine.framework.IGameModel;
 import com.example.try_gameengine.framework.IMoveObserver;
+import com.example.try_gameengine.remotecontroller.RemoteController;
 import com.example.try_gameengine.scene.Scene;
 
 public abstract class EasyScene extends Scene{
 //	EasyGameModel gameModel;
+	private RemoteController remoteController;
 	
 	public EasyScene(Context context, String id) {
 		super(context, id);
@@ -52,7 +55,16 @@ public abstract class EasyScene extends Scene{
 	@Override
 	public void initGameController() {
 		// TODO Auto-generated method stub
+		
 		gameController = new EasyGameController((Activity)context, gameModel);
+	}
+	
+	public void enableRemoteController(boolean enableRemoteController){
+		
+	}
+	
+	public RemoteController getRemoteController(){
+		return remoteController;
 	}
 	
 //	@Override
@@ -101,11 +113,13 @@ public abstract class EasyScene extends Scene{
 			int height);
 	
 	class EasyGameController extends GameController {
-
+		
 		public EasyGameController(Activity activity, IGameModel gameModel) {
 			super(activity, gameModel);
 			// TODO Auto-generated constructor stub
-			
+			BitmapUtil.initBitmap(context);
+			BitmapUtil.initBitmapForTest();
+			remoteController = RemoteController.createRemoteController();
 		}
 
 		@Override
@@ -151,6 +165,21 @@ public abstract class EasyScene extends Scene{
 			EasyScene.this.surfaceChanged(holder, format, width, height);
 		}
 		
+		@Override
+		public void onTouchEvent(MotionEvent event) {
+			// TODO Auto-generated method stub
+			super.onTouchEvent(event);
+			
+			remoteController.onTouchEvent(event);
+			
+//			float x = event.getX();
+//			float y = event.getY();
+//			
+//			if(event.getAction()==MotionEvent.ACTION_DOWN)
+//			remoteController.pressDown(x, y);
+			
+			
+		}
 	}
 
 	class EasyGameModel extends GameModel {
@@ -178,6 +207,7 @@ public abstract class EasyScene extends Scene{
 			// TODO Auto-generated method stub
 //			super.doDraw(canvas);
 			EasyScene.this.doDraw(canvas);
+			remoteController.drawRemoteController(canvas, null);
 		}
 		
 		@Override

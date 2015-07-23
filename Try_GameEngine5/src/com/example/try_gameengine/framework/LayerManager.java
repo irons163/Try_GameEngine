@@ -254,6 +254,10 @@ public class LayerManager {
 //		return rootRectF;
 //	}
 	
+	public static List<List<ALayer>> getLayerLevelList(){
+		return layerLevelList;
+	}
+	
 	public static synchronized ALayer getRootParent(ALayer layer){
 		ALayer rootLayer = null;
 		if(layer.parent!=null){

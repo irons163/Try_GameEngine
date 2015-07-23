@@ -43,11 +43,14 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback, IMo
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
 		// TODO Auto-generated method stub
+		super.onTouchEvent(event);
+		
 		gameController.onTouchEvent(event);
 		
 		System.out.println("onTouchEvent");
 		
-		return super.onTouchEvent(event);
+//		return super.onTouchEvent(event);
+		return true;
 	}
 
 
