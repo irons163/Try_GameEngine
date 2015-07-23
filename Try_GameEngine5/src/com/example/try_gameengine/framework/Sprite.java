@@ -233,6 +233,17 @@ public class Sprite extends ALayer {
 	public Matrix spriteMatrix;
 	public boolean drawWithoutClip = false;
 	public float drawOffsetX;
+	private float xScale = 1.0f;
+	
+	public void setXscale(float xScale){
+		this.xScale = xScale;
+		if(spriteMatrix==null)
+			spriteMatrix = new Matrix();
+		if(spriteMatrix!=null){
+			spriteMatrix.reset();
+			spriteMatrix.postScale(xScale, 1, getX() + w/2, getY() + h/2 );
+		}
+	}
 	public void paint(Canvas canvas,Paint paint)
 	{
 //		canvas.save();
@@ -242,6 +253,9 @@ public class Sprite extends ALayer {
 //		canvas.drawBitmap(bitmap, x-(currentFrame%(bitmap.getWidth()/frameWidth))*frameWidth, 
 //				y - (currentFrame/(bitmap.getWidth()/frameWidth))*frameHeight, paint);
 //		canvas.restore();
+		
+		if(spriteMatrix==null)
+			spriteMatrix = new Matrix();
 		
 		canvas.save();
 		float x = getX();
