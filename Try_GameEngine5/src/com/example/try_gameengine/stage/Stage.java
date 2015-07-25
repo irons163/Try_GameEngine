@@ -81,6 +81,10 @@ public abstract class Stage extends Activity{
 		sceneManager = initSceneManager();
 	}
 	
+	public SceneManager getSceneManager(){
+		return sceneManager;
+	}
+	
 //	public int getMode() {
 //		return mode;
 //	}

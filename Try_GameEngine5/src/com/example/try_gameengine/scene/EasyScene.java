@@ -20,7 +20,6 @@ import com.example.try_gameengine.scene.Scene;
 
 public abstract class EasyScene extends Scene{
 //	EasyGameModel gameModel;
-	private RemoteController remoteController;
 	
 	public EasyScene(Context context, String id) {
 		super(context, id);
@@ -57,14 +56,6 @@ public abstract class EasyScene extends Scene{
 		// TODO Auto-generated method stub
 		
 		gameController = new EasyGameController((Activity)context, gameModel);
-	}
-	
-	public void enableRemoteController(boolean enableRemoteController){
-		
-	}
-	
-	public RemoteController getRemoteController(){
-		return remoteController;
 	}
 	
 //	@Override
@@ -170,7 +161,8 @@ public abstract class EasyScene extends Scene{
 			// TODO Auto-generated method stub
 			super.onTouchEvent(event);
 			
-			remoteController.onTouchEvent(event);
+			if(isEnableRemoteController)
+				remoteController.onTouchEvent(event);
 			
 //			float x = event.getX();
 //			float y = event.getY();
@@ -207,7 +199,8 @@ public abstract class EasyScene extends Scene{
 			// TODO Auto-generated method stub
 //			super.doDraw(canvas);
 			EasyScene.this.doDraw(canvas);
-			remoteController.drawRemoteController(canvas, null);
+			if(isEnableRemoteController)
+				remoteController.drawRemoteController(canvas, null);
 		}
 		
 		@Override

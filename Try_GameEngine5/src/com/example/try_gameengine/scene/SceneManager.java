@@ -60,15 +60,31 @@ public class SceneManager {
 	}
 	
 	public void startScene(int index){
-		if(currentActiveScene!=null)
-			currentActiveScene.stop(); 
+		boolean isNeedStopCurrentActiveScene = true;
 		if(index >=0 && index < scenes.size()){
 			Scene scene = scenes.get(index);
-			LayerManager.setLayerBySenceIndex(index);
+			if(scene instanceof DialogScene){
+				isNeedStopCurrentActiveScene = ((DialogScene) scene).getIsNeedToStopTheActiveScene();
+			}
+		}
+		if(currentActiveScene!=null){
+			if(isNeedStopCurrentActiveScene)
+				currentActiveScene.stop();
+		}
+		if(index >=0 && index < scenes.size()){
+			Scene scene = scenes.get(index);
+			
+			if(!(scene instanceof DialogScene)){
+				LayerManager.setLayerBySenceIndex(index);
+			}
 			scene.start();
 			currentActiveScene = scene;
 			currentSceneIndex = index;
 		}
+	}
+	
+	public void startLastScene(){
+		startScene(scenes.size()-1);
 	}
 	
 	public void stopScene(int index){
@@ -91,20 +107,45 @@ public class SceneManager {
 	
 	public void previous(){
 		currentSceneIndex--;
-		if(currentActiveScene!=null)
-			currentActiveScene.stop(); 
+		if(currentActiveScene!=null){
+			currentActiveScene.stop();
+			if(currentActiveScene instanceof DialogScene)
+				currentActiveScene.finish();
+		}
 		if(currentSceneIndex == -1){
 			currentSceneIndex = scenes.size()-1;
 		}
 		Scene scene = scenes.get(currentSceneIndex);
-		LayerManager.setLayerBySenceIndex(currentSceneIndex);
+		if(!(scene instanceof DialogScene)){
+			LayerManager.setLayerBySenceIndex(currentSceneIndex);
+		}
 		scene.start();
 		currentActiveScene = scene;
+	}
+	
+	public void previousAndLeaveWhenNoPrevious(){
+		if(currentSceneIndex==0){
+			if(currentActiveScene!=null){
+				currentActiveScene.stop();
+				scenes.remove(currentActiveScene);
+				currentActiveScene.finish();
+			}
+		}else{
+			previous();
+		}
 	}
 	
 	public void stopAllScenes(){
 		for(Scene scene : scenes){
 			scene.stop();
 		}
+	}
+	
+	public void removeScene(Scene scene){
+		scenes.remove(scene);
+	}
+	
+	public void removeScene(int index){
+		scenes.remove(index);
 	}
 }

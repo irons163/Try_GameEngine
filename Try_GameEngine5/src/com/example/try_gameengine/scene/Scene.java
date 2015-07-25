@@ -6,13 +6,15 @@ import android.content.Context;
 
 import com.example.try_gameengine.framework.IGameController;
 import com.example.try_gameengine.framework.IGameModel;
+import com.example.try_gameengine.remotecontroller.RemoteController;
 
 public abstract class Scene extends Activity{
 	protected IGameModel gameModel;
 	protected IGameController gameController;
 	private String id;
 	protected Context context;
-	
+	protected RemoteController remoteController;
+	protected boolean isEnableRemoteController = true;
 	
 	public static final int RESTART = 1;
 	public static final int RESUME = 2;
@@ -63,6 +65,20 @@ public abstract class Scene extends Activity{
 
 	public void setMode(int mode) {
 		this.mode = mode;
-	}	
+	}
 	
+	public void isEnableRemoteController(boolean isEnableRemoteController){
+		this.isEnableRemoteController = isEnableRemoteController;
+	}
+	
+	public RemoteController getRemoteController(){
+		return remoteController;
+	}
+	
+	@Override
+	public void finish() {
+		// TODO Auto-generated method stub
+		super.finish();
+		((Activity)context).finish();
+	}
 }
