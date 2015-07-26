@@ -3,15 +3,19 @@ package com.example.try_gameengine.scene;
 import com.example.try_gameengine.framework.GameView;
 import com.example.try_gameengine.framework.IGameController;
 import com.example.try_gameengine.framework.IGameModel;
+import com.example.try_gameengine.scene.Scene.DestoryData;
 import com.example.try_gameengine.stage.BaseStage;
 import com.example.try_gameengine.stage.Stage;
 
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.PixelFormat;
+import android.graphics.PorterDuff.Mode;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
+import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -115,7 +119,30 @@ public class DialogScene extends EasyScene{
 	        for (int i = 0; i < group.getChildCount(); i++){
 	        	isExsit = checkContentViewExist(group.getChildAt(i));
 	        	if(isExsit){
+//	        		Canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR)
+//	        		gameview.draw(canvas);
+//	        		gameModel.d
+	        		SurfaceHolder holder = gameview.getHolder();
+	        		Canvas canvas = holder.lockCanvas();
+	        		canvas.drawColor(Color.TRANSPARENT,Mode.CLEAR);
+	        		holder.unlockCanvasAndPost(canvas);
+	        		holder.setFormat(PixelFormat.TRANSPARENT);
+	        		
+	        		holder.setFormat(PixelFormat.OPAQUE);
+	        		gameview.setVisibility(View.GONE);
+	        		gameview.refreshDrawableState();
+	        		gameview.invalidate();
+	        		gameview.postInvalidate();
+//	        		((SurfaceView)gameview).invalidate();
 	        		group.removeView(gameview);
+	        		
+	        		gameview.destroyDrawingCache();
+	        		
+//	        		group.removeAllViews();
+	        		group.invalidate();
+	        		group.postInvalidate();
+	        		group.refreshDrawableState();
+	        		group.requestLayout();
 	        		break;
 	        	}
 	        }
@@ -192,6 +219,9 @@ public class DialogScene extends EasyScene{
 		Stage s = ((Stage)context);
 		s.getSceneManager().removeScene(this);
 		removeContentView(((Activity)context).getWindow().getDecorView());
+		gameModel.setData(new DestoryData());
+//		((Activity)context).getWindow().getDecorView().findViewById(android.R.id.content).invalidate();
+//		((Activity)context).getWindow().getDecorView().invalidate();
 	}
 	
 	public void setIsNeedToStopTheActiveScene(boolean isNeedStopCurrentActiveScene){

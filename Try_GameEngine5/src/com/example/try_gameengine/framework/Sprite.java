@@ -14,7 +14,7 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.util.Log;
 
-public class Sprite extends ALayer {
+public class Sprite extends Layer {
 	public int frameIdx;// 當前幀下標
 	public int currentFrame = 0;// 當前幀
 	public Hashtable<String, SpriteAction> actions;// 動作集合

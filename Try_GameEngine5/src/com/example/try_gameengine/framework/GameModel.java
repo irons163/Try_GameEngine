@@ -3,7 +3,12 @@ package com.example.try_gameengine.framework;
 
 import java.util.Iterator;
 
+import com.example.try_gameengine.framework.GameController.BlockRunData;
+import com.example.try_gameengine.scene.Scene;
+
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -29,6 +34,7 @@ public class GameModel implements IGameModel{
 	private boolean timeLock = false;
 	private long fpsCounter;
 	float fps;
+	private Bitmap lastCanvas;
 	
 	public GameModel(Context context, Data data) {
 		// TODO Auto-generated constructor stub
@@ -97,6 +103,9 @@ public class GameModel implements IGameModel{
 	public void setData(Data data) {
 		// TODO Auto-generated method stub
 		this.data = data;
+		if(data instanceof Scene.DestoryData){
+			destory();
+		}
 	}
 	
 	@Override
@@ -197,6 +206,7 @@ public class GameModel implements IGameModel{
 						} catch (InterruptedException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
+							break;
 						}
 					}
 				}
@@ -228,9 +238,25 @@ public class GameModel implements IGameModel{
 				e.printStackTrace();
 			}
 		}
+		if(lastCanvas!=null){
+			lastCanvas.recycle();
+			System.gc();
+		}
+		
+//		lastCanvas = Bitmap.createBitmap(surfaceHolder.getSurfaceFrame().width(), surfaceHolder.getSurfaceFrame().height(), Bitmap.Config.);
+//		Canvas c = new Canvas(lastCanvas);
+//		doDraw(c);
 	}
 	
 	public void restart(){
+		if(data!=null && data instanceof BlockRunData && ((BlockRunData)data).getIsBlock()){
+			Canvas canvas = surfaceHolder.lockCanvas();
+//			canvas.drawBitmap(lastCanvas, 0, 0, null);
+			doDraw(canvas);
+			surfaceHolder.unlockCanvasAndPost(canvas);
+			((BlockRunData)data).setIsBlock(false);
+			return;
+		}
 		isGameStop = false;
 		if(!gameThread.isAlive())
 			gameThread.start();
@@ -259,4 +285,11 @@ public class GameModel implements IGameModel{
 		}	
 	}
 
+	private void destory(){
+		if(lastCanvas!=null)
+			lastCanvas.recycle();
+		if(gameThread.isAlive())
+			gameThread.interrupt();
+		System.gc();
+	}
 }

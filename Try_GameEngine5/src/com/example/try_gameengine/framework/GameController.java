@@ -1,5 +1,7 @@
 package com.example.try_gameengine.framework;
 
+import java.util.Iterator;
+
 import com.example.try_gameengine.scene.Scene;
 
 import android.app.Activity;
@@ -17,6 +19,7 @@ public abstract class GameController implements IGameController{
 	GameView gameView;
 	protected int sceneMode = Scene.RESTART;
 	private boolean isGameViewCreated = false;
+	private boolean isBlocRunStart = false;
 //	public GameController() {
 //		// TODO Auto-generated constructor stub
 //	}
@@ -36,23 +39,44 @@ public abstract class GameController implements IGameController{
 		this.sceneMode = sceneMode;
 	}
 	
+	@Override
+	public void setFlag(int sceneMode) {
+		// TODO Auto-generated method stub
+		if((sceneMode&Scene.BLOCK)!=0){
+			isBlocRunStart = true;
+		}else{
+			isBlocRunStart = false;
+		}
+	}
+	
 	protected void initStart(){
 		initStart(sceneMode);
 	}
 	
 	protected void initStart(int sceneMode){
-		if(sceneMode==Scene.RESTART){
+		if((sceneMode&Scene.BLOCK)!=0){
+			isBlocRunStart = true;
+		}else{
+			isBlocRunStart = false;
+		}
+		
+		if((sceneMode&Scene.RESTART)!=0){
 			createGameview();
 			setActivityContentView(activity);
-		}else if(sceneMode==Scene.RESUME){
+		}else if((sceneMode&Scene.RESUME)!=0){
 			if(!isGameViewCreated){
 				createGameview();
 				setActivityContentView(activity);
 				isGameViewCreated = true;
 			}else{
-				setActivityContentView(activity);
-//				runStart();
+				if(gameView!=null &&Utils.checkViewExist(activity.getWindow().getDecorView(), gameView)){
+					setActivityContentView(activity);
+				}else{
+					runStart();
+				}
 			}
+		}else if((sceneMode&Scene.RESUME_WITHOUT_SET_VIEW)!=0){
+			runStart();
 		}
 	}
 	
@@ -115,11 +139,48 @@ public abstract class GameController implements IGameController{
 	}
 	
 //	protected add
+	
+	class BlockRunData extends Data{
+		private boolean isBlock = false;
+		
+		@Override
+		public Object getAllExistPoints() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+	
+		@Override
+		public void setAllExistPoints(Object allExistPoints) {
+			// TODO Auto-generated method stub
+			
+		}
+	
+		@Override
+		public Iterator getAllExistPointsIterator() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+		
+		public boolean getIsBlock(){
+			return isBlock;
+		}
+		
+		public void setIsBlock(boolean isBlock){
+			this.isBlock = isBlock;
+		}
+	}
 
 	public void runStart(){
-		beforeGameStart();
-		gameModel.restart();
-		afterGameStart();
+		if(!isBlocRunStart){
+			beforeGameStart();
+			gameModel.restart();
+			afterGameStart();
+		}else{
+			BlockRunData data = new BlockRunData();
+			data.setIsBlock(true);
+			gameModel.setData(data);
+			gameModel.restart();
+		}
 	}
 
 	protected abstract void beforeGameStart();

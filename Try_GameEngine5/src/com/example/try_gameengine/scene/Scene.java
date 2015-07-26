@@ -1,9 +1,12 @@
 package com.example.try_gameengine.scene;
 
 
+import java.util.Iterator;
+
 import android.app.Activity;
 import android.content.Context;
 
+import com.example.try_gameengine.framework.Data;
 import com.example.try_gameengine.framework.IGameController;
 import com.example.try_gameengine.framework.IGameModel;
 import com.example.try_gameengine.remotecontroller.RemoteController;
@@ -18,6 +21,8 @@ public abstract class Scene extends Activity{
 	
 	public static final int RESTART = 1;
 	public static final int RESUME = 2;
+	public static final int RESUME_WITHOUT_SET_VIEW = 4;
+	public static final int BLOCK = 8;
 	
 	protected int mode = RESTART;
 	
@@ -65,6 +70,17 @@ public abstract class Scene extends Activity{
 
 	public void setMode(int mode) {
 		this.mode = mode;
+		gameController.setFlag(this.mode);
+	}
+	
+	public void addMode(int mode){
+		this.mode = this.mode|mode;
+		gameController.setFlag(this.mode);
+	}
+	
+	public void removeMode(int mode){
+		this.mode &= ~mode;
+		gameController.setFlag(this.mode);
 	}
 	
 	public void isEnableRemoteController(boolean isEnableRemoteController){
@@ -80,5 +96,28 @@ public abstract class Scene extends Activity{
 		// TODO Auto-generated method stub
 		super.finish();
 		((Activity)context).finish();
+		gameModel.setData(new DestoryData());
+	}
+	
+	public class DestoryData extends Data{
+
+		@Override
+		public Object getAllExistPoints() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public void setAllExistPoints(Object allExistPoints) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public Iterator getAllExistPointsIterator() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+		
 	}
 }

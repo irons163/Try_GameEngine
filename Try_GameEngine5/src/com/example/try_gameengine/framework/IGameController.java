@@ -14,4 +14,5 @@ public interface IGameController {
 	public void runStart();
 	public void surfaceChanged(SurfaceHolder holder, int format, int width,
 			int height);
+	public void setFlag(int flag);
 }

@@ -6,6 +6,8 @@ import java.io.InputStream;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.provider.Settings.Global;
+import android.view.View;
+import android.view.ViewGroup;
 
 public class Utils {
 
@@ -23,5 +25,22 @@ public class Utils {
 			return true;
 		}
 		return false;
+	}
+	
+	public static boolean checkViewExist(View parent, View target) {
+		boolean isExsit = false;
+	    if (parent instanceof ViewGroup) {
+	        ViewGroup group = (ViewGroup)parent;
+	        for (int i = 0; i < group.getChildCount(); i++){
+	        	isExsit = checkViewExist(group.getChildAt(i), target);
+	        	if(isExsit)
+	        		break;
+	        }
+	    }else{
+			if(parent.equals(target)){
+				isExsit = true;
+			}
+	    }
+	    return isExsit;
 	}
 }

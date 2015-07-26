@@ -68,8 +68,10 @@ public class SceneManager {
 			}
 		}
 		if(currentActiveScene!=null){
-			if(isNeedStopCurrentActiveScene)
+			if(isNeedStopCurrentActiveScene){
 				currentActiveScene.stop();
+				currentActiveScene.addMode(Scene.BLOCK);
+			}
 		}
 		if(index >=0 && index < scenes.size()){
 			Scene scene = scenes.get(index);
@@ -119,7 +121,16 @@ public class SceneManager {
 		if(!(scene instanceof DialogScene)){
 			LayerManager.setLayerBySenceIndex(currentSceneIndex);
 		}
-		scene.start();
+		if(currentActiveScene instanceof DialogScene){
+			int savedMode = scene.getMode();
+			scene.setMode(Scene.RESUME_WITHOUT_SET_VIEW);
+			scene.start();
+			scene.setMode(savedMode);
+			scene.removeMode(Scene.BLOCK);
+		}else{
+			scene.start();
+		}
+		
 		currentActiveScene = scene;
 	}
 	
