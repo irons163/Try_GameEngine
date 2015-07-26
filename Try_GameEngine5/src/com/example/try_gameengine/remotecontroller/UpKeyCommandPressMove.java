@@ -4,6 +4,7 @@ import com.example.try_gameengine.remotecontroller.RemoteController.CommandType;
 
 public class UpKeyCommandPressMove implements Command{
 	UpKey upKey;
+	private int pointerId = -1;
 	
 	public UpKeyCommandPressMove(UpKey upKey){
 		this.upKey = upKey;
@@ -19,6 +20,18 @@ public class UpKeyCommandPressMove implements Command{
 	public boolean checkExecute(float x, float y) {
 		// TODO Auto-generated method stub
 		return upKey.pressUp(x, y);
+	}
+
+	@Override
+	public void setMotionEventPointerId(int pointerId) {
+		// TODO Auto-generated method stub
+		this.pointerId = pointerId;
+	}
+
+	@Override
+	public int getMotionEventPointerId() {
+		// TODO Auto-generated method stub
+		return pointerId;
 	}
 
 }

@@ -46,23 +46,35 @@ public class RemoteControl {
 //		return offCommands[slot].execute();
 //	}
 	
-	public CommandType executePressDown(float x, float y){
+	public CommandType executePressDown(float x, float y, int motionEventPointerId){
 		CommandType commandType = CommandType.None;
 		for(Command command : onCommands){
 			if(command.checkExecute(x, y)){
 				commandType = command.execute();
+				command.setMotionEventPointerId(motionEventPointerId);
 				break;
 			}
 		}
 		return commandType;
 	}
 	
-	public CommandType executePressUp(float x, float y){
+	public CommandType executePressUp(float x, float y, int motionEventPointerId){
 		CommandType commandType = CommandType.None;
-		for(Command command : offCommands){
-			if(command.checkExecute(x, y)){
-				commandType = command.execute();
-				break;
+		if(motionEventPointerId!=-1){
+			for(int i = 0; i < onCommands.length; i++){
+				Command onCommand = onCommands[i];
+				if(onCommand.getMotionEventPointerId()==motionEventPointerId){
+					commandType = offCommands[i].execute();
+					onCommand.setMotionEventPointerId(-1);
+					break;
+				}
+			}
+		}else{
+			for(Command command : offCommands){
+				if(command.checkExecute(x, y)){
+					commandType = command.execute();
+					break;
+				}
 			}
 		}
 		return commandType;

@@ -40,6 +40,11 @@ public class RemoteController {
 				
 	}
 	
+	private static final int INVALID_POINTER_ID = -1;
+
+	// The ¡¥active pointer¡¦ is the one currently moving our object.
+	private int mActivePointerId = INVALID_POINTER_ID;
+	
 	private RemoteContollerOnTouchEventListener defaultRemoteContollerOnTouchEventListener = new RemoteContollerOnTouchEventListener() {
 		
 		@Override
@@ -53,8 +58,49 @@ public class RemoteController {
 			
 			float x = event.getX();
 			float y = event.getY();
-			if(event.getAction() == MotionEvent.ACTION_DOWN){
-				pressDown(x, y);
+			int action = event.getAction();
+			switch (action & MotionEvent.ACTION_MASK) {
+		    	case MotionEvent.ACTION_DOWN: 
+		    		mActivePointerId = event.getPointerId(0);
+		    		pressDown(x, y, mActivePointerId);
+		    		break;
+		    	case MotionEvent.ACTION_POINTER_DOWN: 
+//		    		mActivePointerId = event.getPointerId(0);
+		    		final int downPointerIndex = (action & MotionEvent.ACTION_POINTER_INDEX_MASK) 
+                    >> MotionEvent.ACTION_POINTER_INDEX_SHIFT;
+                    mActivePointerId = event.getPointerId(downPointerIndex);
+                    x = event.getX(downPointerIndex);
+	                y = event.getY(downPointerIndex);
+		    		pressDown(x, y, mActivePointerId);
+		    		break;
+		    	case MotionEvent.ACTION_UP: 
+//		            mActivePointerId = INVALID_POINTER_ID;
+		    		mActivePointerId = event.getPointerId(0);
+		    		pressUp(x, y, mActivePointerId);
+		            break;
+		            
+		        case MotionEvent.ACTION_CANCEL: 
+		            mActivePointerId = INVALID_POINTER_ID;
+		            break;
+		        
+		        case MotionEvent.ACTION_POINTER_UP: 
+		            // Extract the index of the pointer that left the touch sensor
+		            final int pointerIndex = (action & MotionEvent.ACTION_POINTER_INDEX_MASK) 
+		                    >> MotionEvent.ACTION_POINTER_INDEX_SHIFT;
+		            final int pointerId = event.getPointerId(pointerIndex);
+		            x = event.getX(pointerIndex);
+	                y = event.getY(pointerIndex);
+		            pressUp(x, y, pointerId);
+//		            if (pointerId == mActivePointerId) {
+		                // This was our active pointer going up. Choose a new
+		                // active pointer and adjust accordingly.
+//		                final int newPointerIndex = pointerIndex == 0 ? 1 : 0;
+//		                mLastTouchX = ev.getX(newPointerIndex);
+//		                mLastTouchY = ev.getY(newPointerIndex);
+//		                mActivePointerId = ev.getPointerId(newPointerIndex);
+//		            	
+//		            }
+		            break;
 			}
 		}
 	};
@@ -111,7 +157,7 @@ public class RemoteController {
 	}
 	
 	public void pressDown(float x, float y){
-		CommandType commandType = remoteControl.executePressDown(x, y);
+		CommandType commandType = remoteControl.executePressDown(x, y, INVALID_POINTER_ID);
 		commandTypes.add(commandType);
 		
 		if(remoteControllerTimeUtil.isArriveExecuteTime()){
@@ -125,7 +171,31 @@ public class RemoteController {
 	}
 	
 	public void pressUp(float x, float y){
-		CommandType commandType = remoteControl.executePressUp(x, y);
+		CommandType commandType = remoteControl.executePressUp(x, y, INVALID_POINTER_ID);
+		commandTypes.add(commandType);
+		
+		if(remoteControllerTimeUtil.isArriveExecuteTime()){
+			remoteContollerListener.pressDown(commandTypes);
+			commandTypes.clear();
+		}
+	}
+	
+	public void pressDown(float x, float y, int motionEventPointerId){
+		CommandType commandType = remoteControl.executePressDown(x, y, motionEventPointerId);
+		commandTypes.add(commandType);
+		
+		if(remoteControllerTimeUtil.isArriveExecuteTime()){
+			remoteContollerListener.pressDown(commandTypes);
+			commandTypes.clear();
+		}
+//		if(remoteControl.executePressDown(x, y)){
+//			
+//		}
+//		remoteControl.onButtonWasPushed(0);
+	}
+	
+	public void pressUp(float x, float y, int motionEventPointerId){
+		CommandType commandType = remoteControl.executePressUp(x, y, motionEventPointerId);
 		commandTypes.add(commandType);
 		
 		if(remoteControllerTimeUtil.isArriveExecuteTime()){
