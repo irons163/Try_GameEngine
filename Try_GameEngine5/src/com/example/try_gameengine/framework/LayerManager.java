@@ -165,6 +165,45 @@ public class LayerManager {
 			int layerLevel) {
 		layerLevelList.get(layerLevel).remove(layer);// ?锟絍ector瀵硅薄涓拷??锟芥缁勪欢
 	}
+	
+	public static synchronized void addSceneLayerByLayerLevel(ALayer layer,
+			int sceneLayerLevel) {
+		if(sceneLayerLevelList.containsKey(sceneLayerLevel+"")){
+			synchronized (sceneLayerLevelList) {
+				List<List<ALayer>> layerLevelList = sceneLayerLevelList.get(sceneLayerLevel+"");
+				synchronized (layerLevelList) {
+					List<ALayer> layersByTheSameLevel = layerLevelList.get(0);
+					layersByTheSameLevel.add(layer);
+				}		
+			}
+		}
+	}
+	
+	public static synchronized void deleteSceneLayersByLayerLevel(int sceneLayerLevel){
+		if(sceneLayerLevelList.containsKey(sceneLayerLevel+"")){
+			synchronized (sceneLayerLevelList) {
+				List<List<ALayer>> layerLevelList = sceneLayerLevelList.get(sceneLayerLevel+"");
+				synchronized (layerLevelList) {
+					for(List<ALayer> layersByTheSameLevel : layerLevelList){
+						layersByTheSameLevel.clear();
+					}
+				}		
+			}
+		}
+	}
+	
+	public static synchronized void drawSceneLayers(Canvas canvas, Paint paint, int sceneLayerLevel) {
+		if(sceneLayerLevelList.containsKey(sceneLayerLevel+"")){
+			synchronized (sceneLayerLevelList) {
+				List<List<ALayer>> layerLevelList = sceneLayerLevelList.get(sceneLayerLevel+"");
+				for (List<ALayer> layersByTheSameLevel : layerLevelList) {
+					for (ALayer layer : layersByTheSameLevel) {
+						layer.drawSelf(canvas, paint);
+					}
+				}
+			}
+		}
+	}
 
 	public static synchronized void drawLayers(Canvas canvas, Paint paint) {
 		for (List<ALayer> layersByTheSameLevel : layerLevelList) {
@@ -179,6 +218,29 @@ public class LayerManager {
 		List<ALayer> layersByTheSameLevel = layerLevelList.get(level);
 		for (ALayer layer : layersByTheSameLevel) {
 			layer.drawSelf(canvas, paint);
+		}
+	}
+	
+	public static synchronized void onTouchSceneLayers(MotionEvent event, int sceneLayerLevel) {
+		if(sceneLayerLevelList.containsKey(sceneLayerLevel+"")){
+			synchronized (sceneLayerLevelList) {
+				List<List<ALayer>> layerLevelList = sceneLayerLevelList.get(sceneLayerLevel+"");
+				boolean isTouched = false;
+				for (int i = layerLevelList.size()-1; i >= 0; i--) {
+					List<ALayer> layersByTheSameLevel = layerLevelList.get(i);
+					for (int j = layersByTheSameLevel.size()-1; j >= 0 ; j--) {
+						ALayer layer = layersByTheSameLevel.get(j);
+						if(layer instanceof ButtonLayer){
+							if(((ButtonLayer) layer).onTouch(event)){
+								isTouched = true;
+								break;
+							}
+						}		
+					}
+					if(isTouched)
+						break;
+				}
+			}
 		}
 	}
 

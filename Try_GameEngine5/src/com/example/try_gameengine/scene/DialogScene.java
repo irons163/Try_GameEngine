@@ -3,6 +3,7 @@ package com.example.try_gameengine.scene;
 import com.example.try_gameengine.framework.GameView;
 import com.example.try_gameengine.framework.IGameController;
 import com.example.try_gameengine.framework.IGameModel;
+import com.example.try_gameengine.framework.LayerManager;
 import com.example.try_gameengine.scene.Scene.DestoryData;
 import com.example.try_gameengine.stage.BaseStage;
 import com.example.try_gameengine.stage.Stage;
@@ -59,10 +60,16 @@ public class DialogScene extends EasyScene{
 //				activity.getWindow().setFormat(PixelFormat.TRANSPARENT);
 			}
 			
+//			@Override
+//			public boolean dispatchTouchEvent(MotionEvent event) {
+//				// TODO Auto-generated method stub
+//				return true;
+//			}
+			
 			@Override
-			public boolean dispatchTouchEvent(MotionEvent event) {
+			public boolean onTouchEvent(MotionEvent event) {
 				// TODO Auto-generated method stub
-				return true;
+				return super.onTouchEvent(event);
 			}
 		}
 		
@@ -220,6 +227,7 @@ public class DialogScene extends EasyScene{
 		s.getSceneManager().removeScene(this);
 		removeContentView(((Activity)context).getWindow().getDecorView());
 		gameModel.setData(new DestoryData());
+		LayerManager.deleteSceneLayersByLayerLevel(sceneLayerLevel);
 //		((Activity)context).getWindow().getDecorView().findViewById(android.R.id.content).invalidate();
 //		((Activity)context).getWindow().getDecorView().invalidate();
 	}

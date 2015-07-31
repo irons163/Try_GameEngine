@@ -159,10 +159,14 @@ public abstract class EasyScene extends Scene{
 		@Override
 		public void onTouchEvent(MotionEvent event) {
 			// TODO Auto-generated method stub
-			super.onTouchEvent(event);
-			
+			boolean isRemoteControllerCatchTouchEvent = false;
 			if(isEnableRemoteController)
-				remoteController.onTouchEvent(event);
+				isRemoteControllerCatchTouchEvent = remoteController.onTouchEvent(event);
+			
+			if(!isRemoteControllerCatchTouchEvent)
+				super.onTouchEvent(event);
+			
+			
 			
 //			float x = event.getX();
 //			float y = event.getY();

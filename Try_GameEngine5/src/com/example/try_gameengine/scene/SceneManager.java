@@ -76,9 +76,10 @@ public class SceneManager {
 		if(index >=0 && index < scenes.size()){
 			Scene scene = scenes.get(index);
 			
-			if(!(scene instanceof DialogScene)){
+//			if(!(scene instanceof DialogScene)){
 				LayerManager.setLayerBySenceIndex(index);
-			}
+				scene.setLayerLevel(index);
+//			}
 			scene.start();
 			currentActiveScene = scene;
 			currentSceneIndex = index;

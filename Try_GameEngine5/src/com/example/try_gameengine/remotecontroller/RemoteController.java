@@ -36,7 +36,7 @@ public class RemoteController {
 	
 	public interface RemoteContollerOnTouchEventListener{
 		
-		public void onTouchEvent(MotionEvent event);
+		public boolean onTouchEvent(MotionEvent event);
 				
 	}
 	
@@ -48,21 +48,21 @@ public class RemoteController {
 	private RemoteContollerOnTouchEventListener defaultRemoteContollerOnTouchEventListener = new RemoteContollerOnTouchEventListener() {
 		
 		@Override
-		public void onTouchEvent(MotionEvent event) {
+		public boolean onTouchEvent(MotionEvent event) {
 			// TODO Auto-generated method stub
 //			if (((event.getAction() & event.ACTION_MASK) == event.ACTION_POINTER_DOWN)
 //					|| ((event.getAction() & event.ACTION_MASK) == event.ACTION_POINTER_UP)) {
 //				_x = event.getX(event.getActionIndex());
 //				_y = event.getY(event.getActionIndex());
 //			}
-			
+			boolean isCatchTouchEvent = false;
 			float x = event.getX();
 			float y = event.getY();
 			int action = event.getAction();
 			switch (action & MotionEvent.ACTION_MASK) {
 		    	case MotionEvent.ACTION_DOWN: 
 		    		mActivePointerId = event.getPointerId(0);
-		    		pressDown(x, y, mActivePointerId);
+		    		isCatchTouchEvent = pressDown(x, y, mActivePointerId);
 		    		break;
 		    	case MotionEvent.ACTION_POINTER_DOWN: 
 //		    		mActivePointerId = event.getPointerId(0);
@@ -71,12 +71,12 @@ public class RemoteController {
                     mActivePointerId = event.getPointerId(downPointerIndex);
                     x = event.getX(downPointerIndex);
 	                y = event.getY(downPointerIndex);
-		    		pressDown(x, y, mActivePointerId);
+	                isCatchTouchEvent = pressDown(x, y, mActivePointerId);
 		    		break;
 		    	case MotionEvent.ACTION_UP: 
 //		            mActivePointerId = INVALID_POINTER_ID;
 		    		mActivePointerId = event.getPointerId(0);
-		    		pressUp(x, y, mActivePointerId);
+		    		isCatchTouchEvent = pressUp(x, y, mActivePointerId);
 		            break;
 		            
 		        case MotionEvent.ACTION_CANCEL: 
@@ -90,7 +90,7 @@ public class RemoteController {
 		            final int pointerId = event.getPointerId(pointerIndex);
 		            x = event.getX(pointerIndex);
 	                y = event.getY(pointerIndex);
-		            pressUp(x, y, pointerId);
+	                isCatchTouchEvent = pressUp(x, y, pointerId);
 //		            if (pointerId == mActivePointerId) {
 		                // This was our active pointer going up. Choose a new
 		                // active pointer and adjust accordingly.
@@ -102,6 +102,7 @@ public class RemoteController {
 //		            }
 		            break;
 			}
+			return isCatchTouchEvent;
 		}
 	};
 	
@@ -180,7 +181,7 @@ public class RemoteController {
 		}
 	}
 	
-	public void pressDown(float x, float y, int motionEventPointerId){
+	public boolean pressDown(float x, float y, int motionEventPointerId){
 		CommandType commandType = remoteControl.executePressDown(x, y, motionEventPointerId);
 		commandTypes.add(commandType);
 		
@@ -188,19 +189,31 @@ public class RemoteController {
 			remoteContollerListener.pressDown(commandTypes);
 			commandTypes.clear();
 		}
+		
+		if(commandType==CommandType.None){
+			return false;
+		}else{
+			return true;
+		}
 //		if(remoteControl.executePressDown(x, y)){
 //			
 //		}
 //		remoteControl.onButtonWasPushed(0);
 	}
 	
-	public void pressUp(float x, float y, int motionEventPointerId){
+	public boolean pressUp(float x, float y, int motionEventPointerId){
 		CommandType commandType = remoteControl.executePressUp(x, y, motionEventPointerId);
 		commandTypes.add(commandType);
 		
 		if(remoteControllerTimeUtil.isArriveExecuteTime()){
 			remoteContollerListener.pressDown(commandTypes);
 			commandTypes.clear();
+		}
+		
+		if(commandType==CommandType.None){
+			return false;
+		}else{
+			return true;
 		}
 	}
 	
@@ -216,8 +229,8 @@ public class RemoteController {
 		this.remoteContollerOnTouchEventListener = remoteContollerOnTouchEventListener;
 	}
 	
-	public void onTouchEvent(MotionEvent event){
-		this.remoteContollerOnTouchEventListener.onTouchEvent(event);
+	public boolean onTouchEvent(MotionEvent event){
+		return this.remoteContollerOnTouchEventListener.onTouchEvent(event);
 	}
 	
 	public UpKey getUpKey(){

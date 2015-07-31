@@ -21,6 +21,8 @@ public class BitmapUtil {
 //		initBitmap();
 	}
 	
+	private static boolean wasInitBitmap = false;
+	
 	public static Bitmap redPoint;
 	public static Bitmap greenPoint;
 	public static Bitmap blackPoint;
@@ -30,7 +32,14 @@ public class BitmapUtil {
 	public static Bitmap rightKey;
 	
 	public static void initBitmapForTest(){
-		initBitmap();
+		if(!wasInitBitmap){
+			synchronized (BitmapUtil.class) {
+				if(!wasInitBitmap){
+					initBitmap();
+					wasInitBitmap = true;
+				}
+			}
+		}
 	}
 	
 	private static void initBitmap(){

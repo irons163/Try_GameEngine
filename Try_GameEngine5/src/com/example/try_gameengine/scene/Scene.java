@@ -6,9 +6,11 @@ import java.util.Iterator;
 import android.app.Activity;
 import android.content.Context;
 
+import com.example.try_gameengine.framework.ALayer;
 import com.example.try_gameengine.framework.Data;
 import com.example.try_gameengine.framework.IGameController;
 import com.example.try_gameengine.framework.IGameModel;
+import com.example.try_gameengine.framework.LayerManager;
 import com.example.try_gameengine.remotecontroller.RemoteController;
 
 public abstract class Scene extends Activity{
@@ -30,6 +32,8 @@ public abstract class Scene extends Activity{
 //		
 //	}
 	protected int level;
+	
+	protected int sceneLayerLevel;
 	
 	public Scene(Context context, String id){
 		this(context, id, 0);
@@ -91,12 +95,25 @@ public abstract class Scene extends Activity{
 		return remoteController;
 	}
 	
+	public void setLayerLevel(int sceneLayerLevel){
+		this.sceneLayerLevel = sceneLayerLevel;
+	}
+	
+	public int getLayerLevel(){
+		return this.sceneLayerLevel;
+	}
+	
+	public void addAutoDraw(ALayer layer){
+		LayerManager.addSceneLayerByLayerLevel(layer, sceneLayerLevel);
+	}
+	
 	@Override
 	public void finish() {
 		// TODO Auto-generated method stub
 		super.finish();
 		((Activity)context).finish();
 		gameModel.setData(new DestoryData());
+		LayerManager.deleteSceneLayersByLayerLevel(sceneLayerLevel);
 	}
 	
 	public class DestoryData extends Data{
