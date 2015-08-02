@@ -27,6 +27,9 @@ public class Sprite extends Layer {
 	public MovementAction action;
 	
 	protected RectF moveRage;
+	private MoveRageType moveRageType = MoveRageType.StopOneSide;
+	private int moveRageReflectFactorX = 1;
+	private int moveRageReflectFactorY = 1;
 	
 	private int bitmapOrginalFrameWidth;
 	private int bitmapOrginalFrameHeight;
@@ -40,6 +43,10 @@ public class Sprite extends Layer {
 	protected RectF collisionRectF;
 	private float collisionRectFWidth, collisionRectFHeight;
 	private float collisionOffsetX, collisionOffsetY;
+	
+	public enum MoveRageType{
+		StopOneSide, StopInCurrentPosition, StopAll, Reflect
+	}
 	
 	public Sprite(Bitmap bitmap, int w, int h, boolean autoAdd) {
 		super(bitmap, w, h, autoAdd);
@@ -140,12 +147,6 @@ public class Sprite extends Layer {
 		this.collisionOffsetY = collisionOffsetY;
 	}
 	
-	public void setBitmapAndAutoChangeWH(Bitmap bitmap){
-		this.bitmap = bitmap;
-		setInitWidth(bitmap.getWidth());
-		setInitHeight(bitmap.getHeight());
-	}
-	
 	public void setBitmapAndFrameWH(Bitmap bitmap,int frameWidth ,int frameHeight ){
 		this.bitmap = bitmap;
 		this.bitmapOrginalFrameWidth = frameWidth;
@@ -187,6 +188,14 @@ public class Sprite extends Layer {
 	
 	public void setMoveRage(RectF moveRage){
 		this.moveRage = moveRage;
+	}
+	
+	public void setMoveRageType(MoveRageType moveRageType){
+		this.moveRageType = moveRageType;
+	}
+	
+	public MoveRageType getMoveRageType(){
+		return moveRageType;
 	}
 
 	@Override
@@ -478,21 +487,59 @@ public class Sprite extends Layer {
 			setX(getCenterX() + dx - w/2);
 			setY(getCenterY() + dy - h/2);
 		}else{
-			if(getX()+dx<=moveRage.left){
-				setX(moveRage.left);
-			}else if(getX()+w+dx>=moveRage.right){
-				setX(moveRage.right-w);
-			}else{
-				setX(getCenterX() + dx - w/2);
+			switch (moveRageType) {
+			case StopOneSide:
+				if(getX()+dx<=moveRage.left){
+					setX(moveRage.left);
+				}else if(getX()+w+dx>=moveRage.right){
+					setX(moveRage.right-w);
+				}else{
+					setX(getCenterX() + dx - w/2);
+				}
+				
+				if(getY()+dy<=moveRage.top){
+					setY(moveRage.top);
+				}else if(getY()+h+dy>=moveRage.bottom){
+					setY(moveRage.bottom - h);
+				}else{
+					setY(getCenterY() + dy - h/2);
+				}
+				break;
+			case StopInCurrentPosition:
+							
+				break;
+			case StopAll:
+				
+				break;
+			case Reflect:
+				
+				dx *= moveRageReflectFactorX;
+				dy *= moveRageReflectFactorY;
+				
+				if(getX()+dx<=moveRage.left){
+					moveRageReflectFactorX *= -1;
+					setX(moveRage.left);
+				}else if(getX()+w+dx>=moveRage.right){
+					moveRageReflectFactorX *= -1;
+					setX(moveRage.right-w);
+				}else{
+					setX(getCenterX() + dx - w/2);
+				}
+				
+				if(getY()+dy<=moveRage.top){
+					moveRageReflectFactorY *= -1;
+					setY(moveRage.top);
+				}else if(getY()+h+dy>=moveRage.bottom){
+					moveRageReflectFactorY *= -1;
+					setY(moveRage.bottom - h);
+				}else{
+					setY(getCenterY() + dy - h/2);
+				}
+				break;
+			default:
+				break;
 			}
 			
-			if(getY()+dy<=moveRage.top){
-				setY(moveRage.top);
-			}else if(getY()+h+dy>=moveRage.bottom){
-				setY(moveRage.bottom - h);
-			}else{
-				setY(getCenterY() + dy - h/2);
-			}
 		}
 //		if(parent!=null){
 //			return;

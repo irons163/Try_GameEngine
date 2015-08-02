@@ -20,6 +20,16 @@ public class Layer extends ALayer{
 		super(bitmap, w, h, autoAdd);
 		// TODO Auto-generated constructor stub
 	}
+	
+	public Layer(Bitmap bitmap, float x, float y, boolean autoAdd) {
+//		super(bitmap, w, h, autoAdd);
+		// TODO Auto-generated constructor stub
+		super(bitmap, x, y, autoAdd);
+	}
+	
+	public Layer(float x, float y, boolean autoAdd) {
+		super(x, y, autoAdd);
+	}
 
 	@Override
 	public void drawSelf(Canvas canvas, Paint paint) {

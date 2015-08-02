@@ -135,7 +135,7 @@ public class DialogScene extends EasyScene{
 	        		holder.unlockCanvasAndPost(canvas);
 	        		holder.setFormat(PixelFormat.TRANSPARENT);
 	        		
-	        		holder.setFormat(PixelFormat.OPAQUE);
+//	        		holder.setFormat(PixelFormat.OPAQUE);
 	        		gameview.setVisibility(View.GONE);
 	        		gameview.refreshDrawableState();
 	        		gameview.invalidate();
@@ -223,6 +223,7 @@ public class DialogScene extends EasyScene{
 	public void finish() {
 		// TODO Auto-generated method stub
 //		super.finish();
+		setMode(FINISHED);
 		Stage s = ((Stage)context);
 		s.getSceneManager().removeScene(this);
 		removeContentView(((Activity)context).getWindow().getDecorView());

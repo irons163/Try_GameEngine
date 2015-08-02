@@ -25,6 +25,7 @@ public abstract class Scene extends Activity{
 	public static final int RESUME = 2;
 	public static final int RESUME_WITHOUT_SET_VIEW = 4;
 	public static final int BLOCK = 8;
+	public static final int FINISHED = 16;
 	
 	protected int mode = RESTART;
 	
@@ -112,6 +113,7 @@ public abstract class Scene extends Activity{
 		// TODO Auto-generated method stub
 		super.finish();
 		((Activity)context).finish();
+		setMode(FINISHED);
 		gameModel.setData(new DestoryData());
 		LayerManager.deleteSceneLayersByLayerLevel(sceneLayerLevel);
 	}

@@ -3,6 +3,8 @@ package com.example.try_gameengine.enemy;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
+import android.graphics.Bitmap;
+
 import com.example.try_gameengine.action.LRMovementActionFactory;
 import com.example.try_gameengine.action.MovementAction;
 import com.example.try_gameengine.action.MovementActionFactory;
@@ -11,6 +13,9 @@ import com.example.try_gameengine.action.MovementDecorator;
 import com.example.try_gameengine.action.RLMovementActionFactory;
 
 public class EnemyFactory {
+	private static Bitmap redEnemyBitmap;
+	private static Bitmap blueEnemyBitmap;
+	
 	public Enemy createRedEnemy() {
 		return new RedEnemy(0, 0);
 	}
@@ -168,5 +173,21 @@ public class EnemyFactory {
 			e.printStackTrace();
 		}
 		return enemy;
+	}
+	
+	public static void setRedEnemyBitmap(Bitmap redEnemyBitmap){
+		EnemyFactory.redEnemyBitmap = redEnemyBitmap;
+	}
+	
+	public static void setBlueEnemyBitmap(Bitmap blueEnemyBitmap){
+		EnemyFactory.blueEnemyBitmap = blueEnemyBitmap;
+	}
+	
+	public static Bitmap getRedEnemyBitmap(){
+		return EnemyFactory.redEnemyBitmap;
+	}
+	
+	public static Bitmap getBlueEnemyBitmap(){
+		return EnemyFactory.blueEnemyBitmap;
 	}
 }

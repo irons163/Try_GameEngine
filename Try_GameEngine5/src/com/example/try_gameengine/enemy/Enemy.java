@@ -28,6 +28,7 @@ public abstract class Enemy extends Sprite implements Subject, Observer{
 //		this.y = y;
 //		this.bitmap = BitmapUtil.redPoint;
 		initBitmap();
+		setWH();
 	}
 	
 	public Enemy(float x, float y, MovementAction action) {

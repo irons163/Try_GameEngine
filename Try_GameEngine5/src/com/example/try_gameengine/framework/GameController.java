@@ -77,6 +77,8 @@ public abstract class GameController implements IGameController{
 			}
 		}else if((sceneMode&Scene.RESUME_WITHOUT_SET_VIEW)!=0){
 			runStart();
+		}else if((sceneMode&Scene.FINISHED)!=0){
+			
 		}
 	}
 	

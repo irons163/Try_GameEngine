@@ -76,6 +76,26 @@ public abstract class ALayer {
 			LayerManager.addLayerByLayerLevel(this, level);// 在LayerManager类中添加本组件
 		}
 	}
+	
+	protected ALayer(Bitmap bitmap, float x, float y, boolean autoAdd) {
+		this.bitmap = bitmap;
+		setBitmapAndAutoChangeWH(bitmap);
+		setPosition(x, y);
+		src = new Rect();
+		dst = new RectF();
+		if (autoAdd) {
+			LayerManager.addLayer(this);// 在LayerManager类中添加本组件
+		}
+	}
+	
+	protected ALayer(float x, float y, boolean autoAdd) {
+		setPosition(x, y);
+		src = new Rect();
+		dst = new RectF();
+		if (autoAdd) {
+			LayerManager.addLayer(this);// 在LayerManager类中添加本组件
+		}
+	}
 
 	/** * 设置组件位置的方法 * * @param x * @param y */
 	public void setPosition(float x, float y) {
@@ -258,5 +278,11 @@ public abstract class ALayer {
 	public void setY(float y){
 		this.y = y;
 		this.centerY = y + h/2;
+	}
+	
+	public void setBitmapAndAutoChangeWH(Bitmap bitmap){
+		this.bitmap = bitmap;
+		setInitWidth(bitmap.getWidth());
+		setInitHeight(bitmap.getHeight());
 	}
 }

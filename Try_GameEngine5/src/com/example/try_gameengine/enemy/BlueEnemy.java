@@ -19,7 +19,11 @@ public class BlueEnemy extends Enemy{
 	@Override
 	public void initBitmap() {
 		// TODO Auto-generated method stub
-		bitmap = BitmapUtil.bluePoint;
+		bitmap = EnemyFactory.getBlueEnemyBitmap();
+		if(bitmap==null)
+			bitmap = BitmapUtil.bluePoint;
+		if(bitmap==null)
+			throw new NullPointerException();
 	}
 
 }

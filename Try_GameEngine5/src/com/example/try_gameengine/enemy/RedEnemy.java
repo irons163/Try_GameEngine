@@ -1,5 +1,7 @@
 package com.example.try_gameengine.enemy;
 
+import java.io.IOException;
+
 import com.example.try_gameengine.BitmapUtil;
 import com.example.try_gameengine.action.MovementAction;
 
@@ -19,7 +21,11 @@ public class RedEnemy extends Enemy{
 	@Override
 	public void initBitmap() {
 		// TODO Auto-generated method stub
-		bitmap = BitmapUtil.redPoint;
+		bitmap = EnemyFactory.getRedEnemyBitmap();
+		if(bitmap==null)
+			bitmap = BitmapUtil.redPoint;
+		if(bitmap==null)
+			throw new NullPointerException();
 	}
 
 }

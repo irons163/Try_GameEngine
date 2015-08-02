@@ -3,6 +3,7 @@ package com.example.try_gameengine.enemy;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.util.Log;
 
@@ -279,5 +280,13 @@ public class EnemyManager {
 			String description = enemy.getMovementActionDescriptions();
 			Log.e("description", description);
 		}
+	}
+	
+	public static void setRedEnemyBitmap(Bitmap redEnemyBitmap){
+		EnemyFactory.setRedEnemyBitmap(redEnemyBitmap);	
+	}
+	
+	public static void setBlueEnemyBitmap(Bitmap blueEnemyBitmap){
+		EnemyFactory.setBlueEnemyBitmap(blueEnemyBitmap);
 	}
 }

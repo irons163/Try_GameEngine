@@ -121,6 +121,7 @@ public class MovementActionItem extends MovementAction{
 			thread.start();
 		}
 		
+		if(info.getSprite()!=null)
 		info.getSprite().setAction(info.getSpriteActionName());
 
 	}
