@@ -264,4 +264,8 @@ public class DialogScene extends EasyScene{
 	public void setDialogSceneTouchListener(DialogSceneTouchListener dialogSceneTouchListener){
 		this.dialogSceneTouchListener = dialogSceneTouchListener;
 	}
+	
+	public void setGameView(GameView gameView){
+		this.gameview = gameView;
+	}
 }

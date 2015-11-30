@@ -54,10 +54,10 @@ public abstract class EasyScene extends Scene implements ContactListener{
 	
 	/**物理世界聲明*/
 //	World world;
-	protected LWorld world;
+	public LWorld world;
 //	AABB aabb;  //新版的JBox2D已經不需要AABB區域了
 	Vector2 gravity;
-	protected final float RATE=40.0f; //物理世界與螢幕環境縮放比列
+	public static final float RATE=40.0f; //物理世界與螢幕環境縮放比列
 	protected float timeStep=1f/60f;	
 	
 	/**新的JBox2D增加到兩個控制反覆運算，參數均按照官方manual上的參數設置的 */

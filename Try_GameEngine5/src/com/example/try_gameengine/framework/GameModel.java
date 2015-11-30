@@ -158,6 +158,8 @@ public class GameModel implements IGameModel{
 		catch (Exception e) {      
 	            if(!isGameStop){
 	            	Log.e("GameModel", "draw Error");
+//	            	Log.e("GameModel Error Msg", e.printStackTrace());
+	            	e.printStackTrace();
 	            	throw new RuntimeException();
 //	            	e.printStackTrace();
 	            }

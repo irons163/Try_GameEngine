@@ -2,17 +2,21 @@ package com.example.try_gameengine.framework;
 
 import java.util.Hashtable;
 
-import com.example.try_gameengine.action.MovementAction;
-import com.example.try_gameengine.framework.Config.DestanceType;
+import org.loon.framework.android.game.physics.LWorld;
 
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.graphics.PointF;
 import android.graphics.Rect;
 import android.graphics.RectF;
-import android.util.Log;
+
+import com.example.try_gameengine.action.MovementAction;
+import com.example.try_gameengine.framework.Config.DestanceType;
+import com.example.try_gameengine.physics.PhysicsBody;
+import com.example.try_gameengine.utils.ISpriteDetectAreaHandler;
+import com.example.try_gameengine.utils.SpriteDetectAreaHandler;
 
 public class Sprite extends Layer {
 	public int frameIdx;// 當前幀下標
@@ -43,6 +47,10 @@ public class Sprite extends Layer {
 	protected RectF collisionRectF;
 	private float collisionRectFWidth, collisionRectFHeight;
 	private float collisionOffsetX, collisionOffsetY;
+	
+	private PhysicsBody physicsBody;
+	
+	private SpriteDetectAreaHandler spriteDetectAreaHandler;
 	
 	public enum MoveRageType{
 		StopOneSide, StopInCurrentPosition, StopAll, Reflect
@@ -459,7 +467,7 @@ public class Sprite extends Layer {
 			}else{
 				currentAction.nextBitmap();
 			}		
-		}
+		}	
 		a = System.currentTimeMillis() - a;
 	}
 	
@@ -649,12 +657,38 @@ public class Sprite extends Layer {
 		setMovementAction(movementAction);
 	}
 	
+	public void setPhysicsBody(PhysicsBody physicsBody, LWorld world){
+		this.physicsBody = physicsBody;
+		this.physicsBody.setUserData(this);
+		physicsBody.addToWorld(world);
+	}
+	
+	public void setDynamic(boolean dynamic){
+		this.physicsBody.setDynamic(dynamic);
+	}
+	
+	public void setSpriteDetectAreaHandler(SpriteDetectAreaHandler spriteDetectAreaHandler){
+		this.spriteDetectAreaHandler = spriteDetectAreaHandler;
+		this.spriteDetectAreaHandler.setObjectTag(this);
+	}
+	
+	public SpriteDetectAreaHandler getSpriteDetectAreaHandler(){
+		return spriteDetectAreaHandler;
+	}
+	
+	private void updateSpriteDetectAreaCenter(PointF center){
+		if(spriteDetectAreaHandler!=null)
+			spriteDetectAreaHandler.updateSpriteDetectAreaCenter(center);
+	}
+	
 	@Override
 	public void setX(float x) {
 		// TODO Auto-generated method stub
 		super.setX(x);
 		
 		setCollisionRectF(getX()+collisionOffsetX, getY()+collisionOffsetY, getX()+collisionOffsetX+collisionRectFWidth, getY()+collisionOffsetY+collisionRectFHeight);
+	
+		updateSpriteDetectAreaCenter(new PointF(getCenterX(), getCenterY()));
 	}
 	
 	@Override
@@ -663,6 +697,8 @@ public class Sprite extends Layer {
 		super.setY(y);
 		
 		setCollisionRectF(getX()+collisionOffsetX, getY()+collisionOffsetY, getX()+collisionOffsetX+collisionRectFWidth, getY()+collisionOffsetY+collisionRectFHeight);
+	
+		updateSpriteDetectAreaCenter(new PointF(getCenterX(), getCenterY()));
 	}
 	
 	@Override
