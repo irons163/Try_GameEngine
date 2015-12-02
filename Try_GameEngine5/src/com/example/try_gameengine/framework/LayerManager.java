@@ -122,13 +122,13 @@ public class LayerManager {
 
 	public static synchronized void changeLayerToNewLayerLevel(ALayer layer,
 			int newLevel) {
-		int offsetLayerLevel = newLevel - layer.layerLevel;
+		int offsetLayerLevel = newLevel - layer.getLayerLevel();
 		for (List<ALayer> layersByTheSameLevel : layerLevelList) {
 			int layerIndex = layersByTheSameLevel.indexOf(layer);
 			if (layerIndex >= 0) {
 				layersByTheSameLevel.remove(layerIndex);
 				layerLevelList.get(newLevel).add(layer);
-				layer.layerLevel = newLevel;
+				layer.setLayerLevel(newLevel);
 				layer.moveAllChild(offsetLayerLevel);
 				break;
 			}
@@ -143,7 +143,7 @@ public class LayerManager {
 			if (layerIndex >= 0) {
 				layersByTheSameLevel.remove(layerIndex);
 				layerLevelList.get(newLevel).add(layer);
-				layer.layerLevel = newLevel;
+				layer.setLayerLevel(newLevel);
 				layer.moveAllChild(offsetLayerLevel);
 				break;
 			}

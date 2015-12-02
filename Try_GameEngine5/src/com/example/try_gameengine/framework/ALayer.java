@@ -7,11 +7,12 @@ import java.util.List;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.PointF;
 import android.graphics.Rect;
 import android.graphics.RectF;
 
 /** * 层类，组件的父类，添加组件，设置组件位置，绘制自己， 是所有人物和背景的基类 * * @author Administrator * */
-public abstract class ALayer {
+public abstract class ALayer implements Cloneable{
 	private float x;// 层的x坐标
 	private float y;// 层的y坐标
 	public float centerX;
@@ -25,7 +26,11 @@ public abstract class ALayer {
 	public RectF dst;
 	public Bitmap bitmap;// 引用Bitmap类
 	
-	public int layerLevel;
+	private int layerLevel;
+	private boolean autoAdd;
+	private boolean isComposite;
+	private int alpha = 255;
+	private Paint paint = new Paint();
 	
 	protected ALayer(Bitmap bitmap, int w, int h, boolean autoAdd) {
 		this.bitmap = bitmap;
@@ -36,6 +41,7 @@ public abstract class ALayer {
 		src = new Rect();
 		dst = new RectF();
 		if (autoAdd) {
+			this.autoAdd = autoAdd;
 			LayerManager.addLayer(this);// 在LayerManager类中添加本组件
 		}
 	}
@@ -49,6 +55,7 @@ public abstract class ALayer {
 		src = new Rect();
 		dst = new RectF();
 		if (autoAdd) {
+			this.autoAdd = autoAdd;
 			LayerManager.addLayer(this);// 在LayerManager类中添加本组件
 		}
 	}
@@ -73,6 +80,8 @@ public abstract class ALayer {
 		src = new Rect();
 		dst = new RectF();
 		if (autoAdd) {
+			this.autoAdd = autoAdd;
+			setLayerLevel(level);
 			LayerManager.addLayerByLayerLevel(this, level);// 在LayerManager类中添加本组件
 		}
 	}
@@ -84,6 +93,7 @@ public abstract class ALayer {
 		src = new Rect();
 		dst = new RectF();
 		if (autoAdd) {
+			this.autoAdd = autoAdd;
 			LayerManager.addLayer(this);// 在LayerManager类中添加本组件
 		}
 	}
@@ -93,6 +103,7 @@ public abstract class ALayer {
 		src = new Rect();
 		dst = new RectF();
 		if (autoAdd) {
+			this.autoAdd = autoAdd;
 			LayerManager.addLayer(this);// 在LayerManager类中添加本组件
 		}
 	}
@@ -167,6 +178,7 @@ public abstract class ALayer {
 	public void remove(ALayer layer) {
 		// TODO Auto-generated method stub
 		layers.remove(layer);
+		layer.parent = null;
 		LayerManager.deleteLayerByLayerLevel(layer, layer.layerLevel);
 	}
 
@@ -206,6 +218,14 @@ public abstract class ALayer {
 		layers.add(layer);
 		layer.setParent(this);
 		LayerManager.addLayerByLayerLevel(layer, layerLevel);
+	}
+	
+	//composite
+	public void addChild(ALayer layer){
+		setComposite(true);
+		layer.setComposite(true);
+		layers.add(layer);
+		layer.setParent(this);
 	}
 
 	public ALayer getChild(int i) {
@@ -284,5 +304,107 @@ public abstract class ALayer {
 		this.bitmap = bitmap;
 		setInitWidth(bitmap.getWidth());
 		setInitHeight(bitmap.getHeight());
+	}
+
+	public int getLayerLevel() {
+		return layerLevel;
+	}
+
+	public void setLayerLevel(int layerLevel) {
+		this.layerLevel = layerLevel;
+	}
+
+	public int getAlpha() {
+		return alpha;
+	}
+
+	public void setAlpha(int alpha) {
+		this.alpha = alpha;
+		paint.setAlpha(this.alpha);
+	}
+
+	public Paint getPaint() {
+		return paint;
+	}
+
+	public void setPaint(Paint paint) {
+		this.paint = paint;
+	}
+
+	public boolean isComposite() {
+		return isComposite;
+	}
+
+	public void setComposite(boolean isComposite) {
+		this.isComposite = isComposite;
+	}
+	
+	public PointF locationInLayer(float x, float y){
+		PointF locationInLayer = new PointF(x, y);
+		if(isComposite()){
+			for(ALayer layer : getLayersFromRootLayerToCurrentLayerInComposite()){
+				locationInLayer.x = locationInLayer.x - layer.getX();
+				locationInLayer.y = locationInLayer.y - layer.getY();
+			}
+		}
+		return locationInLayer;
+	}
+	
+	public PointF locationInSceneByCompositeLocation(float locationInLayerX, float locationInLayerY){
+		PointF locationInScene = new PointF(locationInLayerX, locationInLayerY);
+		if(isComposite()){
+			for(ALayer layer : getLayersFromRootLayerToCurrentLayerInComposite()){
+				locationInScene.x = locationInScene.x + layer.getX();
+				locationInScene.y = locationInScene.y + layer.getY();
+			}
+		}
+		return locationInScene;
+	}
+	
+	public ALayer getRootLayer(){
+		ALayer rootLayer = this;
+		while(rootLayer.parent!=null){
+			rootLayer = rootLayer.parent;
+		}
+		return rootLayer;
+	}
+	
+	public List<ALayer> getLayersFromRootLayerToCurrentLayerInComposite(){
+		List<ALayer> layersFromRootLayerToCurrentLayer = new ArrayList<ALayer>();
+		layersFromRootLayerToCurrentLayer.add(0, this);
+		ALayer rootLayer = this;
+		while(rootLayer.parent!=null){
+			if(!rootLayer.parent.isComposite())
+				break;
+			rootLayer = rootLayer.parent;
+			layersFromRootLayerToCurrentLayer.add(0, rootLayer);
+		}
+		return layersFromRootLayerToCurrentLayer;
+	}
+
+	@Override
+	protected Object clone() throws CloneNotSupportedException {
+		// TODO Auto-generated method stub
+		ALayer layer = (ALayer) super.clone();
+		if(src!=null)
+			layer.src = new Rect(src);
+		if(dst!=null)
+			layer.dst = new RectF(dst);
+		
+		layer.layers = new ArrayList<ALayer>(layers.size());
+	    for(ALayer item: layers) layer.layers.add((ALayer)item.clone());
+	    
+	    if(smallViewRect!=null)
+	    	layer.smallViewRect = new RectF(smallViewRect);
+	    
+	    if(autoAdd){
+	    	LayerManager.addLayerByLayerLevel(layer, getLayerLevel());
+	    }
+	    
+	    layer.paint = new Paint(paint);
+	    
+//	    ALayer parent maybe not need clone.
+	    
+		return layer;
 	}
 }

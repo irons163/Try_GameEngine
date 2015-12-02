@@ -198,6 +198,10 @@ public class Sprite extends Layer {
 		this.moveRage = moveRage;
 	}
 	
+	public RectF getMoveRage() {
+		return moveRage;
+	}
+
 	public void setMoveRageType(MoveRageType moveRageType){
 		this.moveRageType = moveRageType;
 	}
@@ -216,23 +220,49 @@ public class Sprite extends Layer {
 //				bitmap = currentAction.bitmapFrames[frameIdx];
 //			}
 //		} 
+		
+		Paint originalPaint = paint;
+		int originalAlpha = 255;
+		if(paint==null){
+			paint = getPaint();
+		}else{
+			originalAlpha = paint.getAlpha();
+			paint.setAlpha(getAlpha());
+		}
+		
 		if(length>0){
 			paint(canvas,paint);
+			
+			paint = originalPaint;
+			originalPaint = null;
+			if(paint!=null){
+				paint.setAlpha(originalAlpha);
+			}
 		}else{
 			if(spriteMatrix!=null){
 				canvas.setMatrix(spriteMatrix);
 			}
-			
+	
 			src.left = (int) (currentFrame * w * scale);// 左端寬度：當前幀乘上幀的寬度再乘上圖片縮放率
 			src.top = 0;
 			src.right = (int) (src.left + w * scale);// 右端寬度：左端寬度加上(幀的寬度乘上圖片縮放率)
 			src.bottom = h;
 //			dst.left = (int) x - w / 2;
 //			dst.top = (int) y - h / 2;
+			
 			dst.left = (float) (centerX - w / 2);
 			dst.top = (float) (centerY - h / 2);
 			dst.right = (float) (dst.left + w * scale);
 			dst.bottom = (float) (dst.top + h * scale);
+			
+			if(isComposite()){
+				if(parent!=null){
+					PointF locationInScene = parent.locationInSceneByCompositeLocation((float) (centerX - w / 2), (float) (centerY - h / 2));
+					dst.left = locationInScene.x;
+					dst.top = locationInScene.y;
+				}
+			}
+			
 			customBitampSRCandDST(src, dst);
 //			canvas.drawBitmap(bitmap, src, dst, paint);
 			canvas.drawBitmap(bitmap, src, dst, paint);
@@ -240,7 +270,17 @@ public class Sprite extends Layer {
 //			Log.e("time2", a+""+"XX"+System.currentTimeMillis());
 		}
 		
-
+		paint = originalPaint;
+		originalPaint = null;
+		if(paint!=null){
+			paint.setAlpha(originalAlpha);
+		}
+		
+		if(isComposite()){
+			for(ALayer layer : layers){
+				layer.drawSelf(canvas, paint);
+			}
+		}
 	}
 	
 	public void customBitampSRCandDST(Rect src, RectF dst){
@@ -269,7 +309,7 @@ public class Sprite extends Layer {
 //		canvas.clipRect(x, y, x+frameWidth, y+frameHeight);
 //		canvas.drawBitmap(bitmap, x-(currentFrame%(bitmap.getWidth()/frameWidth))*frameWidth, 
 //				y - (currentFrame/(bitmap.getWidth()/frameWidth))*frameHeight, paint);
-//		canvas.restore();
+//		canvas.restore();	
 		
 		if(spriteMatrix==null)
 			spriteMatrix = new Matrix();
@@ -277,6 +317,14 @@ public class Sprite extends Layer {
 		canvas.save();
 		float x = getX();
 		float y = getY();
+		
+		if(isComposite()){
+			if(parent!=null){
+				PointF locationInScene = parent.locationInSceneByCompositeLocation(x, y);
+				x = locationInScene.x;
+				y = locationInScene.y;
+			}
+		}
 		
 		if(spriteMatrix!=null){
 //			canvas.clipRect(x, y, x+frameWidth, y+frameHeight);
@@ -686,9 +734,14 @@ public class Sprite extends Layer {
 		// TODO Auto-generated method stub
 		super.setX(x);
 		
-		setCollisionRectF(getX()+collisionOffsetX, getY()+collisionOffsetY, getX()+collisionOffsetX+collisionRectFWidth, getY()+collisionOffsetY+collisionRectFHeight);
-	
-		updateSpriteDetectAreaCenter(new PointF(getCenterX(), getCenterY()));
+		if(isComposite()){
+			PointF locationInScene = locationInSceneByCompositeLocation(getX(), getY());
+			setCollisionRectF(locationInScene.x+collisionOffsetX, locationInScene.y+collisionOffsetY, locationInScene.x+collisionOffsetX+collisionRectFWidth, locationInScene.y+collisionOffsetY+collisionRectFHeight);
+			updateSpriteDetectAreaCenter(new PointF(locationInScene.x+w/2, locationInScene.y+h/2));
+		}else{
+			setCollisionRectF(getX()+collisionOffsetX, getY()+collisionOffsetY, getX()+collisionOffsetX+collisionRectFWidth, getY()+collisionOffsetY+collisionRectFHeight);
+			updateSpriteDetectAreaCenter(new PointF(getCenterX(), getCenterY()));
+		}	
 	}
 	
 	@Override
@@ -696,17 +749,29 @@ public class Sprite extends Layer {
 		// TODO Auto-generated method stub
 		super.setY(y);
 		
-		setCollisionRectF(getX()+collisionOffsetX, getY()+collisionOffsetY, getX()+collisionOffsetX+collisionRectFWidth, getY()+collisionOffsetY+collisionRectFHeight);
-	
-		updateSpriteDetectAreaCenter(new PointF(getCenterX(), getCenterY()));
+		if(isComposite()){
+			PointF locationInScene = locationInSceneByCompositeLocation(getX(), getY());
+			setCollisionRectF(locationInScene.x+collisionOffsetX, locationInScene.y+collisionOffsetY, locationInScene.x+collisionOffsetX+collisionRectFWidth, locationInScene.y+collisionOffsetY+collisionRectFHeight);
+			updateSpriteDetectAreaCenter(new PointF(locationInScene.x+w/2, locationInScene.y+h/2));
+		}else{
+			setCollisionRectF(getX()+collisionOffsetX, getY()+collisionOffsetY, getX()+collisionOffsetX+collisionRectFWidth, getY()+collisionOffsetY+collisionRectFHeight);	
+			updateSpriteDetectAreaCenter(new PointF(getCenterX(), getCenterY()));
+		}
 	}
 	
 	@Override
 	public void setPosition(float x, float y) {
 		// TODO Auto-generated method stub
-		super.setPosition(x, y);
+		super.setPosition(x, y);	
 		
-		setCollisionRectF(getX()+collisionOffsetX, getY()+collisionOffsetY, getX()+collisionOffsetX+collisionRectFWidth, getY()+collisionOffsetY+collisionRectFHeight);
+		if(isComposite()){
+			PointF locationInScene = locationInSceneByCompositeLocation(getX(), getY());
+			setCollisionRectF(locationInScene.x+collisionOffsetX, locationInScene.y+collisionOffsetY, locationInScene.x+collisionOffsetX+collisionRectFWidth, locationInScene.y+collisionOffsetY+collisionRectFHeight);
+			updateSpriteDetectAreaCenter(new PointF(locationInScene.x+w/2, locationInScene.y+h/2));
+		}else{
+			setCollisionRectF(getX()+collisionOffsetX, getY()+collisionOffsetY, getX()+collisionOffsetX+collisionRectFWidth, getY()+collisionOffsetY+collisionRectFHeight);
+			updateSpriteDetectAreaCenter(new PointF(getCenterX(), getCenterY()));
+		}
 	}
 	
 	@Override

@@ -3,6 +3,7 @@ package com.example.try_gameengine.framework;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.PointF;
 
 public class Layer extends ALayer{
 
@@ -36,15 +37,62 @@ public class Layer extends ALayer{
 		// TODO Auto-generated method stub
 		
 		if(bitmap!=null){
-			src.left = 0;
-			src.top = 0;
-			src.right = w;
-			src.bottom = h;
-			dst.left = (float) (centerX - w / 2);
-			dst.top = (float) (centerY - h / 2);
-			dst.right = (float) (dst.left + w);
-			dst.bottom = (float) (dst.top + h);
-			canvas.drawBitmap(bitmap, src, dst, paint);
+			Paint originalPaint = paint;
+			int originalAlpha = 255;
+			if(paint==null){
+				paint = getPaint();
+			}else{
+				originalAlpha = paint.getAlpha();
+				paint.setAlpha(getAlpha());
+			}
+			
+			if(isComposite()){
+				src.left = 0;
+				src.top = 0;
+				src.right = w;
+				src.bottom = h;
+				
+				if(parent!=null){
+					PointF locationInScene = parent.locationInSceneByCompositeLocation((float) (centerX - w / 2), (float) (centerY - h / 2));
+					dst.left = locationInScene.x;
+					dst.top = locationInScene.y;
+					dst.right = (float) (dst.left + w);
+					dst.bottom = (float) (dst.top + h);
+				}else{
+					dst.left = (float) (centerX - w / 2);
+					dst.top = (float) (centerY - h / 2);
+					dst.right = (float) (dst.left + w);
+					dst.bottom = (float) (dst.top + h);
+				}
+				
+				canvas.drawBitmap(bitmap, src, dst, paint);
+				
+				paint = originalPaint;
+				originalPaint = null;
+				if(paint!=null){
+					paint.setAlpha(originalAlpha);
+				}
+				
+				for(ALayer layer : layers){
+					layer.drawSelf(canvas, paint);
+				}
+			}else{
+				src.left = 0;
+				src.top = 0;
+				src.right = w;
+				src.bottom = h;
+				dst.left = (float) (centerX - w / 2);
+				dst.top = (float) (centerY - h / 2);
+				dst.right = (float) (dst.left + w);
+				dst.bottom = (float) (dst.top + h);
+				canvas.drawBitmap(bitmap, src, dst, paint);
+				
+				paint = originalPaint;
+				originalPaint = null;
+				if(paint!=null){
+					paint.setAlpha(originalAlpha);
+				}
+			}
 		}
 	}
 
