@@ -13,7 +13,7 @@ public class ButtonLayer extends Layer{
 	
 	boolean isClickCancled = false;
 	private String text;
-	private Paint paint;
+//	private Paint paint;
 	private Bitmap[] buttonBitmaps = new Bitmap[3];
 	private OnClickListener onClickListener = new OnClickListener() {
 		
@@ -28,27 +28,27 @@ public class ButtonLayer extends Layer{
 		super(bitmap, w, h, autoAdd, level);
 		// TODO Auto-generated constructor stub
 		buttonBitmaps[NORMAL_BITMAP_INDEX] = bitmap;
-		paint = new Paint();
+//		paint = new Paint();
 	}
 
 	public ButtonLayer(Bitmap bitmap, int w, int h, boolean autoAdd) {
 		super(bitmap, w, h, autoAdd);
 		// TODO Auto-generated constructor stub
 		buttonBitmaps[NORMAL_BITMAP_INDEX] = bitmap;
-		paint = new Paint();
+//		paint = new Paint();
 	}
 
 	public ButtonLayer(int w, int h, boolean autoAdd) {
 		super(w, h, autoAdd);
 		// TODO Auto-generated constructor stub
 		buttonBitmaps[NORMAL_BITMAP_INDEX] = bitmap;
-		paint = new Paint();
+//		paint = new Paint();
 	}
 
 	public ButtonLayer(String text, int w, int h, boolean autoAdd){
 		super(w, h, autoAdd);
 		this.text = text;
-		paint = new Paint();
+//		paint = new Paint();
 	}
 	
 	@Override
@@ -85,20 +85,20 @@ public class ButtonLayer extends Layer{
 		this.buttonBitmaps = buttonBitmaps;
 	}
 	
-	public void setPaint(Paint paint){
-		this.paint = paint;
-	}
+//	public void setPaint(Paint paint){
+//		this.paint = paint;
+//	}
 	
 	public void setTextSize(float textSize){
-		paint.setTextSize(textSize);
+		getPaint().setTextSize(textSize);
 	}
 	
 	public void setTextStyle(Typeface typeface){
-		paint.setTypeface(typeface);
+		getPaint().setTypeface(typeface);
 	}
 	
 	public void setTextColor(int color){
-		paint.setColor(color);
+		getPaint().setColor(color);
 	}
 	
 	public boolean onTouch(MotionEvent event){
