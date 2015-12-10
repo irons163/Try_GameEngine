@@ -1,6 +1,8 @@
 package com.example.try_gameengine.framework;
 
 
+import com.example.try_gameengine.application.GameGlobalVariable;
+
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -60,12 +62,14 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback, IMo
 		// TODO Auto-generated method stub
 		viewHeight = height;
 		viewWidth = width;
+		GameGlobalVariable.surfaceHolder = holder;
 		gameController.surfaceChanged(holder, format, width, height);
 	}
 
 	@Override
 	public void surfaceCreated(SurfaceHolder holder) {
 		// TODO Auto-generated method stub
+		GameGlobalVariable.surfaceHolder = holder;
 		gameController.setSurfaceHolder(surfaceHolder);
 		gameController.runStart();
 	}
@@ -73,6 +77,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback, IMo
 	@Override
 	public void surfaceDestroyed(SurfaceHolder holder) {
 		// TODO Auto-generated method stub
+		GameGlobalVariable.surfaceHolder = null;
 		gameController.stop();
 	}
 

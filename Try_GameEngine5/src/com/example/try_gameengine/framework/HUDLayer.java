@@ -16,14 +16,14 @@ public class HUDLayer extends Layer{
 		// TODO Auto-generated constructor stub
 	}
 	
-	@Override
-	public void drawSelf(Canvas canvas, Paint paint) {
-		// TODO Auto-generated method stub
-		super.drawSelf(canvas, paint);
-		
-		for(ALayer layer : layers){
-			layer.drawSelf(canvas, paint);
-		}
-	}
+//	@Override
+//	public void drawSelf(Canvas canvas, Paint paint) {
+//		// TODO Auto-generated method stub
+//		super.drawSelf(canvas, paint);
+//		
+//		for(ALayer layer : layers){
+//			layer.drawSelf(canvas, paint);
+//		}
+//	}
 	
 }

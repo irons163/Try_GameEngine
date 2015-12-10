@@ -38,12 +38,20 @@ public class Layer extends ALayer{
 		
 		if(bitmap!=null){
 			Paint originalPaint = paint;
+			
+			/*//use input paint first 
 			int originalAlpha = 255;
 			if(paint==null){
 				paint = getPaint();
 			}else{
 				originalAlpha = paint.getAlpha();
 				paint.setAlpha(getAlpha());
+			}
+			*/
+			
+			//use self paint first
+			if(getPaint()!=null){
+				paint = getPaint();
 			}
 			
 			if(isComposite()){
@@ -67,11 +75,16 @@ public class Layer extends ALayer{
 				
 				canvas.drawBitmap(bitmap, src, dst, paint);
 				
+				/*//use input paint first 
 				paint = originalPaint;
 				originalPaint = null;
 				if(paint!=null){
 					paint.setAlpha(originalAlpha);
 				}
+				*/
+				
+				//use self paint first
+				paint = originalPaint;
 				
 				for(ALayer layer : layers){
 					layer.drawSelf(canvas, paint);
@@ -87,11 +100,16 @@ public class Layer extends ALayer{
 				dst.bottom = (float) (dst.top + h);
 				canvas.drawBitmap(bitmap, src, dst, paint);
 				
+				/*//use input paint first 
 				paint = originalPaint;
 				originalPaint = null;
 				if(paint!=null){
 					paint.setAlpha(originalAlpha);
 				}
+				*/
+				
+				//use self paint first
+				paint = originalPaint;
 			}
 		}
 	}

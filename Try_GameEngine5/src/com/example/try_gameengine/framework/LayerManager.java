@@ -1,10 +1,12 @@
 package com.example.try_gameengine.framework;
 
 import java.util.ArrayList;
+import java.util.Currency;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.Vector;
 
 import android.graphics.Canvas;
@@ -17,18 +19,20 @@ import android.view.MotionEvent;
  * * 缁勪欢?锟界?锟界被,?锟斤拷?瀛樻斁缁勪欢锛岋拷??锟斤拷??锟斤拷?浠讹拷?娣伙拷?锟�锟斤拷缁勪欢锛岋拷??锟斤拷?涓拷?浠讹拷? ?锟藉叆锟�?锟�* * * @author Administrator *
  */
 public class LayerManager {
-	public static Vector<ALayer> vec = new Vector<ALayer>(); // Vector瀵硅薄?锟斤拷?瀛樻斁???缁勪欢
+	private static Vector<ALayer> vec = new Vector<ALayer>(); // Vector瀵硅薄?锟斤拷?瀛樻斁???缁勪欢
 
 	private static List<List<ALayer>> layerLevelList = new ArrayList<List<ALayer>>();
 	
 	private static Map<String, List<List<ALayer>>> sceneLayerLevelList = new HashMap<String, List<List<ALayer>>>();
 
+	private static int sceneLayerLevelByRecentlySet;
+	
 	/** * 缁樺埗???缁勪欢?锟芥柟锟�* * @param canvas * @param paint */
-	public static void drawLayerManager(Canvas canvas, Paint paint) {
-		for (int i = 0; i < vec.size(); i++) {
-			vec.elementAt(i).drawSelf(canvas, paint);// ?锟斤拷??锟斤拷?Vector瀵硅薄涓拷?缁勪欢缁樺埗?锟芥潵
-		}
-	}
+//	public static void drawLayerManager(Canvas canvas, Paint paint) {
+//		for (int i = 0; i < vec.size(); i++) {
+//			vec.elementAt(i).drawSelf(canvas, paint);// ?锟斤拷??锟斤拷?Vector瀵硅薄涓拷?缁勪欢缁樺埗?锟芥潵
+//		}
+//	}
 
 	/** * 娣伙拷?锟�锟斤拷缁勪欢?锟芥柟锟�* * @param layer */
 	// public static synchronized void addLayer(ALayer layer) {
@@ -44,15 +48,15 @@ public class LayerManager {
 	 * * ?锟絙efore?锟斤拷??锟斤拷?缃拷??锟絣ayer锛岋拷??锟藉璞′互?锟芥?锟斤拷?瀵硅薄渚濇锟�?椤哄欢??* * @param layer * @param before
 	 */
 
-	public static void insert(ALayer layer, ALayer before) {
-		for (int i = 0; i < vec.size(); i++) {
-			// ?锟斤拷?Vector瀵硅薄
-			if (before == vec.elementAt(i)) {
-				vec.insertElementAt(layer, i);// ?锟絙efore瀵硅薄?锟介潰?锟藉叆layer,璇ュ璞★拷?浜巄efore涔嬶拷?
-				return;
-			}
-		}
-	}
+//	public static void insert(ALayer layer, ALayer before) {
+//		for (int i = 0; i < vec.size(); i++) {
+//			// ?锟斤拷?Vector瀵硅薄
+//			if (before == vec.elementAt(i)) {
+//				vec.insertElementAt(layer, i);// ?锟絙efore瀵硅薄?锟介潰?锟藉叆layer,璇ュ璞★拷?浜巄efore涔嬶拷?
+//				return;
+//			}
+//		}
+//	}
 
 	private static void initLayerManager() {
 		// TODO Auto-generated constructor stub
@@ -66,6 +70,8 @@ public class LayerManager {
 //			layerLevelList = new ArrayList<List<ALayer>>();
 //			sceneLayerLevelList.add(layerLevelList);
 //		}
+		sceneLayerLevelByRecentlySet = index;
+		
 		if(sceneLayerLevelList.containsKey(index+""))
 			layerLevelList = sceneLayerLevelList.get(index+"");
 		else{
@@ -85,7 +91,8 @@ public class LayerManager {
 	}
 
 	public static synchronized void addLayer(ALayer layer) {
-		layerLevelList.get(0).add(layer);// ?锟絍ector瀵硅薄涓坊?锟芥缁勪欢
+		layerLevelList.get(0).add(layer);
+		updateLayersDrawOrderByZposition(layerLevelList, sceneLayerLevelByRecentlySet);
 	}
 
 	public static synchronized void addLayerByLayerLevel(ALayer layer,
@@ -95,14 +102,18 @@ public class LayerManager {
 		}
 		List<ALayer> layersByTheSameLevel = layerLevelList.get(layerLevel);
 		layersByTheSameLevel.add(layer);
+		
+		updateLayersDrawOrderByZposition(layerLevelList, sceneLayerLevelByRecentlySet);
 	}
 
 	public static void insertLayer(ALayer layer, ALayer before) {
 		List<ALayer> layersByTheSameLevel = layerLevelList.get(0);
 		for (int i = 0; i < layersByTheSameLevel.size(); i++) {
-			// ?锟斤拷?Vector瀵硅薄
+			
 			if (before == layersByTheSameLevel.get(i)) {
-				layersByTheSameLevel.add(i, layer);// ?锟絙efore瀵硅薄?锟介潰?锟藉叆layer,璇ュ璞★拷?浜巄efore涔嬶拷?
+				layersByTheSameLevel.add(i, layer);
+				
+				updateLayersDrawOrderByZposition(layerLevelList, sceneLayerLevelByRecentlySet);
 				return;
 			}
 		}
@@ -112,9 +123,11 @@ public class LayerManager {
 			int layerLevel) {
 		List<ALayer> layersByTheSameLevel = layerLevelList.get(layerLevel);
 		for (int i = 0; i < layersByTheSameLevel.size(); i++) {
-			// ?锟斤拷?Vector瀵硅薄
+			
 			if (before == layersByTheSameLevel.get(i)) {
-				layersByTheSameLevel.add(i, layer);// ?锟絙efore瀵硅薄?锟介潰?锟藉叆layer,璇ュ璞★拷?浜巄efore涔嬶拷?
+				layersByTheSameLevel.add(i, layer);
+				
+				updateLayersDrawOrderByZposition(layerLevelList, sceneLayerLevelByRecentlySet);
 				return;
 			}
 		}
@@ -130,6 +143,8 @@ public class LayerManager {
 				layerLevelList.get(newLevel).add(layer);
 				layer.setLayerLevel(newLevel);
 				layer.moveAllChild(offsetLayerLevel);
+				
+				updateLayersDrawOrderByZposition(layerLevelList, sceneLayerLevelByRecentlySet);
 				break;
 			}
 		}
@@ -145,6 +160,8 @@ public class LayerManager {
 				layerLevelList.get(newLevel).add(layer);
 				layer.setLayerLevel(newLevel);
 				layer.moveAllChild(offsetLayerLevel);
+				
+				updateLayersDrawOrderByZposition(layerLevelList, sceneLayerLevelByRecentlySet);
 				break;
 			}
 		}
@@ -155,15 +172,19 @@ public class LayerManager {
 		List<ALayer> temp = layerLevelList.get(layerLevel1);
 		layerLevelList.set(layerLevel1, layerLevelList.get(layerLevel2));
 		layerLevelList.set(layerLevel2, temp);
+		
+		updateLayersDrawOrderByZposition(layerLevelList, sceneLayerLevelByRecentlySet);
 	}
 
 	public static synchronized void deleteLayer(ALayer layer) {
-		layerLevelList.get(0).remove(layer);// ?锟絍ector瀵硅薄涓拷??锟芥缁勪欢
+		layerLevelList.get(0).remove(layer);
+		updateLayersDrawOrderByZposition(layerLevelList, sceneLayerLevelByRecentlySet);
 	}
 
 	public static synchronized void deleteLayerByLayerLevel(ALayer layer,
 			int layerLevel) {
-		layerLevelList.get(layerLevel).remove(layer);// ?锟絍ector瀵硅薄涓拷??锟芥缁勪欢
+		layerLevelList.get(layerLevel).remove(layer);
+		updateLayersDrawOrderByZposition(layerLevelList, sceneLayerLevelByRecentlySet);
 	}
 	
 	public static synchronized void addSceneLayerByLayerLevel(ALayer layer,
@@ -171,11 +192,69 @@ public class LayerManager {
 		if(sceneLayerLevelList.containsKey(sceneLayerLevel+"")){
 			synchronized (sceneLayerLevelList) {
 				List<List<ALayer>> layerLevelList = sceneLayerLevelList.get(sceneLayerLevel+"");
+			
 				synchronized (layerLevelList) {
 					List<ALayer> layersByTheSameLevel = layerLevelList.get(0);
 					layersByTheSameLevel.add(layer);
-				}		
+				}
+				
+				updateLayersDrawOrderByZposition(layerLevelList, sceneLayerLevel);
 			}
+		}
+	}
+	
+	private static Map<String, TreeMap<Integer, List<ALayer>>> scencesLayersByZposition = new HashMap<String, TreeMap<Integer, List<ALayer>>>();
+	
+	private static void updateLayersDrawOrderByZposition(List<List<ALayer>> layerLevelList, int sceneLayerLevel ){
+		TreeMap<Integer, List<ALayer>> layerLevelListByZposition;
+		if(scencesLayersByZposition.containsKey(sceneLayerLevel+"")){
+			layerLevelListByZposition = scencesLayersByZposition.get(sceneLayerLevel+"");
+			layerLevelListByZposition.clear();
+		}else{
+			layerLevelListByZposition = new TreeMap<Integer, List<ALayer>>();
+			scencesLayersByZposition.put(sceneLayerLevel+"", layerLevelListByZposition);
+		}	
+		
+		for(int i = 0; i < layerLevelList.size(); i++){
+			List<ALayer> layersByTheSameLevel = layerLevelList.get(i);
+			for(ALayer layer : layersByTheSameLevel){
+				if(!layer.iszPositionValid())
+					continue;
+				int layerZposition = layer.getzPosition();
+				List<ALayer> layersByTheSameZposition;
+				if(layerLevelListByZposition.containsValue(layerZposition)){
+					layersByTheSameZposition = layerLevelListByZposition.get(layerZposition);
+					layersByTheSameZposition.clear();
+				}else{
+					layersByTheSameZposition = new ArrayList<ALayer>();
+					layerLevelListByZposition.put(layerZposition, layersByTheSameZposition);
+				}
+				
+				layersByTheSameZposition.add(layer);
+			}
+		}
+		
+		if(layerLevelListByZposition.size()==0)
+			scencesLayersByZposition.remove(sceneLayerLevel+"");
+	}
+	
+	private static void drawLayersByZposition(int sceneLayerLevel){
+		if(!scencesLayersByZposition.containsValue(sceneLayerLevel))
+			return;
+		TreeMap<Integer, List<ALayer>> layerLevelListByZposition = scencesLayersByZposition.get(sceneLayerLevel);
+		drawLayersByZposition(layerLevelListByZposition);
+	}
+	
+	private static void drawLayersByZposition(){
+		TreeMap<Integer, List<ALayer>> layerLevelListByZposition = scencesLayersByZposition.get(sceneLayerLevelByRecentlySet);
+		drawLayersByZposition(layerLevelListByZposition);
+	}
+	
+	private static void drawLayersByZposition(TreeMap<Integer, List<ALayer>> layerLevelListByZposition){
+		for(Map.Entry<Integer, List<ALayer>> entry : layerLevelListByZposition.entrySet()) {
+			  int layerZposition = entry.getKey();
+			  List<ALayer> layersByTheSameZposition = entry.getValue();
+			  System.out.println(layerZposition + " => " + layersByTheSameZposition.toString());
 		}
 	}
 	
@@ -187,20 +266,26 @@ public class LayerManager {
 					for(List<ALayer> layersByTheSameLevel : layerLevelList){
 						layersByTheSameLevel.clear();
 					}
-				}		
+				}
+				
+				updateLayersDrawOrderByZposition(layerLevelList, sceneLayerLevel);
 			}
 		}
 	}
 	
+	//draw
 	public static synchronized void drawSceneLayers(Canvas canvas, Paint paint, int sceneLayerLevel) {
 		if(sceneLayerLevelList.containsKey(sceneLayerLevel+"")){
 			synchronized (sceneLayerLevelList) {
 				List<List<ALayer>> layerLevelList = sceneLayerLevelList.get(sceneLayerLevel+"");
 				for (List<ALayer> layersByTheSameLevel : layerLevelList) {
 					for (ALayer layer : layersByTheSameLevel) {
-						layer.drawSelf(canvas, paint);
+						if(!layer.iszPositionValid())
+							layer.drawSelf(canvas, paint);
 					}
 				}
+				
+				drawLayersByZposition(sceneLayerLevel);
 			}
 		}
 	}
@@ -208,11 +293,15 @@ public class LayerManager {
 	public static synchronized void drawLayers(Canvas canvas, Paint paint) {
 		for (List<ALayer> layersByTheSameLevel : layerLevelList) {
 			for (ALayer layer : layersByTheSameLevel) {
-				layer.drawSelf(canvas, paint);
+				if(!layer.iszPositionValid())
+					layer.drawSelf(canvas, paint);
 			}
 		}
+		
+		drawLayersByZposition();
 	}
 
+	//this method draw not support zposition
 	public static void drawLayersBySpecificLevel(Canvas canvas, Paint paint,
 			int level) {
 		List<ALayer> layersByTheSameLevel = layerLevelList.get(level);

@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Currency;
 import java.util.List;
 
-import com.example.try_gameengine.application.Application;
+import com.example.try_gameengine.application.GameApplication;
 
 import android.content.Context;
 import android.content.Intent;

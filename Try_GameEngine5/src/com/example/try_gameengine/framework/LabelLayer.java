@@ -7,30 +7,47 @@ import android.graphics.Typeface;
 
 public class LabelLayer extends Layer{
 	private String text;
-	private Paint paint;
+//	private Paint paint = getPaint();
 	
 	public LabelLayer(Bitmap bitmap, int w, int h, boolean autoAdd, int level) {
 		super(bitmap, w, h, autoAdd, level);
 		// TODO Auto-generated constructor stub
-		paint = new Paint();
+//		paint = new Paint();
+		setPaint(new Paint());
 	}
 
 	public LabelLayer(Bitmap bitmap, int w, int h, boolean autoAdd) {
 		super(bitmap, w, h, autoAdd);
 		// TODO Auto-generated constructor stub
-		paint = new Paint();
+//		paint = new Paint();
+		setPaint(new Paint());
 	}
 
 	public LabelLayer(int w, int h, boolean autoAdd) {
 		super(w, h, autoAdd);
 		// TODO Auto-generated constructor stub
-		paint = new Paint();
+//		paint = new Paint();
+		setPaint(new Paint());
 	}
 
 	public LabelLayer(String text, int w, int h, boolean autoAdd){
 		super(w, h, autoAdd);
 		this.text = text;
-		paint = new Paint();
+//		paint = new Paint();
+		setPaint(new Paint());
+	}
+	
+	public LabelLayer(float x, float y, boolean autoAdd) {
+		super(x, y, autoAdd);
+//		paint = new Paint();
+		setPaint(new Paint());
+	}
+	
+	public LabelLayer(String text, float x, float y, boolean autoAdd) {
+		super(x, y, autoAdd);
+		this.text = text;
+//		paint = new Paint();
+		setPaint(new Paint());
 	}
 	
 	@Override
@@ -39,9 +56,17 @@ public class LabelLayer extends Layer{
 		super.drawSelf(canvas, paint);
 		
 		if(text!=null)
-			canvas.drawText(text, getX(), getY(), paint!=null?paint:this.paint);
+			canvas.drawText(text, getX(), getY(), paint!=null?paint:getPaint());
 	}
 	
+	public String getText() {
+		return text;
+	}
+
+	public void setText(String text) {
+		this.text = text;
+	}
+
 	public void setBitmap(Bitmap bitmap){
 		this.bitmap = bitmap;
 	}
@@ -52,19 +77,15 @@ public class LabelLayer extends Layer{
 		setInitHeight(bitmap.getHeight());
 	}
 	
-	public void setPaint(Paint paint){
-		this.paint = paint;
-	}
-	
 	public void setTextSize(float textSize){
-		paint.setTextSize(textSize);
+		getPaint().setTextSize(textSize);
 	}
 	
 	public void setTextStyle(Typeface typeface){
-		paint.setTypeface(typeface);
+		getPaint().setTypeface(typeface);
 	}
 	
 	public void setTextColor(int color){
-		paint.setColor(color);
+		getPaint().setColor(color);
 	}
 }

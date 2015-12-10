@@ -4,7 +4,7 @@ import com.example.try_gameengine.stage.StageManager;
 
 import android.content.Intent;
 
-public abstract class Application extends android.app.Application{
+public abstract class GameApplication extends android.app.Application{
 	
 	@Override
 	public void onCreate() {

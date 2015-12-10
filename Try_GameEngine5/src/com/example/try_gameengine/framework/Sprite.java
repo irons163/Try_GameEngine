@@ -222,6 +222,7 @@ public class Sprite extends Layer {
 //		} 
 		
 		Paint originalPaint = paint;
+		/*//use input paint first 
 		int originalAlpha = 255;
 		if(paint==null){
 			paint = getPaint();
@@ -229,15 +230,26 @@ public class Sprite extends Layer {
 			originalAlpha = paint.getAlpha();
 			paint.setAlpha(getAlpha());
 		}
+		*/
+		
+		//use self paint first
+		if(getPaint()!=null){
+			paint = getPaint();
+		}
 		
 		if(length>0){
 			paint(canvas,paint);
 			
+			/*//use input paint first 
 			paint = originalPaint;
 			originalPaint = null;
 			if(paint!=null){
 				paint.setAlpha(originalAlpha);
 			}
+			*/
+			
+			//use self paint first
+			paint = originalPaint;
 		}else{
 			if(spriteMatrix!=null){
 				canvas.setMatrix(spriteMatrix);
@@ -270,11 +282,16 @@ public class Sprite extends Layer {
 //			Log.e("time2", a+""+"XX"+System.currentTimeMillis());
 		}
 		
+		/*//use input paint first 
 		paint = originalPaint;
 		originalPaint = null;
 		if(paint!=null){
 			paint.setAlpha(originalAlpha);
 		}
+		*/
+		
+		//use self paint first
+		paint = originalPaint;
 		
 		if(isComposite()){
 			for(ALayer layer : layers){
