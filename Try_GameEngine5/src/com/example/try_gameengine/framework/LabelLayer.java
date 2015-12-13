@@ -55,8 +55,12 @@ public class LabelLayer extends Layer{
 		// TODO Auto-generated method stub
 		super.drawSelf(canvas, paint);
 		
-		if(text!=null)
-			canvas.drawText(text, getX(), getY(), paint!=null?paint:getPaint());
+		if(text!=null){
+			if(isComposite() && getParent()!=null)
+				canvas.drawText(text, getLocationInScene().x, getLocationInScene().y, paint!=null?paint:getPaint());
+			else
+				canvas.drawText(text, getX(), getY(), paint!=null?paint:getPaint());
+		}
 	}
 	
 	public String getText() {

@@ -1,6 +1,7 @@
 package com.example.try_gameengine.framework;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Currency;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -8,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.Vector;
+import java.util.Map.Entry;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -180,6 +182,48 @@ public class LayerManager {
 		layerLevelList.get(0).remove(layer);
 		updateLayersDrawOrderByZposition(layerLevelList, sceneLayerLevelByRecentlySet);
 	}
+	
+	public static synchronized void deleteLayerBySearchAll(ALayer layer) {
+		if(!layerLevelList.get(0).remove(layer)){
+			if(sceneLayerLevelList.isEmpty()){
+				boolean isFind = false;
+				synchronized (layerLevelList) {
+					for(List<ALayer> layersByTheSameLevel : layerLevelList){
+						if(layersByTheSameLevel.remove(layer)){
+							isFind = true;
+							break;
+						}
+					}
+				}		
+				if(isFind){
+					updateLayersDrawOrderByZposition(layerLevelList, sceneLayerLevelByRecentlySet);
+				}
+			}else{
+				int sceneLayerLevel = 0;
+				synchronized (sceneLayerLevelList) {
+					for(Map.Entry<String, List<List<ALayer>>> sceneLayers : sceneLayerLevelList.entrySet()){
+						sceneLayerLevel = Integer.parseInt(sceneLayers.getKey());
+						List<List<ALayer>> layerLevelList = sceneLayers.getValue();
+						boolean isFind = false;
+						synchronized (layerLevelList) {
+							for(List<ALayer> layersByTheSameLevel : layerLevelList){
+								if(layersByTheSameLevel.remove(layer)){
+									isFind = true;
+									break;
+								}
+							}
+						}		
+						if(isFind){
+							updateLayersDrawOrderByZposition(layerLevelList, sceneLayerLevel);
+							break;
+						}
+					}
+				}
+			}
+		}else{
+			updateLayersDrawOrderByZposition(layerLevelList, sceneLayerLevelByRecentlySet);	
+		}		
+	}
 
 	public static synchronized void deleteLayerByLayerLevel(ALayer layer,
 			int layerLevel) {
@@ -204,6 +248,53 @@ public class LayerManager {
 	}
 	
 	private static Map<String, TreeMap<Integer, List<ALayer>>> scencesLayersByZposition = new HashMap<String, TreeMap<Integer, List<ALayer>>>();
+	
+	public static void updateLayersDrawOrderByZposition(int sceneLayerLevel){
+		if(sceneLayerLevelList.containsKey(sceneLayerLevel+"")){
+			synchronized (sceneLayerLevelList) {
+				List<List<ALayer>> layerLevelList = sceneLayerLevelList.get(sceneLayerLevel+"");
+				updateLayersDrawOrderByZposition(layerLevelList, sceneLayerLevel);
+			}
+		}	
+	}
+	
+	public static void updateLayersDrawOrderByZposition(ALayer layer){
+		if(sceneLayerLevelList.isEmpty()){
+			boolean isFind = false;
+			synchronized (layerLevelList) {
+				for(List<ALayer> layersByTheSameLevel : layerLevelList){
+					if(layersByTheSameLevel.contains(layer)){
+						isFind = true;
+						break;
+					}
+				}
+			}		
+			if(isFind){
+				updateLayersDrawOrderByZposition(layerLevelList, sceneLayerLevelByRecentlySet);
+			}
+		}else{
+			int sceneLayerLevel = 0;
+			synchronized (sceneLayerLevelList) {
+				for(Map.Entry<String, List<List<ALayer>>> sceneLayers : sceneLayerLevelList.entrySet()){
+					sceneLayerLevel = Integer.parseInt(sceneLayers.getKey());
+					List<List<ALayer>> layerLevelList = sceneLayers.getValue();
+					boolean isFind = false;
+					synchronized (layerLevelList) {
+						for(List<ALayer> layersByTheSameLevel : layerLevelList){
+							if(layersByTheSameLevel.contains(layer)){
+								isFind = true;
+								break;
+							}
+						}
+					}		
+					if(isFind){
+						updateLayersDrawOrderByZposition(layerLevelList, sceneLayerLevel);
+						break;
+					}
+				}
+			}
+		}
+	}
 	
 	private static void updateLayersDrawOrderByZposition(List<List<ALayer>> layerLevelList, int sceneLayerLevel ){
 		TreeMap<Integer, List<ALayer>> layerLevelListByZposition;
@@ -238,23 +329,28 @@ public class LayerManager {
 			scencesLayersByZposition.remove(sceneLayerLevel+"");
 	}
 	
-	private static void drawLayersByZposition(int sceneLayerLevel){
-		if(!scencesLayersByZposition.containsValue(sceneLayerLevel))
+	private static void drawLayersByZposition(Canvas canvas, Paint paint, int sceneLayerLevel){
+		if(!scencesLayersByZposition.containsKey(sceneLayerLevel+""))
 			return;
-		TreeMap<Integer, List<ALayer>> layerLevelListByZposition = scencesLayersByZposition.get(sceneLayerLevel);
-		drawLayersByZposition(layerLevelListByZposition);
+		TreeMap<Integer, List<ALayer>> layerLevelListByZposition = scencesLayersByZposition.get(sceneLayerLevel+"");
+		drawLayersByZposition(canvas, paint, layerLevelListByZposition);
 	}
 	
-	private static void drawLayersByZposition(){
-		TreeMap<Integer, List<ALayer>> layerLevelListByZposition = scencesLayersByZposition.get(sceneLayerLevelByRecentlySet);
-		drawLayersByZposition(layerLevelListByZposition);
+	private static void drawLayersByZposition(Canvas canvas, Paint paint){
+		TreeMap<Integer, List<ALayer>> layerLevelListByZposition = scencesLayersByZposition.get(sceneLayerLevelByRecentlySet+"");
+		drawLayersByZposition(canvas, paint, layerLevelListByZposition);
 	}
 	
-	private static void drawLayersByZposition(TreeMap<Integer, List<ALayer>> layerLevelListByZposition){
+	private static void drawLayersByZposition(Canvas canvas, Paint paint, TreeMap<Integer, List<ALayer>> layerLevelListByZposition){
+		if(layerLevelListByZposition==null)
+			return;
 		for(Map.Entry<Integer, List<ALayer>> entry : layerLevelListByZposition.entrySet()) {
 			  int layerZposition = entry.getKey();
 			  List<ALayer> layersByTheSameZposition = entry.getValue();
-			  System.out.println(layerZposition + " => " + layersByTheSameZposition.toString());
+//			  System.out.println(layerZposition + " => " + layersByTheSameZposition.toString());
+			  for(ALayer layerByZposition : layersByTheSameZposition){
+				  layerByZposition.drawSelf(canvas, paint);
+			  }
 		}
 	}
 	
@@ -285,7 +381,7 @@ public class LayerManager {
 					}
 				}
 				
-				drawLayersByZposition(sceneLayerLevel);
+				drawLayersByZposition(canvas, paint, sceneLayerLevel);
 			}
 		}
 	}
@@ -298,7 +394,7 @@ public class LayerManager {
 			}
 		}
 		
-		drawLayersByZposition();
+		drawLayersByZposition(canvas, paint);
 	}
 
 	//this method draw not support zposition

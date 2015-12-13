@@ -3,6 +3,8 @@ package com.example.try_gameengine.framework;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.ConcurrentLinkedQueue;
+
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -28,9 +30,10 @@ public abstract class ALayer implements Cloneable{
 	public RectF dst;
 	public Bitmap bitmap;// 引用Bitmap类
 	
-	List<ALayer> layers = new ArrayList<ALayer>();
+	ConcurrentLinkedQueue<ALayer> layers = new ConcurrentLinkedQueue<ALayer>();
 	ALayer parent;
 	RectF smallViewRect;
+	PointF locationInScene;
 	
 	private int layerLevel;
 	private boolean autoAdd;
@@ -142,6 +145,9 @@ public abstract class ALayer implements Cloneable{
 		this.y = y;
 		this.centerX = x + w / 2;
 		this.centerY = y + h / 2;
+		if(isComposite() && getParent()!=null)
+			locationInScene = parent.locationInSceneByCompositeLocation((float) (centerX - w / 2), (float) (centerY - h / 2));
+		
 //		this.centerX = x - w / 2;
 //		this.centerX = y - h / 2;
 	}
@@ -203,7 +209,10 @@ public abstract class ALayer implements Cloneable{
 
 	public void remove(ALayer layer) {
 		// TODO Auto-generated method stub
-		if(layers.remove(layer)){
+		if(layers.remove(layer)){	
+			if(layer.isComposite() && layer.getParent()!=null){
+				layer.setLocationInScene(null);
+			}
 			layer.parent = null;
 			LayerManager.deleteLayerByLayerLevel(layer, layer.layerLevel);
 		}
@@ -254,6 +263,7 @@ public abstract class ALayer implements Cloneable{
 			layer.setComposite(true);
 			layers.add(layer);
 			layer.setParent(this);
+			layer.locationInScene = this.locationInSceneByCompositeLocation(layer.getX(), layer.getY());
 		}else{
 			throw new RuntimeException("child already has parent.");
 		}
@@ -261,7 +271,15 @@ public abstract class ALayer implements Cloneable{
 
 	public ALayer getChild(int i) {
 		// TODO Auto-generated method stub
-		return layers.get(i);
+//		return layers.get(i);
+		int index = 0;
+		for(ALayer layer : layers){
+			if(index == i){
+				return layer;
+			}
+			index++;
+		}
+		return null;
 	}
 
 	public Iterator createIterator(){
@@ -316,6 +334,8 @@ public abstract class ALayer implements Cloneable{
 	public void setX(float x){
 		this.x = x;
 		this.centerX = x + w/2;
+		if(isComposite() && getParent()!=null)
+			locationInScene = parent.locationInSceneByCompositeLocation((float) (centerX - w / 2), (float) (centerY - h / 2));
 	}
 	
 	public float getY(){
@@ -329,6 +349,8 @@ public abstract class ALayer implements Cloneable{
 	public void setY(float y){
 		this.y = y;
 		this.centerY = y + h/2;
+		if(isComposite() && getParent()!=null)
+			locationInScene = parent.locationInSceneByCompositeLocation((float) (centerX - w / 2), (float) (centerY - h / 2));
 	}
 	
 	public void setBitmapAndAutoChangeWH(Bitmap bitmap){
@@ -369,12 +391,20 @@ public abstract class ALayer implements Cloneable{
 			parent.remove(this);
 	}
 	
+	public void removeFromAuto(){
+		if(autoAdd){
+			LayerManager.deleteLayerBySearchAll(this);
+			autoAdd = false;
+		}
+	}
+	
 	public int getzPosition() {
 		return zPosition;
 	}
 
 	public void setzPosition(int zPosition) {
 		this.zPosition = zPosition;
+		LayerManager.updateLayersDrawOrderByZposition(this);
 	}
 
 	public boolean iszPositionValid(){
@@ -397,6 +427,16 @@ public abstract class ALayer implements Cloneable{
 		this.isComposite = isComposite;
 	}
 	
+	
+	
+	public PointF getLocationInScene() {
+		return locationInScene;
+	}
+
+	public void setLocationInScene(PointF locationInScene) {
+		this.locationInScene = locationInScene;
+	}
+
 	public PointF locationInLayer(float x, float y){
 		PointF locationInLayer = new PointF(x, y);
 		if(isComposite()){
@@ -598,17 +638,50 @@ public abstract class ALayer implements Cloneable{
 		if(dst!=null)
 			layer.dst = new RectF(dst);
 		
-		layer.layers = new ArrayList<ALayer>(layers.size());
+//		layer.layers = new ArrayList<ALayer>(layers.size());
+		layer.layers = new ConcurrentLinkedQueue<ALayer>();
+		
 	    for(ALayer item: layers) layer.layers.add((ALayer)item.clone());
 	    
 	    if(smallViewRect!=null)
 	    	layer.smallViewRect = new RectF(smallViewRect);
 	    
+	    if(locationInScene!=null)
+	    	layer.locationInScene = new PointF(locationInScene.x, locationInScene.y);
+	    
 	    if(autoAdd){
 	    	LayerManager.addLayerByLayerLevel(layer, getLayerLevel());
 	    }
 	    
-	    layer.paint = new Paint(paint);
+	    if(paint!=null)
+	    	layer.paint = new Paint(paint);
+	
+	    if(mPendingCheckForLongPress!=null){
+	    	layer.mPendingCheckForLongPress = new Runnable() {
+	
+				@Override
+				public void run() {
+					// TODO Auto-generated method stub
+					if (performLongClick()) {
+						mHasPerformedLongPress = true;
+					}
+				}
+			};
+	    }
+	    
+	    if(mPerformClick!=null){
+	    	layer.mPerformClick = new PerformClick();
+	    }
+	    
+//	    private Runnable mPendingCheckForLongPress;
+//		private Runnable mPerformClick;
+		
+		layer.handler = new Handler();
+		
+//		private OnLayerClickListener onLayerClickListener;
+//		private OnLayerLongClickListener onLayerLongClickListener;
+		
+//		private boolean isTouching = false;
 	    
 //	    ALayer parent maybe not need clone.
 	    

@@ -9,11 +9,13 @@ public class HUDLayer extends Layer{
 	public HUDLayer(Bitmap bitmap, float x, float y, boolean autoAdd) {
 		super(bitmap, x, y, autoAdd);
 		// TODO Auto-generated constructor stub
+		setzPosition(Integer.MAX_VALUE);
 	}
 
 	public HUDLayer(float x, float y, boolean autoAdd) {
 		super(x, y, autoAdd);
 		// TODO Auto-generated constructor stub
+		setzPosition(Integer.MAX_VALUE);
 	}
 	
 //	@Override
