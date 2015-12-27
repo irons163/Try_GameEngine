@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.PointF;
+import android.view.MotionEvent;
 
 public class Layer extends ALayer{
 
@@ -86,7 +87,7 @@ public class Layer extends ALayer{
 				//use self paint first
 				paint = originalPaint;
 				
-				for(ALayer layer : layers){
+				for(ILayer layer : getLayers()){
 					layer.drawSelf(canvas, paint);
 				}
 			}else{
@@ -112,6 +113,12 @@ public class Layer extends ALayer{
 				paint = originalPaint;
 			}
 		}
+	}
+
+	@Override
+	protected void onTouched(MotionEvent event) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

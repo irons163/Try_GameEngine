@@ -3,6 +3,7 @@ package com.example.try_gameengine.framework;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.view.MotionEvent;
 
 public class BackGroundLayer extends ALayer {
 	public BackGroundLayer(Bitmap bitmap, int w, int h) {
@@ -20,5 +21,11 @@ public class BackGroundLayer extends ALayer {
 		dst.right = dst.left + w;
 		dst.bottom = dst.top + h;
 		canvas.drawBitmap(bitmap, src, dst, paint);
+	}
+
+	@Override
+	protected void onTouched(MotionEvent event) {
+		// TODO Auto-generated method stub
+		
 	}
 }

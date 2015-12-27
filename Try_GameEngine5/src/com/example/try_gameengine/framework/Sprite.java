@@ -294,7 +294,7 @@ public class Sprite extends Layer {
 		paint = originalPaint;
 		
 		if(isComposite()){
-			for(ALayer layer : layers){
+			for(ILayer layer : layers){
 				layer.drawSelf(canvas, paint);
 			}
 		}

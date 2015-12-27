@@ -9,6 +9,7 @@ import android.graphics.Paint;
 import android.view.MotionEvent;
 
 import com.example.try_gameengine.framework.ALayer;
+import com.example.try_gameengine.framework.ILayer;
 import com.example.try_gameengine.framework.LayerManager;
 import com.example.try_gameengine.framework.Sprite;
 import com.example.try_gameengine.utils.GameTimeUtil;
@@ -123,8 +124,8 @@ public class RemoteController {
 					
 					break;
 				case UPKeyDownCommand:
-					for(List<ALayer> layers : LayerManager.getLayerLevelList()){
-						for(ALayer layer : layers){
+					for(List<ILayer> layers : LayerManager.getLayerLevelList()){
+						for(ILayer layer : layers){
 							if(layer instanceof Sprite){
 								((Sprite)layer).move(0, -10);
 							}

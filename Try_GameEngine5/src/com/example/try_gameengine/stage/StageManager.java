@@ -154,6 +154,10 @@ public class StageManager {
 			currentStage.finish();
 	}
 	
+	public static Stage getCurrentStage(){
+		return currentActiveStage;
+	}
+	
 	private static void stopStage(Stage currentStage){
 		currentStage.stop();
 	}

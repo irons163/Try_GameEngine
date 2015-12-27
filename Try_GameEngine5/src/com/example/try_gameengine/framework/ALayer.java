@@ -5,6 +5,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import com.example.try_gameengine.stage.StageManager;
+
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -12,11 +14,12 @@ import android.graphics.PointF;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.os.Handler;
+import android.util.Log;
 import android.view.MotionEvent;
 
 
 /** * 层类，组件的父类，添加组件，设置组件位置，绘制自己， 是所有人物和背景的基类 * * @author Administrator * */
-public abstract class ALayer implements Cloneable{
+public abstract class ALayer implements ILayer{
 	private float x;// 层的x坐标
 	private float y;// 层的y坐标
 	public float centerX;
@@ -30,8 +33,8 @@ public abstract class ALayer implements Cloneable{
 	public RectF dst;
 	public Bitmap bitmap;// 引用Bitmap类
 	
-	ConcurrentLinkedQueue<ALayer> layers = new ConcurrentLinkedQueue<ALayer>();
-	ALayer parent;
+	ConcurrentLinkedQueue<ILayer> layers = new ConcurrentLinkedQueue<ILayer>();
+	ILayer parent;
 	RectF smallViewRect;
 	PointF locationInScene;
 	
@@ -47,7 +50,7 @@ public abstract class ALayer implements Cloneable{
 	private Runnable mPerformClick;
 	private boolean pressed = false;
 	private boolean mHasPerformedLongPress = false;
-	private Handler handler = new Handler();
+	private Handler handler;
 	private long longPressTimeout = 2000;
 	
 	private OnLayerClickListener onLayerClickListener;
@@ -55,12 +58,14 @@ public abstract class ALayer implements Cloneable{
 	
 	private boolean isTouching = false;
 	
+	private RectF frame = new RectF();
+	
 	public interface OnLayerClickListener{
-		public void onClick(ALayer layer);
+		public void onClick(ILayer layer);
 	}
 	
 	public interface OnLayerLongClickListener{
-		public boolean onLongClick(ALayer layer);
+		public boolean onLongClick(ILayer layer);
 	}
 	
 	protected ALayer(Bitmap bitmap, int w, int h, boolean autoAdd) {
@@ -71,10 +76,12 @@ public abstract class ALayer implements Cloneable{
 		this.centerY = h / 2;
 		src = new Rect();
 		dst = new RectF();
+		getFrame().set(x, y, x+w, y+h);
 		if (autoAdd) {
 			this.autoAdd = autoAdd;
 			LayerManager.addLayer(this);// 在LayerManager类中添加本组件
 		}
+		initALayer();
 	}
 	
 	protected ALayer(int w, int h, boolean autoAdd) {
@@ -85,13 +92,15 @@ public abstract class ALayer implements Cloneable{
 		this.centerY = h / 2;
 		src = new Rect();
 		dst = new RectF();
+		getFrame().set(x, y, x+w, y+h);
 		if (autoAdd) {
 			this.autoAdd = autoAdd;
 			LayerManager.addLayer(this);// 在LayerManager类中添加本组件
 		}
+		initALayer();
 	}
 	
-//	protected ALayer(Bitmap bitmap, int w, int h, boolean autoAdd) {
+//	protected ILayer(Bitmap bitmap, int w, int h, boolean autoAdd) {
 //		this.bitmap = BitmapUtil.createSpecificSizeBitmap(drawable, width, height)(resId);BitmapUtil.getBitmapFromRes(resId);
 //		this.w = w;
 //		this.h = h;
@@ -110,11 +119,13 @@ public abstract class ALayer implements Cloneable{
 		this.centerY = h / 2;
 		src = new Rect();
 		dst = new RectF();
+		getFrame().set(x, y, x+w, y+h);
 		if (autoAdd) {
 			this.autoAdd = autoAdd;
 			setLayerLevel(level);
 			LayerManager.addLayerByLayerLevel(this, level);// 在LayerManager类中添加本组件
 		}
+		initALayer();
 	}
 	
 	protected ALayer(Bitmap bitmap, float x, float y, boolean autoAdd) {
@@ -123,20 +134,34 @@ public abstract class ALayer implements Cloneable{
 		setPosition(x, y);
 		src = new Rect();
 		dst = new RectF();
+		getFrame().set(x, y, x+w, y+h);
 		if (autoAdd) {
 			this.autoAdd = autoAdd;
 			LayerManager.addLayer(this);// 在LayerManager类中添加本组件
 		}
+		initALayer();
 	}
 	
 	protected ALayer(float x, float y, boolean autoAdd) {
 		setPosition(x, y);
 		src = new Rect();
 		dst = new RectF();
+		getFrame().set(x, y, x+w, y+h);
 		if (autoAdd) {
 			this.autoAdd = autoAdd;
 			LayerManager.addLayer(this);// 在LayerManager类中添加本组件
 		}
+		initALayer();
+	}
+	
+	private void initALayer(){
+		if(StageManager.getCurrentStage()!=null)
+		StageManager.getCurrentStage().runOnUiThread(new Runnable() {
+		    public void run() {
+		        Log.d("UI thread", "I am the UI thread");
+		        handler = new Handler();
+		    }
+		});	
 	}
 
 	/** * 设置组件位置的方法 * * @param x * @param y */
@@ -145,6 +170,7 @@ public abstract class ALayer implements Cloneable{
 		this.y = y;
 		this.centerX = x + w / 2;
 		this.centerY = y + h / 2;
+		getFrame().set(x, y, x+w, y+h);
 		if(isComposite() && getParent()!=null)
 			locationInScene = parent.locationInSceneByCompositeLocation((float) (centerX - w / 2), (float) (centerY - h / 2));
 		
@@ -155,24 +181,24 @@ public abstract class ALayer implements Cloneable{
 	/** * 绘制自己的抽象接口 * * @param canvas * @param paint */
 	public abstract void drawSelf(Canvas canvas, Paint paint);
 	
-//	public void addWithLayerLevelIncrease(ALayer layer){
+//	public void addWithLayerLevelIncrease(ILayer layer){
 //		throw new UnsupportedOperationException();
 //		
 //	}
 //	
-//	public void addWithOutLayerLevelIncrease(ALayer layer){
+//	public void addWithOutLayerLevelIncrease(ILayer layer){
 //		throw new UnsupportedOperationException();
 //	}
 //	
-//	public void remove(ALayer layer){
+//	public void remove(ILayer layer){
 //		throw new UnsupportedOperationException();
 //	}
 //	
-//	public ALayer getChild(int i){
+//	public ILayer getChild(int i){
 //		throw new UnsupportedOperationException();
 //	}
 //	
-//	public String getDescription(ALayer layer){
+//	public String getDescription(ILayer layer){
 //		throw new UnsupportedOperationException();
 //	}
 //
@@ -193,7 +219,7 @@ public abstract class ALayer implements Cloneable{
 
 
 //	@Override
-//	public void add(ALayer layer) {
+//	public void add(ILayer layer) {
 //		// TODO Auto-generated method stub
 //		layers.add(layer);
 //	}
@@ -207,45 +233,45 @@ public abstract class ALayer implements Cloneable{
 		this.smallViewRect = smallViewRect;
 	}
 
-	public void remove(ALayer layer) {
+	public void remove(ILayer layer) {
 		// TODO Auto-generated method stub
 		if(layers.remove(layer)){	
 			if(layer.isComposite() && layer.getParent()!=null){
 				layer.setLocationInScene(null);
 			}
-			layer.parent = null;
-			LayerManager.deleteLayerByLayerLevel(layer, layer.layerLevel);
+			layer.setParent(null);
+			LayerManager.deleteLayerByLayerLevel(layer, layer.getLayerLevel());
 		}
 	}
 
-	public void addWithLayerLevelIncrease(ALayer layer) {
+	public void addWithLayerLevelIncrease(ILayer layer) {
 		// TODO Auto-generated method stub
-		layer.layerLevel = layerLevel + 1;
+		layer.setLayerLevel(layerLevel + 1);
 		layers.add(layer);
 		layer.setParent(this);
-		LayerManager.addLayerByLayerLevel(layer, layer.layerLevel);
+		LayerManager.addLayerByLayerLevel(layer, layer.getLayerLevel());
 	}
 	
-	public void addWithLayerLevelIncrease(ALayer layer, int increaseNum) {
+	public void addWithLayerLevelIncrease(ILayer layer, int increaseNum) {
 		// TODO Auto-generated method stub
 
-		layer.layerLevel = layerLevel + increaseNum;
+		layer.setLayerLevel(layerLevel + increaseNum);
 		for(int i =0; i<increaseNum;i++){
 			LayerManager.increaseNewLayer();
 		}
 		layers.add(layer);
 		layer.setParent(this);
-		LayerManager.addLayerByLayerLevel(layer, layer.layerLevel);
+		LayerManager.addLayerByLayerLevel(layer, layer.getLayerLevel());
 	}
 
-	public void addWithOutLayerLevelIncrease(ALayer layer){
-		layer.layerLevel = layerLevel;
+	public void addWithOutLayerLevelIncrease(ILayer layer){
+		layer.setLayerLevel(layerLevel);
 		layers.add(layer);
 		layer.setParent(this);
-		LayerManager.addLayerByLayerLevel(layer, layer.layerLevel);
+		LayerManager.addLayerByLayerLevel(layer, layer.getLayerLevel());
 	}
 	
-	public void addWithLayerLevel(ALayer layer, int layerLevel) {
+	public void addWithLayerLevel(ILayer layer, int layerLevel) {
 		// TODO Auto-generated method stub
 //		int a = LayerManager.get;
 //		for(int i = ; i<layerLevel;i++){
@@ -257,23 +283,23 @@ public abstract class ALayer implements Cloneable{
 	}
 	
 	//composite
-	public void addChild(ALayer layer){
+	public void addChild(ILayer layer){
 		if(layer.getParent()==null){
 			setComposite(true);
 			layer.setComposite(true);
 			layers.add(layer);
 			layer.setParent(this);
-			layer.locationInScene = this.locationInSceneByCompositeLocation(layer.getX(), layer.getY());
+			layer.setLocationInScene(this.locationInSceneByCompositeLocation(layer.getX(), layer.getY()));
 		}else{
 			throw new RuntimeException("child already has parent.");
 		}
 	}
 
-	public ALayer getChild(int i) {
+	public ILayer getChild(int i) {
 		// TODO Auto-generated method stub
 //		return layers.get(i);
 		int index = 0;
-		for(ALayer layer : layers){
+		for(ILayer layer : layers){
 			if(index == i){
 				return layer;
 			}
@@ -282,45 +308,52 @@ public abstract class ALayer implements Cloneable{
 		return null;
 	}
 
+	public ConcurrentLinkedQueue<ILayer> getLayers() {
+		return layers;
+	}
+
 	public Iterator createIterator(){
 		return new CompositeIterator(layers.iterator());
 		
 	}
 
 	public void moveAllChild(int offsetLayerLevel){
-		for(ALayer layer : layers){
+		for(ILayer layer : layers){
 //			layer.moveAllChild(offsetLayerLevel);
-			int oldLayerLevel = layer.layerLevel;
-			int newoldLayerLevel = layer.layerLevel + offsetLayerLevel;
+			int oldLayerLevel = layer.getLayerLevel();
+			int newoldLayerLevel = layer.getLayerLevel() + offsetLayerLevel;
 			LayerManager.changeLayerToNewLayerLevel(layer, oldLayerLevel, newoldLayerLevel);
 		}
 	}
 	
-	public void setParent(ALayer parent){
+	public void setParent(ILayer parent){
 		this.parent = parent;
 	}
 	
-	public ALayer getParent(){
+	public ILayer getParent(){
 		return parent;
 	}
 	
 	public void setInitWidth(int w){
 		this.w = w;
 		this.centerX = x + w / 2;
-		
+		getFrame().set(x, y, x+w, y+h);
 	}
 	
 	public void setInitHeight(int h){
 		this.h = h;
 		this.centerY = y + h / 2;
+		getFrame().set(x, y, x+w, y+h);
 	}
 	
 	public void setWidth(int w){
 		this.w = w;
+		getFrame().set(x, y, x+w, y+h);
 	}
 	
 	public void setHeight(int h){
 		this.h= h;
+		getFrame().set(x, y, x+w, y+h);
 	}
 	
 	public float getX(){
@@ -334,6 +367,7 @@ public abstract class ALayer implements Cloneable{
 	public void setX(float x){
 		this.x = x;
 		this.centerX = x + w/2;
+		getFrame().set(x, y, x+w, y+h);
 		if(isComposite() && getParent()!=null)
 			locationInScene = parent.locationInSceneByCompositeLocation((float) (centerX - w / 2), (float) (centerY - h / 2));
 	}
@@ -349,6 +383,7 @@ public abstract class ALayer implements Cloneable{
 	public void setY(float y){
 		this.y = y;
 		this.centerY = y + h/2;
+		getFrame().set(x, y, x+w, y+h);
 		if(isComposite() && getParent()!=null)
 			locationInScene = parent.locationInSceneByCompositeLocation((float) (centerX - w / 2), (float) (centerY - h / 2));
 	}
@@ -357,6 +392,14 @@ public abstract class ALayer implements Cloneable{
 		this.bitmap = bitmap;
 		setInitWidth(bitmap.getWidth());
 		setInitHeight(bitmap.getHeight());
+	}
+
+	public Bitmap getBitmap() {
+		return bitmap;
+	}
+
+	public RectF getDst() {
+		return dst;
 	}
 
 	public int getLayerLevel() {
@@ -387,8 +430,10 @@ public abstract class ALayer implements Cloneable{
 	}
 	
 	public void removeFromParent(){
-		if(parent!=null)
+		if(parent!=null){
 			parent.remove(this);
+			removeFromAuto();
+		}
 	}
 	
 	public void removeFromAuto(){
@@ -419,6 +464,14 @@ public abstract class ALayer implements Cloneable{
 		this.isTouching = isTouching;
 	}
 
+	public boolean isPressed() {
+		return pressed;
+	}
+
+	public void setPressed(boolean pressed) {
+		this.pressed = pressed;
+	}
+
 	public boolean isComposite() {
 		return isComposite;
 	}
@@ -427,20 +480,35 @@ public abstract class ALayer implements Cloneable{
 		this.isComposite = isComposite;
 	}
 	
-	
-	
+	public RectF getFrame() {
+		return frame;
+	}
+
+	public void setFrame(RectF frame) {
+		
+		if(frame!=null){
+			setPosition(frame.left, frame.top);	
+			setInitWidth((int) (frame.right - frame.left));
+			setInitHeight((int) (frame.bottom - frame.top));	
+		}else
+			this.frame = frame;
+	}
+
 	public PointF getLocationInScene() {
 		return locationInScene;
 	}
 
 	public void setLocationInScene(PointF locationInScene) {
 		this.locationInScene = locationInScene;
+		for(ILayer child : layers){
+			child.setLocationInScene(locationInSceneByCompositeLocation(child.getX(), child.getY()));	
+		}	
 	}
 
 	public PointF locationInLayer(float x, float y){
 		PointF locationInLayer = new PointF(x, y);
 		if(isComposite()){
-			for(ALayer layer : getLayersFromRootLayerToCurrentLayerInComposite()){
+			for(ILayer layer : getLayersFromRootLayerToCurrentLayerInComposite()){
 				locationInLayer.x = locationInLayer.x - layer.getX();
 				locationInLayer.y = locationInLayer.y - layer.getY();
 			}
@@ -451,7 +519,7 @@ public abstract class ALayer implements Cloneable{
 	public PointF locationInSceneByCompositeLocation(float locationInLayerX, float locationInLayerY){
 		PointF locationInScene = new PointF(locationInLayerX, locationInLayerY);
 		if(isComposite()){
-			for(ALayer layer : getLayersFromRootLayerToCurrentLayerInComposite()){
+			for(ILayer layer : getLayersFromRootLayerToCurrentLayerInComposite()){
 				locationInScene.x = locationInScene.x + layer.getX();
 				locationInScene.y = locationInScene.y + layer.getY();
 			}
@@ -459,22 +527,22 @@ public abstract class ALayer implements Cloneable{
 		return locationInScene;
 	}
 	
-	public ALayer getRootLayer(){
-		ALayer rootLayer = this;
-		while(rootLayer.parent!=null){
-			rootLayer = rootLayer.parent;
+	public ILayer getRootLayer(){
+		ILayer rootLayer = this;
+		while(rootLayer.getParent()!=null){
+			rootLayer = rootLayer.getParent();
 		}
 		return rootLayer;
 	}
 	
-	public List<ALayer> getLayersFromRootLayerToCurrentLayerInComposite(){
-		List<ALayer> layersFromRootLayerToCurrentLayer = new ArrayList<ALayer>();
+	public List<ILayer> getLayersFromRootLayerToCurrentLayerInComposite(){
+		List<ILayer> layersFromRootLayerToCurrentLayer = new ArrayList<ILayer>();
 		layersFromRootLayerToCurrentLayer.add(0, this);
-		ALayer rootLayer = this;
-		while(rootLayer.parent!=null){
-			if(!rootLayer.parent.isComposite())
+		ILayer rootLayer = this;
+		while(rootLayer.getParent()!=null){
+			if(!rootLayer.getParent().isComposite())
 				break;
-			rootLayer = rootLayer.parent;
+			rootLayer = rootLayer.getParent();
 			layersFromRootLayerToCurrentLayer.add(0, rootLayer);
 		}
 		return layersFromRootLayerToCurrentLayer;
@@ -490,7 +558,7 @@ public abstract class ALayer implements Cloneable{
 	
 	public boolean onTouchEvent(MotionEvent event) {
 		// TODO Auto-generated method stub
-		for(ALayer child : layers){
+		for(ILayer child : layers){
 			if(child.onTouchEvent(event)){
 				return false;
 			}
@@ -499,17 +567,20 @@ public abstract class ALayer implements Cloneable{
 		float x;
 		float y;
 		
+		RectF f;
 		if(isComposite()){
 			PointF locationInLayer = locationInLayer(event.getX(), event.getY());
 			x = locationInLayer.x;
 			y = locationInLayer.y;
+			f = new RectF(0, 0, w, h);
 		}else{
 			x = event.getX();
 			y = event.getY();
+			f = new RectF(x, y, x+w, y+h);
 		}
 		
-		RectF f = new RectF(0, 0, w,
-				h);
+//		RectF f = new RectF(0, 0, w,
+//				h);
 		
 		switch (event.getAction()) {
 		case MotionEvent.ACTION_DOWN:
@@ -528,6 +599,7 @@ public abstract class ALayer implements Cloneable{
 			if (!f.contains(x, y)) {
 				return false;
 			}
+			
 			mHasPerformedLongPress = false;
 
 			if (mPendingCheckForLongPress == null) {
@@ -547,8 +619,10 @@ public abstract class ALayer implements Cloneable{
 
 			isTouching = true;
 			pressed = true;
+			onTouched(event);
 			break;
 		case MotionEvent.ACTION_UP:
+			onTouched(event);
 			if (!isTouching) {
 				return false;
 //				break;
@@ -559,8 +633,10 @@ public abstract class ALayer implements Cloneable{
 			if(!pressed){
 				break;
 			}
-			
+
 			pressed = false;
+			
+			onTouched(event);
 			
 			if (mHasPerformedLongPress) {
 				break;
@@ -578,9 +654,11 @@ public abstract class ALayer implements Cloneable{
 				return false;
 //				break;
 			}
+
 			// setPressed(false);
 			isTouching = false;
 			pressed = false;
+			onTouched(event);
 			// removeTapCallback();
 			removeLongPressCallback();
 			break;
@@ -589,10 +667,12 @@ public abstract class ALayer implements Cloneable{
 				return false;
 //				break;
 			}
+
 			if (!f.contains(x, y)) {
 				removeLongPressCallback();
 				pressed = false;
 			}
+			onTouched(event);
 			break;
 		default:
 			break;
@@ -600,6 +680,8 @@ public abstract class ALayer implements Cloneable{
 
 		return true;
 	}
+	
+	protected abstract void onTouched(MotionEvent event);
 
 	private void removeLongPressCallback() {
 		if (mPendingCheckForLongPress != null) {
@@ -630,7 +712,7 @@ public abstract class ALayer implements Cloneable{
     }
 
 	@Override
-	protected Object clone() throws CloneNotSupportedException {
+	public Object clone() throws CloneNotSupportedException {
 		// TODO Auto-generated method stub
 		ALayer layer = (ALayer) super.clone();
 		if(src!=null)
@@ -638,10 +720,17 @@ public abstract class ALayer implements Cloneable{
 		if(dst!=null)
 			layer.dst = new RectF(dst);
 		
-//		layer.layers = new ArrayList<ALayer>(layers.size());
-		layer.layers = new ConcurrentLinkedQueue<ALayer>();
+//		layer.layers = new ArrayList<ILayer>(layers.size());
+		layer.layers = new ConcurrentLinkedQueue<ILayer>();
 		
-	    for(ALayer item: layers) layer.layers.add((ALayer)item.clone());
+		for(ILayer item: layers) layer.layers.add((ALayer) ((ALayer)item).clone());
+//	    for(ILayer item: layers) {
+//	    	if(item instanceof ALayer){
+//	    		ALayer layerCanClone = (ALayer) ((ALayer)item).clone();
+//	    		layer.layers.add(layerCanClone);
+//	    	}else
+//	    		throw new CloneNotSupportedException();
+//	    }
 	    
 	    if(smallViewRect!=null)
 	    	layer.smallViewRect = new RectF(smallViewRect);
@@ -678,12 +767,15 @@ public abstract class ALayer implements Cloneable{
 		
 		layer.handler = new Handler();
 		
+		if(frame!=null)
+			layer.setFrame(new RectF(getFrame()));
+		
 //		private OnLayerClickListener onLayerClickListener;
 //		private OnLayerLongClickListener onLayerLongClickListener;
 		
 //		private boolean isTouching = false;
 	    
-//	    ALayer parent maybe not need clone.
+//	    ILayer parent maybe not need clone.
 	    
 		return layer;
 	}

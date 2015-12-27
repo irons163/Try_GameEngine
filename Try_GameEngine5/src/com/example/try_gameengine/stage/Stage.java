@@ -11,7 +11,6 @@ public abstract class Stage extends Activity{
 	private String id;
 //	protected Context context;
 	
-	
 	public static final int CLEAR_TASK = Intent.FLAG_ACTIVITY_CLEAR_TASK;
 	public static final int CLEAR_TOP = Intent.FLAG_ACTIVITY_CLEAR_TOP;
 	public static final int CLEAR_WHEN_TASK_RESET = Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET;

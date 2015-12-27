@@ -12,6 +12,7 @@ public class ButtonLayer extends Layer{
 	private final int UP_BITMAP_INDEX = 2;
 	
 	boolean isClickCancled = false;
+	private LabelLayer labelLayer;
 	private String text;
 //	private Paint paint;
 	private Bitmap[] buttonBitmaps = new Bitmap[3];
@@ -47,7 +48,11 @@ public class ButtonLayer extends Layer{
 
 	public ButtonLayer(String text, int w, int h, boolean autoAdd){
 		super(w, h, autoAdd);
-		this.text = text;
+		labelLayer = new LabelLayer(text, 0, 0, false);
+		labelLayer.setAutoHWByText();
+		labelLayer.setPosition(getCenterX() - labelLayer.w/2.0f, getCenterY() - labelLayer.h/2.0f);
+		addChild(labelLayer);
+//		this.text = text;
 //		paint = new Paint();
 	}
 	
@@ -55,6 +60,9 @@ public class ButtonLayer extends Layer{
 	public void drawSelf(Canvas canvas, Paint paint) {
 		// TODO Auto-generated method stub
 		super.drawSelf(canvas, paint);
+		
+		if(labelLayer!=null)
+			labelLayer.drawSelf(canvas, paint);
 		
 //		if(bitmap!=null){
 //			canvas.drawBitmap(bitmap, 0, 0, paint);
@@ -89,20 +97,40 @@ public class ButtonLayer extends Layer{
 //		this.paint = paint;
 //	}
 	
+	public void setText(String text){
+		if(labelLayer==null){
+			labelLayer = new LabelLayer(text, 0, 0, false);
+			labelLayer.setAutoHWByText();
+			labelLayer.setPosition(getCenterX() - labelLayer.w/2.0f, getCenterY() - labelLayer.h/2.0f);
+			addChild(labelLayer);
+		}	
+	}
+	
 	public void setTextSize(float textSize){
-		getPaint().setTextSize(textSize);
+		if(labelLayer!=null && labelLayer.getPaint()!=null)
+			labelLayer.getPaint().setTextSize(textSize);
 	}
 	
 	public void setTextStyle(Typeface typeface){
-		getPaint().setTypeface(typeface);
+		if(labelLayer!=null && labelLayer.getPaint()!=null)
+			getPaint().setTypeface(typeface);
 	}
 	
 	public void setTextColor(int color){
-		getPaint().setColor(color);
+		if(labelLayer!=null && labelLayer.getPaint()!=null)
+			getPaint().setColor(color);
 	}
 	
+//	@Override
+//	public boolean onTouchEvent(MotionEvent event) {
+//		// TODO Auto-generated method stub
+//		if(super.onTouchEvent(event)){
+//			return onTouch(event);
+//		}
+//		return false;
+//	}
+//	
 	public boolean onTouch(MotionEvent event){
-		
 		float x = event.getX();
 		float y = event.getY();
 		if(event.getAction()==MotionEvent.ACTION_DOWN && this.dst.contains(x, y)){
@@ -131,8 +159,39 @@ public class ButtonLayer extends Layer{
 		return false;
 	}
 	
+	@Override
+	protected void onTouched(MotionEvent event) {
+		// TODO Auto-generated method stub
+		if(event.getAction()==MotionEvent.ACTION_DOWN && isPressed()){
+			if(buttonBitmaps[DOWN_BITMAP_INDEX]!=null){
+				this.bitmap = buttonBitmaps[DOWN_BITMAP_INDEX];
+			}
+			isClickCancled = false;
+		}else if(event.getAction()==MotionEvent.ACTION_MOVE && isPressed()){
+		}else if(event.getAction()==MotionEvent.ACTION_MOVE && !isPressed()){
+			isClickCancled = true;
+		}else if(event.getAction()==MotionEvent.ACTION_UP && isClickCancled && !isPressed()){
+			if(buttonBitmaps[UP_BITMAP_INDEX]!=null){
+				this.bitmap = buttonBitmaps[UP_BITMAP_INDEX];
+			}
+		}else if(event.getAction()==MotionEvent.ACTION_UP && isPressed() && !isClickCancled){
+			if(buttonBitmaps[UP_BITMAP_INDEX]!=null){
+				this.bitmap = buttonBitmaps[UP_BITMAP_INDEX];
+			}
+//			onClickListener.onClick(this);
+		}
+	}
+	
 	public void setOnClickListener(OnClickListener onClickListener){
 		this.onClickListener = onClickListener;
+		setOnLayerClickListener(new OnLayerClickListener() {
+			
+			@Override
+			public void onClick(ILayer layer) {
+				// TODO Auto-generated method stub
+				ButtonLayer.this.onClickListener.onClick((ButtonLayer)layer);
+			}
+		});
 	}
 	
 	public interface OnClickListener{
