@@ -77,6 +77,7 @@ public abstract class Stage extends Activity{
 	}
 	
 	protected void initStage(){
+		StageManager.init(this);
 		sceneManager = initSceneManager();
 	}
 	
