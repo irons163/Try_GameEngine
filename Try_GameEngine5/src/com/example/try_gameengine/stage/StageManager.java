@@ -19,6 +19,10 @@ public class StageManager {
 		StageManager.context = context;
 	}
 	
+	public static void init(Stage currentActiveStage){
+		StageManager.currentActiveStage = currentActiveStage;
+	}
+	
 	public static void addStage(Stage stage){
 		stages.add(stage);
 	}

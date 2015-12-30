@@ -58,7 +58,83 @@ public abstract class ALayer implements ILayer{
 	
 	private boolean isTouching = false;
 	
+	private boolean isEnable = true;
+	
+	private boolean isHidden = false;
+	
 	private RectF frame = new RectF();
+	
+	private LayerParam layerParam = new LayerParam();
+	
+	public class LayerParam implements Cloneable{
+		private boolean isEnabledPercentagePositionX;
+		private boolean isEnabledPercentagePositionY;
+		private boolean isEnabledPercentageSizeW;
+		private boolean isEnabledPercentageSizeH;
+		
+		private float percentageX;
+		private float percentageY;
+		private float percentageW;
+		private float percentageH;
+
+		
+		
+		public boolean isEnabledPercentagePositionX() {
+			return isEnabledPercentagePositionX;
+		}
+		public boolean isEnabledPercentagePositionY() {
+			return isEnabledPercentagePositionY;
+		}
+		public boolean isEnabledPercentageSizeW() {
+			return isEnabledPercentageSizeW;
+		}
+		public boolean isEnabledPercentageSizeH() {
+			return isEnabledPercentageSizeH;
+		}
+		public void setEnabledPercentagePositionX(boolean isEnabledPercentagePositionX) {
+			this.isEnabledPercentagePositionX = isEnabledPercentagePositionX;
+		}
+		public void setEnabledPercentagePositionY(boolean isEnabledPercentagePositionY) {
+			this.isEnabledPercentagePositionY = isEnabledPercentagePositionY;
+		}
+		public void setEnabledPercentageSizeW(boolean isEnabledPercentageSizeW) {
+			this.isEnabledPercentageSizeW = isEnabledPercentageSizeW;
+		}
+		public void setEnabledPercentageSizeH(boolean isEnabledPercentageSizeH) {
+			this.isEnabledPercentageSizeH = isEnabledPercentageSizeH;
+		}
+		public float getPercentageX() {
+			return percentageX;
+		}
+		public float getPercentageY() {
+			return percentageY;
+		}
+		public float getPercentageW() {
+			return percentageW;
+		}
+		public float getPercentageH() {
+			return percentageH;
+		}
+
+		public void setPercentageX(float percentageX) {
+			this.percentageX = percentageX;
+		}
+		public void setPercentageY(float percentageY) {
+			this.percentageY = percentageY;
+		}
+		public void setPercentageW(float percentageW) {
+			this.percentageW = percentageW;
+		}
+		public void setPercentageH(float percentageH) {
+			this.percentageH = percentageH;
+		}
+		
+		@Override
+		protected Object clone() throws CloneNotSupportedException {
+			// TODO Auto-generated method stub
+			return super.clone();
+		}
+	}
 	
 	public interface OnLayerClickListener{
 		public void onClick(ILayer layer);
@@ -338,12 +414,28 @@ public abstract class ALayer implements ILayer{
 		this.w = w;
 		this.centerX = x + w / 2;
 		getFrame().set(x, y, x+w, y+h);
+		
+		if(isComposite() && getLayers().size()!=0){
+			for(ILayer child : getLayers()){
+				if(child.isComposite() && child.getLayerParam().isEnabledPercentagePositionX()){
+					child.setX(w * child.getLayerParam().getPercentageX());
+				}
+			}		
+		}
 	}
 	
 	public void setInitHeight(int h){
 		this.h = h;
 		this.centerY = y + h / 2;
 		getFrame().set(x, y, x+w, y+h);
+		
+		if(isComposite() && getLayers().size()!=0){
+			for(ILayer child : getLayers()){
+				if(child.isComposite() && child.getLayerParam().isEnabledPercentagePositionY()){
+					child.setY(h * child.getLayerParam().getPercentageY());
+				}
+			}		
+		}
 	}
 	
 	public void setWidth(int w){
@@ -370,6 +462,13 @@ public abstract class ALayer implements ILayer{
 		getFrame().set(x, y, x+w, y+h);
 		if(isComposite() && getParent()!=null)
 			locationInScene = parent.locationInSceneByCompositeLocation((float) (centerX - w / 2), (float) (centerY - h / 2));
+		if(isComposite() && getLayers().size()!=0){
+			for(ILayer child : getLayers()){
+				if(child.isComposite()){
+					child.setX(child.getX());
+				}
+			}		
+		}
 	}
 	
 	public float getY(){
@@ -386,6 +485,13 @@ public abstract class ALayer implements ILayer{
 		getFrame().set(x, y, x+w, y+h);
 		if(isComposite() && getParent()!=null)
 			locationInScene = parent.locationInSceneByCompositeLocation((float) (centerX - w / 2), (float) (centerY - h / 2));
+		if(isComposite() && getLayers().size()!=0){
+			for(ILayer child : getLayers()){
+				if(child.isComposite()){
+					child.setY(child.getY());
+				}
+			}		
+		}
 	}
 	
 	public void setBitmapAndAutoChangeWH(Bitmap bitmap){
@@ -411,14 +517,16 @@ public abstract class ALayer implements ILayer{
 	}
 
 	public int getAlpha() {
-		return alpha;
+		if(paint==null)
+			return alpha;
+		return getPaint().getAlpha();
 	}
 
 	public void setAlpha(int alpha) {
-		this.alpha = alpha;
+//		this.alpha = alpha;
 		if(paint==null)
 			paint = new Paint();
-		paint.setAlpha(this.alpha);
+		paint.setAlpha(alpha);
 	}
 
 	public Paint getPaint() {
@@ -432,6 +540,8 @@ public abstract class ALayer implements ILayer{
 	public void removeFromParent(){
 		if(parent!=null){
 			parent.remove(this);
+			removeFromAuto();
+		}else{
 			removeFromAuto();
 		}
 	}
@@ -493,9 +603,67 @@ public abstract class ALayer implements ILayer{
 		}else
 			this.frame = frame;
 	}
+	
+	public LayerParam getLayerParam() {
+		return layerParam;
+	}
+
+	public void setLayerParam(LayerParam layerParam) {
+		this.layerParam = layerParam;
+	}
 
 	public PointF getLocationInScene() {
 		return locationInScene;
+	}
+	
+	
+
+	public boolean isAutoAdd() {
+		return autoAdd;
+	}
+
+	public void setAutoAdd(boolean autoAdd) {
+		if(this.autoAdd == autoAdd)
+			return;
+		this.autoAdd = autoAdd;
+		if (autoAdd) {
+			this.autoAdd = autoAdd;
+			LayerManager.addLayer(this);// 在LayerManager类中添加本组件
+		}else{
+			removeFromAuto();
+		}
+	}
+	
+	public boolean isEnable() {
+		return isEnable;
+	}
+
+	public boolean isHidden() {
+		return isHidden;
+	}
+
+	public void setEnable(boolean isEnable) {
+		this.isEnable = isEnable;
+	}
+
+	public void setHidden(boolean isHidden) {
+		this.isHidden = isHidden;
+		setEnable(!isHidden);
+		if(isHidden){
+			if(getPaint()!=null)
+				this.alpha = getPaint().getAlpha();
+			setAlpha(0);
+		}else{
+			setAlpha(this.alpha);
+		}
+		
+		if(isComposite() && getLayers().size()!=0){
+			for(ILayer child : getLayers()){
+				if(child.isComposite()){
+					child.setHidden(isHidden);
+				}
+			}		
+		}
 	}
 
 	public void setLocationInScene(PointF locationInScene) {
@@ -564,6 +732,9 @@ public abstract class ALayer implements ILayer{
 			}
 		}
 
+		if(!isEnable())
+			return false;
+		
 		float x;
 		float y;
 		
@@ -769,6 +940,9 @@ public abstract class ALayer implements ILayer{
 		
 		if(frame!=null)
 			layer.setFrame(new RectF(getFrame()));
+		
+		layer.layerParam = (LayerParam) this.layerParam.clone();
+				
 		
 //		private OnLayerClickListener onLayerClickListener;
 //		private OnLayerLongClickListener onLayerLongClickListener;

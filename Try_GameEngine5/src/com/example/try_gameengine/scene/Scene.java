@@ -105,7 +105,8 @@ public abstract class Scene extends Activity{
 	}
 	
 	public void addAutoDraw(ALayer layer){
-		LayerManager.addSceneLayerByLayerLevel(layer, sceneLayerLevel);
+//		LayerManager.addSceneLayerByLayerLevel(layer, sceneLayerLevel);
+		layer.setAutoAdd(true);
 	}
 	
 	@Override
