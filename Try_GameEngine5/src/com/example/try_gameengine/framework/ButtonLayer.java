@@ -48,12 +48,16 @@ public class ButtonLayer extends Layer{
 
 	public ButtonLayer(String text, int w, int h, boolean autoAdd){
 		super(w, h, autoAdd);
+		initLabelLayer(text);
+//		this.text = text;
+//		paint = new Paint();
+	}
+	
+	private void initLabelLayer(String text){
 		labelLayer = new LabelLayer(text, 0, 0, false);
 		labelLayer.setAutoHWByText();
 		labelLayer.setPosition(getCenterX() - labelLayer.w/2.0f, getCenterY() - labelLayer.h/2.0f);
 		addChild(labelLayer);
-//		this.text = text;
-//		paint = new Paint();
 	}
 	
 	@Override
@@ -99,10 +103,7 @@ public class ButtonLayer extends Layer{
 	
 	public void setText(String text){
 		if(labelLayer==null){
-			labelLayer = new LabelLayer(text, 0, 0, false);
-			labelLayer.setAutoHWByText();
-			labelLayer.setPosition(getCenterX() - labelLayer.w/2.0f, getCenterY() - labelLayer.h/2.0f);
-			addChild(labelLayer);
+			initLabelLayer(text);
 		}	
 	}
 	
@@ -113,12 +114,12 @@ public class ButtonLayer extends Layer{
 	
 	public void setTextStyle(Typeface typeface){
 		if(labelLayer!=null && labelLayer.getPaint()!=null)
-			getPaint().setTypeface(typeface);
+			labelLayer.getPaint().setTypeface(typeface);
 	}
 	
 	public void setTextColor(int color){
 		if(labelLayer!=null && labelLayer.getPaint()!=null)
-			getPaint().setColor(color);
+			labelLayer.getPaint().setColor(color);
 	}
 	
 //	@Override
@@ -190,6 +191,16 @@ public class ButtonLayer extends Layer{
 			public void onClick(ILayer layer) {
 				// TODO Auto-generated method stub
 				ButtonLayer.this.onClickListener.onClick((ButtonLayer)layer);
+			}
+		});
+		
+		if(labelLayer!=null)
+		labelLayer.setOnLayerClickListener(new OnLayerClickListener() {
+			
+			@Override
+			public void onClick(ILayer layer) {
+				// TODO Auto-generated method stub
+				ButtonLayer.this.onClickListener.onClick(ButtonLayer.this);
 			}
 		});
 	}

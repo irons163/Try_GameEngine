@@ -406,7 +406,12 @@ public class LayerManager {
 		}
 	}
 	
+	///////////////////////////////////
+	//// touch
+	///////////////////////////////////
 	public static synchronized void onTouchSceneLayers(MotionEvent event, int sceneLayerLevel) {
+		onTouchLayersByZposition(event, sceneLayerLevel);
+		
 		if(sceneLayerLevelList.containsKey(sceneLayerLevel+"")){
 			synchronized (sceneLayerLevelList) {
 				List<List<ILayer>> layerLevelList = sceneLayerLevelList.get(sceneLayerLevel+"");
@@ -416,7 +421,11 @@ public class LayerManager {
 					for (int j = layersByTheSameLevel.size()-1; j >= 0 ; j--) {
 						ILayer layer = layersByTheSameLevel.get(j);
 						if(layer instanceof ButtonLayer){
-							if(((ButtonLayer) layer).onTouch(event)){
+//							if(((ButtonLayer) layer).onTouch(event)){
+//								isTouched = true;
+//								break;
+//							}
+							if(layer.onTouchEvent(event)){
 								isTouched = true;
 								break;
 							}
@@ -427,6 +436,68 @@ public class LayerManager {
 				}
 			}
 		}
+	}
+	
+	public static synchronized void onTouchLayers(MotionEvent event) {
+		onTouchLayersByZposition(event);
+
+		boolean isTouched = false;
+		for (int i = layerLevelList.size()-1; i >= 0; i--) {
+			List<ILayer> layersByTheSameLevel = layerLevelList.get(i);
+			for (int j = layersByTheSameLevel.size()-1; j >= 0 ; j--) {
+				ILayer layer = layersByTheSameLevel.get(j);
+				if(layer.onTouchEvent(event)){
+					isTouched = true;
+					break;
+				}		
+			}
+			if(isTouched)
+				break;
+		}
+
+	}
+	
+	//this method touch not support zposition
+	public static void onTouchLayersBySpecificLevel(MotionEvent event,
+			int level) {
+		boolean isTouched = false;
+		List<ILayer> layersByTheSameLevel = layerLevelList.get(level);
+		for (int j = layersByTheSameLevel.size()-1; j >= 0 ; j--) {
+			ILayer layer = layersByTheSameLevel.get(j);
+			if(layer.onTouchEvent(event)){
+				isTouched = true;
+				break;
+			}		
+		}
+	}
+	
+	private static boolean onTouchLayersByZposition(MotionEvent event, int sceneLayerLevel){
+		if(!scencesLayersByZposition.containsKey(sceneLayerLevel+""))
+			return false;
+		TreeMap<Integer, List<ILayer>> layerLevelListByZposition = scencesLayersByZposition.get(sceneLayerLevel+"");
+		return onTouchLayersByZposition(event, layerLevelListByZposition);
+	}
+	
+	private static boolean onTouchLayersByZposition(MotionEvent event){
+		TreeMap<Integer, List<ILayer>> layerLevelListByZposition = scencesLayersByZposition.get(sceneLayerLevelByRecentlySet+"");
+		return onTouchLayersByZposition(event, layerLevelListByZposition);
+	}
+	
+	private static boolean onTouchLayersByZposition(MotionEvent event, TreeMap<Integer, List<ILayer>> layerLevelListByZposition){
+		if(layerLevelListByZposition==null)
+			return false;
+		for(Map.Entry<Integer, List<ILayer>> entry : layerLevelListByZposition.descendingMap().entrySet()) {
+			  int layerZposition = entry.getKey();
+			  List<ILayer> layersByTheSameZposition = entry.getValue();
+//			  System.out.println(layerZposition + " => " + layersByTheSameZposition.toString());
+			  for(int i = layersByTheSameZposition.size()-1; i >= 0; i--){
+				  ILayer layerByZposition = layersByTheSameZposition.get(i);
+				  if(layerByZposition.onTouchEvent(event)){
+					  return true; 
+				  }
+			  }
+		}
+		return false;
 	}
 
 	public static synchronized void increaseNewLayer() {

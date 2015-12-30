@@ -5,6 +5,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import com.example.try_gameengine.framework.ALayer.LayerParam;
+
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -125,4 +127,8 @@ public interface ILayer extends Cloneable{
 	public boolean onTouchEvent(MotionEvent event);
 	
 	public Object clone() throws CloneNotSupportedException;
+
+	public LayerParam getLayerParam();
+
+	public void setHidden(boolean isHidden);
 }
