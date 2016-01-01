@@ -32,7 +32,9 @@ public class RemoteController {
 		DownKeyUpCommand,
 		DownKeyDownCommand,
 		LeftKeyUpCommand,
-		LeftKeyDownCommand
+		LeftKeyDownCommand,
+		RightKeyUpCommand,
+		RightKeyDownCommand
 	}
 	
 	public interface RemoteContollerOnTouchEventListener{
@@ -124,13 +126,32 @@ public class RemoteController {
 					
 					break;
 				case UPKeyDownCommand:
+					
+					break;
+				case DownKeyUpCommand:
+									
+					break;
+				case DownKeyDownCommand:
+					
+					break;
+				case LeftKeyUpCommand:
+					
+					break;
+				case LeftKeyDownCommand:
+					
+					break;
+				case RightKeyUpCommand:
+					/*//Demo. press DownKey and move Layers which are in the LayerManager go right.
 					for(List<ILayer> layers : LayerManager.getLayerLevelList()){
 						for(ILayer layer : layers){
 							if(layer instanceof Sprite){
-								((Sprite)layer).move(0, -10);
+								((Sprite)layer).move(10,0);
 							}
 						}
-					}
+					}*/
+					break;
+				case RightKeyDownCommand:
+					
 					break;
 				default:
 					break;
@@ -238,9 +259,23 @@ public class RemoteController {
 		return remoteLoader.getUpKey();
 	}
 	
+	public DownKey getDownKey(){
+		return remoteLoader.getDownKey();
+	}
+	
+	public LeftKey getLeftKey(){
+		return remoteLoader.getLeftKey();
+	}
+	
+	public RightKey getRightKey(){
+		return remoteLoader.getRightKey();
+	}
+	
 	public void drawRemoteController(Canvas canvas, Paint paint){
-		remoteLoader.getUpKey().drawSelf(canvas, paint);
+//		remoteLoader.getUpKey().drawSelf(canvas, paint);
+//		remoteLoader.getDownKey().drawSelf(canvas, paint);
 		remoteLoader.getLeftKey().drawSelf(canvas, paint);
+		remoteLoader.getRightKey().drawSelf(canvas, paint);
 	}
 	
 	public void setUpKyPosition(float x, float y){
@@ -251,11 +286,27 @@ public class RemoteController {
 		remoteLoader.getUpKey().setBitmapAndAutoChangeWH(bitmap);
 	}
 	
+	public void setDownKyPosition(float x, float y){
+		remoteLoader.getDownKey().setPosition(x, y);
+	}
+	
+	public void setDownKyBitmap(Bitmap bitmap){
+		remoteLoader.getDownKey().setBitmapAndAutoChangeWH(bitmap);
+	}
+	
 	public void setLeftKyPosition(float x, float y){
 		remoteLoader.getLeftKey().setPosition(x, y);
 	}
 	
 	public void setLeftKyBitmap(Bitmap bitmap){
 		remoteLoader.getLeftKey().setBitmapAndAutoChangeWH(bitmap);
+	}
+	
+	public void setRightKyPosition(float x, float y){
+		remoteLoader.getRightKey().setPosition(x, y);
+	}
+	
+	public void setRightKyBitmap(Bitmap bitmap){
+		remoteLoader.getRightKey().setBitmapAndAutoChangeWH(bitmap);
 	}
 }

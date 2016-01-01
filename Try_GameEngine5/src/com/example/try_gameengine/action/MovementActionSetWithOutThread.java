@@ -2,7 +2,11 @@ package com.example.try_gameengine.action;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Future;
 
+import com.example.try_gameengine.action.MovementAction.MovementActionMementoImpl;
+import com.example.try_gameengine.action.MovementAction.TimerOnTickListener;
+import com.example.try_gameengine.action.MovementActionSetWithThreadPool.MovementActionSetWithThreadPoolMementoImpl;
 import com.example.try_gameengine.action.visitor.IMovementActionVisitor;
 
 import android.util.Log;
@@ -13,6 +17,7 @@ public class MovementActionSetWithOutThread extends MovementAction {
 	private boolean isActionFinish = true;
 	private MovementActionInfo info;
 	public boolean isStop = false;
+	private int actionIndex;
 	
 	@Override
 	public MovementAction addMovementAction(MovementAction action) {
@@ -47,22 +52,33 @@ public class MovementActionSetWithOutThread extends MovementAction {
 
 		if (isActionFinish) {
 			isActionFinish = false;
+			actionListener.actionStart();
+			if(actions.size()>0){
+				MovementAction action = actions.get(0);
+				cancelAction = action;
+				action.start();	
+			}else{
+				isActionFinish = true;
+				actionListener.actionFinish();
+			}
+			
+//			isActionFinish = false;
 
-					actionListener.actionStart();
-					do{
-						for(MovementAction action : actions){
-							if(isStop){
-								isLoop = false;
-								break;
-							}
-							cancelAction = action;
-							action.start();	
-						}
-						actionListener.actionCycleFinish();
-					}while(isLoop);
+//					actionListener.actionStart();
+//					do{
+//						for(MovementAction action : actions){
+//							if(isStop){
+//								isLoop = false;
+//								break;
+//							}
+//							cancelAction = action;
+//							action.start();	
+//						}
+//						actionListener.actionCycleFinish();
+//					}while(isLoop);
 
-					isActionFinish = true;
-					actionListener.actionFinish();
+//					isActionFinish = true;
+//					actionListener.actionFinish();
 
 		}
 	}
@@ -160,8 +176,21 @@ public class MovementActionSetWithOutThread extends MovementAction {
 	@Override
 	public void trigger() {
 		// TODO Auto-generated method stub
-		for (MovementAction action : this.actions) {
+//		for (MovementAction action : this.actions) {
+//			action.trigger();
+//		}
+		if(isActionFinish)
+			return;
+		
+		if(actions.size()>0 && actionIndex < actions.size()){
+			MovementAction action = actions.get(actionIndex);
 			action.trigger();
+			if(action.isFinish()){
+				actionIndex++;
+			}
+		}else{
+			isActionFinish = true;
+			actionListener.actionFinish();
 		}
 	}
 	
@@ -184,6 +213,54 @@ public class MovementActionSetWithOutThread extends MovementAction {
 		
 //		if(!isSigleThread)
 //			this.thread.interrupt();
+	}
+	
+	public IMovementActionMemento createMovementActionMemento(){
+		movementActionMemento = new MovementActionSetWithOutThreadMementoImpl(actions, thread, timerOnTickListener, description, copyMovementActionList, currentInfoList, movementItemList, totalCopyMovementActionList, isActionFinish, isActionFinish, isActionFinish, isActionFinish, name, cancelAction, allMovementActoinList, isActionFinish, info, isStop, actionIndex);
+		return movementActionMemento;
+	}
+	
+	public void restoreMovementActionMemento(IMovementActionMemento movementActionMemento){
+//		MovementActionMementoImpl mementoImpl = (MovementActionMementoImpl) movementActionMemento;
+		super.restoreMovementActionMemento(this.movementActionMemento);
+		MovementActionSetWithOutThreadMementoImpl mementoImpl = (MovementActionSetWithOutThreadMementoImpl) this.movementActionMemento;
+		this.isActionFinish = mementoImpl.isActionFinish;
+		this.info = mementoImpl.info;
+		this.isStop = mementoImpl.isStop;
+		this.actionIndex = mementoImpl.actionIndex;
+	}
+	
+	protected static class MovementActionSetWithOutThreadMementoImpl extends MovementActionMementoImpl{
+	
+		private boolean isActionFinish;
+		private MovementActionInfo info;
+		private boolean isStop;
+		private int actionIndex;
+		
+		public MovementActionSetWithOutThreadMementoImpl(List<MovementAction> actions,
+				Thread thread, TimerOnTickListener timerOnTickListener,
+				String description,
+				List<MovementAction> copyMovementActionList,
+				List<MovementActionInfo> currentInfoList,
+				List<MovementAction> movementItemList,
+				List<MovementAction> totalCopyMovementActionList,
+				boolean isCancelFocusAppendPart, boolean isFinish,
+				boolean isLoop, boolean isSigleThread, String name,
+				MovementAction cancelAction,
+				List<MovementAction> allMovementActoinList,
+				boolean isActionFinish, MovementActionInfo info,
+				boolean isStop, int actionIndex) {
+			super(actions, thread, timerOnTickListener, description,
+					copyMovementActionList, currentInfoList, movementItemList,
+					totalCopyMovementActionList, isCancelFocusAppendPart,
+					isFinish, isLoop, isSigleThread, name, cancelAction,
+					allMovementActoinList);
+			this.isActionFinish = isActionFinish;
+			this.info = info;
+			this.isStop = isStop;
+			this.actionIndex = actionIndex;
+		}
+			
 	}
 	
 	@Override

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.test.AndroidTestCase;
+import android.test.suitebuilder.annotation.LargeTest;
 
 import com.example.try_gameengine.BitmapUtil;
 import com.example.try_gameengine.action.CopyMoveDecorator;
@@ -1445,6 +1446,7 @@ public class MovementActionTest extends AndroidTestCase{
 		
 	}
 	
+	@LargeTest
 	public void testActionThreadPool() throws Exception{
 		
 		for(int i = 0; i < 40; i++){
@@ -1480,6 +1482,6 @@ public class MovementActionTest extends AndroidTestCase{
 			Thread.sleep(500);
 		}
 		
-		assertEquals(true, Thread.activeCount() < 20);
+		assertEquals(true, Thread.activeCount() < 30);
 	}
 }

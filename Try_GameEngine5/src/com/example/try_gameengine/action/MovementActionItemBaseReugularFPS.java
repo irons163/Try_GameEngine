@@ -302,6 +302,11 @@ public class MovementActionItemBaseReugularFPS extends MovementAction{
 		pauseFrameNum = millisDelay;
 	}
 	
+	@Override
+	public boolean isFinish(){
+		return isStop;
+	}
+	
 	public IMovementActionMemento createMovementActionMemento(){
 		movementActionMemento = new MovementActionItemBaseReugularFPSMementoImpl(actions, thread, timerOnTickListener, name, copyMovementActionList, currentInfoList, movementItemList, totalCopyMovementActionList, isCycleFinish, isCycleFinish, isCycleFinish, isCycleFinish, name, cancelAction, allMovementActoinList, millisTotal, millisDelay, dx, dy, info, resumeTotal, resetTotal, rotationController, gravityController, name, updateTime, frameIdx, isStop, isCycleFinish, triggerEnable, frameTimes, resumeFrameIndex, resumeFrameCount, pauseFrameNum, pauseFrameCounter, nextframeTrigger, lastTriggerFrameNum);
 		if(this.info!=null){

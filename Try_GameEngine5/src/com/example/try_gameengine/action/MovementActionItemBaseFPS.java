@@ -266,4 +266,9 @@ public class MovementActionItemBaseFPS extends MovementActionItem{
 	void pause(){	
 		pauseFrameNum = 1000;
 	}
+	
+	@Override
+	public boolean isFinish(){
+		return isStop;
+	}
 }
