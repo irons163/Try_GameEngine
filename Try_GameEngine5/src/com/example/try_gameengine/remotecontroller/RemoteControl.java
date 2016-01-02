@@ -3,6 +3,8 @@ package com.example.try_gameengine.remotecontroller;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.view.MotionEvent;
+
 import com.example.try_gameengine.remotecontroller.RemoteController.CommandType;
 
 public class RemoteControl {
@@ -46,10 +48,10 @@ public class RemoteControl {
 //		return offCommands[slot].execute();
 //	}
 	
-	public CommandType executePressDown(float x, float y, int motionEventPointerId){
+	public CommandType executePressDown(float x, float y, int motionEventPointerId, MotionEvent event){
 		CommandType commandType = CommandType.None;
 		for(Command command : onCommands){
-			if(command.checkExecute(x, y)){
+			if(command.checkExecute(x, y, event)){
 				commandType = command.execute();
 				command.setMotionEventPointerId(motionEventPointerId);
 				break;
@@ -58,25 +60,33 @@ public class RemoteControl {
 		return commandType;
 	}
 	
-	public CommandType executePressUp(float x, float y, int motionEventPointerId){
+	public CommandType executePressUp(float x, float y, int motionEventPointerId, MotionEvent event){
 		CommandType commandType = CommandType.None;
-		if(motionEventPointerId!=-1){
-			for(int i = 0; i < onCommands.length; i++){
-				Command onCommand = onCommands[i];
-				if(onCommand.getMotionEventPointerId()==motionEventPointerId){
-					commandType = offCommands[i].execute();
-					onCommand.setMotionEventPointerId(-1);
-					break;
-				}
-			}
-		}else{
-			for(Command command : offCommands){
-				if(command.checkExecute(x, y)){
-					commandType = command.execute();
-					break;
-				}
+//		if(motionEventPointerId!=-1){
+//			for(int i = 0; i < onCommands.length; i++){
+//				Command onCommand = onCommands[i];
+//				if(onCommand.getMotionEventPointerId()==motionEventPointerId){
+//					commandType = offCommands[i].execute();
+//					onCommand.setMotionEventPointerId(-1);
+//					break;
+//				}
+//			}
+//		}else{
+//			for(Command command : offCommands){
+//				if(command.checkExecute(x, y, event)){
+//					commandType = command.execute();
+//					break;
+//				}
+//			}
+//		}
+		
+		for(Command command : offCommands){
+			if(command.checkExecute(x, y, event)){
+				commandType = command.execute();
+				break;
 			}
 		}
+
 		return commandType;
 	}
 }

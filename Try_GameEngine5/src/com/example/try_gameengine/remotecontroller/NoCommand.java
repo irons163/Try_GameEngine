@@ -1,5 +1,7 @@
 package com.example.try_gameengine.remotecontroller;
 
+import android.view.MotionEvent;
+
 import com.example.try_gameengine.remotecontroller.RemoteController.CommandType;
 
 public class NoCommand implements Command{
@@ -12,7 +14,7 @@ public class NoCommand implements Command{
 	}
 
 	@Override
-	public boolean checkExecute(float x, float y) {
+	public boolean checkExecute(float x, float y, MotionEvent event) {
 		// TODO Auto-generated method stub
 		return false;
 	}

@@ -56,11 +56,15 @@ public abstract class ALayer implements ILayer{
 	private OnLayerClickListener onLayerClickListener;
 	private OnLayerLongClickListener onLayerLongClickListener;
 	
+	private boolean isEnableMultiTouch = false;
+	
 	private boolean isTouching = false;
 	
 	private boolean isEnable = true;
 	
 	private boolean isHidden = false;
+	
+	private int mActivePointerId;
 	
 	private RectF frame = new RectF();
 	
@@ -634,6 +638,14 @@ public abstract class ALayer implements ILayer{
 		}
 	}
 	
+	public boolean isEnableMultiTouch() {
+		return isEnableMultiTouch;
+	}
+
+	public void setEnableMultiTouch(boolean isEnableMultiTouch) {
+		this.isEnableMultiTouch = isEnableMultiTouch;
+	}
+
 	public boolean isEnable() {
 		return isEnable;
 	}
@@ -734,26 +746,46 @@ public abstract class ALayer implements ILayer{
 
 		if(!isEnable())
 			return false;
-		
+          
 		float x;
 		float y;
 		
+		final int downPointerIndex = (event.getAction() & MotionEvent.ACTION_POINTER_INDEX_MASK) 
+                >> MotionEvent.ACTION_POINTER_INDEX_SHIFT;
+        if((event.getAction() & MotionEvent.ACTION_MASK) == MotionEvent.ACTION_POINTER_DOWN
+        	||(event.getAction() & MotionEvent.ACTION_MASK) == MotionEvent.ACTION_DOWN){
+//        	final int downPointerIndex = (event.getAction() & MotionEvent.ACTION_POINTER_INDEX_MASK) 
+//                    >> MotionEvent.ACTION_POINTER_INDEX_SHIFT;
+        	if (isTouching || pressed) {
+				return false;
+			}
+                    mActivePointerId = event.getPointerId(downPointerIndex);
+        }else if(event.getPointerId(downPointerIndex)!=mActivePointerId){
+        	return false;
+        }
+		
 		RectF f;
 		if(isComposite()){
-			PointF locationInLayer = locationInLayer(event.getX(), event.getY());
+            x = event.getX(downPointerIndex);
+            y = event.getY(downPointerIndex);
+			PointF locationInLayer = locationInLayer(x, y);
 			x = locationInLayer.x;
 			y = locationInLayer.y;
 			f = new RectF(0, 0, w, h);
 		}else{
-			x = event.getX();
-			y = event.getY();
-			f = new RectF(x, y, x+w, y+h);
+            x = event.getX(downPointerIndex);
+            y = event.getY(downPointerIndex);
+			f = new RectF(getX(), getY(), getX()+w, getY()+h);
 		}
 		
 //		RectF f = new RectF(0, 0, w,
 //				h);
-		
-		switch (event.getAction()) {
+
+		switch (event.getAction() & MotionEvent.ACTION_MASK) {
+		case MotionEvent.ACTION_POINTER_DOWN:
+			if(!isEnableMultiTouch())
+				return false;
+			
 		case MotionEvent.ACTION_DOWN:
 //			RectF f = new RectF(
 //					rectF.centerX()
@@ -792,6 +824,9 @@ public abstract class ALayer implements ILayer{
 			pressed = true;
 			onTouched(event);
 			break;
+		case MotionEvent.ACTION_POINTER_UP:
+			if(!isEnableMultiTouch())
+				return false;
 		case MotionEvent.ACTION_UP:
 			onTouched(event);
 			if (!isTouching) {

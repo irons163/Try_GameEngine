@@ -22,9 +22,11 @@ public class RemoteLoader {
 		remoteControl = new RemoteControl();
 		
 		rightKey = new RightKey(BitmapUtil.rightKey, Config.currentScreenWidth-BitmapUtil.rightKey.getWidth(), Config.currentScreenHeight-BitmapUtil.rightKey.getHeight(), 1, false);
+		rightKey.setEnableMultiTouch(true);
 		RightKeyCommandPressDown upKeyCommandPressDown = new RightKeyCommandPressDown(rightKey);
 		RightKeyCommandPressUp upKeyCommandPressUp = new RightKeyCommandPressUp(rightKey);
 		leftKey = new LeftKey(BitmapUtil.leftKey, 0, Config.currentScreenHeight-BitmapUtil.leftKey.getHeight(), 1, false);
+		leftKey.setEnableMultiTouch(true);
 		LeftKeyCommandPressDown leftKeyCommandPressDown = new LeftKeyCommandPressDown(leftKey);
 		LeftKeyCommandPressUp leftKeyCommandPressUp = new LeftKeyCommandPressUp(leftKey);
 		
