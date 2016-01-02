@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 
 public abstract class Stage extends Activity{
 	private String id;
@@ -83,6 +84,33 @@ public abstract class Stage extends Activity{
 	
 	public SceneManager getSceneManager(){
 		return sceneManager;
+	}
+	
+	@Override
+	public void onBackPressed() {
+		// TODO Auto-generated method stub
+//		super.onBackPressed();
+		
+		if(!sceneManager.previous())
+			finish();
+	}
+	
+	@Override
+	public void finish() {
+		// TODO Auto-generated method stub
+		super.finish();
+		
+		sceneManager.removeAllScenes();
+		Log.d("Stage", "Finish.");
+	}
+	
+	@Override
+	protected void onDestroy() {
+		// TODO Auto-generated method stub
+		super.onDestroy();
+		
+		sceneManager.removeAllScenes();
+		Log.d("Stage", "Destroy.");
 	}
 	
 //	public int getMode() {

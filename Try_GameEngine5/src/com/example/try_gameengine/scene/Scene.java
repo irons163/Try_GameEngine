@@ -113,7 +113,7 @@ public abstract class Scene extends Activity{
 	public void finish() {
 		// TODO Auto-generated method stub
 		super.finish();
-		((Activity)context).finish();
+//		((Activity)context).finish();
 		setMode(FINISHED);
 		gameModel.setData(new DestoryData());
 		LayerManager.deleteSceneLayersByLayerLevel(sceneLayerLevel);

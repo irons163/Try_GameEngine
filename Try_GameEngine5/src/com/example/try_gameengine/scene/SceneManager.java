@@ -3,6 +3,8 @@ package com.example.try_gameengine.scene;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.app.Activity;
+
 import com.example.try_gameengine.framework.LayerManager;
 
 public class SceneManager {
@@ -108,7 +110,7 @@ public class SceneManager {
 		currentActiveScene = scene;
 	}
 	
-	public void previous(){
+	public void previousWithCycle(){
 		currentSceneIndex--;
 		if(currentActiveScene!=null){
 			currentActiveScene.stop();
@@ -135,15 +137,21 @@ public class SceneManager {
 		currentActiveScene = scene;
 	}
 	
-	public void previousAndLeaveWhenNoPrevious(){
+	/**
+	 * @return if false, there is not previous scene. The current scene is the first scene in scene manager.
+	 * Otherwise, return true.
+	 */
+	public boolean previous(){
 		if(currentSceneIndex==0){
 			if(currentActiveScene!=null){
 				currentActiveScene.stop();
 				scenes.remove(currentActiveScene);
 				currentActiveScene.finish();
 			}
+			return false;
 		}else{
-			previous();
+			previousWithCycle();
+			return true;
 		}
 	}
 	
@@ -159,5 +167,22 @@ public class SceneManager {
 	
 	public void removeScene(int index){
 		scenes.remove(index);
+	}
+	
+	//remove scene but not destroy, if you want add it back.
+	public void removeSceneButNotDestroy(Scene scene){
+		scenes.remove(scene);
+		scene.finish();
+	}
+	
+	public void removeSceneButNotDestroy(int index){
+		scenes.remove(index).finish();
+	}
+	
+	public void removeAllScenes(){
+		for(Scene scene : scenes){
+			scene.finish();
+		}
+		scenes.clear();
 	}
 }
