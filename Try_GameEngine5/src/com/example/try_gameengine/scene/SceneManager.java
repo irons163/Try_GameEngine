@@ -14,6 +14,10 @@ public class SceneManager {
 	
 	public void addScene(Scene scene){
 		scenes.add(scene);
+		if(scene.sceneLayerLevel<0){
+			LayerManager.setLayerBySenceIndex(scenes.size()-1);
+			scene.setLayerLevel(scenes.size()-1);
+		}
 	}
 	
 	public List<Scene> getScenes(){
@@ -24,7 +28,7 @@ public class SceneManager {
 		Scene targetScene = null;
 		for(int i =0; i<scenes.size(); i++){
 			Scene scene = scenes.get(i);
-			if(scene.getId().equals(id)){
+			if(scene.getId()!=null && scene.getId().equals(id)){
 				targetScene = scene;
 			}
 		}
@@ -98,7 +102,7 @@ public class SceneManager {
 		}
 	}
 	
-	public void next(){
+	public void nextWithCycle(){
 		currentSceneIndex++;
 		if(currentActiveScene!=null)
 			currentActiveScene.stop(); 
@@ -108,6 +112,15 @@ public class SceneManager {
 		Scene scene = scenes.get(currentSceneIndex);
 		scene.start();
 		currentActiveScene = scene;
+	}
+	
+	public boolean next(){
+		if(currentSceneIndex==scenes.size()-1){
+			return false;
+		}else{
+			nextWithCycle();
+			return true;
+		}
 	}
 	
 	public void previousWithCycle(){
@@ -163,20 +176,21 @@ public class SceneManager {
 	
 	public void removeScene(Scene scene){
 		scenes.remove(scene);
+		scene.finish();
 	}
 	
 	public void removeScene(int index){
-		scenes.remove(index);
+		scenes.remove(index).finish();
 	}
 	
 	//remove scene but not destroy, if you want add it back.
 	public void removeSceneButNotDestroy(Scene scene){
 		scenes.remove(scene);
-		scene.finish();
+		
 	}
 	
 	public void removeSceneButNotDestroy(int index){
-		scenes.remove(index).finish();
+		scenes.remove(index);
 	}
 	
 	public void removeAllScenes(){

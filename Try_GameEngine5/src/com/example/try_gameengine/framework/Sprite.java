@@ -12,6 +12,7 @@ import android.graphics.PointF;
 import android.graphics.Rect;
 import android.graphics.RectF;
 
+import com.example.try_gameengine.action.MAction;
 import com.example.try_gameengine.action.MovementAction;
 import com.example.try_gameengine.framework.Config.DestanceType;
 import com.example.try_gameengine.physics.PhysicsBody;
@@ -182,6 +183,8 @@ public class Sprite extends Layer {
 	}
 	
 	public void setAction(String actionName) {
+		if(actionName==null)
+			return;
 		frameIdx = 0;
 		currentFrame = 0;
 		currentAction = actions.get(actionName);
@@ -715,6 +718,7 @@ public class Sprite extends Layer {
 	}
 	
 	public void runMovementAction(MovementAction movementAction){
+		MAction.attachToTargetSprite(movementAction, this);
 		movementAction.getCurrentInfoList();
 		movementAction.modifyWithSpriteXY(getX(), getY());
 		movementAction.initMovementAction();

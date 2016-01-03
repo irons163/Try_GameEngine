@@ -117,6 +117,10 @@ public class MAction {
 		return null;	
 	}
 	
+	public static MovementAction waitAction(long triggerTotal){
+		return new MovementActionItemBaseReugularFPS(new MovementActionInfo(triggerTotal, 1, 0, 0, "waitAction", null, false));	
+	}
+	
 	public static MovementAction sequence(MovementAction[] movementActions){
 		MovementAction movementActionsetWithThreadPool = new MovementActionSetWithThreadPool();
 

@@ -499,6 +499,72 @@ public class LayerManager {
 		}
 		return false;
 	}
+	
+	////////////////////////////
+	//// process
+	////////////////////////////
+	public static synchronized void processSceneLayers(int sceneLayerLevel) {
+		if(sceneLayerLevelList.containsKey(sceneLayerLevel+"")){
+			synchronized (sceneLayerLevelList) {
+				List<List<ILayer>> layerLevelList = sceneLayerLevelList.get(sceneLayerLevel+"");
+				for (List<ILayer> layersByTheSameLevel : layerLevelList) {
+					for (ILayer layer : layersByTheSameLevel) {
+						if(!layer.iszPositionValid() && layer instanceof Sprite)
+							((Sprite)layer).frameTrig();
+					}
+				}
+				
+				processLayersByZposition(sceneLayerLevel);
+			}
+		}
+	}
+	
+	public static synchronized void processLayers() {
+		for (List<ILayer> layersByTheSameLevel : layerLevelList) {
+			for (ILayer layer : layersByTheSameLevel) {
+				if(!layer.iszPositionValid() && layer instanceof Sprite)
+					((Sprite)layer).frameTrig();
+			}
+		}
+		
+		processLayersByZposition();
+	}
+
+	//this method process not support zposition
+	public static void processLayersBySpecificLevel(int level) {
+		List<ILayer> layersByTheSameLevel = layerLevelList.get(level);
+		for (ILayer layer : layersByTheSameLevel) {
+			if(layer instanceof Sprite)
+				((Sprite)layer).frameTrig();
+		}
+	}
+	
+	private static void processLayersByZposition(int sceneLayerLevel){
+		if(!scencesLayersByZposition.containsKey(sceneLayerLevel+""))
+			return;
+		TreeMap<Integer, List<ILayer>> layerLevelListByZposition = scencesLayersByZposition.get(sceneLayerLevel+"");
+		processLayersByZposition(layerLevelListByZposition);
+	}
+	
+	private static void processLayersByZposition(){
+		TreeMap<Integer, List<ILayer>> layerLevelListByZposition = scencesLayersByZposition.get(sceneLayerLevelByRecentlySet+"");
+		processLayersByZposition(layerLevelListByZposition);
+	}
+	
+	private static void processLayersByZposition(TreeMap<Integer, List<ILayer>> layerLevelListByZposition){
+		if(layerLevelListByZposition==null)
+			return;
+		for(Map.Entry<Integer, List<ILayer>> entry : layerLevelListByZposition.entrySet()) {
+			  int layerZposition = entry.getKey();
+			  List<ILayer> layersByTheSameZposition = entry.getValue();
+//			  System.out.println(layerZposition + " => " + layersByTheSameZposition.toString());
+			  for(ILayer layerByZposition : layersByTheSameZposition){
+				  if(layerByZposition instanceof Sprite)
+					  ((Sprite)layerByZposition).frameTrig();
+			  }
+		}
+	}
+	
 
 	public static synchronized void increaseNewLayer() {
 		layerLevelList.add(new ArrayList<ILayer>());

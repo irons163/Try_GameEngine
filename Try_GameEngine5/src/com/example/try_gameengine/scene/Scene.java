@@ -32,23 +32,27 @@ public abstract class Scene extends Activity{
 //	public Scene(){
 //		
 //	}
-	protected int level;
+//	protected int level;
 	
 	protected int sceneLayerLevel;
 	
 	public Scene(Context context, String id){
-		this(context, id, 0);
+		this(context, id, -1);
 	}
 	
-	public Scene(Context context, String id, int level){
-		this(context, id, level, RESTART);
+	public Scene(Context context, String id, int sceneLayerLevel){
+		this(context, id, sceneLayerLevel, RESTART);
 	}
 	
-	public Scene(Context context, String id, int level, int mode){
+	public Scene(Context context, String id, int sceneLayerLevel, int mode){
 		this.context = context;
 		this.id = id;
-		this.level = level;
+		this.sceneLayerLevel = sceneLayerLevel;
 		this.mode = mode;
+		
+		if(sceneLayerLevel>=0)
+			LayerManager.setLayerBySenceIndex(sceneLayerLevel);
+		
 		initGameModel();
 		initGameController();
 	}

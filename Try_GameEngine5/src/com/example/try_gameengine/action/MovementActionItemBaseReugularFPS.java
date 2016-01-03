@@ -175,7 +175,8 @@ public class MovementActionItemBaseReugularFPS extends MovementAction{
 			}else if(resumeFrameCount==lastTriggerFrameNum+info.getDelay()){
 				doRotation();
 				doGravity();
-				timerOnTickListener.onTick(dx, dy);		
+				if(timerOnTickListener!=null)
+					timerOnTickListener.onTick(dx, dy);		
 				lastTriggerFrameNum += info.getDelay();
 				
 			// add by 150228. if the delay change by main app, the function: else if(resumeFrameCount==lastTriggerFrameNum+info.getDelay() maybe make problem.
