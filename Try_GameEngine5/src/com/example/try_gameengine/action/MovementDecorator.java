@@ -6,7 +6,7 @@ import java.util.List;
 import com.example.try_gameengine.action.visitor.IMovementActionVisitor;
 
 public abstract class MovementDecorator extends MovementAction{
-	protected MovementAction action;
+//	protected MovementAction action;
 	
 	public abstract String getDescription();  
 	
@@ -15,8 +15,8 @@ public abstract class MovementDecorator extends MovementAction{
 //		for(MovementAction movementAction : actions){
 //			movementAction.accept(movementActionVisitor);
 //		}
-		movementActionVisitor.visitComposite(action);
-		for(MovementAction movementAction : action.getAction().getActions()){
+		movementActionVisitor.visitComposite(getAction());
+		for(MovementAction movementAction : getAction().getActions()){
 			movementAction.accept(movementActionVisitor);
 		}
 	}

@@ -420,7 +420,7 @@ public class LayerManager {
 					List<ILayer> layersByTheSameLevel = layerLevelList.get(i);
 					for (int j = layersByTheSameLevel.size()-1; j >= 0 ; j--) {
 						ILayer layer = layersByTheSameLevel.get(j);
-						if(layer instanceof ButtonLayer){
+//						if(layer instanceof ButtonLayer){
 //							if(((ButtonLayer) layer).onTouch(event)){
 //								isTouched = true;
 //								break;
@@ -429,7 +429,7 @@ public class LayerManager {
 								isTouched = true;
 								break;
 							}
-						}		
+//						}		
 					}
 					if(isTouched)
 						break;
