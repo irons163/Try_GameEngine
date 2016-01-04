@@ -104,7 +104,9 @@ public class ButtonLayer extends Layer{
 	public void setText(String text){
 		if(labelLayer==null){
 			initLabelLayer(text);
-		}	
+		}else{
+			labelLayer.setText(text);
+		}
 	}
 	
 	public void setTextSize(float textSize){
