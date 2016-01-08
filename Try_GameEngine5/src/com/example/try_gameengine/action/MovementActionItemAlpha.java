@@ -2,26 +2,17 @@ package com.example.try_gameengine.action;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Future;
 
-import android.util.Log;
-
-import com.example.try_gameengine.action.MovementAction.MovementActionMementoImpl;
-import com.example.try_gameengine.action.MovementAction.TimerOnTickListener;
-import com.example.try_gameengine.action.MovementActionSetWithThreadPool.MovementActionSetWithThreadPoolMementoImpl;
 import com.example.try_gameengine.action.listener.IActionListener;
 import com.example.try_gameengine.action.visitor.IMovementActionVisitor;
+import com.example.try_gameengine.framework.Config;
 
-public class MovementActionItemBaseReugularFPS extends MovementAction{ 
+public class MovementActionItemAlpha extends MovementAction{ 
 	long millisTotal;
 	long millisDelay;
-	float dx;
-	float dy;
 	MovementActionInfo info;
 	long resumeTotal;
-	long resetTotal;
-	IRotationController rotationController;
-	IGravityController gravityController;	
+	long resetTotal;	
 	public String name;	
 	private long updateTime;	
 	public int frameIdx;	
@@ -36,44 +27,38 @@ public class MovementActionItemBaseReugularFPS extends MovementAction{
 	FrameTrigger nextframeTrigger;
 	private long lastTriggerFrameNum;
 	private boolean isEnableSetSpriteAction = true;
+	private int originalAlpha;
+	private int alpha;
+	private int offsetAlphaByOnceTrigger;
 	
-	public MovementActionItemBaseReugularFPS(long millisTotal, long millisDelay, final int dx, final int dy){
-		this(millisTotal, millisDelay, dx, dy, "MovementItem");
+	private static final int NO_ORGINAL_ALPHA = -1;
+	
+	public MovementActionItemAlpha(long millisTotal, int alpha){
+		this((long) (millisTotal/(1000.0f/Config.fps)), 1, NO_ORGINAL_ALPHA, alpha, "MovementActionItemAlpha");
 	}
 	
-	public MovementActionItemBaseReugularFPS(long millisTotal, long millisDelay, final int dx, final int dy, String description){
+	public MovementActionItemAlpha(long millisTotal, int originalAlpha, int alpha){
+		this((long) (millisTotal/(1000.0f/Config.fps)), 1, originalAlpha, alpha, "MovementActionItemAlpha");
+	}
+	
+	public MovementActionItemAlpha(long triggerTotal, long triggerInterval, int alpha){
+		this(triggerTotal, triggerTotal, NO_ORGINAL_ALPHA, alpha, "MovementActionItemAlpha");
+	}
+	
+	public MovementActionItemAlpha(long triggerTotal, long triggerInterval, int originalAlpha, int alpha){
+		this(triggerTotal, triggerInterval, originalAlpha, alpha, "MovementActionItemAlpha");
+	}
+	
+	public MovementActionItemAlpha(long millisTotal, long millisDelay, int originalAlpha, int alpha, String description){
 //		super(millisTotal, millisDelay, dx, dy, description);
 		
 		this.millisTotal = millisTotal;
 		this.millisDelay = millisDelay;
-		this.dx = dx;
-		this.dy = dy;
-		info = new MovementActionInfo(millisTotal, millisDelay, dx, dy);
 		this.description = description + ",";
+		this.originalAlpha = originalAlpha;
+		this.alpha = alpha;
 		movementItemList.add(this);
-	}
-	
-	public MovementActionItemBaseReugularFPS(MovementActionInfo info){
-//		super(info);
-		millisTotal = info.getTotal();
-		millisDelay = info.getDelay();
-		dx = info.getDx();
-		dy = info.getDy();
-		if(info.getDescription()!=null)
-			this.description = info.getDescription() + ",";
-		this.info = info;
-		movementItemList.add(this);
-	}
-	
-	public MovementActionItemBaseReugularFPS(long[] frameTimes, final int dx, final int dy, String description){
-//		super(0, 0, dx, dy, description);
-		
-		this.frameTimes = frameTimes;
-		this.dx = dx;
-		this.dy = dy;
-		info = new MovementActionInfo(millisTotal, millisDelay, dx, dy);
-		this.description = description + ",";
-		movementItemList.add(this);
+		info = new MovementActionInfo(millisTotal, millisDelay, 0, 0);
 	}
 	
 	@Override
@@ -81,20 +66,24 @@ public class MovementActionItemBaseReugularFPS extends MovementAction{
 		// TODO Auto-generated method stub
 
 	}
-
-	
 	
 	@Override
 	public void start() {
-		// TODO Auto-generated method stub
-
-		
+		// TODO Auto-generated method stub	
 		resumeFrameIndex = 0;
 		resumeFrameCount = 0;
 		pauseFrameNum = 0;
 		pauseFrameCounter = 0;
 		isStop = false;
 		isCycleFinish = false;
+		if(originalAlpha==NO_ORGINAL_ALPHA)
+			originalAlpha = info.getSprite().getAlpha();
+		else
+			info.getSprite().setAlpha(originalAlpha);
+		
+		int offsetAlpha= alpha - originalAlpha;
+		offsetAlphaByOnceTrigger = (int) (offsetAlpha/(info.getTotal()/info.getDelay()));
+		
 		if(!isEnableSetSpriteAction)
 			isEnableSetSpriteAction = isRepeatSpriteActionIfMovementActionRepeat;
 		if(info.getSprite()!=null && isEnableSetSpriteAction)
@@ -103,14 +92,10 @@ public class MovementActionItemBaseReugularFPS extends MovementAction{
 		triggerEnable = true;
 		isEnableSetSpriteAction = isRepeatSpriteActionIfMovementActionRepeat;
 	}
-	
-	
-	
+
 	public interface FrameTrigger{
 		public void trigger();
 	}
-	
-	
 	
 	@Override
 	public void trigger(){
@@ -146,12 +131,10 @@ public class MovementActionItemBaseReugularFPS extends MovementAction{
 	public void setActionListener(IActionListener actionListener){
 		this.actionListener = actionListener;
 	}
-	
-	
-	
+
 	private void frameTriggerFPSStart(){
 		if (!isStop) {
-			synchronized (MovementActionItemBaseReugularFPS.this) {
+			synchronized (MovementActionItemAlpha.this) {
 			if(resumeFrameCount>=info.getDelay()){	
 				if(resumeFrameCount==info.getTotal())
 					isCycleFinish = true;
@@ -168,15 +151,10 @@ public class MovementActionItemBaseReugularFPS extends MovementAction{
 				isStop = true;
 				doReset();	
 				triggerEnable = false;
-				if(actionListener!=null)
-					actionListener.actionFinish();
-				
-				MovementActionItemBaseReugularFPS.this.notifyAll();
+
 			}else if(resumeFrameCount==lastTriggerFrameNum+info.getDelay()){
-				doRotation();
-				doGravity();
-				if(timerOnTickListener!=null)
-					timerOnTickListener.onTick(dx, dy);		
+//				timerOnTickListener.onTick(dx, dy);		
+				info.getSprite().setAlpha(info.getSprite().getAlpha()+offsetAlphaByOnceTrigger);
 				lastTriggerFrameNum += info.getDelay();
 				
 			// add by 150228. if the delay change by main app, the function: else if(resumeFrameCount==lastTriggerFrameNum+info.getDelay() maybe make problem.
@@ -187,62 +165,40 @@ public class MovementActionItemBaseReugularFPS extends MovementAction{
 			}
 			
 			if(isCycleFinish){
+				info.getSprite().setAlpha(alpha);
+				
 				if(actionListener!=null)
 					actionListener.actionCycleFinish();
 				isCycleFinish = false;
+				
+				if(!isLoop){
+					if(actionListener!=null)
+						actionListener.actionFinish();
+					
+					MovementActionItemAlpha.this.notifyAll();
+				}
 			}
 			
 			}
 		}else{
-			synchronized (MovementActionItemBaseReugularFPS.this) {
-				MovementActionItemBaseReugularFPS.this.notifyAll();
+			synchronized (MovementActionItemAlpha.this) {
+				MovementActionItemAlpha.this.notifyAll();
 			}
 		}
 	}
-	
 
-	
 	@Override
 	protected MovementAction initTimer(){
 		millisTotal = info.getTotal();
 		millisDelay = info.getDelay();
-		dx = info.getDx();
-		dy = info.getDy();
-		rotationController = info.getRotationController();
-		gravityController = info.getGravityController();
 		
 		resumeFrameIndex = 0;
 		return this;
 	}
 	
-	private void doRotation(){
-		if(rotationController!=null){
-			rotationController.execute(info);
-			dx = info.getDx();
-			dy = info.getDy();
-		}
-	}
-	
-	private void doGravity(){
-		if(gravityController!=null){
-			gravityController.execute(info);
-			dx = info.getDx();
-			dy = info.getDy();
-		}
-	}
-	
 	private void doReset(){
-		if(gravityController!=null){
-			gravityController.reset(info);
-		}
-		if(rotationController!=null)
-			rotationController.reset(info);
-
-
 		millisTotal = info.getTotal();
 		millisDelay = info.getDelay();
-		dx = info.getDx();
-		dy = info.getDy();
 	}
 	
 	@Override
@@ -293,8 +249,8 @@ public class MovementActionItemBaseReugularFPS extends MovementAction{
 	@Override
 	public void cancelMove(){
 		isStop = true;
-		synchronized (MovementActionItemBaseReugularFPS.this) {
-			MovementActionItemBaseReugularFPS.this.notifyAll();
+		synchronized (MovementActionItemAlpha.this) {
+			MovementActionItemAlpha.this.notifyAll();
 		}
 	}
 	
@@ -309,7 +265,7 @@ public class MovementActionItemBaseReugularFPS extends MovementAction{
 	}
 	
 	public IMovementActionMemento createMovementActionMemento(){
-		movementActionMemento = new MovementActionItemBaseReugularFPSMementoImpl(actions, thread, timerOnTickListener, name, copyMovementActionList, currentInfoList, movementItemList, totalCopyMovementActionList, isCycleFinish, isCycleFinish, isCycleFinish, isCycleFinish, name, cancelAction, allMovementActoinList, millisTotal, millisDelay, dx, dy, info, resumeTotal, resetTotal, rotationController, gravityController, name, updateTime, frameIdx, isStop, isCycleFinish, triggerEnable, frameTimes, resumeFrameIndex, resumeFrameCount, pauseFrameNum, pauseFrameCounter, nextframeTrigger, lastTriggerFrameNum);
+		movementActionMemento = new MovementActionItemBaseReugularFPSMementoImpl(actions, thread, timerOnTickListener, name, copyMovementActionList, currentInfoList, movementItemList, totalCopyMovementActionList, isCycleFinish, isCycleFinish, isCycleFinish, isCycleFinish, name, cancelAction, allMovementActoinList, millisTotal, millisDelay, info, resumeTotal, resetTotal, name, updateTime, frameIdx, isStop, isCycleFinish, triggerEnable, frameTimes, resumeFrameIndex, resumeFrameCount, pauseFrameNum, pauseFrameCounter, nextframeTrigger, lastTriggerFrameNum);
 		if(this.info!=null){
 			this.info.createIMovementActionInfoMemento();
 		}
@@ -322,13 +278,9 @@ public class MovementActionItemBaseReugularFPS extends MovementAction{
 		MovementActionItemBaseReugularFPSMementoImpl mementoImpl = (MovementActionItemBaseReugularFPSMementoImpl) this.movementActionMemento;
 		this.millisTotal = mementoImpl.millisTotal;
 		this.millisDelay = mementoImpl.millisDelay;
-		this.dx = mementoImpl.dx;
-		this.dy = mementoImpl.dy;
 		this.info = mementoImpl.info;
 		this.resumeTotal = mementoImpl.resumeTotal;
 		this.resetTotal = mementoImpl.resetTotal;
-		this.rotationController = mementoImpl.rotationController;
-		this.gravityController = mementoImpl.gravityController;
 		this.name = mementoImpl.name;
 		this.updateTime = mementoImpl.updateTime;
 		this.frameIdx = mementoImpl.frameIdx;
@@ -355,13 +307,9 @@ public class MovementActionItemBaseReugularFPS extends MovementAction{
 	
 		long millisTotal;
 		long millisDelay;
-		float dx;
-		float dy;
 		MovementActionInfo info;
 		long resumeTotal;
-		long resetTotal;
-		IRotationController rotationController;
-		IGravityController gravityController;	
+		long resetTotal;	
 		public String name;	
 		private long updateTime;	
 		public int frameIdx;	
@@ -388,10 +336,8 @@ public class MovementActionItemBaseReugularFPS extends MovementAction{
 				boolean isLoop, boolean isSigleThread, String name,
 				MovementAction cancelAction,
 				List<MovementAction> allMovementActoinList, long millisTotal,
-				long millisDelay, float dx, float dy, MovementActionInfo info,
-				long resumeTotal, long resetTotal,
-				IRotationController rotationController,
-				IGravityController gravityController, String name2,
+				long millisDelay, MovementActionInfo info,
+				long resumeTotal, long resetTotal, String name2,
 				long updateTime, int frameIdx, boolean isStop,
 				boolean isCycleFinish, boolean triggerEnable,
 				long[] frameTimes, int resumeFrameIndex, int resumeFrameCount,
@@ -404,13 +350,9 @@ public class MovementActionItemBaseReugularFPS extends MovementAction{
 					allMovementActoinList);
 			this.millisTotal = millisTotal;
 			this.millisDelay = millisDelay;
-			this.dx = dx;
-			this.dy = dy;
 			this.info = info;
 			this.resumeTotal = resumeTotal;
 			this.resetTotal = resetTotal;
-			this.rotationController = rotationController;
-			this.gravityController = gravityController;
 			name = name2;
 			this.updateTime = updateTime;
 			this.frameIdx = frameIdx;

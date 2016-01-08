@@ -5,9 +5,9 @@ import android.view.MotionEvent;
 
 import com.example.try_gameengine.framework.Sprite;
 
-public class LeftKey extends Sprite{
+public class DownKey extends Sprite{
 	
-	public LeftKey(Bitmap bitmap, float x, float y, int scale, boolean autoAdd) {
+	public DownKey(Bitmap bitmap, float x, float y, int scale, boolean autoAdd) {
 		super(bitmap, x, y, scale, autoAdd);
 		// TODO Auto-generated constructor stub
 	}

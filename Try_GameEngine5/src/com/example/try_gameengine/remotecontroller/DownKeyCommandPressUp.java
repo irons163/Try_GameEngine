@@ -4,24 +4,24 @@ import android.view.MotionEvent;
 
 import com.example.try_gameengine.remotecontroller.RemoteController.CommandType;
 
-public class UpKeyCommandPressDown implements Command{
-	UpKey upKey;
+public class DownKeyCommandPressUp implements Command{
+	DownKey downKey;
 	private int pointerId = -1;
 	
-	public UpKeyCommandPressDown(UpKey upKey){
-		this.upKey = upKey;
+	public DownKeyCommandPressUp(DownKey downKey){
+		this.downKey = downKey;
 	}
 	
 	@Override
 	public CommandType execute() {
 		// TODO Auto-generated method stub
-		return CommandType.UPKeyDownCommand;
+		return CommandType.DownKeyUpCommand;
 	}
 
 	@Override
 	public boolean checkExecute(float x, float y, MotionEvent event) {
 		// TODO Auto-generated method stub
-		return upKey.pressUp(x, y, event);
+		return downKey.pressUp(x, y, event);
 	}
 
 	@Override

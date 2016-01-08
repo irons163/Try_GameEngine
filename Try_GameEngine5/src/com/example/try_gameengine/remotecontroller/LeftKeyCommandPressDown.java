@@ -1,5 +1,7 @@
 package com.example.try_gameengine.remotecontroller;
 
+import android.view.MotionEvent;
+
 import com.example.try_gameengine.remotecontroller.RemoteController.CommandType;
 
 public class LeftKeyCommandPressDown implements Command{
@@ -17,9 +19,9 @@ public class LeftKeyCommandPressDown implements Command{
 	}
 
 	@Override
-	public boolean checkExecute(float x, float y) {
+	public boolean checkExecute(float x, float y, MotionEvent event) {
 		// TODO Auto-generated method stub
-		return leftKey.pressDown(x, y);
+		return leftKey.pressDown(x, y, event);
 	}
 
 	@Override

@@ -3,6 +3,8 @@ package com.example.try_gameengine.scene;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.app.Activity;
+
 import com.example.try_gameengine.framework.LayerManager;
 
 public class SceneManager {
@@ -12,6 +14,10 @@ public class SceneManager {
 	
 	public void addScene(Scene scene){
 		scenes.add(scene);
+		if(scene.sceneLayerLevel<0){
+			LayerManager.setLayerBySenceIndex(scenes.size()-1);
+			scene.setLayerLevel(scenes.size()-1);
+		}
 	}
 	
 	public List<Scene> getScenes(){
@@ -22,7 +28,7 @@ public class SceneManager {
 		Scene targetScene = null;
 		for(int i =0; i<scenes.size(); i++){
 			Scene scene = scenes.get(i);
-			if(scene.getId().equals(id)){
+			if(scene.getId()!=null && scene.getId().equals(id)){
 				targetScene = scene;
 			}
 		}
@@ -96,7 +102,7 @@ public class SceneManager {
 		}
 	}
 	
-	public void next(){
+	public void nextWithCycle(){
 		currentSceneIndex++;
 		if(currentActiveScene!=null)
 			currentActiveScene.stop(); 
@@ -108,7 +114,16 @@ public class SceneManager {
 		currentActiveScene = scene;
 	}
 	
-	public void previous(){
+	public boolean next(){
+		if(currentSceneIndex==scenes.size()-1){
+			return false;
+		}else{
+			nextWithCycle();
+			return true;
+		}
+	}
+	
+	public void previousWithCycle(){
 		currentSceneIndex--;
 		if(currentActiveScene!=null){
 			currentActiveScene.stop();
@@ -135,15 +150,21 @@ public class SceneManager {
 		currentActiveScene = scene;
 	}
 	
-	public void previousAndLeaveWhenNoPrevious(){
+	/**
+	 * @return if false, there is not previous scene. The current scene is the first scene in scene manager.
+	 * Otherwise, return true.
+	 */
+	public boolean previous(){
 		if(currentSceneIndex==0){
 			if(currentActiveScene!=null){
 				currentActiveScene.stop();
 				scenes.remove(currentActiveScene);
 				currentActiveScene.finish();
 			}
+			return false;
 		}else{
-			previous();
+			previousWithCycle();
+			return true;
 		}
 	}
 	
@@ -155,9 +176,27 @@ public class SceneManager {
 	
 	public void removeScene(Scene scene){
 		scenes.remove(scene);
+		scene.finish();
 	}
 	
 	public void removeScene(int index){
+		scenes.remove(index).finish();
+	}
+	
+	//remove scene but not destroy, if you want add it back.
+	public void removeSceneButNotDestroy(Scene scene){
+		scenes.remove(scene);
+		
+	}
+	
+	public void removeSceneButNotDestroy(int index){
 		scenes.remove(index);
+	}
+	
+	public void removeAllScenes(){
+		for(Scene scene : scenes){
+			scene.finish();
+		}
+		scenes.clear();
 	}
 }

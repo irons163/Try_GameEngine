@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.example.try_gameengine.action.visitor.IMovementActionVisitor;
+import com.example.try_gameengine.action.visitor.MovementActionAttachToTargetSpriteVisitor;
 import com.example.try_gameengine.action.visitor.MovementActionNoRepeatSpriteActionVisitor;
 import com.example.try_gameengine.action.visitor.MovementActionObjectStructure;
 import com.example.try_gameengine.framework.Config;
@@ -71,6 +72,8 @@ public class MAction {
 		return repeatAction;
 	}
 	
+	//SpriteAction == texture change action in sprite.
+	//this repeat only repeat MovementAction not repeat the SpriteAction.
 	public static MovementAction repeatFasterWithoutRepeatSpriteAction(MovementAction movementAction, long count){
 		MovementAction repeatAction = new RepeatDecorator(movementAction, count);
 		MovementActionObjectStructure objectStructure = new MovementActionObjectStructure();
@@ -94,6 +97,30 @@ public class MAction {
 		return new MovementActionNoDelayBlock(block);
 	}
 	
+	public static MovementAction alphaAction(long millisTotal, int alpha){
+		return new MovementActionItemAlpha(millisTotal, alpha);	
+	}
+	
+	public static MovementAction alphaAction(long millisTotal, int originalAlpha, int alpha){
+		return new MovementActionItemAlpha(millisTotal, originalAlpha, alpha);	
+	}
+	
+	public static MovementAction alphaAction(long triggerTotal, long triggerInterval, int alpha){
+		return new MovementActionItemAlpha(triggerTotal, triggerInterval, alpha);	
+	}
+	
+	public static MovementAction alphaAction(long triggerTotal, long triggerInterval, int originalAlpha, int alpha){
+		return new MovementActionItemAlpha(triggerTotal, triggerInterval, originalAlpha, alpha);	
+	}
+	
+	public static MovementAction animateAction(){
+		return null;	
+	}
+	
+	public static MovementAction waitAction(long triggerTotal){
+		return new MovementActionItemBaseReugularFPS(new MovementActionInfo(triggerTotal, 1, 0, 0, "waitAction", null, false));	
+	}
+	
 	public static MovementAction sequence(MovementAction[] movementActions){
 		MovementAction movementActionsetWithThreadPool = new MovementActionSetWithThreadPool();
 
@@ -101,6 +128,22 @@ public class MAction {
 			movementActionsetWithThreadPool.addMovementAction(movementActions[i]);
 		}
 		return movementActionsetWithThreadPool;
+	}
+	
+	public static MovementAction group(MovementAction[] movementActions){
+		MovementAction movementActionSetGroupWithOutThread = new MovementActionSetGroupWithOutThread();
+
+		for(int i = 0; i < movementActions.length; i++){
+			movementActionSetGroupWithOutThread.addMovementAction(movementActions[i]);
+		}
+		return movementActionSetGroupWithOutThread;
+	}
+	
+	public static void attachToTargetSprite(MovementAction movementAction, Sprite targetSprite){
+		MovementActionObjectStructure objectStructure = new MovementActionObjectStructure();
+		objectStructure.setRoot(movementAction);
+		IMovementActionVisitor movementActionVisitor = new MovementActionAttachToTargetSpriteVisitor(targetSprite);
+		objectStructure.handleRequest(movementActionVisitor);
 	}
 	
 	static class MovementActionBlock extends MovementAction{

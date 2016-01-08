@@ -12,7 +12,7 @@ import com.example.try_gameengine.action.MovementAction.TimerOnTickListener;
 import android.util.Log;
 
 public class RepeatDecorator extends MovementDecorator {
-	
+	private MovementAction action;
 	private long count;
 	private boolean isTheOuterActionForInitMovementAction;
 	
