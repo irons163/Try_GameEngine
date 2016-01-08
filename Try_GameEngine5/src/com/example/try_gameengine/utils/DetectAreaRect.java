@@ -21,7 +21,8 @@ public class DetectAreaRect extends DetectArea{
 				this.spriteDetectAreaListener.didDetected(this, request);
 		}else{
 			if(successor!=null){
-				return this.successor.detect(request);
+				if(this.spriteDetectAreaListener==null || !this.spriteDetectAreaListener.stopDoSuccessorDetected(this, request, isDetected))
+					return this.successor.detect(request);
 			}
 		}
 		return isDetected;
@@ -40,7 +41,8 @@ public class DetectAreaRect extends DetectArea{
 	@Override
 	public void setCenter(PointF center) {
 		// TODO Auto-generated method stub
-		rectF.offset(center.x - this.center.x, center.y - this.center.y);
+//		rectF.offset(center.x - this.center.x, center.y - this.center.y); //this use point center to calculate, but sometimes the rectF is updated, center point not.
+		rectF.offset(center.x - rectF.centerX(), center.y - rectF.centerY()); //this use rectF.center to calculate.
 		this.center = center;
 	}
 }

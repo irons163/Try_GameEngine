@@ -83,6 +83,25 @@ public class SpriteDetectAreaHandler implements ISpriteDetectAreaHandler{
 		detectArea.setSpriteDetectAreaListener(spriteDetectAreaListener);
 	}
 	
+	public boolean replaceDetectArea(DetectArea oldDetectArea, DetectArea newDetectArea){
+		if(detectAreas.size()==0)
+			return false;
+		
+		int replaceIndex = detectAreas.indexOf(oldDetectArea);
+
+		if(replaceIndex>=0){
+			DetectArea successor = oldDetectArea.getSuccessor();
+			newDetectArea.setSuccessor(successor);
+			oldDetectArea.setSuccessor(null);
+			
+			detectAreas.set(replaceIndex, newDetectArea);
+			detectAreas.remove(oldDetectArea);
+			return true;
+		}else{
+			return false;
+		}
+	}
+	
 	public void apply(){
 		if(detectAreas.size()==0)
 			return;
@@ -139,5 +158,13 @@ public class SpriteDetectAreaHandler implements ISpriteDetectAreaHandler{
 			DetectArea detectArea = detectAreas.get(i);
 			detectArea.setObjectTag(objectTag);
 		}
+	}
+	
+	public void reset(){
+		spriteDetectAreaBehavior.setSpriteDetectArea(null);
+		for(DetectArea detectArea : detectAreas){
+			detectArea.setObjectTag(null);
+		}
+		detectAreas.clear();
 	}
 }

@@ -211,87 +211,48 @@ public class Sprite extends Layer {
 	}
 
 	@Override
-	public void drawSelf(Canvas canvas, Paint paint) {
-		
-//		if (currentAction != null) {
-//			if(currentAction.frames!=null){
-//				currentFrame = currentAction.frames[frameIdx];
-//			}else{
-//				bitmap = currentAction.bitmapFrames[frameIdx];
-//			}
-//		} 
-		
-		Paint originalPaint = paint;
-		/*//use input paint first 
-		int originalAlpha = 255;
-		if(paint==null){
-			paint = getPaint();
-		}else{
-			originalAlpha = paint.getAlpha();
-			paint.setAlpha(getAlpha());
-		}
-		*/
-		
-		//use self paint first
-		if(getPaint()!=null){
-			paint = getPaint();
-		}
-		
-		if(length>0){
-			paint(canvas,paint);
-			
-			/*//use input paint first 
-			paint = originalPaint;
-			originalPaint = null;
-			if(paint!=null){
-				paint.setAlpha(originalAlpha);
+	public void drawSelf(Canvas canvas, Paint paint) {	
+		if(bitmap!=null){
+			Paint originalPaint = paint;		
+			//use self paint first
+			if(getPaint()!=null){
+				paint = getPaint();
 			}
-			*/
+			
+			if(length>0){
+				paint(canvas,paint);		
+				//use self paint first
+				paint = originalPaint;
+			}else{
+				if(spriteMatrix!=null){
+					canvas.setMatrix(spriteMatrix);
+				}
+		
+				src.left = (int) (currentFrame * w * scale);// 左端寬度：當前幀乘上幀的寬度再乘上圖片縮放率
+				src.top = 0;
+				src.right = (int) (src.left + w * scale);// 右端寬度：左端寬度加上(幀的寬度乘上圖片縮放率)
+				src.bottom = h;
+				
+				dst.left = (float) (centerX - w / 2);
+				dst.top = (float) (centerY - h / 2);
+				dst.right = (float) (dst.left + w * scale);
+				dst.bottom = (float) (dst.top + h * scale);
+				
+				if(isComposite()){
+					if(parent!=null){
+						PointF locationInScene = parent.locationInSceneByCompositeLocation((float) (centerX - w / 2), (float) (centerY - h / 2));
+						dst.left = locationInScene.x;
+						dst.top = locationInScene.y;
+					}
+				}
+				
+				customBitampSRCandDST(src, dst);
+				canvas.drawBitmap(bitmap, src, dst, paint);
+			}
 			
 			//use self paint first
 			paint = originalPaint;
-		}else{
-			if(spriteMatrix!=null){
-				canvas.setMatrix(spriteMatrix);
-			}
-	
-			src.left = (int) (currentFrame * w * scale);// 左端寬度：當前幀乘上幀的寬度再乘上圖片縮放率
-			src.top = 0;
-			src.right = (int) (src.left + w * scale);// 右端寬度：左端寬度加上(幀的寬度乘上圖片縮放率)
-			src.bottom = h;
-//			dst.left = (int) x - w / 2;
-//			dst.top = (int) y - h / 2;
-			
-			dst.left = (float) (centerX - w / 2);
-			dst.top = (float) (centerY - h / 2);
-			dst.right = (float) (dst.left + w * scale);
-			dst.bottom = (float) (dst.top + h * scale);
-			
-			if(isComposite()){
-				if(parent!=null){
-					PointF locationInScene = parent.locationInSceneByCompositeLocation((float) (centerX - w / 2), (float) (centerY - h / 2));
-					dst.left = locationInScene.x;
-					dst.top = locationInScene.y;
-				}
-			}
-			
-			customBitampSRCandDST(src, dst);
-//			canvas.drawBitmap(bitmap, src, dst, paint);
-			canvas.drawBitmap(bitmap, src, dst, paint);
-
-//			Log.e("time2", a+""+"XX"+System.currentTimeMillis());
 		}
-		
-		/*//use input paint first 
-		paint = originalPaint;
-		originalPaint = null;
-		if(paint!=null){
-			paint.setAlpha(originalAlpha);
-		}
-		*/
-		
-		//use self paint first
-		paint = originalPaint;
 		
 		if(isComposite()){
 			for(ILayer layer : layers){
@@ -319,15 +280,7 @@ public class Sprite extends Layer {
 		}
 	}
 	public void paint(Canvas canvas,Paint paint)
-	{
-//		canvas.save();
-//		float x = getX();
-//		float y = getY();
-//		canvas.clipRect(x, y, x+frameWidth, y+frameHeight);
-//		canvas.drawBitmap(bitmap, x-(currentFrame%(bitmap.getWidth()/frameWidth))*frameWidth, 
-//				y - (currentFrame/(bitmap.getWidth()/frameWidth))*frameHeight, paint);
-//		canvas.restore();	
-		
+	{	
 		if(spriteMatrix==null)
 			spriteMatrix = new Matrix();
 		
@@ -356,42 +309,7 @@ public class Sprite extends Layer {
 			canvas.drawBitmap(bitmap, x-(currentFrame%(bitmap.getWidth()/(int)frameWidth))*frameWidth+drawOffsetX, 
 					y - (currentFrame/(bitmap.getWidth()/(int)frameWidth))*frameHeight, paint);
 		}else{
-//			canvas.clipRect(x, y, x+frameWidth, y+frameHeight);
-//			RectF d = new RectF(x-(currentFrame%(bitmap.getWidth()/frameWidth))*frameWidth, 
-//					y - (currentFrame/(bitmap.getWidth()/frameWidth))*frameHeight,x-(currentFrame%(bitmap.getWidth()/frameWidth))*frameWidth+bitmap.getWidth(), 
-//					y - (currentFrame/(bitmap.getWidth()/frameWidth))*frameHeight+bitmap.getHeight());
-//			canvas.clipRect(d);
-//			spriteMatrix.mapRect(d, d);
-//			canvas.clipRect(x, y, x+frameWidth, y+frameHeight);
-			
-			
 			canvas.setMatrix(spriteMatrix);
-//			if(spriteMatrix!=null)
-//				canvas.scale(0.9f, 0.9f);
-			
-//			canvas.concat(spriteMatrix);
-//			spriteMatrix.setRectToRect(new RectF(0, 0, bitmap.getWidth(), bitmap.getHeight()), d, Matrix.ScaleToFit.START);
-//			Bitmap newBit = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), spriteMatrix, true);
-			
-//			canvas.drawBitmap(bitmap, new Rect((int)(currentFrame%(bitmap.getWidth()/bitmapOrginalFrameWidth))*bitmapOrginalFrameWidth
-//					, (int)(currentFrame/(bitmap.getWidth()/bitmapOrginalFrameWidth))*bitmapOrginalFrameHeight
-//					,(int)(currentFrame%(bitmap.getWidth()/bitmapOrginalFrameWidth))*bitmapOrginalFrameWidth+bitmapOrginalFrameWidth
-//					, (int)(currentFrame/(bitmap.getWidth()/bitmapOrginalFrameWidth))*bitmapOrginalFrameHeight+bitmapOrginalFrameHeight)
-//			, new RectF(x+bitmapOrginalFrameWidth/2.0f-frameWidth/2.0f
-//					, y+bitmapOrginalFrameHeight-frameHeight
-//					, x+bitmapOrginalFrameWidth/2.0f+frameWidth/2.0f
-//					, y+bitmapOrginalFrameHeight)
-//			, paint);
-			
-//			canvas.drawBitmap(bitmap, new Rect((int)(currentFrame%(bitmap.getWidth()/bitmapOrginalFrameWidth))*bitmapOrginalFrameWidth
-//					, (int)(currentFrame/(bitmap.getWidth()/bitmapOrginalFrameWidth))*bitmapOrginalFrameHeight
-//					,(int)(currentFrame%(bitmap.getWidth()/bitmapOrginalFrameWidth))*bitmapOrginalFrameWidth+bitmapOrginalFrameWidth
-//					, (int)(currentFrame/(bitmap.getWidth()/bitmapOrginalFrameWidth))*bitmapOrginalFrameHeight+bitmapOrginalFrameHeight)
-//			, new RectF(x
-//					, y+bitmapOrginalFrameHeight-frameHeight
-//					, x+frameWidth
-//					, y+bitmapOrginalFrameHeight)
-//			, paint);
 			
 			canvas.drawBitmap(bitmap, new Rect((int)(currentFrame%(bitmap.getWidth()/bitmapOrginalFrameWidth))*bitmapOrginalFrameWidth+(int)drawOffsetX
 					, (int)(currentFrame/(bitmap.getWidth()/bitmapOrginalFrameWidth))*bitmapOrginalFrameHeight
@@ -402,12 +320,6 @@ public class Sprite extends Layer {
 					, x+frameWidth+drawOffsetX
 					, y+frameHeight)
 			, paint);
-			
-//			canvas.drawBitmap(bitmap, x-(currentFrame%(bitmap.getWidth()/frameWidth))*frameWidth, 
-//					y - (currentFrame/(bitmap.getWidth()/frameWidth))*frameHeight, paint);
-//			canvas.drawBitmap(bitmap, x, y, paint);
-//			canvas.setMatrix(null);
-//			canvas.drawBitmap(bitmap, spriteMatrix, paint);
 		}
 		canvas.restore();
 		
@@ -798,6 +710,11 @@ public class Sprite extends Layer {
 		collisionOffsetX = (float)w/this.w*collisionOffsetX;
 		collisionRectFWidth = (float)w/this.w*collisionRectFWidth;
 		setCollisionRectF(getX()+collisionOffsetX, getY()+collisionOffsetY, getX()+collisionOffsetX+collisionRectFWidth, getY()+collisionOffsetY+collisionRectFHeight);
+		if(isComposite()){
+			updateSpriteDetectAreaCenter(new PointF(locationInScene.x+w/2, locationInScene.y+h/2));
+		}else{
+			updateSpriteDetectAreaCenter(new PointF(getCenterX(), getCenterY()));
+		}	
 	}
 	
 	@Override
@@ -807,6 +724,11 @@ public class Sprite extends Layer {
 		collisionOffsetY = (float)h/this.h*collisionOffsetY;
 		collisionRectFHeight = (float)h/this.h*collisionRectFHeight;
 		setCollisionRectF(getX()+collisionOffsetX, getY()+collisionOffsetY, getX()+collisionOffsetX+collisionRectFWidth, getY()+collisionOffsetY+collisionRectFHeight);
+		if(isComposite()){
+			updateSpriteDetectAreaCenter(new PointF(locationInScene.x+w/2, locationInScene.y+h/2));
+		}else{
+			updateSpriteDetectAreaCenter(new PointF(getCenterX(), getCenterY()));
+		}
 	}
 
 	public class SpriteAction {

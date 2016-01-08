@@ -22,7 +22,8 @@ public class DetectAreaRound extends DetectArea{
 				this.spriteDetectAreaListener.didDetected(this, request);
 		}else{
 			if(successor!=null){
-				return this.successor.detect(request);
+				if(this.spriteDetectAreaListener==null || !this.spriteDetectAreaListener.stopDoSuccessorDetected(this, request, isDetected))
+					return this.successor.detect(request);
 			}
 		}
 		return isDetected;

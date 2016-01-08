@@ -440,12 +440,30 @@ public abstract class ALayer implements ILayer{
 	
 	public void setWidth(int w){
 		this.w = w;
+		this.centerX = x + w / 2;
 		getFrame().set(x, y, x+w, y+h);
+		
+		if(isComposite() && getLayers().size()!=0){
+			for(ILayer child : getLayers()){
+				if(child.isComposite() && child.getLayerParam().isEnabledPercentagePositionX()){
+					child.setX(w * child.getLayerParam().getPercentageX());
+				}
+			}		
+		}
 	}
 	
 	public void setHeight(int h){
 		this.h= h;
+		this.centerY = y + h / 2;
 		getFrame().set(x, y, x+w, y+h);
+		
+		if(isComposite() && getLayers().size()!=0){
+			for(ILayer child : getLayers()){
+				if(child.isComposite() && child.getLayerParam().isEnabledPercentagePositionY()){
+					child.setY(h * child.getLayerParam().getPercentageY());
+				}
+			}		
+		}
 	}
 	
 	public float getX(){
