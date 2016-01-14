@@ -657,7 +657,7 @@ public class Sprite extends Layer {
 		return spriteDetectAreaHandler;
 	}
 	
-	private void updateSpriteDetectAreaCenter(PointF center){
+	protected void updateSpriteDetectAreaCenter(PointF center){
 		if(spriteDetectAreaHandler!=null)
 			spriteDetectAreaHandler.updateSpriteDetectAreaCenter(center);
 	}

@@ -17,9 +17,7 @@ public class SpriteDetectAreaHelper {
 	}
 }
 
-enum DetectAreaType{
-	POINT, ROUND, RECT
-}
+
 
 //abstract class DetectAreaRequest{
 //	
