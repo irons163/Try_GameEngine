@@ -26,6 +26,7 @@ public abstract class Scene extends Activity{
 	public static final int RESUME_WITHOUT_SET_VIEW = 4;
 	public static final int BLOCK = 8;
 	public static final int FINISHED = 16;
+	public static final int NOT_AUTO_START = 32;
 	
 	protected int mode = RESTART;
 	
@@ -64,6 +65,15 @@ public abstract class Scene extends Activity{
 	public abstract void initGameModel();
 	
 	public abstract void initGameController();
+	
+	public void sceneWillStart(Object obj){
+		
+	}
+	
+	public void startWithObj(Object obj){
+		sceneWillStart(obj);
+		start();
+	}
 	
 	public void start(){
 		gameController.start();

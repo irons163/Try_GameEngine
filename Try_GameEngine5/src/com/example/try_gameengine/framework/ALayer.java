@@ -251,9 +251,16 @@ public abstract class ALayer implements ILayer{
 		this.centerX = x + w / 2;
 		this.centerY = y + h / 2;
 		getFrame().set(x, y, x+w, y+h);
+		
 		if(isComposite() && getParent()!=null)
 			locationInScene = parent.locationInSceneByCompositeLocation((float) (centerX - w / 2), (float) (centerY - h / 2));
-		
+		if(getLayers().size()!=0){
+			for(ILayer child : getLayers()){
+				if(child.isComposite()){
+					child.setPosition(child.getX(), child.getY());
+				}
+			}		
+		}
 //		this.centerX = x - w / 2;
 //		this.centerX = y - h / 2;
 	}
@@ -365,7 +372,7 @@ public abstract class ALayer implements ILayer{
 	//composite
 	public void addChild(ILayer layer){
 		if(layer.getParent()==null){
-			setComposite(true);
+//			setComposite(true);
 			layer.setComposite(true);
 			layers.add(layer);
 			layer.setParent(this);
@@ -419,7 +426,7 @@ public abstract class ALayer implements ILayer{
 		this.centerX = x + w / 2;
 		getFrame().set(x, y, x+w, y+h);
 		
-		if(isComposite() && getLayers().size()!=0){
+		if(getLayers().size()!=0){
 			for(ILayer child : getLayers()){
 				if(child.isComposite() && child.getLayerParam().isEnabledPercentagePositionX()){
 					child.setX(w * child.getLayerParam().getPercentageX());
@@ -433,7 +440,7 @@ public abstract class ALayer implements ILayer{
 		this.centerY = y + h / 2;
 		getFrame().set(x, y, x+w, y+h);
 		
-		if(isComposite() && getLayers().size()!=0){
+		if(getLayers().size()!=0){
 			for(ILayer child : getLayers()){
 				if(child.isComposite() && child.getLayerParam().isEnabledPercentagePositionY()){
 					child.setY(h * child.getLayerParam().getPercentageY());
@@ -447,7 +454,7 @@ public abstract class ALayer implements ILayer{
 		this.centerX = x + w / 2;
 		getFrame().set(x, y, x+w, y+h);
 		
-		if(isComposite() && getLayers().size()!=0){
+		if(getLayers().size()!=0){
 			for(ILayer child : getLayers()){
 				if(child.isComposite() && child.getLayerParam().isEnabledPercentagePositionX()){
 					child.setX(w * child.getLayerParam().getPercentageX());
@@ -461,7 +468,7 @@ public abstract class ALayer implements ILayer{
 		this.centerY = y + h / 2;
 		getFrame().set(x, y, x+w, y+h);
 		
-		if(isComposite() && getLayers().size()!=0){
+		if(getLayers().size()!=0){
 			for(ILayer child : getLayers()){
 				if(child.isComposite() && child.getLayerParam().isEnabledPercentagePositionY()){
 					child.setY(h * child.getLayerParam().getPercentageY());
@@ -484,7 +491,7 @@ public abstract class ALayer implements ILayer{
 		getFrame().set(x, y, x+w, y+h);
 		if(isComposite() && getParent()!=null)
 			locationInScene = parent.locationInSceneByCompositeLocation((float) (centerX - w / 2), (float) (centerY - h / 2));
-		if(isComposite() && getLayers().size()!=0){
+		if(getLayers().size()!=0){
 			for(ILayer child : getLayers()){
 				if(child.isComposite()){
 					child.setX(child.getX());
@@ -507,7 +514,7 @@ public abstract class ALayer implements ILayer{
 		getFrame().set(x, y, x+w, y+h);
 		if(isComposite() && getParent()!=null)
 			locationInScene = parent.locationInSceneByCompositeLocation((float) (centerX - w / 2), (float) (centerY - h / 2));
-		if(isComposite() && getLayers().size()!=0){
+		if(getLayers().size()!=0){
 			for(ILayer child : getLayers()){
 				if(child.isComposite()){
 					child.setY(child.getY());
@@ -687,7 +694,7 @@ public abstract class ALayer implements ILayer{
 			setAlpha(this.alpha);
 		}
 		
-		if(isComposite() && getLayers().size()!=0){
+		if(getLayers().size()!=0){
 			for(ILayer child : getLayers()){
 				if(child.isComposite()){
 					child.setHidden(isHidden);

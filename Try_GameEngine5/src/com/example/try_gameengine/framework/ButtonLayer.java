@@ -61,6 +61,56 @@ public class ButtonLayer extends Layer{
 	}
 	
 	@Override
+	public void setX(float x) {
+		// TODO Auto-generated method stub
+		super.setX(x);
+		
+		if(labelLayer!=null){
+			labelLayer.setX(getCenterX() - labelLayer.w/2.0f);
+		}
+	}
+	
+	@Override
+	public void setY(float y) {
+		// TODO Auto-generated method stub
+		super.setY(y);
+		
+		if(labelLayer!=null){
+			labelLayer.setY(getCenterY() - labelLayer.h/2.0f);
+		}
+	}
+	
+	@Override
+	public void setPosition(float x, float y) {
+		// TODO Auto-generated method stub
+		super.setPosition(x, y);
+		
+		if(labelLayer!=null){
+			labelLayer.setPosition(getCenterX() - labelLayer.w/2.0f, getCenterY() - labelLayer.h/2.0f);
+		}
+	}
+	
+	@Override
+	public void setWidth(int w) {
+		// TODO Auto-generated method stub
+		super.setWidth(w);
+		
+		if(labelLayer!=null){
+			labelLayer.setX(getCenterX() - labelLayer.w/2.0f);
+		}
+	}
+	
+	@Override
+	public void setHeight(int h) {
+		// TODO Auto-generated method stub
+		super.setHeight(h);
+		
+		if(labelLayer!=null){
+			labelLayer.setY(getCenterY() - labelLayer.h/2.0f);
+		}
+	}
+	
+	@Override
 	public void drawSelf(Canvas canvas, Paint paint) {
 		// TODO Auto-generated method stub
 		super.drawSelf(canvas, paint);

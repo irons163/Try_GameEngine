@@ -34,7 +34,7 @@ public class GameModel implements IGameModel{
 	private boolean timeLock = false;
 	private long fpsCounter;
 	float fps;
-	private Bitmap lastCanvas;
+//	private Bitmap lastCanvas;
 	
 	public GameModel(Context context, Data data) {
 		// TODO Auto-generated constructor stub
@@ -240,10 +240,10 @@ public class GameModel implements IGameModel{
 				e.printStackTrace();
 			}
 		}
-		if(lastCanvas!=null){
-			lastCanvas.recycle();
-			System.gc();
-		}
+//		if(lastCanvas!=null){
+//			lastCanvas.recycle();
+//			System.gc();
+//		}
 		
 //		lastCanvas = Bitmap.createBitmap(surfaceHolder.getSurfaceFrame().width(), surfaceHolder.getSurfaceFrame().height(), Bitmap.Config.);
 //		Canvas c = new Canvas(lastCanvas);
@@ -288,8 +288,8 @@ public class GameModel implements IGameModel{
 	}
 
 	private void destory(){
-		if(lastCanvas!=null)
-			lastCanvas.recycle();
+//		if(lastCanvas!=null)
+//			lastCanvas.recycle();
 		if(gameThread.isAlive())
 			gameThread.interrupt();
 		System.gc();

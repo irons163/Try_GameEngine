@@ -1,9 +1,14 @@
 package com.example.try_gameengine.scene;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import android.app.Activity;
+import android.content.Context;
 
 import com.example.try_gameengine.framework.LayerManager;
 
@@ -11,6 +16,41 @@ public class SceneManager {
 	private List<Scene> scenes = new ArrayList<Scene>();
 	private Scene currentActiveScene;
 	private int currentSceneIndex;
+	private Map<SceneClassInfo, Class<? extends Scene>> sceneClassMap;
+	
+	class SceneClassInfo{
+		private Context context;
+		private String id;
+		private int sceneLayerLevel = -1;
+		private int mode = -1;
+		private Object obj;
+		
+		
+		public Context getContext() {
+			return context;
+		}
+		public void setContext(Context context) {
+			this.context = context;
+		}
+		public String getId() {
+			return id;
+		}
+		public void setId(String id) {
+			this.id = id;
+		}
+		public int getSceneLayerLevel() {
+			return sceneLayerLevel;
+		}
+		public int getMode() {
+			return mode;
+		}
+		public void setSceneLayerLevel(int sceneLayerLevel) {
+			this.sceneLayerLevel = sceneLayerLevel;
+		}
+		public void setMode(int mode) {
+			this.mode = mode;
+		}	
+	}
 	
 	public void addScene(Scene scene){
 		scenes.add(scene);
@@ -18,6 +58,25 @@ public class SceneManager {
 			LayerManager.setLayerBySenceIndex(scenes.size()-1);
 			scene.setLayerLevel(scenes.size()-1);
 		}
+	}
+	
+	public void addScene(Class<? extends Scene> sceneClass, Context context, String id){
+		addScene(sceneClass, context, id, scenes.size(), Scene.RESTART);
+	}
+	
+	public void addScene(Class<? extends Scene> sceneClass, Context context, String id, int sceneLayerLevel){
+		addScene(sceneClass, context, id, scenes.size(), Scene.RESTART);
+	}
+	
+	public void addScene(Class<? extends Scene> sceneClass, Context context, String id, int sceneLayerLevel, int mode){
+		if(sceneClassMap==null)
+			sceneClassMap = new HashMap<SceneManager.SceneClassInfo, Class<? extends Scene>>();
+		SceneClassInfo sceneClassInfo = new SceneClassInfo();
+		sceneClassInfo.setContext(context);
+		sceneClassInfo.setId(id);
+		sceneClassInfo.setSceneLayerLevel(sceneLayerLevel);
+		sceneClassInfo.setMode(mode);
+		sceneClassMap.put(sceneClassInfo, sceneClass);
 	}
 	
 	public List<Scene> getScenes(){
@@ -66,7 +125,61 @@ public class SceneManager {
 	}
 	
 	public void startScene(int index){
+		startScene(index, null);
+	}
+	
+	public void startScene(int index, Object objForSendToScene){
 		boolean isNeedStopCurrentActiveScene = true;
+		Entry<SceneClassInfo, Class<? extends Scene>> sceneClassForStart = null;
+		if(sceneClassMap!=null)
+		for(Entry<SceneClassInfo, Class<? extends Scene>> sceneClass : sceneClassMap.entrySet()){
+			
+			if(index == sceneClass.getKey().getSceneLayerLevel()){
+				Context context = sceneClass.getKey().getContext();
+				String id = sceneClass.getKey().getId();
+				int sceneLayerLevel = sceneClass.getKey().getSceneLayerLevel();
+				int mode = sceneClass.getKey().getMode();
+				Scene scene = null;
+				for(int i = 0; i < 3; i++){
+					try {
+						if(i==0){
+							scene = sceneClass.getValue().getConstructor(Context.class, String.class, Integer.class, int.class).newInstance(context, id, sceneLayerLevel, mode);
+						}else if(i==1){
+							scene = sceneClass.getValue().getConstructor(Context.class, String.class, int.class).newInstance(context, id, sceneLayerLevel);
+						}else{
+							scene = sceneClass.getValue().getConstructor(Context.class, String.class).newInstance(context, id);
+						}
+						
+					} catch (InstantiationException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (IllegalAccessException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (IllegalArgumentException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (InvocationTargetException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (NoSuchMethodException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					
+					if(scene!=null)
+						break;
+				}
+
+				if(scene==null)
+					throw new RuntimeException();
+				scenes.add(index, scene);		
+				sceneClassForStart = sceneClass;
+			}
+		}
+		if(sceneClassForStart!=null)
+			sceneClassMap.remove(sceneClassForStart.getKey());
+		
 		if(index >=0 && index < scenes.size()){
 			Scene scene = scenes.get(index);
 			if(scene instanceof DialogScene){
@@ -81,12 +194,11 @@ public class SceneManager {
 		}
 		if(index >=0 && index < scenes.size()){
 			Scene scene = scenes.get(index);
-			
-//			if(!(scene instanceof DialogScene)){
-				LayerManager.setLayerBySenceIndex(index);
-				scene.setLayerLevel(index);
-//			}
-			scene.start();
+			LayerManager.setLayerBySenceIndex(index);
+			scene.setLayerLevel(index);
+
+			scene.startWithObj(objForSendToScene);
+//			scene.start();
 			currentActiveScene = scene;
 			currentSceneIndex = index;
 		}
@@ -96,6 +208,10 @@ public class SceneManager {
 		startScene(scenes.size()-1);
 	}
 	
+	public void startLastScene(Object objForSendToScene){
+		startScene(scenes.size()-1, objForSendToScene);
+	}
+	
 	public void stopScene(int index){
 		if(index >=0 && index < scenes.size()){
 			scenes.get(index).stop();
@@ -103,22 +219,35 @@ public class SceneManager {
 	}
 	
 	public void nextWithCycle(){
+		nextWithCycle(null);
+	}
+	
+	public void nextWithCycle(Object objForSendToScene){
 		currentSceneIndex++;
-		if(currentActiveScene!=null)
-			currentActiveScene.stop(); 
+//		if(currentActiveScene!=null)
+//			currentActiveScene.stop(); 
 		if(currentSceneIndex == scenes.size()){
-			currentSceneIndex = 0;
+			if(sceneClassMap!=null && sceneClassMap.size()==0){
+				currentSceneIndex = 0;
+			}
 		}
-		Scene scene = scenes.get(currentSceneIndex);
-		scene.start();
-		currentActiveScene = scene;
+		
+		startScene(currentSceneIndex, objForSendToScene);
+//		Scene scene = scenes.get(currentSceneIndex);
+//		scene.startWithObj(objForSendToScene);
+////		scene.start();
+//		currentActiveScene = scene;
 	}
 	
 	public boolean next(){
-		if(currentSceneIndex==scenes.size()-1){
+		return next(null);
+	}
+	
+	public boolean next(Object objForSendToScene){
+		if(currentSceneIndex==scenes.size()-1 && (sceneClassMap==null || sceneClassMap.size()==0)){
 			return false;
 		}else{
-			nextWithCycle();
+			nextWithCycle(objForSendToScene);
 			return true;
 		}
 	}

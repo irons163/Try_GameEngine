@@ -61,9 +61,11 @@ public abstract class GameController implements IGameController{
 		}
 		
 		if((sceneMode&Scene.RESTART)!=0){
+			isBlocRunStart = false;
 			createGameview();
 			setActivityContentView(activity);
 		}else if((sceneMode&Scene.RESUME)!=0){
+			isBlocRunStart = false;
 			if(!isGameViewCreated){
 				createGameview();
 				setActivityContentView(activity);
@@ -76,8 +78,11 @@ public abstract class GameController implements IGameController{
 				}
 			}
 		}else if((sceneMode&Scene.RESUME_WITHOUT_SET_VIEW)!=0){
+			isBlocRunStart = false;
 			runStart();
 		}else if((sceneMode&Scene.FINISHED)!=0){
+			
+		}else if((sceneMode&Scene.NOT_AUTO_START)!=0){
 			
 		}
 	}

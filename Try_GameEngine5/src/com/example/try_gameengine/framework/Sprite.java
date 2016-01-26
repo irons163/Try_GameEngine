@@ -246,6 +246,8 @@ public class Sprite extends Layer {
 						PointF locationInScene = parent.locationInSceneByCompositeLocation((float) (centerX - w / 2), (float) (centerY - h / 2));
 						dst.left = locationInScene.x;
 						dst.top = locationInScene.y;
+						dst.right = (float) (dst.left + w * scale);
+						dst.bottom = (float) (dst.top + h * scale);
 					}
 				}
 				

@@ -3,6 +3,8 @@ package com.example.try_gameengine.action;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.graphics.Bitmap;
+
 import com.example.try_gameengine.action.visitor.IMovementActionVisitor;
 import com.example.try_gameengine.action.visitor.MovementActionAttachToTargetSpriteVisitor;
 import com.example.try_gameengine.action.visitor.MovementActionNoRepeatSpriteActionVisitor;
@@ -113,8 +115,24 @@ public class MAction {
 		return new MovementActionItemAlpha(triggerTotal, triggerInterval, originalAlpha, alpha);	
 	}
 	
-	public static MovementAction animateAction(){
-		return null;	
+	public static MovementAction animateAction(Bitmap[] bitmapFrames, float secondPerOneTime){
+		return new MovementActionItemAnimate(bitmapFrames, secondPerOneTime);
+	}
+	
+	public static MovementAction animateAction(long millisTotal, Bitmap[] bitmapFrames, int[] frameTriggerTimes){
+		return new MovementActionItemAnimate(millisTotal, bitmapFrames, frameTriggerTimes);	
+	}
+	
+	public static MovementAction animateAction(long millisTotal, Bitmap[] bitmapFrames, int[] frameTriggerTimes, float scale){
+		return new MovementActionItemAnimate(millisTotal, bitmapFrames, frameTriggerTimes, scale);	
+	}
+	
+	public static MovementAction animateAction(long triggerTotal, long triggerInterval, Bitmap[] bitmapFrames, int[] frameTriggerTimes){
+		return new MovementActionItemAnimate(triggerTotal, triggerInterval, bitmapFrames, frameTriggerTimes);	
+	}
+	
+	public static MovementAction animateAction(long triggerTotal, long triggerInterval, Bitmap[] bitmapFrames, int[] frameTriggerTimes, float scale){
+		return new MovementActionItemAnimate(triggerTotal, triggerInterval, bitmapFrames, frameTriggerTimes, scale);	
 	}
 	
 	public static MovementAction waitAction(long triggerTotal){
