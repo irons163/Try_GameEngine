@@ -67,16 +67,16 @@ public class MovementActionItemAnimate extends MovementAction{
 		this.description = description + ",";
 		this.bitmapFrames = bitmapFrames;
 		if(frameTriggerTimes == null){
-			this.frameTriggerTimes = new int[bitmapFrames.length];
+			frameTriggerTimes = new int[bitmapFrames.length];
 			Arrays.fill(frameTriggerTimes, (int) triggerInterval);
-		}else{
-			this.frameTriggerTimes = frameTriggerTimes;
 		}
+		
+		this.frameTriggerTimes = frameTriggerTimes;
 		
 		this.scale = scale;
 		movementItemList.add(this);
 		info = new MovementActionInfo(millisTotal, millisDelay, 0, 0);
-		
+		info.setSpriteActionName(description);
 //		info.getSprite().getActionName();
 	}
 	
@@ -103,7 +103,7 @@ public class MovementActionItemAnimate extends MovementAction{
 //		int offsetAlpha= alpha - originalAlpha;
 //		offsetAlphaByOnceTrigger = (int) (offsetAlpha/(info.getTotal()/info.getDelay()));
 		
-		info.getSprite().addActionFPS(description, bitmapFrames, frameTriggerTimes, scale, isLoop, new com.example.try_gameengine.framework.IActionListener() {
+		info.getSprite().addActionFPS(info.getSpriteActionName(), bitmapFrames, frameTriggerTimes, scale, isLoop, new com.example.try_gameengine.framework.IActionListener() {
 			
 			@Override
 			public void beforeChangeFrame(int nextFrameId) {

@@ -36,6 +36,12 @@ public class MovementActionItemBaseReugularFPS extends MovementAction{
 	FrameTrigger nextframeTrigger;
 	private long lastTriggerFrameNum;
 	private boolean isEnableSetSpriteAction = true;
+	private FrameTimesType frameTimesType = FrameTimesType.FrameTimesIntervalBeforeAction;
+	
+	public enum FrameTimesType{ //Default = FrameTimesIntervalBeforeAction
+		FrameTimesIntervalBeforeAction, //wait interval->Action->wait interval->Action->end
+		FrameTimesIntervalAfterAction //Action->wait interval->Action->wait interval->end
+	};
 	
 	public MovementActionItemBaseReugularFPS(long millisTotal, long millisDelay, final int dx, final int dy){
 		this(millisTotal, millisDelay, dx, dy, "MovementItem");
@@ -212,7 +218,20 @@ public class MovementActionItemBaseReugularFPS extends MovementAction{
 		gravityController = info.getGravityController();
 		
 		resumeFrameIndex = 0;
+		initLastTriggerFrameNum();
 		return this;
+	}
+	
+	private void initLastTriggerFrameNum(){
+		switch (frameTimesType) {
+		
+		case FrameTimesIntervalBeforeAction:
+			lastTriggerFrameNum = 0; //wait interval->Action->wait interval->Action->end, if total = 9 interval = 3 then 3->6->9->end(10)
+			break;
+		case FrameTimesIntervalAfterAction:
+			lastTriggerFrameNum = (-info.getDelay() + 1); //Action->wait interval->Action->wait interval->end, if total = 9 interval = 3 then 1->4->7->end(10)
+			break;
+		}
 	}
 	
 	private void doRotation(){
@@ -243,8 +262,17 @@ public class MovementActionItemBaseReugularFPS extends MovementAction{
 		millisDelay = info.getDelay();
 		dx = info.getDx();
 		dy = info.getDy();
+		initLastTriggerFrameNum();
 	}
 	
+	public FrameTimesType getFrameTimesType() {
+		return frameTimesType;
+	}
+
+	public void setFrameTimesType(FrameTimesType frameTimesType) {
+		this.frameTimesType = frameTimesType;
+	}
+
 	@Override
 	public MovementAction getAction(){
 		return this;

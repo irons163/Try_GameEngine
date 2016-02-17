@@ -3,6 +3,7 @@ package com.example.try_gameengine.framework;
 
 import java.util.Iterator;
 
+import com.example.try_gameengine.action.MovementAction;
 import com.example.try_gameengine.framework.GameController.BlockRunData;
 import com.example.try_gameengine.scene.Scene;
 
@@ -34,13 +35,15 @@ public class GameModel implements IGameModel{
 	private boolean timeLock = false;
 	private long fpsCounter;
 	float fps;
+	Paint paint = new Paint();
 //	private Bitmap lastCanvas;
 	
 	public GameModel(Context context, Data data) {
 		// TODO Auto-generated constructor stub
 		this.context = context;
 		this.data = data;
-		
+		paint.setTextSize(50);
+		paint.setColor(Config.debugMessageColor);
 //		initChessBoard();
 //		initChessPointManager();
 //		initPlayerManager();
@@ -137,9 +140,16 @@ public class GameModel implements IGameModel{
 					fpsCounter = 0;
 					timeLock = false;
 				}	
-				Paint paint = new Paint();
-				paint.setTextSize(50);
+				
 				canvas.drawText(String.format("%.1f", fps), 100, 50, paint);
+			}
+			
+			if(Config.showMovementActionThreadNumber){
+				canvas.drawText(String.format("%d", MovementAction.getThreadPoolNumber()), 100, 85, paint);
+			}
+			
+			if(Config.showAllThreadNumber){
+				canvas.drawText(String.format("%d", Thread.activeCount()), 100, 120, paint);
 			}
 			
 			if(Config.enableFPSInterval){

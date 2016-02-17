@@ -87,9 +87,6 @@ public class Layer extends ALayer{
 				//use self paint first
 				paint = originalPaint;
 				
-				for(ILayer layer : getLayers()){
-					layer.drawSelf(canvas, paint);
-				}
 			}else{
 				src.left = 0;
 				src.top = 0;
@@ -112,6 +109,11 @@ public class Layer extends ALayer{
 				//use self paint first
 				paint = originalPaint;
 			}
+		}
+		
+		for(ILayer layer : getLayers()){
+			if(layer.isComposite())
+				layer.drawSelf(canvas, paint);
 		}
 	}
 

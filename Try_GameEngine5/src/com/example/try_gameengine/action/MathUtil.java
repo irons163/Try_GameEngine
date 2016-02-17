@@ -333,7 +333,10 @@ public class MathUtil {
 	public float getJumpTime(float dx, int count){
 		int time = 0;
 		time = (int)Math.ceil(vy*2/-ay);
-		vx = dx/time;
+		if(time==0)
+			vx = 0;
+		else
+			vx = dx/time;
 		float newVx = vx;
 		return newVx;
 	}

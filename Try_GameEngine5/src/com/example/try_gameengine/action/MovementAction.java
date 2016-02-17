@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
 
 import com.example.try_gameengine.action.listener.DefaultActionListener;
 import com.example.try_gameengine.action.listener.IActionListener;
@@ -51,6 +52,10 @@ public abstract class MovementAction {
 	public void setTimerOnTickListener(TimerOnTickListener timerOnTickListener) {
 			this.timerOnTickListener = timerOnTickListener;
 			setActionsTheSameTimerOnTickListener();
+	}
+	
+	public TimerOnTickListener getTimerOnTickListener(){
+		return this.timerOnTickListener;
 	}
 	
 	protected void setActionsTheSameTimerOnTickListener(){
@@ -178,6 +183,10 @@ public abstract class MovementAction {
 		this.name = name;
 	}
 	
+	public String getName() {
+		return name;
+	}
+	
 	public MovementAction getPartOfMovementActionByName(String name){
 		return getMovement(this, name);
 	} 
@@ -231,6 +240,13 @@ public abstract class MovementAction {
 	public IMovementActionMemento createMovementActionMemento(){
 		movementActionMemento = new MovementActionMementoImpl(actions, thread, timerOnTickListener, description, copyMovementActionList, currentInfoList, movementItemList, totalCopyMovementActionList, isCancelFocusAppendPart, isFinish, isLoop, isSigleThread, name, cancelAction, allMovementActoinList);
 		return movementActionMemento;
+	}
+	
+	public static int getThreadPoolNumber(){
+		if(executor instanceof ThreadPoolExecutor){
+			return ((ThreadPoolExecutor)executor).getActiveCount();
+		}
+		return 0;
 	}
 	
 	public void restoreMovementActionMemento(IMovementActionMemento movementActionMemento){

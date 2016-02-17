@@ -1,6 +1,9 @@
 package com.example.try_gameengine.framework;
 
+import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.List;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import org.loon.framework.android.game.physics.LWorld;
 
@@ -14,9 +17,9 @@ import android.graphics.RectF;
 
 import com.example.try_gameengine.action.MAction;
 import com.example.try_gameengine.action.MovementAction;
+import com.example.try_gameengine.action.MovementAtionController;
 import com.example.try_gameengine.framework.Config.DestanceType;
 import com.example.try_gameengine.physics.PhysicsBody;
-import com.example.try_gameengine.utils.ISpriteDetectAreaHandler;
 import com.example.try_gameengine.utils.SpriteDetectAreaHandler;
 
 public class Sprite extends Layer {
@@ -30,6 +33,7 @@ public class Sprite extends Layer {
 	public float scale = 1.0f;
 	public boolean canCollision = true;
 	public MovementAction action;
+	public ConcurrentLinkedQueue<MovementAction> movementActions = new ConcurrentLinkedQueue<MovementAction>();
 	
 	protected RectF moveRage;
 	private MoveRageType moveRageType = MoveRageType.StopOneSide;
@@ -176,10 +180,25 @@ public class Sprite extends Layer {
 	
 	public void setMovementAction(MovementAction movementAction){
 		this.action = movementAction;
+		movementActions.clear();
+		movementActions.add(this.action);
 	}
 	
 	public MovementAction getMovementAction(){
 		return action;
+	}
+	
+	private void addMovementAction(MovementAction movementAction){
+		this.action = movementAction;
+		movementActions.add(this.action);
+	}
+	
+	public void removeAllMovementActions(){
+		for(MovementAction action : movementActions){
+			if(action.controller!=null)
+				action.controller.cancelAllMove();
+		}
+		movementActions.clear();
 	}
 	
 	public void setAction(String actionName) {
@@ -187,6 +206,8 @@ public class Sprite extends Layer {
 			return;
 		frameIdx = 0;
 		currentFrame = 0;
+		if(currentAction!=null)
+			currentAction.forceToFinish();
 		currentAction = actions.get(actionName);
 		currentAction.initUpdateTime();
 		scale = currentAction.scale;
@@ -259,11 +280,13 @@ public class Sprite extends Layer {
 			paint = originalPaint;
 		}
 		
-		if(isComposite()){
-			for(ILayer layer : layers){
+		
+		for(ILayer layer : layers){
+			if(layer.isComposite()){
 				layer.drawSelf(canvas, paint);
 			}
 		}
+		
 	}
 	
 	public void customBitampSRCandDST(Rect src, RectF dst){
@@ -540,12 +563,18 @@ public class Sprite extends Layer {
 //		}
 	}
 	
+	@Override
 	public void frameTrig(){
 		
-		if(action!=null)
+//		if(action!=null)
+//			action.trigger();
+		for(MovementAction action : movementActions){
 			action.trigger();
+		}
 		if(currentAction!=null)
 			currentAction.trigger();
+		
+		super.frameTrig();
 	}
 	
 	public String getActionName(){
@@ -632,12 +661,45 @@ public class Sprite extends Layer {
 	}
 	
 	public void runMovementAction(MovementAction movementAction){
+		initRunMovementAction(movementAction);
+		setMovementAction(movementAction);
+	}
+	
+	public void runMovementActionAndAppend(MovementAction movementAction){
+		initRunMovementAction(movementAction);
+		addMovementAction(movementAction);
+	}
+	
+	private void initRunMovementAction(MovementAction movementAction){
 		MAction.attachToTargetSprite(movementAction, this);
+		MAction.setDefaultTimeToTickListenerIfNotSetYetToTargetSprite(movementAction, this);
+		if(movementAction.controller==null)
+			movementAction.setMovementActionController(new MovementAtionController());
 		movementAction.getCurrentInfoList();
 		movementAction.modifyWithSpriteXY(getX(), getY());
 		movementAction.initMovementAction();
 		movementAction.start();
-		setMovementAction(movementAction);
+	}
+	
+	public void cancelCurrentMovementAction(){
+		if(getMovementAction()!=null)
+			getMovementAction().controller.cancelAllMove();
+	}
+	
+	public void cancelCurrentMovementActionAndCurrentMovementActionInChirdren(){
+		cancelCurrentMovementAction();
+		
+		checkChildrenForCancelCurrentMovementAction(this);
+	}
+	
+	protected void checkChildrenForCancelCurrentMovementAction(ILayer checkLayer){
+		for(ILayer layer : checkLayer.getLayers()){
+			if(layer.isComposite() && layer instanceof Sprite){
+				((Sprite)layer).cancelCurrentMovementActionAndCurrentMovementActionInChirdren();
+			}else if(layer.isComposite()){
+				checkChildrenForCancelCurrentMovementAction(layer);
+			}
+		}
 	}
 	
 	public void setPhysicsBody(PhysicsBody physicsBody, LWorld world){
@@ -710,11 +772,26 @@ public class Sprite extends Layer {
 	}
 	
 	@Override
+	public void setInitWidth(int w) {
+		// TODO Auto-generated method stub
+		this.setWidth(w);
+	}
+	
+	@Override
+	public void setInitHeight(int h) {
+		// TODO Auto-generated method stub
+		this.setHeight(h);
+	}
+	
+	@Override
 	public void setWidth(int w) {
 		// TODO Auto-generated method stub
 		super.setWidth(w);
 		collisionOffsetX = (float)w/this.w*collisionOffsetX;
-		collisionRectFWidth = (float)w/this.w*collisionRectFWidth;
+		if(collisionRectFWidth==0)
+			collisionRectFWidth = w;
+		else
+			collisionRectFWidth = (float)w/this.w*collisionRectFWidth;
 		setCollisionRectF(getX()+collisionOffsetX, getY()+collisionOffsetY, getX()+collisionOffsetX+collisionRectFWidth, getY()+collisionOffsetY+collisionRectFHeight);
 		if(isComposite()){
 			updateSpriteDetectAreaCenter(new PointF(locationInScene.x+w/2, locationInScene.y+h/2));
@@ -728,7 +805,10 @@ public class Sprite extends Layer {
 		// TODO Auto-generated method stub
 		super.setHeight(h);
 		collisionOffsetY = (float)h/this.h*collisionOffsetY;
-		collisionRectFHeight = (float)h/this.h*collisionRectFHeight;
+		if(collisionRectFHeight==0)
+			collisionRectFHeight = h;
+		else
+			collisionRectFHeight = (float)h/this.h*collisionRectFHeight;
 		setCollisionRectF(getX()+collisionOffsetX, getY()+collisionOffsetY, getX()+collisionOffsetX+collisionRectFWidth, getY()+collisionOffsetY+collisionRectFHeight);
 		if(isComposite()){
 			updateSpriteDetectAreaCenter(new PointF(locationInScene.x+w/2, locationInScene.y+h/2));
@@ -736,7 +816,15 @@ public class Sprite extends Layer {
 			updateSpriteDetectAreaCenter(new PointF(getCenterX(), getCenterY()));
 		}
 	}
-
+	
+	@Override
+	protected void willDoSometiongBeforeOneOfAncestorLayerWillRemoved() {
+		// TODO Auto-generated method stub
+		if(isComposite() || getParent()==null)
+			cancelCurrentMovementAction();
+		super.willDoSometiongBeforeOneOfAncestorLayerWillRemoved();
+	}
+	
 	public class SpriteAction {
 		public int[] frames;
 		public int[] frameTime;
@@ -795,6 +883,13 @@ public class Sprite extends Layer {
 			frameIdx %= bitmapFrames.length;
 			if(!isLoop && frameIdx==0){
 				isStop = true;		
+			}
+		}
+		
+		public void forceToFinish(){
+			if(!isStop){
+				isStop = true;
+				actionListener.actionFinish();
 			}
 		}
 		

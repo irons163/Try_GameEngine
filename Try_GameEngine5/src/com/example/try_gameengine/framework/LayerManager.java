@@ -509,8 +509,8 @@ public class LayerManager {
 				List<List<ILayer>> layerLevelList = sceneLayerLevelList.get(sceneLayerLevel+"");
 				for (List<ILayer> layersByTheSameLevel : layerLevelList) {
 					for (ILayer layer : layersByTheSameLevel) {
-						if(!layer.iszPositionValid() && layer instanceof Sprite)
-							((Sprite)layer).frameTrig();
+						if(!layer.iszPositionValid() && layer instanceof ALayer)
+							((ALayer)layer).frameTrig();
 					}
 				}
 				
@@ -522,8 +522,8 @@ public class LayerManager {
 	public static synchronized void processLayers() {
 		for (List<ILayer> layersByTheSameLevel : layerLevelList) {
 			for (ILayer layer : layersByTheSameLevel) {
-				if(!layer.iszPositionValid() && layer instanceof Sprite)
-					((Sprite)layer).frameTrig();
+				if(!layer.iszPositionValid() && layer instanceof ALayer)
+					((ALayer)layer).frameTrig();
 			}
 		}
 		
@@ -534,8 +534,8 @@ public class LayerManager {
 	public static void processLayersBySpecificLevel(int level) {
 		List<ILayer> layersByTheSameLevel = layerLevelList.get(level);
 		for (ILayer layer : layersByTheSameLevel) {
-			if(layer instanceof Sprite)
-				((Sprite)layer).frameTrig();
+			if(layer instanceof ALayer)
+				((ALayer)layer).frameTrig();
 		}
 	}
 	
@@ -559,8 +559,8 @@ public class LayerManager {
 			  List<ILayer> layersByTheSameZposition = entry.getValue();
 //			  System.out.println(layerZposition + " => " + layersByTheSameZposition.toString());
 			  for(ILayer layerByZposition : layersByTheSameZposition){
-				  if(layerByZposition instanceof Sprite)
-					  ((Sprite)layerByZposition).frameTrig();
+				  if(layerByZposition instanceof ALayer)
+					  ((ALayer)layerByZposition).frameTrig();
 			  }
 		}
 	}

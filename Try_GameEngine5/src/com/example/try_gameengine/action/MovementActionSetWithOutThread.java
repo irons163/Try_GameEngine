@@ -187,6 +187,8 @@ public class MovementActionSetWithOutThread extends MovementAction {
 			action.trigger();
 			if(action.isFinish()){
 				actionIndex++;
+				if(actionIndex < actions.size())
+					actions.get(actionIndex).start();
 			}
 		}else{
 			isActionFinish = true;

@@ -9,6 +9,7 @@ import com.example.try_gameengine.action.visitor.IMovementActionVisitor;
 import com.example.try_gameengine.action.visitor.MovementActionAttachToTargetSpriteVisitor;
 import com.example.try_gameengine.action.visitor.MovementActionNoRepeatSpriteActionVisitor;
 import com.example.try_gameengine.action.visitor.MovementActionObjectStructure;
+import com.example.try_gameengine.action.visitor.MovementActionSetDefaultTimeOnTickListenerIfNotSetYetVisitor;
 import com.example.try_gameengine.framework.Config;
 import com.example.try_gameengine.framework.Sprite;
 import com.rits.cloning.Cloner;
@@ -31,8 +32,12 @@ public class MAction {
 		float fps = Config.fps; //60
 		float perFrame = 1000.0f/durationMs/fps; //1000/1000/60=1/60;
 		float perMove = dy * perFrame; //1*(1/60)=1/60
-
-		return new MovementActionItemBaseReugularFPS(new MovementActionInfo(durationMs, (long)(perFrame*1000), 0, perMove, "L", null, false));
+		
+		long millisTotal = durationMs;
+		long totalTrigger = (long) (millisTotal/(1000.0f/Config.fps));
+		
+//		new MovementActionFPSInfo(count, durationFPSFream, dx, dy)
+		return new MovementActionItemBaseReugularFPS(new MovementActionInfo(totalTrigger, 1, 0, perMove, "L", null, false));
 	}
 	
 	public static MovementAction moveByY(float dy, long durationFPSFream, int count){
@@ -161,6 +166,13 @@ public class MAction {
 		MovementActionObjectStructure objectStructure = new MovementActionObjectStructure();
 		objectStructure.setRoot(movementAction);
 		IMovementActionVisitor movementActionVisitor = new MovementActionAttachToTargetSpriteVisitor(targetSprite);
+		objectStructure.handleRequest(movementActionVisitor);
+	}
+	
+	public static void setDefaultTimeToTickListenerIfNotSetYetToTargetSprite(MovementAction movementAction, Sprite targetSprite){
+		MovementActionObjectStructure objectStructure = new MovementActionObjectStructure();
+		objectStructure.setRoot(movementAction);
+		IMovementActionVisitor movementActionVisitor = new MovementActionSetDefaultTimeOnTickListenerIfNotSetYetVisitor(targetSprite);
 		objectStructure.handleRequest(movementActionVisitor);
 	}
 	

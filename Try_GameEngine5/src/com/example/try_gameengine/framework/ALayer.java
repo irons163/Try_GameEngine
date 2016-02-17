@@ -265,6 +265,13 @@ public abstract class ALayer implements ILayer{
 //		this.centerX = y - h / 2;
 	}
 
+	public void frameTrig(){
+		for(ILayer layer : layers){
+			if(layer instanceof ALayer && layer.isComposite())
+				((ALayer)layer).frameTrig();
+		}
+	}
+
 	/** * 绘制自己的抽象接口 * * @param canvas * @param paint */
 	public abstract void drawSelf(Canvas canvas, Paint paint);
 	
@@ -322,15 +329,30 @@ public abstract class ALayer implements ILayer{
 
 	public void remove(ILayer layer) {
 		// TODO Auto-generated method stub
+		if(layer instanceof ALayer)
+			((ALayer)layer).willRemove();
 		if(layers.remove(layer)){	
 			if(layer.isComposite() && layer.getParent()!=null){
 				layer.setLocationInScene(null);
+				layer.setComposite(false);
 			}
 			layer.setParent(null);
 			LayerManager.deleteLayerByLayerLevel(layer, layer.getLayerLevel());
 		}
 	}
+	
+	protected void willRemove(){
+		willDoSometiongBeforeOneOfAncestorLayerWillRemoved();
+	}
 
+	protected void willDoSometiongBeforeOneOfAncestorLayerWillRemoved(){
+		for(ILayer layer : layers){
+			if(layer.isComposite()){
+				((ALayer)layer).willDoSometiongBeforeOneOfAncestorLayerWillRemoved();
+			}
+		}
+	}
+	
 	public void addWithLayerLevelIncrease(ILayer layer) {
 		// TODO Auto-generated method stub
 		layer.setLayerLevel(layerLevel + 1);
@@ -477,6 +499,32 @@ public abstract class ALayer implements ILayer{
 		}
 	}
 	
+	public void calculateWHByChildern(){
+		if(getLayers().size()!=0){
+			PointF pointWHMax = null;
+			for(ILayer child : getLayers()){
+				if(child.isComposite()){
+					((ALayer)child).calculateWHByChildern();
+					float w = ((ALayer)child).w + child.getX();
+					float h = ((ALayer)child).h + child.getY();
+					PointF childPointWH = new PointF(w, h);
+					if(pointWHMax==null)
+						pointWHMax = childPointWH;
+					else{
+						if(childPointWH.x > pointWHMax.x)
+							pointWHMax.x = childPointWH.x;
+						if(childPointWH.y > pointWHMax.y)
+							pointWHMax.y = childPointWH.y;
+					}			
+				}
+			}
+			if(pointWHMax!=null){
+				this.setWidth((int)pointWHMax.x);
+				this.setHeight((int)pointWHMax.y);
+			}
+		}
+	}
+	
 	public float getX(){
 		return x;
 	}
@@ -567,12 +615,17 @@ public abstract class ALayer implements ILayer{
 	}
 	
 	public void removeFromParent(){
+		willRemoveFromParent();
 		if(parent!=null){
 			parent.remove(this);
 			removeFromAuto();
 		}else{
 			removeFromAuto();
 		}
+	}
+	
+	public void willRemoveFromParent(){
+		willDoSometiongBeforeOneOfAncestorLayerWillRemoved();
 	}
 	
 	public void removeFromAuto(){
@@ -702,7 +755,7 @@ public abstract class ALayer implements ILayer{
 			}		
 		}
 	}
-
+	
 	public void setLocationInScene(PointF locationInScene) {
 		this.locationInScene = locationInScene;
 		for(ILayer child : layers){
@@ -712,23 +765,23 @@ public abstract class ALayer implements ILayer{
 
 	public PointF locationInLayer(float x, float y){
 		PointF locationInLayer = new PointF(x, y);
-		if(isComposite()){
+//		if(isComposite()){
 			for(ILayer layer : getLayersFromRootLayerToCurrentLayerInComposite()){
 				locationInLayer.x = locationInLayer.x - layer.getX();
 				locationInLayer.y = locationInLayer.y - layer.getY();
 			}
-		}
+//		}
 		return locationInLayer;
 	}
 	
 	public PointF locationInSceneByCompositeLocation(float locationInLayerX, float locationInLayerY){
 		PointF locationInScene = new PointF(locationInLayerX, locationInLayerY);
-		if(isComposite()){
+//		if(isComposite()){
 			for(ILayer layer : getLayersFromRootLayerToCurrentLayerInComposite()){
 				locationInScene.x = locationInScene.x + layer.getX();
 				locationInScene.y = locationInScene.y + layer.getY();
 			}
-		}
+//		}
 		return locationInScene;
 	}
 	
@@ -745,7 +798,7 @@ public abstract class ALayer implements ILayer{
 		layersFromRootLayerToCurrentLayer.add(0, this);
 		ILayer rootLayer = this;
 		while(rootLayer.getParent()!=null){
-			if(!rootLayer.getParent().isComposite())
+			if(!rootLayer.isComposite())
 				break;
 			rootLayer = rootLayer.getParent();
 			layersFromRootLayerToCurrentLayer.add(0, rootLayer);
