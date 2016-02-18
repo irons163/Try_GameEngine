@@ -14,6 +14,7 @@ import com.example.try_gameengine.framework.Config;
 import com.example.try_gameengine.framework.Sprite;
 import com.rits.cloning.Cloner;
 
+//MAction use threadPool it would delay during action by action.
 public class MAction {
 	
 	public interface MActionBlock{

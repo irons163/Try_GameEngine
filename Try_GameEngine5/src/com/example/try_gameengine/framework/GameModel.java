@@ -36,6 +36,7 @@ public class GameModel implements IGameModel{
 	private long fpsCounter;
 	float fps;
 	Paint paint = new Paint();
+	private int backgroundColor = Color.BLACK;
 //	private Bitmap lastCanvas;
 	
 	public GameModel(Context context, Data data) {
@@ -50,6 +51,8 @@ public class GameModel implements IGameModel{
 //		
 //		setPlayersBySquential();
 	}
+	
+	
 	
 //	protected void initChessBoard(){
 //		chessBoard = new ChessBoard(CommonUtil.screenWidth, CommonUtil.screenHeight, 8, 8);
@@ -76,6 +79,18 @@ public class GameModel implements IGameModel{
 //		chessBoard.setPlayersBySquential(playerManager.getPlayersBySquential());
 //	}
 	
+	@Override
+	public int getBackgroundColor() {
+		return backgroundColor;
+	}
+
+
+	@Override
+	public void setBackgroundColor(int backgroundColor) {
+		this.backgroundColor = backgroundColor;
+	}
+
+
 
 	@Override
 	public void registerObserver(IMoveObserver moveObserver) {
@@ -126,7 +141,7 @@ public class GameModel implements IGameModel{
 		try {
 			canvas = surfaceHolder.lockCanvas();
 
-			canvas.drawColor(Color.BLACK);
+			canvas.drawColor(backgroundColor);
 
 			doDraw(canvas);
 			

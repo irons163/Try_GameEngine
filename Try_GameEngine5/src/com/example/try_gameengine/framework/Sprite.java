@@ -681,11 +681,13 @@ public class Sprite extends Layer {
 		movementAction.start();
 	}
 	
+	//use in game engein by removeFromParent() and willDoSometiongBeforeOneOfAncestorLayerWillRemoved().
+	//cancel the sprites which ancestorLayer removed from composite group.
 	public void cancelCurrentMovementAction(){
-		if(getMovementAction()!=null)
-			getMovementAction().controller.cancelAllMove();
+		removeAllMovementActions();
 	}
 	
+	//not use in game engein yet, just call for user.
 	public void cancelCurrentMovementActionAndCurrentMovementActionInChirdren(){
 		cancelCurrentMovementAction();
 		

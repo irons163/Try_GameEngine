@@ -15,4 +15,6 @@ public interface IGameModel {
 	public void setSurfaceHolder(SurfaceHolder surfaceHolder);
 	public void restart();
 	public void stop();
+	public int getBackgroundColor();
+	public void setBackgroundColor(int backgroundColor);
 }

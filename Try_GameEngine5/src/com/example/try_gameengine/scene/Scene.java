@@ -123,6 +123,14 @@ public abstract class Scene extends Activity{
 		layer.setAutoAdd(true);
 	}
 	
+	public int getBackgroundColor() {
+		return gameModel.getBackgroundColor();
+	}
+
+	public void setBackgroundColor(int backgroundColor) {
+		gameModel.setBackgroundColor(backgroundColor);
+	}
+	
 	@Override
 	public void finish() {
 		// TODO Auto-generated method stub
