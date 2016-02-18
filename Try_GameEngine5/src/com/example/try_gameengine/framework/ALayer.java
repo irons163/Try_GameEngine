@@ -70,7 +70,7 @@ public abstract class ALayer implements ILayer{
 	
 	private LayerParam layerParam = new LayerParam();
 	
-	public class LayerParam implements Cloneable{
+	public static class LayerParam implements Cloneable{
 		private boolean isEnabledPercentagePositionX;
 		private boolean isEnabledPercentagePositionY;
 		private boolean isEnabledPercentageSizeW;

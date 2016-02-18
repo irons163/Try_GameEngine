@@ -118,7 +118,9 @@ public abstract class GameController implements IGameController{
 	@Override
 	public void stop() {
 		// TODO Auto-generated method stub
+		beforeGameStop();
 		gameModel.stop();
+		afterGameStop();
 	}
 
 	@Override
@@ -193,6 +195,14 @@ public abstract class GameController implements IGameController{
 	protected abstract void beforeGameStart();
 	
 	protected abstract void afterGameStart();
+	
+	protected void beforeGameStop(){
+		//do something
+	}
+	
+	protected void afterGameStop(){
+		//do something
+	}
 	
 	interface OnViewCreateListener{
 		

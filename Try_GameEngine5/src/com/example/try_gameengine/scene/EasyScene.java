@@ -42,6 +42,7 @@ import com.example.try_gameengine.scene.Scene;
 public abstract class EasyScene extends Scene implements ContactListener{
 //	EasyGameModel gameModel;
 	Paint paint;
+	protected boolean isEnablePhysical = false;
 	
 	private int screenW,screenH;
 	
@@ -304,6 +305,14 @@ public abstract class EasyScene extends Scene implements ContactListener{
 	
 	public abstract void afterGameStart();
 	
+	protected void beforeGameStop(){
+		//do something
+	};
+	
+	protected void afterGameStop(){
+		//do something
+	};
+	
 	public abstract void surfaceChanged(SurfaceHolder holder, int format, int width,
 			int height);
 	
@@ -345,6 +354,18 @@ public abstract class EasyScene extends Scene implements ContactListener{
 		public void afterGameStart() {
 			// TODO Auto-generated method stub
 			EasyScene.this.afterGameStart();
+		}
+		
+		@Override
+		protected void beforeGameStop() {
+			// TODO Auto-generated method stub
+			EasyScene.this.beforeGameStop();
+		}
+
+		@Override
+		protected void afterGameStop() {
+			// TODO Auto-generated method stub
+			EasyScene.this.afterGameStop();
 		}
 		
 		@Override
@@ -409,25 +430,26 @@ public abstract class EasyScene extends Scene implements ContactListener{
 			EasyScene.this.doDraw(canvas);
 			if(isEnableRemoteController)
 				remoteController.drawRemoteController(canvas, null);
-			
-			/**畫出小鳥*/
-			bird.draw(canvas, paint);
-
-			/**如果小鳥還沒被發射，畫出拖動的橡皮筋軌跡*/
-			if(!bird.getIsReleased())
-			{
-				canvas.drawLine(AngryBirdActivity.startX, AngryBirdActivity.startY, bird.getX(), bird.getY(), paint);
-			}
-
-			/**遍歷物理世界，畫出Rect */
-//			Body body = world.getBodyList();
-			for (int i = 1; i < world.getBodyCount(); i++) {
-				LBody body = world.getBodyList().get(i);
-				if ((body.getUserData()) instanceof MyRect) {
-					MyRect rect = (MyRect) (body.getUserData());
-					rect.draw(canvas, paint);
+			if(isEnablePhysical){
+				/**畫出小鳥*/
+				bird.draw(canvas, paint);
+	
+				/**如果小鳥還沒被發射，畫出拖動的橡皮筋軌跡*/
+				if(!bird.getIsReleased())
+				{
+					canvas.drawLine(AngryBirdActivity.startX, AngryBirdActivity.startY, bird.getX(), bird.getY(), paint);
 				}
-//				body = body.m_next;
+	
+				/**遍歷物理世界，畫出Rect */
+	//			Body body = world.getBodyList();
+				for (int i = 1; i < world.getBodyCount(); i++) {
+					LBody body = world.getBodyList().get(i);
+					if ((body.getUserData()) instanceof MyRect) {
+						MyRect rect = (MyRect) (body.getUserData());
+						rect.draw(canvas, paint);
+					}
+	//				body = body.m_next;
+				}
 			}
 		}
 		
@@ -439,6 +461,14 @@ public abstract class EasyScene extends Scene implements ContactListener{
 		}
 	}
 	
+	public boolean isEnablePhysical() {
+		return isEnablePhysical;
+	}
+
+	public void setEnablePhysical(boolean isEnablePhysical) {
+		this.isEnablePhysical = isEnablePhysical;
+	}
+
 	@Override
 	public void beginContact(Contact arg0) {
 		// TODO Auto-generated method stub
