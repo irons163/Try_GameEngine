@@ -68,7 +68,7 @@ public class LabelLayer extends Layer{
 			if(isComposite() && getParent()!=null)
 				canvas.drawText(text, getLocationInScene().x, getLocationInScene().y, paint!=null?paint:getPaint());
 			else
-				canvas.drawText(text, getX(), getY(), paint!=null?paint:getPaint());
+				canvas.drawText(text, getLeft(), getTop(), paint!=null?paint:getPaint());
 		}
 	}
 	

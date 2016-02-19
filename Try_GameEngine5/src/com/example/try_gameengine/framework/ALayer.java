@@ -70,6 +70,7 @@ public abstract class ALayer implements ILayer{
 	
 	private LayerParam layerParam = new LayerParam();
 	
+	//Adjust position and size by parent layer.
 	public static class LayerParam implements Cloneable{
 		private boolean isEnabledPercentagePositionX;
 		private boolean isEnabledPercentagePositionY;
@@ -139,6 +140,9 @@ public abstract class ALayer implements ILayer{
 			return super.clone();
 		}
 	}
+	
+	private PointF anchorPoint = new PointF(0, 0);
+	private PointF anchorPointXY = new PointF();
 	
 	public interface OnLayerClickListener{
 		public void onClick(ILayer layer);
@@ -246,6 +250,15 @@ public abstract class ALayer implements ILayer{
 
 	/** * 设置组件位置的方法 * * @param x * @param y */
 	public void setPosition(float x, float y) {
+		anchorPointXY.x = x;
+		x = x - anchorPoint.x * w;
+		
+//		x = x - anchorPointXY.x - anchorPoint.x * w;
+		
+		anchorPointXY.y = y;
+		y = y - anchorPoint.y * h;
+		
+		
 		this.x = x;
 		this.y = y;
 		this.centerX = x + w / 2;
@@ -448,6 +461,9 @@ public abstract class ALayer implements ILayer{
 		this.centerX = x + w / 2;
 		getFrame().set(x, y, x+w, y+h);
 		
+		if(anchorPoint.x != 0)
+			setX(anchorPointXY.x);
+		
 		if(getLayers().size()!=0){
 			for(ILayer child : getLayers()){
 				if(child.isComposite() && child.getLayerParam().isEnabledPercentagePositionX()){
@@ -461,6 +477,9 @@ public abstract class ALayer implements ILayer{
 		this.h = h;
 		this.centerY = y + h / 2;
 		getFrame().set(x, y, x+w, y+h);
+		
+		if(anchorPoint.y != 0)
+			setY(anchorPointXY.y);;
 		
 		if(getLayers().size()!=0){
 			for(ILayer child : getLayers()){
@@ -476,6 +495,9 @@ public abstract class ALayer implements ILayer{
 		this.centerX = x + w / 2;
 		getFrame().set(x, y, x+w, y+h);
 		
+		if(anchorPoint.x != 0)
+			setX(anchorPointXY.x);
+		
 		if(getLayers().size()!=0){
 			for(ILayer child : getLayers()){
 				if(child.isComposite() && child.getLayerParam().isEnabledPercentagePositionX()){
@@ -489,6 +511,9 @@ public abstract class ALayer implements ILayer{
 		this.h= h;
 		this.centerY = y + h / 2;
 		getFrame().set(x, y, x+w, y+h);
+		
+		if(anchorPoint.y != 0)
+			setY(anchorPointXY.y);
 		
 		if(getLayers().size()!=0){
 			for(ILayer child : getLayers()){
@@ -505,8 +530,10 @@ public abstract class ALayer implements ILayer{
 			for(ILayer child : getLayers()){
 				if(child.isComposite()){
 					((ALayer)child).calculateWHByChildern();
-					float w = ((ALayer)child).w + child.getX();
-					float h = ((ALayer)child).h + child.getY();
+//					float w = ((ALayer)child).w + child.getX();
+//					float h = ((ALayer)child).h + child.getY();
+					float w = ((ALayer)child).w + child.getLeft();
+					float h = ((ALayer)child).h + child.getTop();
 					PointF childPointWH = new PointF(w, h);
 					if(pointWHMax==null)
 						pointWHMax = childPointWH;
@@ -526,6 +553,10 @@ public abstract class ALayer implements ILayer{
 	}
 	
 	public float getX(){
+		return anchorPointXY.x;
+	}
+	
+	public float getLeft(){
 		return x;
 	}
 	
@@ -534,6 +565,9 @@ public abstract class ALayer implements ILayer{
 	}
 	
 	public void setX(float x){
+		anchorPointXY.x = x;
+		x = x - anchorPoint.x * w;
+		
 		this.x = x;
 		this.centerX = x + w/2;
 		getFrame().set(x, y, x+w, y+h);
@@ -549,14 +583,21 @@ public abstract class ALayer implements ILayer{
 	}
 	
 	public float getY(){
-		return y;
+		return anchorPointXY.y;
 	}
 	
 	public float getCenterY(){
 		return centerY;
 	}
 	
+	public float getTop(){
+		return y;
+	}
+	
 	public void setY(float y){
+		anchorPointXY.y = y;
+		y = y - anchorPoint.y * h;
+		
 		this.y = y;
 		this.centerY = y + h/2;
 		getFrame().set(x, y, x+w, y+h);
@@ -568,6 +609,22 @@ public abstract class ALayer implements ILayer{
 					child.setY(child.getY());
 				}
 			}		
+		}
+	}
+	
+	public PointF getAnchorPoint() {
+		return anchorPoint;
+	}
+
+	public void setAnchorPoint(PointF anchorPoint) {
+		setAnchorPoint(anchorPoint.x, anchorPoint.y);
+	}
+
+	public void setAnchorPoint(float x, float y) {
+		if (!(x == anchorPoint.x && y == anchorPoint.y)) {
+			this.anchorPoint.set(x, y);
+//			this.anchorPointXY.set(getX(), getY());
+			setPosition(getX(), getY());
 		}
 	}
 	
@@ -853,7 +910,7 @@ public abstract class ALayer implements ILayer{
 		}else{
             x = event.getX(downPointerIndex);
             y = event.getY(downPointerIndex);
-			f = new RectF(getX(), getY(), getX()+w, getY()+h);
+			f = new RectF(getLeft(), getTop(), getLeft()+w, getTop()+h);
 		}
 		
 //		RectF f = new RectF(0, 0, w,

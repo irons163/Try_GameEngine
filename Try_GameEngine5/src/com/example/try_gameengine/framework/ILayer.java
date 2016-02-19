@@ -62,11 +62,15 @@ public interface ILayer extends Cloneable{
 	
 	public float getX();
 	
+	public float getLeft();
+	
 	public float getCenterX();
 	
 	public void setX(float x);
 	
 	public float getY();
+	
+	public float getTop();
 	
 	public float getCenterY();
 	
