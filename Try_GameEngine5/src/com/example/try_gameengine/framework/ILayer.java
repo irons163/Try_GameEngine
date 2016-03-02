@@ -60,6 +60,10 @@ public interface ILayer extends Cloneable{
 	
 	public void setHeight(int h);
 	
+	public int getWidth();
+	
+	public int getHeight();
+	
 	public float getX();
 	
 	public float getLeft();

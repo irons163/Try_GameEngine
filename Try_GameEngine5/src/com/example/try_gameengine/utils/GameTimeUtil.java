@@ -4,6 +4,7 @@ public class GameTimeUtil {
 	private long initTimeMS;
 	private long intervalMS;
 	private long nextExecuteTimeMS;
+	private boolean enable = true;
 	
 	public GameTimeUtil(long intervalMS){
 		this.initTimeMS = System.currentTimeMillis();
@@ -18,6 +19,8 @@ public class GameTimeUtil {
 	}
 	
 	public boolean isArriveExecuteTime(){
+		if(!enable)
+			return false;
 		boolean isArriveTime = false;
 		if(System.currentTimeMillis() >= nextExecuteTimeMS){
 			isArriveTime = true;
@@ -27,6 +30,8 @@ public class GameTimeUtil {
 	}
 	
 	public boolean isArriveExecuteTime(long currentTimeMS){
+		if(!enable)
+			return false;
 		boolean isArriveTime = false;
 		if(currentTimeMS >= nextExecuteTimeMS){
 			isArriveTime = true;
@@ -40,11 +45,17 @@ public class GameTimeUtil {
 	}
 	
 	public boolean isArriveExecuteTimeIfOneDelayThenAllDelay(long currentTimeMS){
+		if(!enable)
+			return false;
 		boolean isArriveTime = false;
 		if(currentTimeMS >= nextExecuteTimeMS){
 			isArriveTime = true;
 			nextExecuteTimeMS = currentTimeMS + intervalMS;
 		}
 		return isArriveTime;
+	}
+	
+	public void enable(boolean enable){
+		this.enable = enable;
 	}
 }

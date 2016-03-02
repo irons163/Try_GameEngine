@@ -14,6 +14,7 @@ import android.graphics.Paint;
 import android.graphics.PointF;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.util.Log;
 
 import com.example.try_gameengine.action.MAction;
 import com.example.try_gameengine.action.MovementAction;
@@ -44,6 +45,8 @@ public class Sprite extends Layer {
 	private int bitmapOrginalFrameHeight;
 	private float frameWidth;
 	private float frameHeight;
+	private float frameColNum;
+	private float frameRowNum;
 	private int length;
 	private int[] frameSequence;
 	private  int frameIndex; 
@@ -171,6 +174,19 @@ public class Sprite extends Layer {
 		this.length = (bitmap.getWidth()/frameWidth)*(bitmap.getHeight()/frameHeight);
 	}
 	
+	public void setBitmapAndFrameWHAndColAndRowNum(Bitmap bitmap,int frameWidth ,int frameHeight,int frameColNum ,int frameRowNum){
+		this.bitmap = bitmap;
+		this.bitmapOrginalFrameWidth = frameWidth;
+		this.bitmapOrginalFrameHeight = frameHeight;
+		this.frameWidth = frameWidth;
+		this.frameHeight = frameHeight;
+		this.frameColNum = frameColNum;
+		this.frameRowNum = frameRowNum;
+		setWidth(frameWidth);
+		setHeight(frameHeight);
+		this.length = frameColNum*frameRowNum;
+	}
+	
 	public void setFrameSequence(int[] sequence)
 	{			
 		this.frameSequence = sequence;
@@ -248,14 +264,15 @@ public class Sprite extends Layer {
 				//use self paint first
 				paint = originalPaint;
 			}else{
-				if(spriteMatrix!=null){
-					canvas.setMatrix(spriteMatrix);
+				boolean isUseCanvasScale = false;
+				if(xScale*xScaleForBitmapWidth<0 || yScale*yScaleForBitmapHeight<0){
+					isUseCanvasScale = true;
 				}
-		
+				
 				src.left = (int) (currentFrame * w * scale);// 左端寬度：當前幀乘上幀的寬度再乘上圖片縮放率
 				src.top = 0;
-				src.right = (int) (src.left + w * scale);// 右端寬度：左端寬度加上(幀的寬度乘上圖片縮放率)
-				src.bottom = h;
+				src.right = (int) ((src.left + w * scale)/(xScale*xScaleForBitmapWidth));// 右端寬度：左端寬度加上(幀的寬度乘上圖片縮放率)
+				src.bottom = (int) (h/(yScale*yScaleForBitmapHeight));
 				
 				dst.left = (float) (centerX - w / 2);
 				dst.top = (float) (centerY - h / 2);
@@ -269,11 +286,29 @@ public class Sprite extends Layer {
 						dst.top = locationInScene.y;
 						dst.right = (float) (dst.left + w * scale);
 						dst.bottom = (float) (dst.top + h * scale);
+
+						if(isUseCanvasScale){
+							if(spriteMatrix!=null){
+								spriteMatrix.reset();
+	//							spriteMatrix.postScale(xScale*xScaleForBitmapWidth, yScale*yScaleForBitmapHeight, getLeft() + w/2, getTop() + h/2 );
+								spriteMatrix.postScale(xScale*xScaleForBitmapWidth, yScale*yScaleForBitmapHeight, locationInScene.x - getLeft() + getAnchorPointXY().x, locationInScene.y - getTop() + getAnchorPointXY().y );
+							}
+						}
 					}
 				}
 				
-				customBitampSRCandDST(src, dst);
-				canvas.drawBitmap(bitmap, src, dst, paint);
+				if(isUseCanvasScale){
+					if(spriteMatrix!=null){
+						canvas.setMatrix(spriteMatrix);
+					}
+					canvas.save();
+					canvas.drawBitmap(bitmap, null, dst, paint);
+					canvas.restore();
+				}else{
+					customBitampSRCandDST(src, dst);
+					canvas.drawBitmap(bitmap, src, dst, paint);
+				}
+				
 			}
 			
 			//use self paint first
@@ -297,6 +332,9 @@ public class Sprite extends Layer {
 	public boolean drawWithoutClip = false;
 	public float drawOffsetX;
 	private float xScale = 1.0f;
+	private float yScale = 1.0f;
+	private float xScaleForBitmapWidth = 1.0f;
+	private float yScaleForBitmapHeight = 1.0f;
 	
 	public void setXscale(float xScale){
 		this.xScale = xScale;
@@ -304,9 +342,32 @@ public class Sprite extends Layer {
 			spriteMatrix = new Matrix();
 		if(spriteMatrix!=null){
 			spriteMatrix.reset();
-			spriteMatrix.postScale(xScale, 1, getX() + w/2, getY() + h/2 );
+//			spriteMatrix.postScale(xScale, yScale, getLeft() + w/2, getTop() + h/2 );
+//			spriteMatrix.postScale(xScale*xScaleForBitmapWidth, yScale*yScaleForBitmapHeight, getLeft() + w/2, getTop() + h/2 );
+			spriteMatrix.postScale(xScale*xScaleForBitmapWidth, yScale*yScaleForBitmapHeight, getAnchorPointXY().x, getAnchorPointXY().y );
 		}
 	}
+	
+	public float getXscale(){
+		return xScale;
+	}
+	
+	public void setYscale(float yScale){
+		this.yScale = yScale;
+		if(spriteMatrix==null)
+			spriteMatrix = new Matrix();
+		if(spriteMatrix!=null){
+			spriteMatrix.reset();
+//			spriteMatrix.postScale(xScale, yScale, getLeft() + w/2, getTop() + h/2 );
+//			spriteMatrix.postScale(xScale*xScaleForBitmapWidth, yScale*yScaleForBitmapHeight, getLeft() + w/2, getTop() + h/2 );
+			spriteMatrix.postScale(xScale*xScaleForBitmapWidth, yScale*yScaleForBitmapHeight, getAnchorPointXY().x, getAnchorPointXY().y );
+		}
+	}
+	
+	public float getYscale(){
+		return yScale;
+	}
+	
 	public void paint(Canvas canvas,Paint paint)
 	{	
 		if(spriteMatrix==null)
@@ -325,13 +386,14 @@ public class Sprite extends Layer {
 		}
 		
 		if(spriteMatrix!=null){
-//			canvas.clipRect(x, y, x+frameWidth, y+frameHeight);
-//			canvas.drawBitmap(bitmap, spriteMatrix, paint);
 			canvas.setMatrix(spriteMatrix);
-			canvas.clipRect(x+drawOffsetX, y, x+frameWidth+drawOffsetX, y+frameHeight);
-//			canvas.drawBitmap(bitmap, x, y, paint);
-			canvas.drawBitmap(bitmap, x-(currentFrame%(bitmap.getWidth()/(int)frameWidth))*frameWidth+drawOffsetX, 
-					y - (currentFrame/(bitmap.getWidth()/(int)frameWidth))*frameHeight, paint);
+//			canvas.clipRect(x+drawOffsetX, y, x+frameWidth+drawOffsetX, y+frameHeight);
+			canvas.clipRect(x+drawOffsetX, y, x+frameWidth/(xScale*xScaleForBitmapWidth)+drawOffsetX, y+frameHeight/(yScale*yScaleForBitmapHeight));
+//			canvas.drawBitmap(bitmap, x-(currentFrame%(bitmap.getWidth()/(int)frameWidth))*frameWidth+drawOffsetX, 
+//					y - (currentFrame/(bitmap.getWidth()/(int)frameWidth))*frameHeight, paint);
+			canvas.drawBitmap(bitmap, x-(currentFrame%(int)((bitmap.getWidth()*(xScale*xScaleForBitmapWidth)/(int)frameWidth)))*frameWidth/(xScale*xScaleForBitmapWidth)+drawOffsetX, 
+					y - (currentFrame/(int)((bitmap.getWidth()*(yScale*yScaleForBitmapHeight))/(int)frameWidth))*frameHeight/(yScale*yScaleForBitmapHeight), paint);
+			Log.e("xScaleForBitmapWidth", xScaleForBitmapWidth+"");
 		}else if(!drawWithoutClip){
 			canvas.clipRect(x+drawOffsetX, y, x+frameWidth+drawOffsetX, y+frameHeight);
 			canvas.drawBitmap(bitmap, x-(currentFrame%(bitmap.getWidth()/(int)frameWidth))*frameWidth+drawOffsetX, 
@@ -733,6 +795,14 @@ public class Sprite extends Layer {
 		// TODO Auto-generated method stub
 		super.setX(x);
 		
+		if(spriteMatrix==null)
+			spriteMatrix = new Matrix();
+		if(spriteMatrix!=null){
+			spriteMatrix.reset();
+//			spriteMatrix.postScale(xScale*xScaleForBitmapWidth, yScale*yScaleForBitmapHeight, getLeft() + w/2, getTop() + h/2 );
+			spriteMatrix.postScale(xScale*xScaleForBitmapWidth, yScale*yScaleForBitmapHeight, getAnchorPointXY().x, getAnchorPointXY().y );
+		}
+		
 		if(isComposite()){
 			PointF locationInScene = locationInSceneByCompositeLocation(getX(), getY());
 			setCollisionRectF(locationInScene.x+collisionOffsetX, locationInScene.y+collisionOffsetY, locationInScene.x+collisionOffsetX+collisionRectFWidth, locationInScene.y+collisionOffsetY+collisionRectFHeight);
@@ -748,6 +818,14 @@ public class Sprite extends Layer {
 		// TODO Auto-generated method stub
 		super.setY(y);
 		
+		if(spriteMatrix==null)
+			spriteMatrix = new Matrix();
+		if(spriteMatrix!=null){
+			spriteMatrix.reset();
+//			spriteMatrix.postScale(xScale*xScaleForBitmapWidth, yScale*yScaleForBitmapHeight, getLeft() + w/2, getTop() + h/2 );
+			spriteMatrix.postScale(xScale*xScaleForBitmapWidth, yScale*yScaleForBitmapHeight, getAnchorPointXY().x, getAnchorPointXY().y );
+		}
+		
 		if(isComposite()){
 			PointF locationInScene = locationInSceneByCompositeLocation(getX(), getY());
 			setCollisionRectF(locationInScene.x+collisionOffsetX, locationInScene.y+collisionOffsetY, locationInScene.x+collisionOffsetX+collisionRectFWidth, locationInScene.y+collisionOffsetY+collisionRectFHeight);
@@ -762,6 +840,14 @@ public class Sprite extends Layer {
 	public void setPosition(float x, float y) {
 		// TODO Auto-generated method stub
 		super.setPosition(x, y);	
+		
+		if(spriteMatrix==null)
+			spriteMatrix = new Matrix();
+		if(spriteMatrix!=null){
+			spriteMatrix.reset();
+//			spriteMatrix.postScale(xScale*xScaleForBitmapWidth, yScale*yScaleForBitmapHeight, getLeft() + w/2, getTop() + h/2 );
+			spriteMatrix.postScale(xScale*xScaleForBitmapWidth, yScale*yScaleForBitmapHeight, getAnchorPointXY().x, getAnchorPointXY().y );
+		}
 		
 		if(isComposite()){
 			PointF locationInScene = locationInSceneByCompositeLocation(getX(), getY());
@@ -789,6 +875,29 @@ public class Sprite extends Layer {
 	public void setWidth(int w) {
 		// TODO Auto-generated method stub
 		super.setWidth(w);
+		if(getBitmap()!=null){
+			if(frameWidth==0){
+				xScaleForBitmapWidth = w/(float)getBitmap().getWidth();
+			}else if(frameColNum!=0){
+				xScaleForBitmapWidth = w/((float)(getBitmap().getWidth()/frameColNum));
+			}
+			
+			if(spriteMatrix==null)
+				spriteMatrix = new Matrix();
+			if(spriteMatrix!=null){
+				spriteMatrix.reset();
+//				spriteMatrix.postScale(xScale*xScaleForBitmapWidth, yScale*yScaleForBitmapHeight, getLeft() + w/2, getTop() + h/2 );
+				spriteMatrix.postScale(xScale*xScaleForBitmapWidth, yScale*yScaleForBitmapHeight, getAnchorPointXY().x, getAnchorPointXY().y);
+				
+				float objectNewX;
+				if (xScale*xScaleForBitmapWidth >= 1){    
+					  objectNewX = getLeft() + (getLeft() - getAnchorPointXY().x)*(xScale*xScaleForBitmapWidth - 1); 
+				}else{   
+					  objectNewX = getLeft() + (getLeft() - getAnchorPointXY().x)*(1 - xScale*xScaleForBitmapWidth); 
+				}
+			}
+		}
+		
 		collisionOffsetX = (float)w/this.w*collisionOffsetX;
 		if(collisionRectFWidth==0)
 			collisionRectFWidth = w;
@@ -806,6 +915,33 @@ public class Sprite extends Layer {
 	public void setHeight(int h) {
 		// TODO Auto-generated method stub
 		super.setHeight(h);
+		if(getBitmap()!=null){
+			if(frameHeight==0){
+				yScaleForBitmapHeight = h/(float)getBitmap().getHeight();
+			}else if(frameRowNum!=0){
+				yScaleForBitmapHeight = h/((float)(getBitmap().getHeight()/frameRowNum));
+			}
+			
+			if(spriteMatrix==null)
+				spriteMatrix = new Matrix();
+			if(spriteMatrix!=null){
+				spriteMatrix.reset();
+//				spriteMatrix.postScale(xScale*xScaleForBitmapWidth, yScale*yScaleForBitmapHeight, getLeft() + w/2, getTop() + h/2 );
+				spriteMatrix.postScale(xScale*xScaleForBitmapWidth, yScale*yScaleForBitmapHeight, getAnchorPointXY().x, getAnchorPointXY().y );
+				
+				float objectNewX;
+				if (xScale*xScaleForBitmapWidth >= 1){    
+					  objectNewX = getLeft() + (getLeft() - getAnchorPointXY().x)*(xScale*xScaleForBitmapWidth - 1); 
+				}else{   
+					  objectNewX = getLeft() + (getLeft() - getAnchorPointXY().x)*(1 - xScale*xScaleForBitmapWidth); 
+				}
+				System.out.println(objectNewX);
+			}
+			
+
+
+		}
+		
 		collisionOffsetY = (float)h/this.h*collisionOffsetY;
 		if(collisionRectFHeight==0)
 			collisionRectFHeight = h;

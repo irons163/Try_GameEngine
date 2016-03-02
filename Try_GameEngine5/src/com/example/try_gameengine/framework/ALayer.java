@@ -354,6 +354,12 @@ public abstract class ALayer implements ILayer{
 		}
 	}
 	
+	public void removeAllChildren(){
+		for(ILayer layer : layers){
+			remove(layer);
+		}
+	}
+	
 	protected void willRemove(){
 		willDoSometiongBeforeOneOfAncestorLayerWillRemoved();
 	}
@@ -524,6 +530,14 @@ public abstract class ALayer implements ILayer{
 		}
 	}
 	
+	public int getWidth(){
+		return w;
+	}
+	
+	public int getHeight(){
+		return h;
+	}
+	
 	public void calculateWHByChildern(){
 		if(getLayers().size()!=0){
 			PointF pointWHMax = null;
@@ -628,6 +642,10 @@ public abstract class ALayer implements ILayer{
 		}
 	}
 	
+	public PointF getAnchorPointXY() {
+		return anchorPointXY;
+	}
+
 	public void setBitmapAndAutoChangeWH(Bitmap bitmap){
 		this.bitmap = bitmap;
 		setInitWidth(bitmap.getWidth());

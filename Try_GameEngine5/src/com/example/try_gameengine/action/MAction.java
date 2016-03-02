@@ -141,6 +141,30 @@ public class MAction {
 		return new MovementActionItemAnimate(triggerTotal, triggerInterval, bitmapFrames, frameTriggerTimes, scale);	
 	}
 	
+	public static MovementAction scaleXToAction(long millisTotal, float scaleX){
+		return new MovementActionItemScale(millisTotal, scaleX, MovementActionItemScale.NO_SCALE);	
+	}
+	
+	public static MovementAction scaleYToAction(long millisTotal, float scaleY){
+		return new MovementActionItemScale(millisTotal, MovementActionItemScale.NO_SCALE, scaleY);	
+	}
+	
+	public static MovementAction scaleToAction(long millisTotal, float scaleX, float scaleY){
+		return new MovementActionItemScale(millisTotal, scaleX, scaleY);	
+	}
+	
+	public static MovementAction scaleXToAction(long triggerTotal, long triggerInterval, float scaleX){
+		return new MovementActionItemScale(triggerTotal, triggerInterval, scaleX, MovementActionItemScale.NO_SCALE);	
+	}
+	
+	public static MovementAction scaleYToAction(long triggerTotal, long triggerInterval, float scaleY){
+		return new MovementActionItemScale(triggerTotal, triggerInterval, MovementActionItemScale.NO_SCALE, scaleY);	
+	}
+	
+	public static MovementAction scaleToAction(long triggerTotal, long triggerInterval, float scaleX, float scaleY){
+		return new MovementActionItemScale(triggerTotal, triggerInterval, scaleX, scaleY);	
+	}
+	
 	public static MovementAction waitAction(long triggerTotal){
 		return new MovementActionItemBaseReugularFPS(new MovementActionInfo(triggerTotal, 1, 0, 0, "waitAction", null, false));	
 	}
