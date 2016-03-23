@@ -266,7 +266,8 @@ public abstract class ALayer implements ILayer{
 		getFrame().set(x, y, x+w, y+h);
 		
 		if(isComposite() && getParent()!=null)
-			locationInScene = parent.locationInSceneByCompositeLocation((float) (centerX - w / 2), (float) (centerY - h / 2));
+			locationInScene = parent.locationInSceneByCompositeLocation(getX(), getY());
+//			locationInScene = parent.locationInSceneByCompositeLocation((float) (centerX - w / 2), (float) (centerY - h / 2));
 		if(getLayers().size()!=0){
 			for(ILayer child : getLayers()){
 				if(child.isComposite()){
@@ -842,8 +843,10 @@ public abstract class ALayer implements ILayer{
 		PointF locationInLayer = new PointF(x, y);
 //		if(isComposite()){
 			for(ILayer layer : getLayersFromRootLayerToCurrentLayerInComposite()){
-				locationInLayer.x = locationInLayer.x - layer.getX();
-				locationInLayer.y = locationInLayer.y - layer.getY();
+//				locationInLayer.x = locationInLayer.x - layer.getX();
+//				locationInLayer.y = locationInLayer.y - layer.getY();
+				locationInLayer.x = locationInLayer.x - layer.getLeft();
+				locationInLayer.y = locationInLayer.y - layer.getTop();
 			}
 //		}
 		return locationInLayer;
@@ -853,8 +856,10 @@ public abstract class ALayer implements ILayer{
 		PointF locationInScene = new PointF(locationInLayerX, locationInLayerY);
 //		if(isComposite()){
 			for(ILayer layer : getLayersFromRootLayerToCurrentLayerInComposite()){
-				locationInScene.x = locationInScene.x + layer.getX();
-				locationInScene.y = locationInScene.y + layer.getY();
+//				locationInScene.x = locationInScene.x + layer.getX();
+//				locationInScene.y = locationInScene.y + layer.getY();
+				locationInScene.x = locationInScene.x + layer.getLeft();
+				locationInScene.y = locationInScene.y + layer.getTop();
 			}
 //		}
 		return locationInScene;
