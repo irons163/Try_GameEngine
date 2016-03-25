@@ -334,6 +334,8 @@ public class Sprite extends Layer {
 					if(isComposite()){
 						if(parent!=null){
 							PointF locationInScene = parent.locationInSceneByCompositeLocation((float) (centerX - w / 2), (float) (centerY - h / 2));
+//							dst.left = locationLeftTopInScene.x;
+//							dst.top = locationLeftTopInScene.y;
 							dst.left = locationLeftTopInScene.x;
 							dst.top = locationLeftTopInScene.y;
 							dst.right = (float) (dst.left + w * scale);
@@ -384,9 +386,17 @@ public class Sprite extends Layer {
 	private int heightWithoutyScale;
 	
 	public void setXscale(float xScale){
+		float factor = xScale/this.xScale;
 		this.xScale = xScale;
 		setSuperWidth((int)(widthWithoutxScale*Math.abs(xScale)));
-		colculationScale();
+//		colculationScale();
+		if(getLayers().size()!=0){
+			for(ILayer child : getLayers()){
+				if(child.isComposite() && child instanceof Sprite){
+					((Sprite)child).setXscale(((Sprite)child).getXscale()*factor);
+				}
+			}		
+		}
 	}
 	
 	public float getXscale(){
@@ -394,10 +404,18 @@ public class Sprite extends Layer {
 	}
 	
 	public void setYscale(float yScale){
+		float factor = yScale/this.yScale;
 		this.yScale = yScale;
 //		setHeight((int)(getHeight()*Math.abs(yScale)));
 		setSuperHeight((int)(heightWithoutyScale*Math.abs(yScale)));
-		colculationScale();
+//		colculationScale();
+		if(getLayers().size()!=0){
+			for(ILayer child : getLayers()){
+				if(child.isComposite() && child instanceof Sprite){
+					((Sprite)child).setYscale(((Sprite)child).getYscale()*factor);
+				}
+			}		
+		}
 	}
 	
 	public float getYscale(){
