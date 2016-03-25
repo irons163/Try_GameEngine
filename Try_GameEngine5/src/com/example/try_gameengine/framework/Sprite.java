@@ -1024,11 +1024,11 @@ public class Sprite extends Layer {
 			colculationScale();
 		}
 		
-//		collisionOffsetY = (float)h/this.h*collisionOffsetY;
-//		if(collisionRectFHeight==0)
-//			collisionRectFHeight = h;
-//		else
-//			collisionRectFHeight = (float)h/this.h*collisionRectFHeight;
+		collisionOffsetY = (float)h/this.h*collisionOffsetY;
+		if(collisionRectFHeight==0)
+			collisionRectFHeight = h;
+		else
+			collisionRectFHeight = (float)h/this.h*collisionRectFHeight;
 		setCollisionRectF(getX()+collisionOffsetX, getY()+collisionOffsetY, getX()+collisionOffsetX+collisionRectFWidth, getY()+collisionOffsetY+collisionRectFHeight);
 		if(isComposite()){
 			updateSpriteDetectAreaCenter(new PointF(locationInScene.x+w/2, locationInScene.y+h/2));
