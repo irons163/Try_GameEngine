@@ -60,7 +60,7 @@ public class Sprite extends Layer {
 	
 	private SpriteDetectAreaHandler spriteDetectAreaHandler;
 	
-	private PointF locationLeftTopInScene = new PointF(); 
+	protected PointF locationLeftTopInScene = new PointF(); 
 	
 	public enum MoveRageType{
 		StopOneSide, StopInCurrentPosition, StopAll, Reflect

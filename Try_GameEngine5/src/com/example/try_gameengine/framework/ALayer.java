@@ -414,19 +414,18 @@ public abstract class ALayer implements ILayer{
 	//composite
 	public void addChild(ILayer layer){
 		if(layer.getParent()==null){
-//			setComposite(true);
 			layer.setComposite(true);
 			layers.add(layer);
 			layer.setParent(this);
 			layer.setLocationInScene(this.locationInSceneByCompositeLocation(layer.getX(), layer.getY()));
+			if(layer instanceof Sprite)
+				((Sprite)layer).locationLeftTopInScene = this.locationInSceneByCompositeLocation(layer.getLeft(), layer.getTop());
 		}else{
 			throw new RuntimeException("child already has parent.");
 		}
 	}
 
 	public ILayer getChild(int i) {
-		// TODO Auto-generated method stub
-//		return layers.get(i);
 		int index = 0;
 		for(ILayer layer : layers){
 			if(index == i){
