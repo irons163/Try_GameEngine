@@ -256,6 +256,11 @@ public class MAction {
 		}
 		
 		@Override
+		public boolean isFinish(){
+			return isFinish;
+		}
+		
+		@Override
 		public void accept(IMovementActionVisitor movementActionVisitor){
 			movementActionVisitor.visitLeaf(this);
 		}
@@ -278,6 +283,7 @@ public class MAction {
 		public void start() {
 			// TODO Auto-generated method stub
 			block.runBlock();
+			isFinish = true;
 			executor.submit(new Runnable() {
 				
 				@Override

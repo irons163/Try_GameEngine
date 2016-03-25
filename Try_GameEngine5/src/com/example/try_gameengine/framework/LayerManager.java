@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.Vector;
 import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentSkipListMap;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -247,7 +248,7 @@ public class LayerManager {
 		}
 	}
 	
-	private static Map<String, TreeMap<Integer, List<ILayer>>> scencesLayersByZposition = new HashMap<String, TreeMap<Integer, List<ILayer>>>();
+	private static Map<String, ConcurrentSkipListMap<Integer, List<ILayer>>> scencesLayersByZposition = new HashMap<String, ConcurrentSkipListMap<Integer, List<ILayer>>>();
 	
 	public static void updateLayersDrawOrderByZposition(int sceneLayerLevel){
 		if(sceneLayerLevelList.containsKey(sceneLayerLevel+"")){
@@ -297,12 +298,12 @@ public class LayerManager {
 	}
 	
 	private static void updateLayersDrawOrderByZposition(List<List<ILayer>> layerLevelList, int sceneLayerLevel ){
-		TreeMap<Integer, List<ILayer>> layerLevelListByZposition;
+		ConcurrentSkipListMap<Integer, List<ILayer>> layerLevelListByZposition;
 		if(scencesLayersByZposition.containsKey(sceneLayerLevel+"")){
 			layerLevelListByZposition = scencesLayersByZposition.get(sceneLayerLevel+"");
 			layerLevelListByZposition.clear();
 		}else{
-			layerLevelListByZposition = new TreeMap<Integer, List<ILayer>>();
+			layerLevelListByZposition = new ConcurrentSkipListMap<Integer, List<ILayer>>();
 			scencesLayersByZposition.put(sceneLayerLevel+"", layerLevelListByZposition);
 		}	
 		
@@ -332,16 +333,16 @@ public class LayerManager {
 	private static void drawLayersByZposition(Canvas canvas, Paint paint, int sceneLayerLevel){
 		if(!scencesLayersByZposition.containsKey(sceneLayerLevel+""))
 			return;
-		TreeMap<Integer, List<ILayer>> layerLevelListByZposition = scencesLayersByZposition.get(sceneLayerLevel+"");
+		ConcurrentSkipListMap<Integer, List<ILayer>> layerLevelListByZposition = scencesLayersByZposition.get(sceneLayerLevel+"");
 		drawLayersByZposition(canvas, paint, layerLevelListByZposition);
 	}
 	
 	private static void drawLayersByZposition(Canvas canvas, Paint paint){
-		TreeMap<Integer, List<ILayer>> layerLevelListByZposition = scencesLayersByZposition.get(sceneLayerLevelByRecentlySet+"");
+		ConcurrentSkipListMap<Integer, List<ILayer>> layerLevelListByZposition = scencesLayersByZposition.get(sceneLayerLevelByRecentlySet+"");
 		drawLayersByZposition(canvas, paint, layerLevelListByZposition);
 	}
 	
-	private static void drawLayersByZposition(Canvas canvas, Paint paint, TreeMap<Integer, List<ILayer>> layerLevelListByZposition){
+	private static void drawLayersByZposition(Canvas canvas, Paint paint, ConcurrentSkipListMap<Integer, List<ILayer>> layerLevelListByZposition){
 		if(layerLevelListByZposition==null)
 			return;
 		for(Map.Entry<Integer, List<ILayer>> entry : layerLevelListByZposition.entrySet()) {
@@ -474,16 +475,16 @@ public class LayerManager {
 	private static boolean onTouchLayersByZposition(MotionEvent event, int sceneLayerLevel){
 		if(!scencesLayersByZposition.containsKey(sceneLayerLevel+""))
 			return false;
-		TreeMap<Integer, List<ILayer>> layerLevelListByZposition = scencesLayersByZposition.get(sceneLayerLevel+"");
+		ConcurrentSkipListMap<Integer, List<ILayer>> layerLevelListByZposition = scencesLayersByZposition.get(sceneLayerLevel+"");
 		return onTouchLayersByZposition(event, layerLevelListByZposition);
 	}
 	
 	private static boolean onTouchLayersByZposition(MotionEvent event){
-		TreeMap<Integer, List<ILayer>> layerLevelListByZposition = scencesLayersByZposition.get(sceneLayerLevelByRecentlySet+"");
+		ConcurrentSkipListMap<Integer, List<ILayer>> layerLevelListByZposition = scencesLayersByZposition.get(sceneLayerLevelByRecentlySet+"");
 		return onTouchLayersByZposition(event, layerLevelListByZposition);
 	}
 	
-	private static boolean onTouchLayersByZposition(MotionEvent event, TreeMap<Integer, List<ILayer>> layerLevelListByZposition){
+	private static boolean onTouchLayersByZposition(MotionEvent event, ConcurrentSkipListMap<Integer, List<ILayer>> layerLevelListByZposition){
 		if(layerLevelListByZposition==null)
 			return false;
 		for(Map.Entry<Integer, List<ILayer>> entry : layerLevelListByZposition.descendingMap().entrySet()) {
@@ -542,16 +543,16 @@ public class LayerManager {
 	private static void processLayersByZposition(int sceneLayerLevel){
 		if(!scencesLayersByZposition.containsKey(sceneLayerLevel+""))
 			return;
-		TreeMap<Integer, List<ILayer>> layerLevelListByZposition = scencesLayersByZposition.get(sceneLayerLevel+"");
+		ConcurrentSkipListMap<Integer, List<ILayer>> layerLevelListByZposition = scencesLayersByZposition.get(sceneLayerLevel+"");
 		processLayersByZposition(layerLevelListByZposition);
 	}
 	
 	private static void processLayersByZposition(){
-		TreeMap<Integer, List<ILayer>> layerLevelListByZposition = scencesLayersByZposition.get(sceneLayerLevelByRecentlySet+"");
+		ConcurrentSkipListMap<Integer, List<ILayer>> layerLevelListByZposition = scencesLayersByZposition.get(sceneLayerLevelByRecentlySet+"");
 		processLayersByZposition(layerLevelListByZposition);
 	}
 	
-	private static void processLayersByZposition(TreeMap<Integer, List<ILayer>> layerLevelListByZposition){
+	private static void processLayersByZposition(ConcurrentSkipListMap<Integer, List<ILayer>> layerLevelListByZposition){
 		if(layerLevelListByZposition==null)
 			return;
 		for(Map.Entry<Integer, List<ILayer>> entry : layerLevelListByZposition.entrySet()) {
