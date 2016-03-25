@@ -1,7 +1,10 @@
 package com.example.try_gameengine.action;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+
+import android.util.Log;
 
 import com.example.try_gameengine.action.MovementAction.MovementActionMementoImpl;
 import com.example.try_gameengine.action.MovementAction.TimerOnTickListener;
@@ -40,7 +43,20 @@ public class MovementActionItemScale extends MovementAction{
 	
 	public static final float NO_SCALE = Float.MIN_VALUE;
 	
+	private ScaleType scaleType = ScaleType.ScaleTo;
+	
+	public enum ScaleType{
+		ScaleTo, ScaleBy, ScaleToWith
+	}
+	
+	private static float doubelToFloat(float scale, double pow){
+		BigDecimal bigDecimal = new BigDecimal(Math.pow(scale, pow));
+
+		return bigDecimal.floatValue();
+	}
+	
 	public MovementActionItemScale(long millisTotal, float scaleX, float scaleY){
+//		this((long) (millisTotal/(1000.0f/Config.fps)), 1, doubelToFloat(scaleX,1/(long) (millisTotal/(1000.0f/Config.fps))), scaleY, "MovementActionItemAlpha");
 		this((long) (millisTotal/(1000.0f/Config.fps)), 1, scaleX, scaleY, "MovementActionItemAlpha");
 	}
 	
@@ -56,16 +72,20 @@ public class MovementActionItemScale extends MovementAction{
 		this(triggerTotal, triggerInterval, scaleX, scaleY, "MovementActionItemAlpha");
 	}
 	
-	public MovementActionItemScale(long millisTotal, long millisDelay, float scaleX, float scaleY, String description){
+	public MovementActionItemScale(long triggerTotal, long triggerInterval, float scaleX, float scaleY, String description){
 		this.scaleX = scaleX;
 		this.scaleY = scaleY;
 //		super(millisTotal, millisDelay, dx, dy, description);
-		this.millisTotal = millisTotal;
-		this.millisDelay = millisDelay;
+		this.millisTotal = triggerTotal;
+		this.millisDelay = triggerInterval;
 		this.description = description + ",";
 
 		movementItemList.add(this);
 		info = new MovementActionInfo(millisTotal, millisDelay, 0, 0);
+	}
+	
+	public void setScaleType(ScaleType scaleType){
+		this.scaleType = scaleType;
 	}
 	
 	@Override
@@ -87,16 +107,64 @@ public class MovementActionItemScale extends MovementAction{
 //			originalAlpha = info.getSprite().getAlpha();
 //		else
 //			info.getSprite().setAlpha(originalAlpha);
-		if(this.scaleX!=NO_SCALE){
-			float originalScaleX = info.getSprite().getXscale();
-			float offsetScaleX = scaleX - originalScaleX;
-			offsetScaleXByOnceTrigger = offsetScaleX/(info.getTotal()/info.getDelay());
+		
+		switch (scaleType) {
+		case ScaleTo:
+			if(this.scaleX!=NO_SCALE){
+				float originalScaleX = info.getSprite().getXscale();
+				float offsetScaleX = 0;
+				offsetScaleX = scaleX - originalScaleX;
+				
+				offsetScaleXByOnceTrigger = offsetScaleX/(info.getTotal()/info.getDelay());
+			}
+			if(this.scaleY!=NO_SCALE){
+				float originalScaleY = info.getSprite().getYscale();
+				float offsetScaleY = 0;
+				offsetScaleY = scaleY - originalScaleY;
+
+				offsetScaleYByOnceTrigger = offsetScaleY/(info.getTotal()/info.getDelay());
+			}
+			break;
+		case ScaleBy:
+			if(this.scaleX!=NO_SCALE){
+				float offsetScaleX = 0;
+				offsetScaleX = scaleX;
+				
+				offsetScaleXByOnceTrigger = offsetScaleX/(info.getTotal()/info.getDelay());
+			}
+			if(this.scaleY!=NO_SCALE){
+				float offsetScaleY = 0;
+				offsetScaleY = scaleY;
+
+				offsetScaleYByOnceTrigger = offsetScaleY/(info.getTotal()/info.getDelay());
+			}
+			break;
+		case ScaleToWith:
+			if(this.scaleX!=NO_SCALE){
+				float originalScaleX = info.getSprite().getXscale();
+				float offsetScaleX = 0;
+				if(originalScaleX<0){
+					offsetScaleX = -1*scaleX - originalScaleX;
+				}else{
+					offsetScaleX = scaleX - originalScaleX;
+				}
+				
+				offsetScaleXByOnceTrigger = offsetScaleX/(info.getTotal()/info.getDelay());
+			}
+			if(this.scaleY!=NO_SCALE){
+				float originalScaleY = info.getSprite().getYscale();
+				float offsetScaleY = 0;
+				if(originalScaleY<0){
+					offsetScaleY = -1*scaleY - originalScaleY;
+				}else{
+					offsetScaleY = scaleY - originalScaleY;
+				}
+
+				offsetScaleYByOnceTrigger = offsetScaleY/(info.getTotal()/info.getDelay());
+			}
+			break;
 		}
-		if(this.scaleY!=NO_SCALE){
-			float originalScaleY = info.getSprite().getYscale();
-			float offsetScaleY = scaleY - originalScaleY;
-			offsetScaleYByOnceTrigger = offsetScaleY/(info.getTotal()/info.getDelay());
-		}	
+	
 		
 		if(!isEnableSetSpriteAction)
 			isEnableSetSpriteAction = isRepeatSpriteActionIfMovementActionRepeat;
@@ -173,7 +241,7 @@ public class MovementActionItemScale extends MovementAction{
 				if(offsetScaleYByOnceTrigger!=0)
 					info.getSprite().setYscale(info.getSprite().getYscale()+offsetScaleYByOnceTrigger);
 				lastTriggerFrameNum += info.getDelay();
-				
+				Log.e("scale by scale action", "xScale:"+info.getSprite().getXscale() + "yScale:" +info.getSprite().getYscale());
 			// add by 150228. if the delay change by main app, the function: else if(resumeFrameCount==lastTriggerFrameNum+info.getDelay() maybe make problem.
 			}else if(resumeFrameCount>lastTriggerFrameNum+info.getDelay()){ 
 //				resumeFrameCount--;
@@ -182,10 +250,30 @@ public class MovementActionItemScale extends MovementAction{
 			}
 			
 			if(isCycleFinish){
-				if(scaleX!=NO_SCALE)
-					info.getSprite().setXscale(scaleX);
-				if(scaleY!=NO_SCALE)
-					info.getSprite().setYscale(scaleY);
+				switch (scaleType) {
+				case ScaleTo:
+					if(scaleX!=NO_SCALE)
+						info.getSprite().setXscale(scaleX);
+					if(scaleY!=NO_SCALE)
+						info.getSprite().setYscale(scaleY);
+					break;
+				case ScaleBy:
+					break;
+				case ScaleToWith:
+					if(scaleX!=NO_SCALE)
+						info.getSprite().setXscale(scaleX);
+					if(scaleY!=NO_SCALE)
+						info.getSprite().setYscale(scaleY);
+					if(this.scaleX!=NO_SCALE){
+						float currentScaleX = info.getSprite().getXscale();
+						if(currentScaleX<0){
+							info.getSprite().setXscale(scaleX<0?scaleX:-1*scaleX);
+						}else{
+							info.getSprite().setXscale(scaleX<0?-1*scaleX:scaleX);
+						}
+					}
+					break;
+				}
 				
 				if(actionListener!=null)
 					actionListener.actionCycleFinish();

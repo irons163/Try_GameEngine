@@ -171,8 +171,8 @@ public class Sprite extends Layer {
 		this.bitmapOrginalFrameHeight = frameHeight;
 		this.frameWidth = frameWidth;
 		this.frameHeight = frameHeight;
-		this.frameColNum = (bitmap.getWidth()/frameWidth);
-		this.frameRowNum = (bitmap.getHeight()/frameHeight);
+		this.frameColNum = (int)Math.ceil(bitmap.getWidth()/frameWidth);
+		this.frameRowNum = (int)Math.ceil(bitmap.getHeight()/frameHeight);
 		this.length = this.frameColNum*this.frameRowNum;
 		setWidth(frameWidth);
 		setHeight(frameHeight);
@@ -380,11 +380,12 @@ public class Sprite extends Layer {
 	private float yScale = 1.0f;
 	private float xScaleForBitmapWidth = 1.0f;
 	private float yScaleForBitmapHeight = 1.0f;
+	private int widthWithoutxScale;
+	private int heightWithoutyScale;
 	
 	public void setXscale(float xScale){
 		this.xScale = xScale;
-		setWidth((int)(getWidth()*Math.abs(xScale)));
-		
+		setSuperWidth((int)(widthWithoutxScale*Math.abs(xScale)));
 		colculationScale();
 	}
 	
@@ -394,8 +395,8 @@ public class Sprite extends Layer {
 	
 	public void setYscale(float yScale){
 		this.yScale = yScale;
-		setHeight((int)(getHeight()*Math.abs(yScale)));
-		
+//		setHeight((int)(getHeight()*Math.abs(yScale)));
+		setSuperHeight((int)(heightWithoutyScale*Math.abs(yScale)));
 		colculationScale();
 	}
 	
@@ -481,7 +482,7 @@ public class Sprite extends Layer {
 //				canvas.drawBitmap(bitmap, x - ((float)bitmap.getWidth())/frameColNum*getAnchorPoint().x - (currentFrame%(int)frameColNum)*(((float)bitmap.getWidth())/frameColNum)+drawOffsetX, 
 //						y - ((float)bitmap.getHeight())/frameRowNum*getAnchorPoint().y - (currentFrame/(int)frameColNum)*(((float)bitmap.getHeight())/frameRowNum), paint);
 			}
-			Log.e("xScaleForBitmapWidth", xScaleForBitmapWidth+"");
+//			Log.e("xScaleForBitmapWidth", xScaleForBitmapWidth+"");
 		}else if(!drawWithoutClip){
 			canvas.clipRect(x+drawOffsetX, y, x+frameWidth+drawOffsetX, y+frameHeight);
 			canvas.drawBitmap(bitmap, x-(currentFrame%(bitmap.getWidth()/(int)frameWidth))*frameWidth+drawOffsetX, 
@@ -949,15 +950,21 @@ public class Sprite extends Layer {
 	@Override
 	public void setWidth(int w) {
 		// TODO Auto-generated method stub
+		widthWithoutxScale = w;
+		w = (int)(w*Math.abs(xScale));
+		setSuperWidth(w);
+	}
+	
+	private void setSuperWidth(int w){
 		super.setWidth(w);
 		if(isComposite())
 			locationLeftTopInScene = parent.locationInSceneByCompositeLocation((float) (centerX - w / 2), (float) (centerY - h / 2));
 		if(getBitmap()!=null){
-			if(frameWidth==0){
-				xScaleForBitmapWidth = w/(float)getBitmap().getWidth();
-			}else if(frameColNum!=0){
+			if(frameColNum!=0){
 				xScaleForBitmapWidth = w/((float)(getBitmap().getWidth()/frameColNum));
 				this.frameWidth = w;
+			}else if(frameWidth==0){
+				xScaleForBitmapWidth = w/(float)getBitmap().getWidth();
 			}
 			
 			colculationScale();
@@ -973,31 +980,37 @@ public class Sprite extends Layer {
 			updateSpriteDetectAreaCenter(new PointF(locationInScene.x+w/2, locationInScene.y+h/2));
 		}else{
 			updateSpriteDetectAreaCenter(new PointF(getCenterX(), getCenterY()));
-		}	
+		}
 	}
 	
 	@Override
 	public void setHeight(int h) {
 		// TODO Auto-generated method stub
+		heightWithoutyScale = h;
+		h = (int)(h*Math.abs(yScale));
+		setSuperHeight(h);
+	}
+	
+	private void setSuperHeight(int h){
 		super.setHeight(h);
 		if(isComposite())
 			locationLeftTopInScene = parent.locationInSceneByCompositeLocation((float) (centerX - w / 2), (float) (centerY - h / 2));
 		if(getBitmap()!=null){
-			if(frameHeight==0){
-				yScaleForBitmapHeight = h/(float)getBitmap().getHeight();
-			}else if(frameRowNum!=0){
+			if(frameRowNum!=0){
 				yScaleForBitmapHeight = h/((float)(getBitmap().getHeight()/frameRowNum));
 				this.frameHeight = h;
+			}else if(frameHeight==0){
+				yScaleForBitmapHeight = h/(float)getBitmap().getHeight();
 			}
 			
 			colculationScale();
 		}
 		
-		collisionOffsetY = (float)h/this.h*collisionOffsetY;
-		if(collisionRectFHeight==0)
-			collisionRectFHeight = h;
-		else
-			collisionRectFHeight = (float)h/this.h*collisionRectFHeight;
+//		collisionOffsetY = (float)h/this.h*collisionOffsetY;
+//		if(collisionRectFHeight==0)
+//			collisionRectFHeight = h;
+//		else
+//			collisionRectFHeight = (float)h/this.h*collisionRectFHeight;
 		setCollisionRectF(getX()+collisionOffsetX, getY()+collisionOffsetY, getX()+collisionOffsetX+collisionRectFWidth, getY()+collisionOffsetY+collisionRectFHeight);
 		if(isComposite()){
 			updateSpriteDetectAreaCenter(new PointF(locationInScene.x+w/2, locationInScene.y+h/2));
