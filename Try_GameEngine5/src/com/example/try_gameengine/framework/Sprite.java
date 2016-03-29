@@ -763,18 +763,26 @@ public class Sprite extends Layer {
 	public boolean isNeedRemoveInstance(){
 		return getX()<0 || getX() > CommonUtil.screenWidth || getY() < 0 || getY() > CommonUtil.screenHeight;
 	}
-	
+	//Be care for the isCompostie();
 	public void setCollisionRectF(RectF collisionRectF){
 		this.collisionRectF = collisionRectF;
+		collisionOffsetX = collisionRectF.left - getLeft();
+		collisionOffsetY = collisionRectF.top - getTop();
+		collisionRectFWidth = collisionRectF.width();
+		collisionRectFHeight = collisionRectF.height();
 	}
 	
 	public void setCollisionRectF(float left, float top, float right, float bottom){
-		if(!isCollisionRectFEnable)
-			return;
+//		if(!isCollisionRectFEnable)
+//			return;
 		if(collisionRectF==null)
 			collisionRectF = new RectF(left, top, right, bottom);
 		else
 			collisionRectF.set(left, top, right, bottom);
+		collisionOffsetX = collisionRectF.left - getLeft();
+		collisionOffsetY = collisionRectF.top - getTop();
+		collisionRectFWidth = collisionRectF.width();
+		collisionRectFHeight = collisionRectF.height();
 	}
 	
 	public RectF getCollisionRectF(){
@@ -907,12 +915,12 @@ public class Sprite extends Layer {
 			locationLeftTopInScene = parent.locationInSceneByCompositeLocation((float) (centerX - w / 2), (float) (centerY - h / 2));
 		colculationScale();
 		
-		if(isComposite()){
+		if(isComposite()){//this is not test yet after add anchor point. It might be wrong.
 			PointF locationInScene = locationInSceneByCompositeLocation(getX(), getY());
 			setCollisionRectF(locationInScene.x+collisionOffsetX, locationInScene.y+collisionOffsetY, locationInScene.x+collisionOffsetX+collisionRectFWidth, locationInScene.y+collisionOffsetY+collisionRectFHeight);
 			updateSpriteDetectAreaCenter(new PointF(locationInScene.x+w/2, locationInScene.y+h/2));
 		}else{
-			setCollisionRectF(getX()+collisionOffsetX, getY()+collisionOffsetY, getX()+collisionOffsetX+collisionRectFWidth, getY()+collisionOffsetY+collisionRectFHeight);
+			setCollisionRectF(getLeft()+collisionOffsetX, getTop()+collisionOffsetY, getLeft()+collisionOffsetX+collisionRectFWidth, getTop()+collisionOffsetY+collisionRectFHeight);
 			updateSpriteDetectAreaCenter(new PointF(getCenterX(), getCenterY()));
 		}	
 	}
@@ -925,12 +933,12 @@ public class Sprite extends Layer {
 			locationLeftTopInScene = parent.locationInSceneByCompositeLocation((float) (centerX - w / 2), (float) (centerY - h / 2));
 		colculationScale();
 		
-		if(isComposite()){
+		if(isComposite()){//this is not test yet after add anchor point. It might be wrong.
 			PointF locationInScene = locationInSceneByCompositeLocation(getX(), getY());
 			setCollisionRectF(locationInScene.x+collisionOffsetX, locationInScene.y+collisionOffsetY, locationInScene.x+collisionOffsetX+collisionRectFWidth, locationInScene.y+collisionOffsetY+collisionRectFHeight);
 			updateSpriteDetectAreaCenter(new PointF(locationInScene.x+w/2, locationInScene.y+h/2));
 		}else{
-			setCollisionRectF(getX()+collisionOffsetX, getY()+collisionOffsetY, getX()+collisionOffsetX+collisionRectFWidth, getY()+collisionOffsetY+collisionRectFHeight);	
+			setCollisionRectF(getLeft()+collisionOffsetX, getTop()+collisionOffsetY, getLeft()+collisionOffsetX+collisionRectFWidth, getTop()+collisionOffsetY+collisionRectFHeight);	
 			updateSpriteDetectAreaCenter(new PointF(getCenterX(), getCenterY()));
 		}
 	}
@@ -943,12 +951,12 @@ public class Sprite extends Layer {
 			locationLeftTopInScene = parent.locationInSceneByCompositeLocation((float) (centerX - w / 2), (float) (centerY - h / 2));
 		colculationScale();
 		
-		if(isComposite()){
+		if(isComposite()){//this is not test yet after add anchor point. It might be wrong.
 			PointF locationInScene = locationInSceneByCompositeLocation(getX(), getY());
 			setCollisionRectF(locationInScene.x+collisionOffsetX, locationInScene.y+collisionOffsetY, locationInScene.x+collisionOffsetX+collisionRectFWidth, locationInScene.y+collisionOffsetY+collisionRectFHeight);
 			updateSpriteDetectAreaCenter(new PointF(locationInScene.x+w/2, locationInScene.y+h/2));
 		}else{
-			setCollisionRectF(getX()+collisionOffsetX, getY()+collisionOffsetY, getX()+collisionOffsetX+collisionRectFWidth, getY()+collisionOffsetY+collisionRectFHeight);
+			setCollisionRectF(getLeft()+collisionOffsetX, getTop()+collisionOffsetY, getLeft()+collisionOffsetX+collisionRectFWidth, getTop()+collisionOffsetY+collisionRectFHeight);
 			updateSpriteDetectAreaCenter(new PointF(getCenterX(), getCenterY()));
 		}
 	}
@@ -993,7 +1001,7 @@ public class Sprite extends Layer {
 			collisionRectFWidth = w;
 		else
 			collisionRectFWidth = (float)w/this.w*collisionRectFWidth;
-		setCollisionRectF(getX()+collisionOffsetX, getY()+collisionOffsetY, getX()+collisionOffsetX+collisionRectFWidth, getY()+collisionOffsetY+collisionRectFHeight);
+		setCollisionRectF(getLeft()+collisionOffsetX, getTop()+collisionOffsetY, getLeft()+collisionOffsetX+collisionRectFWidth, getTop()+collisionOffsetY+collisionRectFHeight);
 		if(isComposite()){
 			updateSpriteDetectAreaCenter(new PointF(locationInScene.x+w/2, locationInScene.y+h/2));
 		}else{
@@ -1029,7 +1037,7 @@ public class Sprite extends Layer {
 			collisionRectFHeight = h;
 		else
 			collisionRectFHeight = (float)h/this.h*collisionRectFHeight;
-		setCollisionRectF(getX()+collisionOffsetX, getY()+collisionOffsetY, getX()+collisionOffsetX+collisionRectFWidth, getY()+collisionOffsetY+collisionRectFHeight);
+		setCollisionRectF(getLeft()+collisionOffsetX, getTop()+collisionOffsetY, getLeft()+collisionOffsetX+collisionRectFWidth, getTop()+collisionOffsetY+collisionRectFHeight);
 		if(isComposite()){
 			updateSpriteDetectAreaCenter(new PointF(locationInScene.x+w/2, locationInScene.y+h/2));
 		}else{
