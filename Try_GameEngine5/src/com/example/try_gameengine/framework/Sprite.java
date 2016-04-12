@@ -62,6 +62,18 @@ public class Sprite extends Layer {
 	
 	protected PointF locationLeftTopInScene = new PointF(); 
 	
+	public Matrix spriteMatrix;
+	public boolean drawWithoutClip = false;
+	public float drawOffsetX;
+	private float xScale = 1.0f;
+	private float yScale = 1.0f;
+	private float xScaleForBitmapWidth = 1.0f;
+	private float yScaleForBitmapHeight = 1.0f;
+	private int widthWithoutxScale;
+	private int heightWithoutyScale;
+	
+	private float rotation;
+	
 	public enum MoveRageType{
 		StopOneSide, StopInCurrentPosition, StopAll, Reflect
 	}
@@ -375,16 +387,6 @@ public class Sprite extends Layer {
 		
 	}
 	
-	public Matrix spriteMatrix;
-	public boolean drawWithoutClip = false;
-	public float drawOffsetX;
-	private float xScale = 1.0f;
-	private float yScale = 1.0f;
-	private float xScaleForBitmapWidth = 1.0f;
-	private float yScaleForBitmapHeight = 1.0f;
-	private int widthWithoutxScale;
-	private int heightWithoutyScale;
-	
 	public void setXscale(float xScale){
 		float factor = xScale/this.xScale;
 		this.xScale = xScale;
@@ -420,6 +422,15 @@ public class Sprite extends Layer {
 	
 	public float getYscale(){
 		return yScale;
+	}
+	
+	public void setRotation(float rotation){
+		this.rotation = rotation;
+		colculationMatrix();
+	}
+	
+	public float getRotation(){
+		return rotation;
 	}
 	
 	public void paint(Canvas canvas,Paint paint)
@@ -913,7 +924,7 @@ public class Sprite extends Layer {
 		super.setX(x);
 		if(isComposite())
 			locationLeftTopInScene = parent.locationInSceneByCompositeLocation((float) (centerX - w / 2), (float) (centerY - h / 2));
-		colculationScale();
+		colculationMatrix();
 		
 		if(isComposite()){//this is not test yet after add anchor point. It might be wrong.
 			PointF locationInScene = locationInSceneByCompositeLocation(getX(), getY());
@@ -931,7 +942,7 @@ public class Sprite extends Layer {
 		super.setY(y);
 		if(isComposite())
 			locationLeftTopInScene = parent.locationInSceneByCompositeLocation((float) (centerX - w / 2), (float) (centerY - h / 2));
-		colculationScale();
+		colculationMatrix();
 		
 		if(isComposite()){//this is not test yet after add anchor point. It might be wrong.
 			PointF locationInScene = locationInSceneByCompositeLocation(getX(), getY());
@@ -949,7 +960,7 @@ public class Sprite extends Layer {
 		super.setPosition(x, y);	
 		if(isComposite())
 			locationLeftTopInScene = parent.locationInSceneByCompositeLocation((float) (centerX - w / 2), (float) (centerY - h / 2));
-		colculationScale();
+		colculationMatrix();
 		
 		if(isComposite()){//this is not test yet after add anchor point. It might be wrong.
 			PointF locationInScene = locationInSceneByCompositeLocation(getX(), getY());
@@ -993,7 +1004,7 @@ public class Sprite extends Layer {
 				xScaleForBitmapWidth = w/(float)getBitmap().getWidth();
 			}
 			
-			colculationScale();
+			colculationMatrix();
 		}
 		
 		collisionOffsetX = (float)w/this.w*collisionOffsetX;
@@ -1029,7 +1040,7 @@ public class Sprite extends Layer {
 				yScaleForBitmapHeight = h/(float)getBitmap().getHeight();
 			}
 			
-			colculationScale();
+			colculationMatrix();
 		}
 		
 		collisionOffsetY = (float)h/this.h*collisionOffsetY;
@@ -1115,6 +1126,52 @@ public class Sprite extends Layer {
 			}
 			System.out.println(objectNewX);
 		}
+	}
+	
+	private void colculationMatrix(){
+		colculationScale();
+		
+//		if(this.length>0){
+//			if(xScale*xScaleForBitmapWidth<0 && yScale*yScaleForBitmapHeight<0){
+//				spriteMatrix.postTranslate(-2*w*scale*(getAnchorPoint().x-0.5f),-2*h*scale*(getAnchorPoint().y-0.5f));
+//			}else if(xScale*xScaleForBitmapWidth<0){
+////				spriteMatrix.postTranslate(w*scale*0.5f,-h*scale*0.5f);
+////				spriteMatrix.postTranslate(-w*frameColNum/2.0f-2*w*scale*(getAnchorPoint().x-0.5f),h*scale*(getAnchorPoint().y-0.5f));
+////				spriteMatrix.postTranslate(-w*scale*0.5f,-h*scale*0.5f);
+//				spriteMatrix.postTranslate(-2*w*scale*(getAnchorPoint().x-0.5f),-h*scale*getAnchorPoint().y);
+//			}else if(yScale*yScaleForBitmapHeight<0){
+//				spriteMatrix.postTranslate(-w*scale*getAnchorPoint().x,-2*h*scale*(getAnchorPoint().y-0.5f));
+//			}else{
+//				spriteMatrix.postTranslate(-w*scale*getAnchorPoint().x,-h*scale*getAnchorPoint().y);
+//			}
+//		}else{
+//			if(xScale*xScaleForBitmapWidth<0 && yScale*yScaleForBitmapHeight<0){
+//				spriteMatrix.postTranslate(-1*w*scale*(getAnchorPoint().x-1.0f),-h*scale*(getAnchorPoint().y-1.0f));
+//			}else if(xScale*xScaleForBitmapWidth<0){
+////				spriteMatrix.postTranslate(w*scale*0.5f,-h*scale*0.5f);
+//				spriteMatrix.postTranslate(-1*w*scale*(getAnchorPoint().x-1.0f),-h*scale*getAnchorPoint().y);
+////				spriteMatrix.postTranslate(w*scale*(getAnchorPoint().x),h*scale*(getAnchorPoint().y-0.5f));
+//			}else if(yScale*yScaleForBitmapHeight<0){
+//				spriteMatrix.postTranslate(-1*w*scale*(getAnchorPoint().x),-h*scale*(getAnchorPoint().y-1.0f));
+//			}else{
+////				spriteMatrix.postTranslate(w*scale*(getAnchorPoint().x-0.5f),-h*scale*(getAnchorPoint().y-0.5f));
+//				spriteMatrix.postTranslate(-w*scale*getAnchorPoint().x,h*scale*(getAnchorPoint().y-0.5f));
+//			}
+//		}
+		
+		if(isComposite()){
+			spriteMatrix.postRotate(rotation, locationLeftTopInScene.x + w/2, locationLeftTopInScene.y + h/2);
+		}else{
+			spriteMatrix.postRotate(rotation, getLeft() + w/2,  getTop() + h/2);
+		}
+		
+
+		
+		dealWithSpriteMatrixAfterCalculationMatrix(spriteMatrix);
+	}
+	
+	protected void dealWithSpriteMatrixAfterCalculationMatrix(Matrix spriteMatrix){
+		//deal with Sprite Matrix.
 	}
 	
 	@Override

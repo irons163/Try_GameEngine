@@ -165,6 +165,14 @@ public class MAction {
 		return new MovementActionItemScale(triggerTotal, triggerInterval, scaleX, scaleY);	
 	}
 	
+	public static MovementAction rotationToAction(long millisTotal, float rotation){
+		return new MovementActionItemRotation(millisTotal, rotation);	
+	}
+	
+	public static MovementAction rotationToAction(long triggerTotal, long triggerInterval, float rotation){
+		return new MovementActionItemRotation(triggerTotal, triggerInterval, rotation);	
+	}
+	
 	public static MovementAction waitAction(long triggerTotal){
 		return new MovementActionItemBaseReugularFPS(new MovementActionInfo(triggerTotal, 1, 0, 0, "waitAction", null, false));	
 	}
