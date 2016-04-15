@@ -71,6 +71,7 @@ public abstract class ALayer implements ILayer{
 	private LayerParam layerParam = new LayerParam();
 	
 	//Adjust position and size by parent layer.
+	//the size function not implement yet.
 	public static class LayerParam implements Cloneable{
 		private boolean isEnabledPercentagePositionX;
 		private boolean isEnabledPercentagePositionY;
@@ -420,6 +421,13 @@ public abstract class ALayer implements ILayer{
 			layer.setLocationInScene(this.locationInSceneByCompositeLocation(layer.getX(), layer.getY()));
 			if(layer instanceof Sprite)
 				((Sprite)layer).locationLeftTopInScene = this.locationInSceneByCompositeLocation(layer.getLeft(), layer.getTop());
+			
+			if(layer.getLayerParam().isEnabledPercentagePositionX()){
+				layer.setX(w * layer.getLayerParam().getPercentageX());	
+			}
+			if(layer.getLayerParam().isEnabledPercentagePositionY()){
+				layer.setY(h * layer.getLayerParam().getPercentageY());
+			}
 		}else{
 			throw new RuntimeException("child already has parent.");
 		}

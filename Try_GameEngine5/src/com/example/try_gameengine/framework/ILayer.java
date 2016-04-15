@@ -111,6 +111,10 @@ public interface ILayer extends Cloneable{
 	public boolean isTouching();
 
 	public void setTouching(boolean isTouching);
+	
+	public boolean isPressed();
+	
+	public void setPressed(boolean pressed);
 
 	public boolean isComposite();
 
