@@ -213,7 +213,7 @@ public class MovementActionItemRotation extends MovementAction{
 					info.getSprite().setRotation(info.getSprite().getRotation()+offsetRotationByOnceTrigger);
 
 				lastTriggerFrameNum += info.getDelay();
-				Log.e("rotation by rotation action", "rotation:"+info.getSprite().getRotation());
+//				Log.e("rotation by rotation action", "rotation:"+info.getSprite().getRotation());
 			// add by 150228. if the delay change by main app, the function: else if(resumeFrameCount==lastTriggerFrameNum+info.getDelay() maybe make problem.
 			}else if(resumeFrameCount>lastTriggerFrameNum+info.getDelay()){ 
 //				resumeFrameCount--;

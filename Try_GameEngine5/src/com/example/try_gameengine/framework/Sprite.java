@@ -304,7 +304,7 @@ public class Sprite extends Layer {
 				dst.bottom = (float) (dst.top + h * scale);
 				
 				
-				if(isUseCanvasScale){
+//				if(isUseCanvasScale){
 					if(isComposite()){
 						if(parent!=null){
 //							PointF locationInScene = parent.locationInSceneByCompositeLocation((float) (centerX), (float) (centerY));
@@ -342,31 +342,55 @@ public class Sprite extends Layer {
 //					canvas.drawBitmap(bitmap, null, dst, paint);
 					canvas.drawBitmap(bitmap, dst.left, dst.top, paint);
 					canvas.restore();
-				}else{
-					if(isComposite()){
-						if(parent!=null){
-							PointF locationInScene = parent.locationInSceneByCompositeLocation((float) (centerX - w / 2), (float) (centerY - h / 2));
+//				}else{
+//					if(isComposite()){
+//						if(parent!=null){
+//							PointF locationInScene = parent.locationInSceneByCompositeLocation((float) (centerX - w / 2), (float) (centerY - h / 2));
+////							dst.left = locationLeftTopInScene.x;
+////							dst.top = locationLeftTopInScene.y;
 //							dst.left = locationLeftTopInScene.x;
 //							dst.top = locationLeftTopInScene.y;
-							dst.left = locationLeftTopInScene.x;
-							dst.top = locationLeftTopInScene.y;
-							dst.right = (float) (dst.left + w * scale);
-							dst.bottom = (float) (dst.top + h * scale);
-
-//							if(isUseCanvasScale){
-//								if(spriteMatrix!=null){
-//									spriteMatrix.reset();
-//		//							spriteMatrix.postScale(xScale*xScaleForBitmapWidth, yScale*yScaleForBitmapHeight, getLeft() + w/2, getTop() + h/2 );
-//									spriteMatrix.postScale(xScale*xScaleForBitmapWidth, yScale*yScaleForBitmapHeight, locationLeftTopInScene.x +w/2, locationLeftTopInScene.y  + h/2);
-//									spriteMatrix.postTranslate(w*scale,h*scale);
-//								}
-//							}
-						}
-					}
-					
-					customBitampSRCandDST(src, dst);
-					canvas.drawBitmap(bitmap, src, dst, paint);
-				}
+//							dst.right = (float) (dst.left + w * scale);
+//							dst.bottom = (float) (dst.top + h * scale);
+//
+////							if(isUseCanvasScale){
+////								if(spriteMatrix!=null){
+////									spriteMatrix.reset();
+////		//							spriteMatrix.postScale(xScale*xScaleForBitmapWidth, yScale*yScaleForBitmapHeight, getLeft() + w/2, getTop() + h/2 );
+////									spriteMatrix.postScale(xScale*xScaleForBitmapWidth, yScale*yScaleForBitmapHeight, locationLeftTopInScene.x +w/2, locationLeftTopInScene.y  + h/2);
+////									spriteMatrix.postTranslate(w*scale,h*scale);
+////								}
+////							}
+//						}
+//					}
+//					
+//					float[] v1 = new float[9];
+//					spriteMatrix.getValues(v1);
+//					float tx = v1[Matrix.MTRANS_X];
+//					float ty = v1[Matrix.MTRANS_Y];
+//					// calculate real scale
+//					float scalex = v1[Matrix.MSCALE_X];
+//					float skewy = v1[Matrix.MSKEW_Y];
+//					float rScale = (float) Math.sqrt(scalex * scalex + skewy *skewy);
+//
+//					// degree of rotation
+//					float rAngle = Math.round(Math.atan2(v1[Matrix.MSKEW_X], v1[Matrix.MSKEW_X]) * (180 / Math.PI));
+//
+//					// float tx = values[2];
+//					// float ty = values[3];
+//					// float sx = values[0];
+//					// float xc = (view.getWidth() / 2) * sx;
+//					// float yc = (view.getHeight() / 2) * sx;
+//					spriteMatrix.setRotate(rAngle, getLeft() + w/2,  getTop() + h/2);
+//					
+//					canvas.save();
+//					if(spriteMatrix!=null){
+//						canvas.setMatrix(spriteMatrix);
+//					}
+//					customBitampSRCandDST(src, dst);
+//					canvas.drawBitmap(bitmap, src, dst, paint);
+//					canvas.restore();
+//				}
 				
 			}
 			
@@ -1104,6 +1128,7 @@ public class Sprite extends Layer {
 					spriteMatrix.postTranslate(-w*scale*getAnchorPoint().x,-h*scale*getAnchorPoint().y);
 				}
 			}else{
+				/*
 				if(xScale*xScaleForBitmapWidth<0 && yScale*yScaleForBitmapHeight<0){
 					spriteMatrix.postTranslate(-1*w*scale*(getAnchorPoint().x-1.0f),-h*scale*(getAnchorPoint().y-1.0f));
 				}else if(xScale*xScaleForBitmapWidth<0){
@@ -1115,16 +1140,29 @@ public class Sprite extends Layer {
 				}else{
 //					spriteMatrix.postTranslate(w*scale*(getAnchorPoint().x-0.5f),-h*scale*(getAnchorPoint().y-0.5f));
 					spriteMatrix.postTranslate(-w*scale*getAnchorPoint().x,h*scale*(getAnchorPoint().y-0.5f));
+				}*/
+				
+				if(xScale*xScaleForBitmapWidth<0 && yScale*yScaleForBitmapHeight<0){
+					spriteMatrix.postTranslate(-1*w*scale*(getAnchorPoint().x-1.0f),-h*scale*(getAnchorPoint().y-1.0f));
+				}else if(xScale*xScaleForBitmapWidth<0){
+//					spriteMatrix.postTranslate(w*scale*0.5f,-h*scale*0.5f);
+					spriteMatrix.postTranslate(-1*w*scale*(getAnchorPoint().x-1.0f),-h*scale*getAnchorPoint().y);
+//					spriteMatrix.postTranslate(w*scale*(getAnchorPoint().x),h*scale*(getAnchorPoint().y-0.5f));
+				}else if(yScale*yScaleForBitmapHeight<0){
+					spriteMatrix.postTranslate(-1*w*scale*(getAnchorPoint().x),-h*scale*(getAnchorPoint().y-1.0f));
+				}else{
+//					spriteMatrix.postTranslate(w*scale*(getAnchorPoint().x-0.5f),-h*scale*(getAnchorPoint().y-0.5f));
+					spriteMatrix.postTranslate(-w*scale*getAnchorPoint().x,-h*scale*getAnchorPoint().y);
 				}
 			}
 			
-			float objectNewX;
-			if (xScale*xScaleForBitmapWidth >= 1){    
-				  objectNewX = getLeft() + (getLeft() - getAnchorPointXY().x)*(xScale*xScaleForBitmapWidth - 1); 
-			}else{   
-				  objectNewX = getLeft() + (getLeft() - getAnchorPointXY().x)*(1 - xScale*xScaleForBitmapWidth); 
-			}
-			System.out.println(objectNewX);
+//			float objectNewX;
+//			if (xScale*xScaleForBitmapWidth >= 1){    
+//				  objectNewX = getLeft() + (getLeft() - getAnchorPointXY().x)*(xScale*xScaleForBitmapWidth - 1); 
+//			}else{   
+//				  objectNewX = getLeft() + (getLeft() - getAnchorPointXY().x)*(1 - xScale*xScaleForBitmapWidth); 
+//			}
+//			System.out.println(objectNewX);
 		}
 	}
 	
@@ -1165,7 +1203,28 @@ public class Sprite extends Layer {
 			spriteMatrix.postRotate(rotation, getLeft() + w/2,  getTop() + h/2);
 		}
 		
-
+//		float[] leftTop = new float[2];
+//		float[] leftBottom = new float[2];
+//		float[] rightTop = new float[2];
+//		float[] rightBottom = new float[2];
+//
+//		spriteMatrix.mapPoints(leftTop, new float[]{getFrame().left,getFrame().top});
+//		spriteMatrix.mapPoints(leftBottom, new float[]{getFrame().left,getFrame().bottom});
+//		spriteMatrix.mapPoints(rightTop, new float[]{getFrame().right,getFrame().top});
+//		spriteMatrix.mapPoints(rightBottom, new float[]{getFrame().right,getFrame().bottom});
+//		
+//		getFrame().set(new RectF(dst[0], dst[1], dst[2], dst[3]));
+		
+//		spriteMatrix.mapRect(getFrame(), new RectF(getLeft(), getTop(), getLeft()+getWidth(), getTop()+getHeight()));
+		
+		if(getBitmap()!=null){
+//			spriteMatrix.mapRect(getFrame(), new RectF(160f, 200f, 160+((float)getBitmap().getWidth())/frameColNum, 200f+((float)getBitmap().getHeight())/frameRowNum));
+			if(this.length>0)
+				spriteMatrix.mapRect(getFrame(), new RectF(getAnchorPointXY().x, getAnchorPointXY().y, getAnchorPointXY().x+((float)getBitmap().getWidth())/frameColNum, getAnchorPointXY().y+((float)getBitmap().getHeight())/frameRowNum));
+			else //not test yet
+				spriteMatrix.mapRect(getFrame(), new RectF(getAnchorPointXY().x, getAnchorPointXY().y, getAnchorPointXY().x+getBitmap().getWidth(), getAnchorPointXY().y+getBitmap().getHeight()));
+		}else // not test yet
+			spriteMatrix.mapRect(getFrame(), new RectF(getAnchorPointXY().x, getAnchorPointXY().y, getAnchorPointXY().x+getWidth(), getAnchorPointXY().y+getHeight()));
 		
 		dealWithSpriteMatrixAfterCalculationMatrix(spriteMatrix);
 	}
