@@ -449,8 +449,17 @@ public class Sprite extends Layer {
 	}
 	
 	public void setRotation(float rotation){
+		float offsetRotation = rotation - this.rotation;
 		this.rotation = rotation;
 		colculationMatrix();
+		
+		if(getLayers().size()!=0){
+			for(ILayer child : getLayers()){
+				if(child.isComposite() && child instanceof Sprite){
+					((Sprite)child).setRotation(((Sprite)child).getRotation() + offsetRotation);
+				}
+			}		
+		}
 	}
 	
 	public float getRotation(){
@@ -1219,10 +1228,18 @@ public class Sprite extends Layer {
 		
 		if(getBitmap()!=null){
 //			spriteMatrix.mapRect(getFrame(), new RectF(160f, 200f, 160+((float)getBitmap().getWidth())/frameColNum, 200f+((float)getBitmap().getHeight())/frameRowNum));
-			if(this.length>0)
-				spriteMatrix.mapRect(getFrame(), new RectF(getAnchorPointXY().x, getAnchorPointXY().y, getAnchorPointXY().x+((float)getBitmap().getWidth())/frameColNum, getAnchorPointXY().y+((float)getBitmap().getHeight())/frameRowNum));
-			else //not test yet
-				spriteMatrix.mapRect(getFrame(), new RectF(getAnchorPointXY().x, getAnchorPointXY().y, getAnchorPointXY().x+getBitmap().getWidth(), getAnchorPointXY().y+getBitmap().getHeight()));
+			if(isComposite()){
+				if(this.length>0)//not test yet
+					spriteMatrix.mapRect(getFrame(), new RectF(getAnchorPointXY().x, getAnchorPointXY().y, getAnchorPointXY().x+((float)getBitmap().getWidth())/frameColNum, getAnchorPointXY().y+((float)getBitmap().getHeight())/frameRowNum));
+				else //not test yet
+					spriteMatrix.mapRect(getFrame(), new RectF(locationLeftTopInScene.x +getAnchorPoint().x*w, locationLeftTopInScene.y  + getAnchorPoint().y*h, locationLeftTopInScene.x +getAnchorPoint().x*w+getBitmap().getWidth(), locationLeftTopInScene.y  + getAnchorPoint().y*h+getBitmap().getHeight()));
+			}else{
+				if(this.length>0)
+					spriteMatrix.mapRect(getFrame(), new RectF(getAnchorPointXY().x, getAnchorPointXY().y, getAnchorPointXY().x+((float)getBitmap().getWidth())/frameColNum, getAnchorPointXY().y+((float)getBitmap().getHeight())/frameRowNum));
+				else //not test yet
+					spriteMatrix.mapRect(getFrame(), new RectF(getAnchorPointXY().x, getAnchorPointXY().y, getAnchorPointXY().x+getBitmap().getWidth(), getAnchorPointXY().y+getBitmap().getHeight()));
+			}
+			
 		}else // not test yet
 			spriteMatrix.mapRect(getFrame(), new RectF(getAnchorPointXY().x, getAnchorPointXY().y, getAnchorPointXY().x+getWidth(), getAnchorPointXY().y+getHeight()));
 		
