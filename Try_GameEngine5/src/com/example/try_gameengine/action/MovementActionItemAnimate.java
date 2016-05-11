@@ -9,6 +9,7 @@ import android.graphics.Bitmap;
 import com.example.try_gameengine.action.listener.IActionListener;
 import com.example.try_gameengine.action.visitor.IMovementActionVisitor;
 import com.example.try_gameengine.framework.Config;
+import com.example.try_gameengine.framework.LightImage;
 
 public class MovementActionItemAnimate extends MovementAction{ 
 	long millisTotal;
@@ -31,6 +32,7 @@ public class MovementActionItemAnimate extends MovementAction{
 	private long lastTriggerFrameNum;
 	private boolean isEnableSetSpriteAction = true;
 	private Bitmap[] bitmapFrames;
+	private LightImage[] lightImageFrames;
 	private int[] frameTriggerTimes; 
 	private float scale;
 	
@@ -80,6 +82,60 @@ public class MovementActionItemAnimate extends MovementAction{
 //		info.getSprite().getActionName();
 	}
 	
+	public MovementActionItemAnimate(LightImage[] lightImageFrames, float secondPerOneTime){
+		this((long) (secondPerOneTime*1000/(1000.0f/Config.fps))*lightImageFrames.length, (long) (secondPerOneTime*1000/(1000.0f/Config.fps)), lightImageFrames, null, 1.0f, "MovementActionItemAnimate");
+	}
+	
+	public MovementActionItemAnimate(long millisTotal, LightImage[] lightImageFrames, int[] frameTriggerTimes){
+		this((long) (millisTotal/(1000.0f/Config.fps)), 1, lightImageFrames, frameTriggerTimes, 1.0f, "MovementActionItemAnimate");
+	}
+	
+	public MovementActionItemAnimate(long millisTotal, LightImage[] lightImageFrames, int[] frameTriggerTimes, float scale){
+		this((long) (millisTotal/(1000.0f/Config.fps)), 1, lightImageFrames, frameTriggerTimes, scale, "MovementActionItemAnimate");
+	}
+	
+	public MovementActionItemAnimate(long triggerTotal, long triggerInterval, LightImage[] lightImageFrames, int[] frameTriggerTimes){
+		this(triggerTotal, triggerTotal, lightImageFrames, frameTriggerTimes, 1.0f, "MovementActionItemAnimate");
+	}
+	
+	public MovementActionItemAnimate(long triggerTotal, long triggerInterval, LightImage[] lightImageFrames, int[] frameTriggerTimes, float scale){
+		this(triggerTotal, triggerInterval, lightImageFrames, frameTriggerTimes, scale, "MovementActionItemAnimate");
+	}
+	
+	public MovementActionItemAnimate(long triggerTotal, long triggerInterval, LightImage[] lightImageFrames, int[] frameTriggerTimes, float scale, String description){
+//		super(millisTotal, millisDelay, dx, dy, description);
+		
+		this.millisTotal = triggerTotal;
+		this.millisDelay = triggerInterval;
+		this.description = description + ",";
+		
+//		LightImage lightImage;
+//		Bitmap[] bitmapFrames = new Bitmap[lightImageFrames.length];
+//		for(int i = 0; i < lightImageFrames.length; i++){
+//			lightImage = lightImageFrames[i];
+//			if(lightImage.getBitmap()==null){
+//				
+//			}
+//			bitmapFrames[i] = lightImage.getBitmap();
+//		}
+		
+		this.lightImageFrames = lightImageFrames;
+		this.bitmapFrames = new Bitmap[lightImageFrames.length];
+		
+		if(frameTriggerTimes == null){
+			frameTriggerTimes = new int[lightImageFrames.length];
+			Arrays.fill(frameTriggerTimes, (int) triggerInterval);
+		}
+		
+		this.frameTriggerTimes = frameTriggerTimes;
+		
+		this.scale = scale;
+		movementItemList.add(this);
+		info = new MovementActionInfo(millisTotal, millisDelay, 0, 0);
+		info.setSpriteActionName(description);
+//		info.getSprite().getActionName();
+	}
+	
 	@Override
 	public void setTimer() {
 		// TODO Auto-generated method stub
@@ -108,7 +164,8 @@ public class MovementActionItemAnimate extends MovementAction{
 			@Override
 			public void beforeChangeFrame(int nextFrameId) {
 				// TODO Auto-generated method stub
-				
+				if(lightImageFrames!=null)
+					info.getSprite().setLightImage(lightImageFrames[nextFrameId]);
 			}
 			
 			@Override

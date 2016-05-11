@@ -11,6 +11,7 @@ import com.example.try_gameengine.action.visitor.MovementActionNoRepeatSpriteAct
 import com.example.try_gameengine.action.visitor.MovementActionObjectStructure;
 import com.example.try_gameengine.action.visitor.MovementActionSetDefaultTimeOnTickListenerIfNotSetYetVisitor;
 import com.example.try_gameengine.framework.Config;
+import com.example.try_gameengine.framework.LightImage;
 import com.example.try_gameengine.framework.Sprite;
 import com.rits.cloning.Cloner;
 
@@ -139,6 +140,26 @@ public class MAction {
 	
 	public static MovementAction animateAction(long triggerTotal, long triggerInterval, Bitmap[] bitmapFrames, int[] frameTriggerTimes, float scale){
 		return new MovementActionItemAnimate(triggerTotal, triggerInterval, bitmapFrames, frameTriggerTimes, scale);	
+	}
+	
+	public static MovementAction animateAction(LightImage[] lightImageFrames, float secondPerOneTime){
+		return new MovementActionItemAnimate(lightImageFrames, secondPerOneTime);
+	}
+	
+	public static MovementAction animateAction(long millisTotal, LightImage[] lightImageFrames, int[] frameTriggerTimes){
+		return new MovementActionItemAnimate(millisTotal, lightImageFrames, frameTriggerTimes);	
+	}
+	
+	public static MovementAction animateAction(long millisTotal, LightImage[] lightImageFrames, int[] frameTriggerTimes, float scale){
+		return new MovementActionItemAnimate(millisTotal, lightImageFrames, frameTriggerTimes, scale);	
+	}
+	
+	public static MovementAction animateAction(long triggerTotal, long triggerInterval, LightImage[] lightImageFrames, int[] frameTriggerTimes){
+		return new MovementActionItemAnimate(triggerTotal, triggerInterval, lightImageFrames, frameTriggerTimes);	
+	}
+	
+	public static MovementAction animateAction(long triggerTotal, long triggerInterval, LightImage[] lightImageFrames, int[] frameTriggerTimes, float scale){
+		return new MovementActionItemAnimate(triggerTotal, triggerInterval, lightImageFrames, frameTriggerTimes, scale);	
 	}
 	
 	public static MovementAction scaleXToAction(long millisTotal, float scaleX){

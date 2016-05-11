@@ -52,7 +52,17 @@ public class GameModel implements IGameModel{
 //		setPlayersBySquential();
 	}
 	
+	public long getStartTime(){
+		return startTime;
+	}
 	
+	public long getEndTime(){
+		return endTime;
+	}
+	
+	public long getInterval(){
+		return interval;
+	}
 	
 //	protected void initChessBoard(){
 //		chessBoard = new ChessBoard(CommonUtil.screenWidth, CommonUtil.screenHeight, 8, 8);

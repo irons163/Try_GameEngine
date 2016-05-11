@@ -21,7 +21,7 @@ import android.graphics.RectF;
  * 
  * @project loonframework
  * @author chenpeng
- * @email：ceponline@yahoo.com.cn
+ * @email嚗eponline@yahoo.com.cn
  * @version 0.1.2
  */
 public class RectBox {
@@ -202,6 +202,42 @@ public class RectBox {
 
 	public int getArea() {
 		return width * height;
+	}
+	
+	/**
+	 * 水平移动X坐标执行长度
+	 * 
+	 * @param xMod
+	 */
+	public final void modX(int xMod) {
+		x += xMod;
+	}
+
+	/**
+	 * 水平移动Y坐标指定长度
+	 * 
+	 * @param yMod
+	 */
+	public final void modY(int yMod) {
+		y += yMod;
+	}
+
+	/**
+	 * 水平移动Width指定长度
+	 * 
+	 * @param w
+	 */
+	public void modWidth(int w) {
+		this.width += w;
+	}
+
+	/**
+	 * 水平移动Height指定长度
+	 * 
+	 * @param h
+	 */
+	public void modHeight(int h) {
+		this.height += h;
 	}
 
 	/**

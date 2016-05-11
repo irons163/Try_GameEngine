@@ -210,6 +210,21 @@ public class Sprite extends Layer {
 		currentFrame = sequence[0];
 	}
 	
+	public void setLightImage(LightImage lightImage){
+		if(lightImage.getBitmap()!=null){
+			bitmap = lightImage.getBitmap();
+		}else if(bitmap==null){
+			return;
+		}
+		
+		setBitmapAndFrameWH(bitmap, lightImage.getClipIfno().getWidth(), lightImage.getClipIfno().getHeight());
+		currentFrame = (int)(lightImage.getClipIfno().getClipStartX()/(frameWidth*frameColNum)) + (int)(lightImage.getClipIfno().getClipStartY()/(frameHeight*frameRowNum))*frameColNum;
+	}
+	
+//	public LightImage getLightImage(){
+//		return null;
+//	}
+	
 	public void setMovementAction(MovementAction movementAction){
 		this.action = movementAction;
 		movementActions.clear();
@@ -1283,7 +1298,7 @@ public class Sprite extends Layer {
 		
 		public void nextBitmap(){			
 			if (System.currentTimeMillis() > updateTime && !isStop) {
-				actionListener.beforeChangeFrame(frameIdx+1);
+				actionListener.beforeChangeFrame(frameIdx);
 //				frameIdx++;
 //				frameIdx %= bitmapFrames.length;
 				
@@ -1304,8 +1319,7 @@ public class Sprite extends Layer {
 					
 					setWidth(bitmap.getWidth());
 					setHeight(bitmap.getHeight());
-					int periousId = frameIdx-1<0 ? bitmapFrames.length+(frameIdx-1) : frameIdx-1;
-					actionListener.afterChangeFrame(periousId);
+					actionListener.afterChangeFrame(frameIdx);
 				}
 			}
 		}
@@ -1357,30 +1371,22 @@ public class Sprite extends Layer {
 		@Override
 		public void nextFrame() {
 			if (triggerCount >= updateTime && !isStop) {
-				actionListener.beforeChangeFrame(frameIdx+1);
-//				frameIdx++;
-//				frameIdx %= bitmapFrames.length;
+				actionListener.beforeChangeFrame(frameIdx);
 				
 				if(!isLoop && frameIdx==frames.length-1){
 					nextFrameBySequence();
 					triggerCount=0;
 					isStop = true;
 					actionListener.actionFinish();
-				}else{
-					
+				}else{					
 					nextFrameBySequence();
-					
-					
+			
 					triggerCount=0;
 					updateTime = frameTime[frameIdx];
-					
-//					int w = bitmap.getWidth();
-//					int h = bitmap.getHeight();
-//					
-//					setWidth(bitmap.getWidth());
-//					setHeight(bitmap.getHeight());
-					int periousId = frameIdx-1<0 ? frames.length+(frameIdx-1) : frameIdx-1;
-					actionListener.afterChangeFrame(periousId);
+
+//					int periousId = frameIdx-1<0 ? frames.length+(frameIdx-1) : frameIdx-1;
+//					actionListener.afterChangeFrame(periousId);
+					actionListener.afterChangeFrame(frameIdx);
 				}
 			}
 		}
@@ -1388,31 +1394,35 @@ public class Sprite extends Layer {
 		@Override
 		public void nextBitmap(){			
 			if (triggerCount >= updateTime && !isStop) {
-				actionListener.beforeChangeFrame(frameIdx+1);
+				actionListener.beforeChangeFrame(frameIdx);
 //				frameIdx++;
 //				frameIdx %= bitmapFrames.length;
 				
 				if(!isLoop && frameIdx==bitmapFrames.length-1){
-					bitmap = bitmapFrames[frameIdx];
+					if(bitmapFrames[frameIdx]!=null){
+						bitmap = bitmapFrames[frameIdx];
+					}
 					triggerCount=0;
 					isStop = true;
 					actionListener.actionFinish();
 				}else{
-					bitmap = bitmapFrames[frameIdx];
+					
+					if(bitmapFrames[frameIdx]!=null){
+						bitmap = bitmapFrames[frameIdx];
+								
+						int w = bitmap.getWidth();
+						int h = bitmap.getHeight();
+						
+						setWidth(bitmap.getWidth());
+						setHeight(bitmap.getHeight());
+					}
+					actionListener.afterChangeFrame(frameIdx);
 					
 					frameIdx++;// 帧下标增加
 					frameIdx %= bitmapFrames.length;
 					
 					triggerCount=0;
 					updateTime = frameTime[frameIdx];
-					
-					int w = bitmap.getWidth();
-					int h = bitmap.getHeight();
-					
-					setWidth(bitmap.getWidth());
-					setHeight(bitmap.getHeight());
-					int periousId = frameIdx-1<0 ? bitmapFrames.length+(frameIdx-1) : frameIdx-1;
-					actionListener.afterChangeFrame(periousId);
 				}
 			}
 		}

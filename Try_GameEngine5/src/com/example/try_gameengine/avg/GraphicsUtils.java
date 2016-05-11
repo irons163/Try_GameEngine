@@ -10,8 +10,10 @@ import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.NinePatch;
 import android.graphics.Rect;
+import android.graphics.RectF;
 import android.util.Log;
 
 public class GraphicsUtils {
@@ -191,5 +193,35 @@ public class GraphicsUtils {
 		//store
 		cv.restore();//¶s¿x
 		return newb;
+	}
+	
+	public static void filterColorToWhite(Bitmap myBitmap, int color){
+		int [] allpixels = new int [myBitmap.getHeight()*myBitmap.getWidth()];
+
+		myBitmap.getPixels(allpixels, 0, myBitmap.getWidth(), 0, 0, myBitmap.getWidth(), myBitmap.getHeight());
+
+		for(int i = 0; i < allpixels.length; i++)
+		{
+		    if(allpixels[i] == color)
+		    {
+		        allpixels[i] = 0xffffff;
+		    }
+		}
+
+		myBitmap.setPixels(allpixels, 0, myBitmap.getWidth(), 0, 0, myBitmap.getWidth(), myBitmap.getHeight());
+	}
+	
+	public static Bitmap filterColorToWhite(final String innerFileName, int color){
+		Bitmap myBitmap = loadImage(innerFileName);
+		filterColorToWhite(myBitmap, color);
+		return myBitmap;
+	}
+	
+	public static Rect createRect(int left, int top, int width, int height){
+		return new Rect(left, top, left+width, top+height);
+	}
+	
+	public static RectF createRectF(float left, float top, float width, float height){
+		return new RectF(left, top, left+width, top+height);
 	}
 }
