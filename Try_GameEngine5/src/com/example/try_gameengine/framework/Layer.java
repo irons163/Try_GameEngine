@@ -32,6 +32,14 @@ public class Layer extends ALayer{
 	public Layer(float x, float y, boolean autoAdd) {
 		super(x, y, autoAdd);
 	}
+	
+	public Layer(boolean autoAdd) {
+		super(autoAdd);
+	}
+	
+	public Layer() {
+		super();
+	}
 
 	@Override
 	public void drawSelf(Canvas canvas, Paint paint) {
@@ -62,7 +70,6 @@ public class Layer extends ALayer{
 				src.bottom = h;
 				
 				if(parent!=null){
-					
 //					dst.left = getLocationInScene().x;
 //					dst.top = getLocationInScene().y;
 					PointF locationInScene = parent.locationInSceneByCompositeLocation((float) (centerX - w / 2), (float) (centerY - h / 2));
@@ -115,7 +122,7 @@ public class Layer extends ALayer{
 		}
 		
 		for(ILayer layer : getLayers()){
-			if(layer.isComposite())
+			if(layer.isComposite() && !layer.isAutoAdd()) //if the layer is auto add, not draw.
 				layer.drawSelf(canvas, paint);
 		}
 	}

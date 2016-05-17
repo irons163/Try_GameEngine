@@ -61,10 +61,12 @@ public class LightImage {
 	
 	public LightImage(Bitmap bitmap) {
 		this.bitmap = bitmap;
+		setClipInfo(new ClipInfo(0, 0, bitmap.getWidth(), bitmap.getHeight()));
 	}
 	
 	public LightImage(String resPath){
 		this.bitmap = GraphicsUtils.loadImage(resPath);
+		setClipInfo(new ClipInfo(0, 0, bitmap.getWidth(), bitmap.getHeight()));
 	}
 	
 	public LightImage(LightImage lightImage) {
@@ -86,6 +88,14 @@ public class LightImage {
 	
 	public Bitmap getBitmap(){
 		return this.bitmap;
+	}
+	
+	public int getWidth(){
+		return clipInfo.getWidth();
+	}
+	
+	public int getHeight(){
+		return clipInfo.getHeight();
 	}
 	
 	public void drawSelf(Canvas canvas){

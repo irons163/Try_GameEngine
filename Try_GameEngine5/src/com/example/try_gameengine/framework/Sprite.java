@@ -158,6 +158,20 @@ public class Sprite extends Layer {
 	     initCollisionRectF();
 	}
 	
+	public Sprite(boolean autoAdd) {
+		super(autoAdd);
+
+	     actions = new Hashtable<String, Sprite.SpriteAction>();  
+	     initCollisionRectF();
+	}
+	
+	public Sprite() {
+		super(false);
+
+	     actions = new Hashtable<String, Sprite.SpriteAction>();
+	     initCollisionRectF();
+	}
+	
 	private void initCollisionRectF(){
 		collisionRectFWidth = w;
 		collisionRectFHeight = h;
@@ -415,7 +429,7 @@ public class Sprite extends Layer {
 		
 		
 		for(ILayer layer : layers){
-			if(layer.isComposite()){
+			if(layer.isComposite() && !layer.isAutoAdd()){ //if the layer is auto add, not draw.
 				layer.drawSelf(canvas, paint);
 			}
 		}
@@ -1268,8 +1282,13 @@ public class Sprite extends Layer {
 	@Override
 	protected void willDoSometiongBeforeOneOfAncestorLayerWillRemoved() {
 		// TODO Auto-generated method stub
-		if(isComposite() || getParent()==null)
+		/*
+		//The case that is NOT composite and is NOT null is the Sprite is in autoDraw and is a Layer's child. 
+		//Because maybe the auto need the movementAction, user do not want to cancel.
+		if(isComposite() || getParent()==null) 
 			cancelCurrentMovementAction();
+			*/
+		cancelCurrentMovementAction(); // Not consider which is auto add or not, just cancel.
 		super.willDoSometiongBeforeOneOfAncestorLayerWillRemoved();
 	}
 	

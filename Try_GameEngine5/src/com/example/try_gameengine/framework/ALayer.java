@@ -185,6 +185,20 @@ public abstract class ALayer implements ILayer{
 		initALayer();
 	}
 	
+	protected ALayer(boolean autoAdd) {
+		src = new Rect();
+		dst = new RectF();
+		if (autoAdd) {
+			this.autoAdd = autoAdd;
+			LayerManager.addLayer(this);// 在LayerManager类中添加本组件
+		}
+		initALayer();
+	}
+	
+	protected ALayer() {
+		this(false);
+	}
+	
 //	protected ILayer(Bitmap bitmap, int w, int h, boolean autoAdd) {
 //		this.bitmap = BitmapUtil.createSpecificSizeBitmap(drawable, width, height)(resId);BitmapUtil.getBitmapFromRes(resId);
 //		this.w = w;
@@ -282,7 +296,7 @@ public abstract class ALayer implements ILayer{
 
 	public void frameTrig(){
 		for(ILayer layer : layers){
-			if(layer instanceof ALayer && layer.isComposite())
+			if(layer instanceof ALayer && layer.isComposite() && !layer.isAutoAdd()) //if the layer is auto add, not trigger.
 				((ALayer)layer).frameTrig();
 		}
 	}
@@ -660,6 +674,10 @@ public abstract class ALayer implements ILayer{
 		setInitHeight(bitmap.getHeight());
 	}
 
+	public void setBitmap(Bitmap bitmap){
+		this.bitmap = bitmap;
+	}
+	
 	public Bitmap getBitmap() {
 		return bitmap;
 	}
@@ -701,27 +719,36 @@ public abstract class ALayer implements ILayer{
 		willRemoveFromParent();
 		if(parent!=null){
 			parent.remove(this);
-			removeFromAuto();
+			removeFromLayerManager();
 		}else{
-			removeFromAuto();
+			removeFromLayerManager();
 		}
 	}
 	
-	public void willRemoveFromParent(){
-		willDoSometiongBeforeOneOfAncestorLayerWillRemoved();
-	}
-	
-	public void removeFromAuto(){
+	private void removeFromLayerManager(){
 		if(autoAdd){
 			LayerManager.deleteLayerBySearchAll(this);
 			autoAdd = false;
 		}
 	}
 	
+	protected void willRemoveFromParent(){
+		willDoSometiongBeforeOneOfAncestorLayerWillRemoved();
+	}
+	
+	protected void willRemoveFromAuto(){
+		willDoSometiongBeforeOneOfAncestorLayerWillRemoved();
+	}
+	
+	public void removeFromAuto(){
+		willRemoveFromAuto();
+		removeFromLayerManager();
+	}
+	
 	public int getzPosition() {
 		return zPosition;
 	}
-
+	//Need add LayerManager.(AutoDraw)
 	public void setzPosition(int zPosition) {
 		this.zPosition = zPosition;
 		LayerManager.updateLayersDrawOrderByZposition(this);

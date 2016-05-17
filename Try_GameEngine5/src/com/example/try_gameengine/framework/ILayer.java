@@ -29,6 +29,8 @@ public interface ILayer extends Cloneable{
 	public void setSmallViewRect(RectF smallViewRect);
 
 	public void remove(ILayer layer);
+	
+	public boolean isAutoAdd();
 
 	public void addWithLayerLevelIncrease(ILayer layer);
 	public void addWithLayerLevelIncrease(ILayer layer, int increaseNum);
@@ -81,6 +83,8 @@ public interface ILayer extends Cloneable{
 	public void setY(float y);
 	
 	public void setBitmapAndAutoChangeWH(Bitmap bitmap);
+	
+	public void setBitmap(Bitmap bitmap);
 	
 	public Bitmap getBitmap();
 	
