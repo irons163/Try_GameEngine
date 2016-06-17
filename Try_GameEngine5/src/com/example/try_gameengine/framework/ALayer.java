@@ -44,7 +44,7 @@ public abstract class ALayer implements ILayer{
 	private int alpha = 255;
 	private Paint paint;
 	
-	private int zPosition = Integer.MIN_VALUE;
+	private int zPosition = 0; //default 0
 	
 	private Runnable mPendingCheckForLongPress;
 	private Runnable mPerformClick;
@@ -758,9 +758,9 @@ public abstract class ALayer implements ILayer{
 		LayerManager.updateLayersDrawOrderByZposition(this);
 	}
 
-	public boolean iszPositionValid(){
-		return zPosition != Integer.MIN_VALUE;
-	}
+//	public boolean iszPositionValid(){
+//		return zPosition != Integer.MIN_VALUE;
+//	}
 	
 	public boolean isTouching() {
 		return isTouching;

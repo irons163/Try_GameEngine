@@ -110,7 +110,7 @@ public interface ILayer extends Cloneable{
 
 	public void setzPosition(int zPosition);
 
-	public boolean iszPositionValid();
+//	public boolean iszPositionValid();
 	
 	public boolean isTouching();
 

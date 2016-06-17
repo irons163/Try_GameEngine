@@ -310,8 +310,8 @@ public class LayerManager {
 		for(int i = 0; i < layerLevelList.size(); i++){
 			List<ILayer> layersByTheSameLevel = layerLevelList.get(i);
 			for(ILayer layer : layersByTheSameLevel){
-				if(!layer.iszPositionValid())
-					continue;
+//				if(!layer.iszPositionValid())
+//					continue;
 				int layerZposition = layer.getzPosition();
 				List<ILayer> layersByTheSameZposition;
 				if(layerLevelListByZposition.containsValue(layerZposition)){
@@ -374,13 +374,13 @@ public class LayerManager {
 	public static synchronized void drawSceneLayers(Canvas canvas, Paint paint, int sceneLayerLevel) {
 		if(sceneLayerLevelList.containsKey(sceneLayerLevel+"")){
 			synchronized (sceneLayerLevelList) {
-				List<List<ILayer>> layerLevelList = sceneLayerLevelList.get(sceneLayerLevel+"");
-				for (List<ILayer> layersByTheSameLevel : layerLevelList) {
-					for (ILayer layer : layersByTheSameLevel) {
-						if(!layer.iszPositionValid())
-							layer.drawSelf(canvas, paint);
-					}
-				}
+//				List<List<ILayer>> layerLevelList = sceneLayerLevelList.get(sceneLayerLevel+"");
+//				for (List<ILayer> layersByTheSameLevel : layerLevelList) {
+//					for (ILayer layer : layersByTheSameLevel) {
+//						if(!layer.iszPositionValid())
+//							layer.drawSelf(canvas, paint);
+//					}
+//				}
 				
 				drawLayersByZposition(canvas, paint, sceneLayerLevel);
 			}
@@ -388,12 +388,12 @@ public class LayerManager {
 	}
 
 	public static synchronized void drawLayers(Canvas canvas, Paint paint) {
-		for (List<ILayer> layersByTheSameLevel : layerLevelList) {
-			for (ILayer layer : layersByTheSameLevel) {
-				if(!layer.iszPositionValid())
-					layer.drawSelf(canvas, paint);
-			}
-		}
+//		for (List<ILayer> layersByTheSameLevel : layerLevelList) {
+//			for (ILayer layer : layersByTheSameLevel) {
+//				if(!layer.iszPositionValid())
+//					layer.drawSelf(canvas, paint);
+//			}
+//		}
 		
 		drawLayersByZposition(canvas, paint);
 	}
@@ -507,13 +507,13 @@ public class LayerManager {
 	public static synchronized void processSceneLayers(int sceneLayerLevel) {
 		if(sceneLayerLevelList.containsKey(sceneLayerLevel+"")){
 			synchronized (sceneLayerLevelList) {
-				List<List<ILayer>> layerLevelList = sceneLayerLevelList.get(sceneLayerLevel+"");
-				for (List<ILayer> layersByTheSameLevel : layerLevelList) {
-					for (ILayer layer : layersByTheSameLevel) {
-						if(!layer.iszPositionValid() && layer instanceof ALayer)
-							((ALayer)layer).frameTrig();
-					}
-				}
+//				List<List<ILayer>> layerLevelList = sceneLayerLevelList.get(sceneLayerLevel+"");
+//				for (List<ILayer> layersByTheSameLevel : layerLevelList) {
+//					for (ILayer layer : layersByTheSameLevel) {
+//						if(!layer.iszPositionValid() && layer instanceof ALayer)
+//							((ALayer)layer).frameTrig();
+//					}
+//				}
 				
 				processLayersByZposition(sceneLayerLevel);
 			}
@@ -521,12 +521,12 @@ public class LayerManager {
 	}
 	
 	public static synchronized void processLayers() {
-		for (List<ILayer> layersByTheSameLevel : layerLevelList) {
-			for (ILayer layer : layersByTheSameLevel) {
-				if(!layer.iszPositionValid() && layer instanceof ALayer)
-					((ALayer)layer).frameTrig();
-			}
-		}
+//		for (List<ILayer> layersByTheSameLevel : layerLevelList) {
+//			for (ILayer layer : layersByTheSameLevel) {
+//				if(!layer.iszPositionValid() && layer instanceof ALayer)
+//					((ALayer)layer).frameTrig();
+//			}
+//		}
 		
 		processLayersByZposition();
 	}
