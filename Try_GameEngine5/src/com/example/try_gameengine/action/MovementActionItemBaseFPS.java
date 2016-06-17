@@ -76,7 +76,7 @@ public class MovementActionItemBaseFPS extends MovementActionItem{
 		isCycleFinish = false;
 		if(info.getSprite()!=null)
 		info.getSprite().setAction(info.getSpriteActionName());
-		
+		actionListener.actionStart();
 	}
 	
 	long[] frameTimes;

@@ -108,6 +108,8 @@ public class MovementActionItemBaseReugularFPS extends MovementAction{
 		
 		triggerEnable = true;
 		isEnableSetSpriteAction = isRepeatSpriteActionIfMovementActionRepeat;
+		
+		actionListener.actionStart();
 	}
 	
 	

@@ -751,6 +751,10 @@ public abstract class ALayer implements ILayer{
 	//Need add LayerManager.(AutoDraw)
 	public void setzPosition(int zPosition) {
 		this.zPosition = zPosition;
+		if(!autoAdd){
+			autoAdd = true;
+			LayerManager.addLayer(this);
+		}
 		LayerManager.updateLayersDrawOrderByZposition(this);
 	}
 
