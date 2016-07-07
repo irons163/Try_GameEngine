@@ -1024,7 +1024,7 @@ public abstract class ALayer implements ILayer{
 			if(!isEnableMultiTouch())
 				return false;
 		case MotionEvent.ACTION_UP:
-			onTouched(event);
+//			onTouched(event); //marked in 2016/06/21
 			if (!isTouching) {
 				return false;
 //				break;

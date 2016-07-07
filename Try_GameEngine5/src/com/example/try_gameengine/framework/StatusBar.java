@@ -8,7 +8,9 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.PointF;
 import android.graphics.Rect;
+import android.graphics.RectF;
 import android.graphics.Paint.Style;
 import android.graphics.Path.FillType;
 import android.view.MotionEvent;
@@ -80,15 +82,15 @@ public class StatusBar extends ALayer{
 				getPaint().setColor(Color.YELLOW);
 			}
 			getPaint().setStyle(Style.FILL);
-			g.drawRect(x, y, (width * j) / k, height,getPaint());
+			g.drawRect(x, y, x + (width * j) / k, y + height,getPaint());
 			getPaint().setColor(color);
-			g.drawRect(x, y, (width * i) / k, height,getPaint());
+			g.drawRect(x, y, x + (width * i) / k, y + height,getPaint());
 		} else {
 			getPaint().setStyle(Style.FILL);
 			getPaint().setColor(Color.YELLOW);
-			g.drawRect(x, y, (width * i) / k, height,getPaint());
+			g.drawRect(x, y, x + (width * i) / k, y + height,getPaint());
 			getPaint().setColor(color);
-			g.drawRect(x, y, (width * j) / k, height,getPaint());
+			g.drawRect(x, y, x + (width * j) / k, y + height,getPaint());
 		}
 		getPaint().setColor(Color.WHITE);
 	}
@@ -124,7 +126,7 @@ public class StatusBar extends ALayer{
 	}
 
 	private void createUI(Canvas g) {
-		if (visible) {
+		if (visible) {			
 			if (showValue) {
 				hpString = "" + value;
 //				g.setColor(Color.WHITE);
@@ -137,13 +139,26 @@ public class StatusBar extends ALayer{
 //				int w = (int) paint.measureText(hpString);
 				int w = rect.width();
 				int h = rect.height();
-				g.drawText("" + value, (getX() + width / 2 - w / 2) + 2, (getY()
+				g.drawText("" + value, (getXInScene() + width / 2 - w / 2) + 2, (getYInScene()
 						+ height / 2 + h / 2), paint);
 			}
-			drawBar(g, (int) we, (int) w, width, (int)getX(), (int)getY());
+			drawBar(g, (int) we, (int) w, width, (int)getXInScene(), (int)getYInScene());
 		}
 	}
 
+	public float getXInScene() {
+		if(isComposite())
+			return getLocationInScene().x;
+		else
+			return super.getX();
+	}
+	
+	public float getYInScene() {
+		if(isComposite())
+			return getLocationInScene().y;
+		else
+			return super.getY();
+	}
 //	public RectBox getCollisionBox() {
 //		if (rect == null) {
 //			rect = new RectBox(x(), y(), width, height);

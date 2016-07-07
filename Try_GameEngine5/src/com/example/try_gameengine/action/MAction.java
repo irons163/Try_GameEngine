@@ -240,7 +240,18 @@ public class MAction {
 		@Override
 		public void trigger() {
 			// TODO Auto-generated method stub
+			if (!isFinish) {		
+				if(!isLoop){
+					isFinish = true;
+				}else{
+					actionListener.beforeChangeFrame(0);
+					block.runBlock();
+					actionListener.afterChangeFrame(0);
+				}
+			}
+			
 			if(isFinish){
+				actionListener.actionFinish();
 				synchronized (MovementActionBlock.this) {
 					MovementActionBlock.this.notifyAll();
 				}
@@ -250,8 +261,12 @@ public class MAction {
 		@Override
 		public void start() {
 			// TODO Auto-generated method stub
+			actionListener.actionStart();
+			actionListener.beforeChangeFrame(0);
 			block.runBlock();
-			isFinish = true;
+			actionListener.afterChangeFrame(0);
+			if(!isLoop)
+				isFinish = true;
 		}
 		
 		@Override
@@ -279,6 +294,7 @@ public class MAction {
 		void cancelMove() {
 			// TODO Auto-generated method stub
 //			super.cancelMove();
+			isFinish = true;
 			synchronized (MovementActionBlock.this) {
 				MovementActionBlock.this.notifyAll();
 			}
@@ -305,30 +321,59 @@ public class MAction {
 		@Override
 		public void trigger() {
 			// TODO Auto-generated method stub
+			if (!isFinish) {		
+				if(!isLoop){
+					isFinish = true;
+				}else{
+					actionListener.beforeChangeFrame(0);
+					block.runBlock();
+					actionListener.afterChangeFrame(0);
+				}
+			}
 			
+			if(isFinish){
+				executor.submit(new Runnable() {
+					
+					@Override
+					public void run() {
+						// TODO Auto-generated method stub
+						actionListener.actionFinish();
+						synchronized (MovementActionNoDelayBlock.this) {
+							MovementActionNoDelayBlock.this.notifyAll();
+						}
+					}
+				});
+			}
 		}
 		
 		@Override
 		public void start() {
 			// TODO Auto-generated method stub
+			actionListener.actionStart();
+			actionListener.beforeChangeFrame(0);
 			block.runBlock();
-			isFinish = true;
-			executor.submit(new Runnable() {
-				
-				@Override
-				public void run() {
-					// TODO Auto-generated method stub
-					synchronized (MovementActionNoDelayBlock.this) {
-						MovementActionNoDelayBlock.this.notifyAll();
+			actionListener.afterChangeFrame(0);
+			if(!isLoop){
+				isFinish = true;
+				executor.submit(new Runnable() {
+					
+					@Override
+					public void run() {
+						// TODO Auto-generated method stub
+						actionListener.actionFinish();
+						synchronized (MovementActionNoDelayBlock.this) {
+							MovementActionNoDelayBlock.this.notifyAll();
+						}
 					}
-				}
-			});
+				});
+			}
 		}
 		
 		@Override
 		void cancelMove() {
 			// TODO Auto-generated method stub
 //			super.cancelMove();
+			isFinish = true;
 			synchronized (MovementActionNoDelayBlock.this) {
 				MovementActionNoDelayBlock.this.notifyAll();
 			}

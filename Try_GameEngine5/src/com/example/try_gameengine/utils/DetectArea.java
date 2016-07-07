@@ -126,12 +126,20 @@ public abstract class DetectArea{
 	private static boolean rectToRound(DetectAreaRect detectAreaRect, DetectAreaRound detectAreaRound){
 		RectF rectF = detectAreaRect.getRectF();
 		PointF point = detectAreaRound.getCenter();
+		float rdius = detectAreaRound.getRadius();
 		
-		if(rectF.contains(point.x, point.y)){
-			return true;
-		}
+		float circleDistanceX = Math.abs(point.x - rectF.centerX());
+		float circleDistanceY = Math.abs(point.y - rectF.centerY());
 		
-		return false;
+		if(circleDistanceX > (rectF.width()/2 + rdius)){return false;}
+		if(circleDistanceY > (rectF.height()/2 + rdius)){return false;}
+		
+		if(circleDistanceX <= (rectF.width()/2)){return true;}
+		if(circleDistanceY <= (rectF.height()/2)){return true;}
+		
+		double cornerDistance_sq = Math.sqrt(circleDistanceX - rectF.width()/2) + Math.sqrt(circleDistanceY - rectF.height()/2);
+		
+		return cornerDistance_sq <= Math.sqrt(rdius);
 	}
 
 	private static boolean rectToRect(DetectAreaRect detectAreaRect, DetectAreaRect detectAreaRect2){

@@ -12,6 +12,7 @@ import java.util.Vector;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentSkipListMap;
 
+import android.R.bool;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
@@ -413,48 +414,48 @@ public class LayerManager {
 	public static synchronized void onTouchSceneLayers(MotionEvent event, int sceneLayerLevel) {
 		onTouchLayersByZposition(event, sceneLayerLevel);
 		
-		if(sceneLayerLevelList.containsKey(sceneLayerLevel+"")){
-			synchronized (sceneLayerLevelList) {
-				List<List<ILayer>> layerLevelList = sceneLayerLevelList.get(sceneLayerLevel+"");
-				boolean isTouched = false;
-				for (int i = layerLevelList.size()-1; i >= 0; i--) {
-					List<ILayer> layersByTheSameLevel = layerLevelList.get(i);
-					for (int j = layersByTheSameLevel.size()-1; j >= 0 ; j--) {
-						ILayer layer = layersByTheSameLevel.get(j);
-//						if(layer instanceof ButtonLayer){
-//							if(((ButtonLayer) layer).onTouch(event)){
+//		if(sceneLayerLevelList.containsKey(sceneLayerLevel+"")){
+//			synchronized (sceneLayerLevelList) {
+//				List<List<ILayer>> layerLevelList = sceneLayerLevelList.get(sceneLayerLevel+"");
+//				boolean isTouched = false;
+//				for (int i = layerLevelList.size()-1; i >= 0; i--) {
+//					List<ILayer> layersByTheSameLevel = layerLevelList.get(i);
+//					for (int j = layersByTheSameLevel.size()-1; j >= 0 ; j--) {
+//						ILayer layer = layersByTheSameLevel.get(j);
+////						if(layer instanceof ButtonLayer){
+////							if(((ButtonLayer) layer).onTouch(event)){
+////								isTouched = true;
+////								break;
+////							}
+//							if(layer.onTouchEvent(event)){
 //								isTouched = true;
 //								break;
 //							}
-							if(layer.onTouchEvent(event)){
-								isTouched = true;
-								break;
-							}
-//						}		
-					}
-					if(isTouched)
-						break;
-				}
-			}
-		}
+////						}		
+//					}
+//					if(isTouched)
+//						break;
+//				}
+//			}
+//		}
 	}
 	
 	public static synchronized void onTouchLayers(MotionEvent event) {
 		onTouchLayersByZposition(event);
 
-		boolean isTouched = false;
-		for (int i = layerLevelList.size()-1; i >= 0; i--) {
-			List<ILayer> layersByTheSameLevel = layerLevelList.get(i);
-			for (int j = layersByTheSameLevel.size()-1; j >= 0 ; j--) {
-				ILayer layer = layersByTheSameLevel.get(j);
-				if(layer.onTouchEvent(event)){
-					isTouched = true;
-					break;
-				}		
-			}
-			if(isTouched)
-				break;
-		}
+//		boolean isTouched = false;
+//		for (int i = layerLevelList.size()-1; i >= 0; i--) {
+//			List<ILayer> layersByTheSameLevel = layerLevelList.get(i);
+//			for (int j = layersByTheSameLevel.size()-1; j >= 0 ; j--) {
+//				ILayer layer = layersByTheSameLevel.get(j);
+//				if(layer.onTouchEvent(event)){
+//					isTouched = true;
+//					break;
+//				}		
+//			}
+//			if(isTouched)
+//				break;
+//		}
 
 	}
 	
@@ -566,7 +567,49 @@ public class LayerManager {
 		}
 	}
 	
+////////////////////////////
+//// iterate layers
+////////////////////////////
+	public interface IterateLayersListener{
+		public boolean dealWithLayer(ILayer layer);
+	}
+	
+	public static boolean iterateRootLayers(IterateLayersListener iterateLayersListener){
+		ConcurrentSkipListMap<Integer, List<ILayer>> layerLevelListByZposition = scencesLayersByZposition.get(sceneLayerLevelByRecentlySet+"");;
+		for(Map.Entry<Integer, List<ILayer>> entry : layerLevelListByZposition.entrySet()) {
+			  int layerZposition = entry.getKey();
+			  List<ILayer> layersByTheSameZposition = entry.getValue();
+//			  System.out.println(layerZposition + " => " + layersByTheSameZposition.toString());
+			  for(ILayer layerByZposition : layersByTheSameZposition){
+				  if(iterateLayersListener.dealWithLayer(layerByZposition))
+					  return true;
+			  }
+		}
+		return false;
+	}
 
+	public static boolean iterateAllLayers(IterateLayersListener iterateLayersListener){
+		ConcurrentSkipListMap<Integer, List<ILayer>> layerLevelListByZposition = scencesLayersByZposition.get(sceneLayerLevelByRecentlySet+"");;
+		for(Map.Entry<Integer, List<ILayer>> entry : layerLevelListByZposition.entrySet()) {
+			  int layerZposition = entry.getKey();
+			  List<ILayer> layersByTheSameZposition = entry.getValue();
+//			  System.out.println(layerZposition + " => " + layersByTheSameZposition.toString());
+			  for(ILayer layerByZposition : layersByTheSameZposition){
+				  if(iterateChildren(layerByZposition, iterateLayersListener))
+					  return true;
+			  }
+		}
+		return false;
+	}
+	
+	private static boolean iterateChildren(ILayer parentLayer, IterateLayersListener iterateLayersListener){
+		for(ILayer childLayer : parentLayer.getLayers()){
+			  if(iterateLayersListener.dealWithLayer(childLayer))
+				  return true;
+		  }
+		return false;
+	}
+	
 	public static synchronized void increaseNewLayer() {
 		layerLevelList.add(new ArrayList<ILayer>());
 	}
