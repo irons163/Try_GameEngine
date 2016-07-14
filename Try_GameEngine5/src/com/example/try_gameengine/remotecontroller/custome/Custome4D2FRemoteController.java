@@ -1,6 +1,7 @@
-package com.example.try_gameengine.remotecontroller;
+package com.example.try_gameengine.remotecontroller.custome;
 
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.List;
 
 import android.graphics.Bitmap;
@@ -8,34 +9,19 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.view.MotionEvent;
 
-import com.example.try_gameengine.framework.ALayer;
-import com.example.try_gameengine.framework.ILayer;
-import com.example.try_gameengine.framework.LayerManager;
-import com.example.try_gameengine.framework.Sprite;
+import com.example.try_gameengine.remotecontroller.IRemoteController;
 import com.example.try_gameengine.utils.GameTimeUtil;
 
-public class RemoteController implements IRemoteController{
+public class Custome4D2FRemoteController implements IRemoteController{
 	
-	private static RemoteController remoteController;
-	private static RemoteControl remoteControl;
-	private static RemoteLoader remoteLoader;
+	private static Custome4D2FRemoteController remoteController;
+	private static Custome4D2FRemoteControl remoteControl;
+	private static Custome4D2FRemoteLoader remoteLoader;
 	
 	RemoteContollerListener remoteContollerListener;
 	RemoteContollerOnTouchEventListener remoteContollerOnTouchEventListener;
-	List<CommandType> commandTypes = new ArrayList<CommandType>();
+	List<Custome4D2FCommandType> commandTypes = new ArrayList<Custome4D2FCommandType>();
 	GameTimeUtil remoteControllerTimeUtil;
-	
-	public enum CommandType{
-		None,
-		UPKeyUpCommand,
-		UPKeyDownCommand,
-		DownKeyUpCommand,
-		DownKeyDownCommand,
-		LeftKeyUpCommand,
-		LeftKeyDownCommand,
-		RightKeyUpCommand,
-		RightKeyDownCommand
-	}
 	
 	public interface RemoteContollerOnTouchEventListener{
 		
@@ -62,8 +48,8 @@ public class RemoteController implements IRemoteController{
 			float x = event.getX();
 			float y = event.getY();
 			int action = event.getAction();
-			switch (action & MotionEvent.ACTION_MASK) {
-		    	case MotionEvent.ACTION_DOWN: 
+			switch (action & MotionEvent.ACTION_MASK) { 
+		    	case MotionEvent.ACTION_DOWN:
 		    		mActivePointerId = event.getPointerId(0);
 		    		isCatchTouchEvent = pressDown(x, y, mActivePointerId, event);
 		    		break;
@@ -111,22 +97,22 @@ public class RemoteController implements IRemoteController{
 	
 	public interface RemoteContollerListener{
 		
-		public void pressDown(List<CommandType> commandTypes);
+		public void pressDown(List<Custome4D2FCommandType> commandTypes);
 				
 	}
 	
 	private RemoteContollerListener defaultRemoteContollerListener = new RemoteContollerListener() {
 		
 		@Override
-		public void pressDown(List<CommandType> commandTypes) {
+		public void pressDown(List<Custome4D2FCommandType> commandTypes) {
 			// TODO Auto-generated method stub
-			for(CommandType commandType : commandTypes){
+			for(Custome4D2FCommandType commandType : commandTypes){
 				switch (commandType) {
 				case UPKeyUpCommand:
 					
 					break;
 				case UPKeyDownCommand:
-					
+			
 					break;
 				case DownKeyUpCommand:
 									
@@ -153,6 +139,18 @@ public class RemoteController implements IRemoteController{
 				case RightKeyDownCommand:
 					
 					break;
+				case EnterKeyUpCommand:
+					
+					break;
+				case EnterKeyDownCommand:
+			
+					break;
+				case CancelKeyUpCommand:
+									
+					break;
+				case CancelKeyDownCommand:
+					
+					break;
 				default:
 					break;
 				}
@@ -161,19 +159,19 @@ public class RemoteController implements IRemoteController{
 		
 	};
 
-	private RemoteController(){
-		remoteLoader = new RemoteLoader();
+	private Custome4D2FRemoteController(){
+		remoteLoader = new Custome4D2FRemoteLoader();
 		remoteControl = remoteLoader.getRemoteControl();
 		remoteControllerTimeUtil = new GameTimeUtil(0);
 		remoteContollerListener = defaultRemoteContollerListener;
 		remoteContollerOnTouchEventListener = defaultRemoteContollerOnTouchEventListener;
 	};
 	
-	public static RemoteController createRemoteController(){
+	public static Custome4D2FRemoteController createRemoteController(){
 		if(remoteController==null){
-			synchronized (RemoteController.class) {
+			synchronized (Custome4D2FRemoteController.class) {
 				if(remoteController==null)
-					remoteController = new RemoteController();
+					remoteController = new Custome4D2FRemoteController();
 			}			
 		}
 		return remoteController;
@@ -200,7 +198,7 @@ public class RemoteController implements IRemoteController{
 //	}
 	
 	public boolean pressDown(float x, float y, int motionEventPointerId, MotionEvent event){
-		CommandType commandType = remoteControl.executePressDown(x, y, motionEventPointerId, event);
+		Custome4D2FCommandType commandType = remoteControl.executePressDown(x, y, motionEventPointerId, event);
 		commandTypes.add(commandType);
 		
 		if(remoteControllerTimeUtil.isArriveExecuteTime()){
@@ -208,7 +206,7 @@ public class RemoteController implements IRemoteController{
 			commandTypes.clear();
 		}
 		
-		if(commandType==CommandType.None){
+		if(commandType==Custome4D2FCommandType.None){
 			return false;
 		}else{
 			return true;
@@ -220,7 +218,7 @@ public class RemoteController implements IRemoteController{
 	}
 	
 	public boolean pressUp(float x, float y, int motionEventPointerId, MotionEvent event){
-		CommandType commandType = remoteControl.executePressUp(x, y, motionEventPointerId, event);
+		Custome4D2FCommandType commandType = remoteControl.executePressUp(x, y, motionEventPointerId, event);
 		commandTypes.add(commandType);
 		
 		if(remoteControllerTimeUtil.isArriveExecuteTime()){
@@ -228,7 +226,7 @@ public class RemoteController implements IRemoteController{
 			commandTypes.clear();
 		}
 		
-		if(commandType==CommandType.None){
+		if(commandType==Custome4D2FCommandType.None){
 			return false;
 		}else{
 			return true;
@@ -251,20 +249,28 @@ public class RemoteController implements IRemoteController{
 		return this.remoteContollerOnTouchEventListener.onTouchEvent(event);
 	}
 	
-	public UpKey getUpKey(){
+	public Key getUpKey(){
 		return remoteLoader.getUpKey();
 	}
 	
-	public DownKey getDownKey(){
+	public Key getDownKey(){
 		return remoteLoader.getDownKey();
 	}
 	
-	public LeftKey getLeftKey(){
+	public Key getLeftKey(){
 		return remoteLoader.getLeftKey();
 	}
 	
-	public RightKey getRightKey(){
+	public Key getRightKey(){
 		return remoteLoader.getRightKey();
+	}
+	
+	public Key getEnterKey(){
+		return remoteLoader.getEnterKey();
+	}
+	
+	public Key getCancelKey(){
+		return remoteLoader.getCancelKey();
 	}
 	
 	public void drawRemoteController(Canvas canvas, Paint paint){
@@ -272,6 +278,10 @@ public class RemoteController implements IRemoteController{
 //		remoteLoader.getDownKey().drawSelf(canvas, paint);
 		remoteLoader.getLeftKey().drawSelf(canvas, paint);
 		remoteLoader.getRightKey().drawSelf(canvas, paint);
+		remoteLoader.getUpKey().drawSelf(canvas, paint);
+		remoteLoader.getDownKey().drawSelf(canvas, paint);
+		remoteLoader.getEnterKey().drawSelf(canvas, paint);
+		remoteLoader.getCancelKey().drawSelf(canvas, paint);
 	}
 	
 	public void setUpKyPosition(float x, float y){
@@ -304,5 +314,21 @@ public class RemoteController implements IRemoteController{
 	
 	public void setRightKyBitmap(Bitmap bitmap){
 		remoteLoader.getRightKey().setBitmapAndAutoChangeWH(bitmap);
+	}
+	
+	public void setEnterKyPosition(float x, float y){
+		remoteLoader.getEnterKey().setPosition(x, y);
+	}
+	
+	public void setEnterKyBitmap(Bitmap bitmap){
+		remoteLoader.getEnterKey().setBitmapAndAutoChangeWH(bitmap);
+	}
+	
+	public void Cancel(float x, float y){
+		remoteLoader.getRightKey().setPosition(x, y);
+	}
+	
+	public void setCancelKyBitmap(Bitmap bitmap){
+		remoteLoader.getCancelKey().setBitmapAndAutoChangeWH(bitmap);
 	}
 }

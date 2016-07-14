@@ -24,14 +24,16 @@ public final class R {
         public static int black_point=0x7f020000;
         public static int blue_point=0x7f020001;
         public static int brown_point=0x7f020002;
-        public static int green_point=0x7f020003;
-        public static int ic_launcher=0x7f020004;
-        public static int left_keyboard_btn=0x7f020005;
-        public static int orange_point=0x7f020006;
-        public static int red_point=0x7f020007;
-        public static int right_keyboard_btn=0x7f020008;
-        public static int white_point=0x7f020009;
-        public static int yellow_point=0x7f02000a;
+        public static int down_keyboard_btn=0x7f020003;
+        public static int green_point=0x7f020004;
+        public static int ic_launcher=0x7f020005;
+        public static int left_keyboard_btn=0x7f020006;
+        public static int orange_point=0x7f020007;
+        public static int red_point=0x7f020008;
+        public static int right_keyboard_btn=0x7f020009;
+        public static int up_keyboard_btn=0x7f02000a;
+        public static int white_point=0x7f02000b;
+        public static int yellow_point=0x7f02000c;
     }
     public static final class id {
         public static int action_settings=0x7f080000;

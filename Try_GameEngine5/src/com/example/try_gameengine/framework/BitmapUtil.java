@@ -30,6 +30,10 @@ public class BitmapUtil {
 	public static Bitmap bluePoint;
 	public static Bitmap leftKey;
 	public static Bitmap rightKey;
+	public static Bitmap upKey;
+	public static Bitmap downKey;
+	public static Bitmap enterKey;
+	public static Bitmap cancelKey;
 	
 	public static void initBitmapForTest(){
 		if(!wasInitBitmap){
@@ -55,6 +59,14 @@ public class BitmapUtil {
 				R.drawable.left_keyboard_btn);
 		rightKey = BitmapFactory.decodeResource(context.getResources(), 
 				R.drawable.right_keyboard_btn);
+		upKey = BitmapFactory.decodeResource(context.getResources(), 
+				R.drawable.up_keyboard_btn);
+		downKey = BitmapFactory.decodeResource(context.getResources(), 
+				R.drawable.down_keyboard_btn);
+		enterKey = BitmapFactory.decodeResource(context.getResources(), 
+				R.drawable.green_point);
+		cancelKey = BitmapFactory.decodeResource(context.getResources(), 
+				R.drawable.red_point);
 	}
 	
 	public static Bitmap createSpecificSizeBitmap(Drawable drawable, int width, int height) {

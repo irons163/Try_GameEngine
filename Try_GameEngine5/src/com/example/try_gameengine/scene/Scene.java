@@ -11,6 +11,7 @@ import com.example.try_gameengine.framework.Data;
 import com.example.try_gameengine.framework.IGameController;
 import com.example.try_gameengine.framework.IGameModel;
 import com.example.try_gameengine.framework.LayerManager;
+import com.example.try_gameengine.remotecontroller.IRemoteController;
 import com.example.try_gameengine.remotecontroller.RemoteController;
 
 public abstract class Scene extends Activity{
@@ -18,7 +19,7 @@ public abstract class Scene extends Activity{
 	protected IGameController gameController;
 	private String id;
 	protected Context context;
-	protected RemoteController remoteController;
+	protected IRemoteController remoteController;
 	protected boolean isEnableRemoteController = true;
 	
 	public static final int RESTART = 1;
@@ -102,12 +103,23 @@ public abstract class Scene extends Activity{
 		gameController.setFlag(this.mode);
 	}
 	
+	public boolean createDefaultRemoteController(){
+		if(remoteController!=null)
+			return false;
+		remoteController = RemoteController.createRemoteController();
+		return true;
+	}
+	
 	public void isEnableRemoteController(boolean isEnableRemoteController){
 		this.isEnableRemoteController = isEnableRemoteController;
 	}
 	
-	public RemoteController getRemoteController(){
+	public IRemoteController getRemoteController(){
 		return remoteController;
+	}
+	
+	public void setRemoteController(IRemoteController remoteController){
+		this.remoteController = remoteController;
 	}
 	
 	public void setLayerLevel(int sceneLayerLevel){

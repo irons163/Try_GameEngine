@@ -323,7 +323,7 @@ public abstract class EasyScene extends Scene implements ContactListener{
 			// TODO Auto-generated constructor stub
 			BitmapUtil.initBitmap(context);
 			BitmapUtil.initBitmapForTest();
-			remoteController = RemoteController.createRemoteController();
+//			remoteController = RemoteController.createRemoteController();
 		}
 
 		@Override
@@ -385,7 +385,7 @@ public abstract class EasyScene extends Scene implements ContactListener{
 		public void onTouchEvent(MotionEvent event) {
 			// TODO Auto-generated method stub
 			boolean isRemoteControllerCatchTouchEvent = false;
-			if(isEnableRemoteController)
+			if(isEnableRemoteController && remoteController!=null)
 				isRemoteControllerCatchTouchEvent = remoteController.onTouchEvent(event);
 			
 			if(!isRemoteControllerCatchTouchEvent)
@@ -428,7 +428,7 @@ public abstract class EasyScene extends Scene implements ContactListener{
 			// TODO Auto-generated method stub
 //			super.doDraw(canvas);
 			EasyScene.this.doDraw(canvas);
-			if(isEnableRemoteController)
+			if(isEnableRemoteController && remoteController!=null)
 				remoteController.drawRemoteController(canvas, null);
 			if(isEnablePhysical){
 				/**µe¥X¤p³¾*/
