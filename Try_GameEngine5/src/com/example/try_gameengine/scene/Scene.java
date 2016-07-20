@@ -103,11 +103,8 @@ public abstract class Scene extends Activity{
 		gameController.setFlag(this.mode);
 	}
 	
-	public boolean createDefaultRemoteController(){
-		if(remoteController!=null)
-			return false;
-		remoteController = RemoteController.createRemoteController();
-		return true;
+	public RemoteController createDefaultRemoteController(){
+		return RemoteController.createRemoteController();
 	}
 	
 	public void isEnableRemoteController(boolean isEnableRemoteController){
@@ -131,8 +128,8 @@ public abstract class Scene extends Activity{
 	}
 	
 	public void addAutoDraw(ALayer layer){
-//		LayerManager.addSceneLayerByLayerLevel(layer, sceneLayerLevel);
-		layer.setAutoAdd(true);
+		LayerManager.addSceneLayerByLayerLevel(layer, sceneLayerLevel);
+//		layer.setAutoAdd(true);
 	}
 	
 	public int getBackgroundColor() {

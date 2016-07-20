@@ -149,6 +149,29 @@ public abstract class ALayer implements ILayer{
 		public void onClick(ILayer layer);
 	}
 	
+	public static final int NO_FLAG = 0;
+	public static final int TOUCH_UP_CAN_OUTSIDE_SELF_RANGE = 1;
+	public static final int TOUCH_UP_CAN_WITHOUT_TOUCH_DOWN = 2;
+	public static final int TOUCH_UP_DISABLE_WHEN_CLICK_LISTENER_ENABLE = 4;
+	
+	protected int flag = NO_FLAG;
+	
+	public void setFlag(int flag){
+		this.flag = flag;
+	}
+	
+	public int getFlag(){
+		return this.flag;
+	}
+	
+	public void addFlag(int flag){
+		this.flag = this.flag|flag;
+	}
+	
+	public void removeFlag(int flag){
+		this.flag &= ~flag;
+	}
+	
 	public interface OnLayerLongClickListener{
 		public boolean onLongClick(ILayer layer);
 	}
@@ -1024,21 +1047,46 @@ public abstract class ALayer implements ILayer{
 			if(!isEnableMultiTouch())
 				return false;
 		case MotionEvent.ACTION_UP:
-//			onTouched(event); //marked in 2016/06/21
-			if (!isTouching) {
-				return false;
-//				break;
+			if((flag & TOUCH_UP_DISABLE_WHEN_CLICK_LISTENER_ENABLE)==0 || onLayerClickListener == null){
+				if((flag & TOUCH_UP_CAN_WITHOUT_TOUCH_DOWN)!=0 && (flag & TOUCH_UP_CAN_OUTSIDE_SELF_RANGE)==0){
+					onTouched(event); 
+				}else if((flag & TOUCH_UP_CAN_WITHOUT_TOUCH_DOWN)!=0 && (flag & TOUCH_UP_CAN_OUTSIDE_SELF_RANGE)!=0){
+					if (f.contains(x, y)) {
+						onTouched(event);
+					}
+				}else if((flag & TOUCH_UP_CAN_WITHOUT_TOUCH_DOWN)==0 && (flag & TOUCH_UP_CAN_OUTSIDE_SELF_RANGE)!=0){
+					if (!isTouching) {
+						return false;
+	//					break;
+					}
+					
+					isTouching = false;
+					
+					onTouched(event);
+					
+					if(!pressed){
+						break;
+					}
+	
+					pressed = false;
+					
+				}else if((flag & TOUCH_UP_CAN_WITHOUT_TOUCH_DOWN)==0 && (flag & TOUCH_UP_CAN_OUTSIDE_SELF_RANGE)==0){
+					if (!isTouching) {
+						return false;
+	//					break;
+					}
+					
+					isTouching = false;
+					
+					if(!pressed){
+						break;
+					}
+	
+					pressed = false;
+					
+					onTouched(event);
+				}
 			}
-			
-			isTouching = false;
-			
-			if(!pressed){
-				break;
-			}
-
-			pressed = false;
-			
-			onTouched(event);
 			
 			if (mHasPerformedLongPress) {
 				break;
@@ -1173,6 +1221,8 @@ public abstract class ALayer implements ILayer{
 			layer.setFrame(new RectF(getFrame()));
 		
 		layer.layerParam = (LayerParam) this.layerParam.clone();
+		
+		layer.flag = this.flag;
 				
 		
 //		private OnLayerClickListener onLayerClickListener;

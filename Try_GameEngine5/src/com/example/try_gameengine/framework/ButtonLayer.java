@@ -29,6 +29,7 @@ public class ButtonLayer extends Layer{
 		super(bitmap, w, h, autoAdd, level);
 		// TODO Auto-generated constructor stub
 		buttonBitmaps[NORMAL_BITMAP_INDEX] = bitmap;
+		setFlag(ALayer.TOUCH_UP_CAN_OUTSIDE_SELF_RANGE);
 //		paint = new Paint();
 	}
 
@@ -36,6 +37,7 @@ public class ButtonLayer extends Layer{
 		super(bitmap, w, h, autoAdd);
 		// TODO Auto-generated constructor stub
 		buttonBitmaps[NORMAL_BITMAP_INDEX] = bitmap;
+		setFlag(ALayer.TOUCH_UP_CAN_OUTSIDE_SELF_RANGE);
 //		paint = new Paint();
 	}
 
@@ -43,12 +45,14 @@ public class ButtonLayer extends Layer{
 		super(w, h, autoAdd);
 		// TODO Auto-generated constructor stub
 		buttonBitmaps[NORMAL_BITMAP_INDEX] = bitmap;
+		setFlag(ALayer.TOUCH_UP_CAN_OUTSIDE_SELF_RANGE);
 //		paint = new Paint();
 	}
 
 	public ButtonLayer(String text, int w, int h, boolean autoAdd){
 		super(w, h, autoAdd);
 		initLabelLayer(text);
+		setFlag(ALayer.TOUCH_UP_CAN_OUTSIDE_SELF_RANGE);
 //		this.text = text;
 //		paint = new Paint();
 	}

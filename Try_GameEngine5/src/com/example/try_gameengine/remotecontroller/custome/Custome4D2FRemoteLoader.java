@@ -33,7 +33,7 @@ public class Custome4D2FRemoteLoader {
 		upKey = new Key(BitmapUtil.upKey, leftKey.getX() + leftKey.getWidth() + leftKey.getWidth()/2 - BitmapUtil.upKey.getWidth()/2, Config.currentScreenHeight-BitmapUtil.leftKey.getHeight()*2 - BitmapUtil.leftKey.getHeight()/2 - BitmapUtil.upKey.getHeight()/2, 1, false);
 		upKey.setEnableMultiTouch(true);
 		Custome4D2FKeyCommandPressDown upKeyCommandPressDown = new Custome4D2FKeyCommandPressDown(upKey, Custome4D2FCommandType.UPKeyDownCommand);
-		Custome4D2FKeyCommandPressUp upKeyCommandPressUp = new Custome4D2FKeyCommandPressUp(upKey, Custome4D2FCommandType.UPKeyDownCommand);
+		Custome4D2FKeyCommandPressUp upKeyCommandPressUp = new Custome4D2FKeyCommandPressUp(upKey, Custome4D2FCommandType.UPKeyUpCommand);
 		downKey = new Key(BitmapUtil.downKey, leftKey.getX() + leftKey.getWidth() + leftKey.getWidth()/2 - BitmapUtil.downKey.getWidth()/2, Config.currentScreenHeight-BitmapUtil.leftKey.getHeight() + BitmapUtil.leftKey.getHeight()/2 - BitmapUtil.downKey.getHeight()/2, 1, false);
 		downKey.setEnableMultiTouch(true);
 		Custome4D2FKeyCommandPressDown downKeyCommandPressDown = new Custome4D2FKeyCommandPressDown(downKey, Custome4D2FCommandType.DownKeyDownCommand);

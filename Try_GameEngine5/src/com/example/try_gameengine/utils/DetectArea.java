@@ -146,7 +146,7 @@ public abstract class DetectArea{
 		RectF rectF = detectAreaRect.getRectF();
 		RectF rectF2 = detectAreaRect2.getRectF();
 		
-		if(rectF.intersect(rectF2)){
+		if(RectF.intersects(rectF, rectF2)){
 			return true;
 		}
 		
