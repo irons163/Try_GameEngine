@@ -132,6 +132,8 @@ public interface ILayer extends Cloneable{
 	
 	public PointF locationInSceneByCompositeLocation(float locationInLayerX, float locationInLayerY);
 	
+	public RectF frameInSceneByCompositeLocation();
+	
 	public ILayer getRootLayer();
 	
 	public List<ILayer> getLayersFromRootLayerToCurrentLayerInComposite();
@@ -147,4 +149,14 @@ public interface ILayer extends Cloneable{
 	public LayerParam getLayerParam();
 
 	public void setHidden(boolean isHidden);
+	
+	public RectF getFrame();
+	
+	public RectF getFrameInScene();
+	
+	public void setFrameInScene(RectF frameInScene);
+	
+	public boolean isClipOutside();
+	
+	public void setBackgroundColor(int backgroundColor);
 }

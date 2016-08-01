@@ -68,6 +68,14 @@ public abstract class ALayer implements ILayer{
 	
 	private RectF frame = new RectF();
 	
+	protected static int NONE_COLOR = 0;
+	
+	private int backgroundColor = NONE_COLOR;
+	
+	protected boolean isClipOutside = false;
+	
+	protected RectF frameInScene = new RectF();
+	
 	private LayerParam layerParam = new LayerParam();
 	
 	//Adjust position and size by parent layer.
@@ -178,13 +186,17 @@ public abstract class ALayer implements ILayer{
 	
 	protected ALayer(Bitmap bitmap, int w, int h, boolean autoAdd) {
 		this.bitmap = bitmap;
-		this.w = w;
-		this.h = h;
-		this.centerX = w / 2;
-		this.centerY = h / 2;
+		this.setWidth(w);
+		this.setHeight(h);
+//		this.w = w;
+//		this.h = h;
+//		this.centerX = w / 2;
+//		this.centerY = h / 2;
 		src = new Rect();
 		dst = new RectF();
-		getFrame().set(x, y, x+w, y+h);
+//		getFrame().set(x, y, x+w, y+h);
+//		setFrameInScene(frameInSceneByCompositeLocation());
+		
 		if (autoAdd) {
 			this.autoAdd = autoAdd;
 			LayerManager.addLayer(this);// 在LayerManager类中添加本组件
@@ -193,14 +205,18 @@ public abstract class ALayer implements ILayer{
 	}
 	
 	protected ALayer(int w, int h, boolean autoAdd) {
+		this.setWidth(w);
+		this.setHeight(h);
 //		this.bitmap = bitmap;
-		this.w = w;
-		this.h = h;
-		this.centerX = w / 2;
-		this.centerY = h / 2;
+//		this.w = w;
+//		this.h = h;
+//		this.centerX = w / 2;
+//		this.centerY = h / 2;
 		src = new Rect();
 		dst = new RectF();
-		getFrame().set(x, y, x+w, y+h);
+//		getFrame().set(x, y, x+w, y+h);
+//		setFrameInScene(frameInSceneByCompositeLocation());
+		
 		if (autoAdd) {
 			this.autoAdd = autoAdd;
 			LayerManager.addLayer(this);// 在LayerManager类中添加本组件
@@ -235,13 +251,17 @@ public abstract class ALayer implements ILayer{
 	
 	protected ALayer(Bitmap bitmap, int w, int h, boolean autoAdd, int level) {
 		this.bitmap = bitmap;
-		this.w = w;
-		this.h = h;
-		this.centerX = w / 2;
-		this.centerY = h / 2;
+		this.setWidth(w);
+		this.setHeight(h);
+//		this.w = w;
+//		this.h = h;
+//		this.centerX = w / 2;
+//		this.centerY = h / 2;
 		src = new Rect();
 		dst = new RectF();
-		getFrame().set(x, y, x+w, y+h);
+//		getFrame().set(x, y, x+w, y+h);
+//		setFrameInScene(frameInSceneByCompositeLocation());
+		
 		if (autoAdd) {
 			this.autoAdd = autoAdd;
 			setLayerLevel(level);
@@ -257,6 +277,8 @@ public abstract class ALayer implements ILayer{
 		src = new Rect();
 		dst = new RectF();
 		getFrame().set(x, y, x+w, y+h);
+		setFrameInScene(frameInSceneByCompositeLocation());
+		
 		if (autoAdd) {
 			this.autoAdd = autoAdd;
 			LayerManager.addLayer(this);// 在LayerManager类中添加本组件
@@ -269,6 +291,8 @@ public abstract class ALayer implements ILayer{
 		src = new Rect();
 		dst = new RectF();
 		getFrame().set(x, y, x+w, y+h);
+		setFrameInScene(frameInSceneByCompositeLocation());
+		
 		if (autoAdd) {
 			this.autoAdd = autoAdd;
 			LayerManager.addLayer(this);// 在LayerManager类中添加本组件
@@ -302,6 +326,7 @@ public abstract class ALayer implements ILayer{
 		this.centerX = x + w / 2;
 		this.centerY = y + h / 2;
 		getFrame().set(x, y, x+w, y+h);
+		setFrameInScene(frameInSceneByCompositeLocation());
 		
 		if(isComposite() && getParent()!=null)
 			locationInScene = parent.locationInSceneByCompositeLocation(getX(), getY());
@@ -455,15 +480,20 @@ public abstract class ALayer implements ILayer{
 			layer.setComposite(true);
 			layers.add(layer);
 			layer.setParent(this);
-			layer.setLocationInScene(this.locationInSceneByCompositeLocation(layer.getX(), layer.getY()));
-			if(layer instanceof Sprite)
-				((Sprite)layer).locationLeftTopInScene = this.locationInSceneByCompositeLocation(layer.getLeft(), layer.getTop());
 			
 			if(layer.getLayerParam().isEnabledPercentagePositionX()){
 				layer.setX(w * layer.getLayerParam().getPercentageX());	
 			}
 			if(layer.getLayerParam().isEnabledPercentagePositionY()){
 				layer.setY(h * layer.getLayerParam().getPercentageY());
+			}
+			
+			layer.setLocationInScene(this.locationInSceneByCompositeLocation(layer.getX(), layer.getY()));
+//			layer.setFrameInScene(layer.frameInSceneByCompositeLocation(layer.getFrame()));
+			layer.setFrameInScene(layer.frameInSceneByCompositeLocation());
+			if(layer instanceof Sprite){
+				((Sprite)layer).locationLeftTopInScene = this.locationInSceneByCompositeLocation(layer.getLeft(), layer.getTop());
+				((Sprite)layer).setX(layer.getX()); //want to do colculationMatrix();
 			}
 		}else{
 			throw new RuntimeException("child already has parent.");
@@ -511,6 +541,7 @@ public abstract class ALayer implements ILayer{
 		this.w = w;
 		this.centerX = x + w / 2;
 		getFrame().set(x, y, x+w, y+h);
+		setFrameInScene(frameInSceneByCompositeLocation());
 		
 		if(anchorPoint.x != 0)
 			setX(anchorPointXY.x);
@@ -528,6 +559,7 @@ public abstract class ALayer implements ILayer{
 		this.h = h;
 		this.centerY = y + h / 2;
 		getFrame().set(x, y, x+w, y+h);
+		setFrameInScene(frameInSceneByCompositeLocation());
 		
 		if(anchorPoint.y != 0)
 			setY(anchorPointXY.y);;
@@ -545,6 +577,7 @@ public abstract class ALayer implements ILayer{
 		this.w = w;
 		this.centerX = x + w / 2;
 		getFrame().set(x, y, x+w, y+h);
+		setFrameInScene(frameInSceneByCompositeLocation());
 		
 		if(anchorPoint.x != 0)
 			setX(anchorPointXY.x);
@@ -562,6 +595,7 @@ public abstract class ALayer implements ILayer{
 		this.h= h;
 		this.centerY = y + h / 2;
 		getFrame().set(x, y, x+w, y+h);
+		setFrameInScene(frameInSceneByCompositeLocation());
 		
 		if(anchorPoint.y != 0)
 			setY(anchorPointXY.y);
@@ -630,6 +664,8 @@ public abstract class ALayer implements ILayer{
 		this.x = x;
 		this.centerX = x + w/2;
 		getFrame().set(x, y, x+w, y+h);
+		setFrameInScene(frameInSceneByCompositeLocation());
+		
 		if(isComposite() && getParent()!=null)
 			locationInScene = parent.locationInSceneByCompositeLocation((float) (centerX - w / 2), (float) (centerY - h / 2));
 		if(getLayers().size()!=0){
@@ -660,6 +696,8 @@ public abstract class ALayer implements ILayer{
 		this.y = y;
 		this.centerY = y + h/2;
 		getFrame().set(x, y, x+w, y+h);
+		setFrameInScene(frameInSceneByCompositeLocation());
+		
 		if(isComposite() && getParent()!=null)
 			locationInScene = parent.locationInSceneByCompositeLocation((float) (centerX - w / 2), (float) (centerY - h / 2));
 		if(getLayers().size()!=0){
@@ -781,8 +819,18 @@ public abstract class ALayer implements ILayer{
 		LayerManager.updateLayersDrawOrderByZposition(this);
 	}
 
-//	public boolean iszPositionValid(){
-//		return zPosition != Integer.MIN_VALUE;
+	public void setIsClipOutside(boolean isClipOutside){
+		this.isClipOutside = isClipOutside;
+		if(isClipOutside && getPaint()==null)
+			setPaint(new Paint());
+	}
+	
+	public boolean isClipOutside(){
+		return isClipOutside;
+	}
+	
+//	protected void setParentRectF(RectF parentRectF){
+//		this.parentRectF = parentRectF;
 //	}
 	
 	public boolean isTouching() {
@@ -823,6 +871,28 @@ public abstract class ALayer implements ILayer{
 			this.frame = frame;
 	}
 	
+	public RectF getFrameInScene(){
+		return frameInScene;
+	}
+	
+	public void setFrameInScene(RectF frameInScene){
+		this.frameInScene = frameInScene;
+	}
+	
+	public void setBackgroundColor(int backgroundColor){
+		this.backgroundColor = backgroundColor;
+		if(paint==null)
+			paint = new Paint();
+	}
+	
+	public void setBackgroundColorNone(){
+		this.backgroundColor = NONE_COLOR;
+	}
+	
+	public int getBackgroundColor(){
+		return backgroundColor;
+	}
+	
 	public LayerParam getLayerParam() {
 		return layerParam;
 	}
@@ -834,8 +904,6 @@ public abstract class ALayer implements ILayer{
 	public PointF getLocationInScene() {
 		return locationInScene;
 	}
-	
-	
 
 	public boolean isAutoAdd() {
 		return autoAdd;
@@ -924,6 +992,57 @@ public abstract class ALayer implements ILayer{
 			}
 //		}
 		return locationInScene;
+	}
+	
+	public RectF frameInSceneByCompositeLocation(){
+		RectF frameInScene = new RectF();
+//		if(isComposite()){
+			for(ILayer layer : getLayersFromRootLayerToCurrentLayerInComposite()){
+				frameInScene.left = frameInScene.left + layer.getLeft();
+				frameInScene.top = frameInScene.top + layer.getTop();
+			}
+			frameInScene.right = frameInScene.left + getWidth();
+			frameInScene.bottom = frameInScene.top + getHeight();
+//		}
+		return frameInScene;
+	}
+	
+//	public RectF frameInSceneByCompositeLocation(RectF rectF){
+//		RectF frameInScene = new RectF(rectF);
+////		if(isComposite()){
+//			for(ILayer layer : getLayersFromRootLayerToCurrentLayerInComposite()){
+////				locationInScene.x = locationInScene.x + layer.getX();
+////				locationInScene.y = locationInScene.y + layer.getY();
+//				frameInScene.left = frameInScene.left + layer.getFrame().left;
+//				frameInScene.top = frameInScene.top + layer.getFrame().top;
+//				frameInScene.right = frameInScene.right + layer.getFrame().right;
+//				frameInScene.bottom = frameInScene.bottom + layer.getFrame().bottom;
+//			}
+////		}
+//		return frameInScene;
+//	}
+	
+	protected boolean isAncestorClipOutSide(){
+		boolean isAncestorClipOutSide = false;
+		ILayer layer = this;
+		while((layer = layer.getParent()) != null){
+			isAncestorClipOutSide = layer.isClipOutside();
+			if(isAncestorClipOutSide)
+				break;
+		}
+		return isAncestorClipOutSide;
+	}
+	
+	protected RectF getClipRange(){
+		ILayer layer = this;
+		RectF clipRange = new RectF(this.getFrameInScene());
+		while((layer = layer.getParent()) != null){
+			if(!layer.isClipOutside())
+				continue;
+			if(!clipRange.intersect(layer.getFrameInScene()))
+				clipRange = null;
+		}
+		return clipRange;
 	}
 	
 	public ILayer getRootLayer(){
@@ -1224,6 +1343,7 @@ public abstract class ALayer implements ILayer{
 		
 		layer.flag = this.flag;
 				
+		layer.backgroundColor = this.backgroundColor;
 		
 //		private OnLayerClickListener onLayerClickListener;
 //		private OnLayerLongClickListener onLayerLongClickListener;

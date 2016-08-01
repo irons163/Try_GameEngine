@@ -1,5 +1,7 @@
 package com.example.try_gameengine.framework;
 
+import com.example.try_gameengine.framework.LabelLayer.LabelBaseLine;
+
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -7,15 +9,15 @@ import android.graphics.Typeface;
 import android.view.MotionEvent;
 
 public class ButtonLayer extends Layer{
-	private final int NORMAL_BITMAP_INDEX = 0;
-	private final int DOWN_BITMAP_INDEX = 1;
-	private final int UP_BITMAP_INDEX = 2;
+	private final int NORMAL_INDEX = 0;
+	private final int DOWN_INDEX = 1;
+	private final int UP_INDEX = 2;
 	
 	boolean isClickCancled = false;
 	private LabelLayer labelLayer;
 	private String text;
-//	private Paint paint;
 	private Bitmap[] buttonBitmaps = new Bitmap[3];
+	private int[] buttonColors = new int[3];
 	private OnClickListener onClickListener = new OnClickListener() {
 		
 		@Override
@@ -28,39 +30,36 @@ public class ButtonLayer extends Layer{
 	public ButtonLayer(Bitmap bitmap, int w, int h, boolean autoAdd, int level) {
 		super(bitmap, w, h, autoAdd, level);
 		// TODO Auto-generated constructor stub
-		buttonBitmaps[NORMAL_BITMAP_INDEX] = bitmap;
+		buttonBitmaps[NORMAL_INDEX] = bitmap;
 		setFlag(ALayer.TOUCH_UP_CAN_OUTSIDE_SELF_RANGE);
-//		paint = new Paint();
 	}
 
 	public ButtonLayer(Bitmap bitmap, int w, int h, boolean autoAdd) {
 		super(bitmap, w, h, autoAdd);
 		// TODO Auto-generated constructor stub
-		buttonBitmaps[NORMAL_BITMAP_INDEX] = bitmap;
+		buttonBitmaps[NORMAL_INDEX] = bitmap;
 		setFlag(ALayer.TOUCH_UP_CAN_OUTSIDE_SELF_RANGE);
-//		paint = new Paint();
 	}
 
 	public ButtonLayer(int w, int h, boolean autoAdd) {
 		super(w, h, autoAdd);
 		// TODO Auto-generated constructor stub
-		buttonBitmaps[NORMAL_BITMAP_INDEX] = bitmap;
+		buttonBitmaps[NORMAL_INDEX] = bitmap;
 		setFlag(ALayer.TOUCH_UP_CAN_OUTSIDE_SELF_RANGE);
-//		paint = new Paint();
 	}
 
 	public ButtonLayer(String text, int w, int h, boolean autoAdd){
 		super(w, h, autoAdd);
 		initLabelLayer(text);
 		setFlag(ALayer.TOUCH_UP_CAN_OUTSIDE_SELF_RANGE);
-//		this.text = text;
-//		paint = new Paint();
 	}
 	
 	private void initLabelLayer(String text){
 		labelLayer = new LabelLayer(text, 0, 0, false);
 		labelLayer.setAutoHWByText();
-		labelLayer.setPosition(getCenterX() - labelLayer.w/2.0f, getCenterY() - labelLayer.h/2.0f);
+		labelLayer.setPosition(getWidth()/2, getHeight()/2);
+		labelLayer.setAnchorPoint(0.5f, 0.5f);
+		labelLayer.setLabelBaseLine(LabelBaseLine.BASELINE_FOR_TEXT_TOP);
 		addChild(labelLayer);
 	}
 	
@@ -68,92 +67,68 @@ public class ButtonLayer extends Layer{
 	public void setX(float x) {
 		// TODO Auto-generated method stub
 		super.setX(x);
-		
-		if(labelLayer!=null){
-			labelLayer.setX(getCenterX() - labelLayer.w/2.0f);
-		}
 	}
 	
 	@Override
 	public void setY(float y) {
 		// TODO Auto-generated method stub
 		super.setY(y);
-		
-		if(labelLayer!=null){
-			labelLayer.setY(getCenterY() - labelLayer.h/2.0f);
-		}
 	}
 	
 	@Override
 	public void setPosition(float x, float y) {
 		// TODO Auto-generated method stub
 		super.setPosition(x, y);
-		
-		if(labelLayer!=null){
-			labelLayer.setPosition(getCenterX() - labelLayer.w/2.0f, getCenterY() - labelLayer.h/2.0f);
-		}
 	}
 	
 	@Override
 	public void setWidth(int w) {
 		// TODO Auto-generated method stub
 		super.setWidth(w);
-		
-		if(labelLayer!=null){
-			labelLayer.setX(getCenterX() - labelLayer.w/2.0f);
-		}
 	}
 	
 	@Override
 	public void setHeight(int h) {
 		// TODO Auto-generated method stub
 		super.setHeight(h);
-		
-		if(labelLayer!=null){
-			labelLayer.setY(getCenterY() - labelLayer.h/2.0f);
-		}
 	}
 	
 	@Override
 	public void drawSelf(Canvas canvas, Paint paint) {
 		// TODO Auto-generated method stub
 		super.drawSelf(canvas, paint);
-		
-		if(labelLayer!=null)
-			labelLayer.drawSelf(canvas, paint);
-		
-//		if(bitmap!=null){
-//			canvas.drawBitmap(bitmap, 0, 0, paint);
-//		}
-//		if(text!=null)1
-//			canvas.drawText(text, getX(), getY(), paint!=null?paint:this.paint);
 	}
 	
+	@Override
 	public void setBitmap(Bitmap normal){
 		this.bitmap = normal;
-		buttonBitmaps[NORMAL_BITMAP_INDEX] = normal;
+		buttonBitmaps[NORMAL_INDEX] = normal;
 	}
 	
+	@Override
 	public void setBitmapAndAutoChangeWH(Bitmap bitmap){
 		this.bitmap = bitmap;
-		buttonBitmaps[NORMAL_BITMAP_INDEX] = bitmap;
+		buttonBitmaps[NORMAL_INDEX] = bitmap;
 		setInitWidth(bitmap.getWidth());
 		setInitHeight(bitmap.getHeight());
 	}
 	
 	public void setButtonBitmap(Bitmap normal, Bitmap down , Bitmap up){
-		buttonBitmaps[NORMAL_BITMAP_INDEX] = normal;
-		buttonBitmaps[DOWN_BITMAP_INDEX] = down;
-		buttonBitmaps[UP_BITMAP_INDEX] = up;
+		buttonBitmaps[NORMAL_INDEX] = normal;
+		buttonBitmaps[DOWN_INDEX] = down;
+		buttonBitmaps[UP_INDEX] = up;
 	}
 	
-	public void seButton1tBitmaps(Bitmap[] buttonBitmaps){
+	public void setButtonBitmaps(Bitmap[] buttonBitmaps){
 		this.buttonBitmaps = buttonBitmaps;
 	}
 	
-//	public void setPaint(Paint paint){
-//		this.paint = paint;
-//	}
+	public void setButtonColors(int normal, int down , int up){
+		setBackgroundColor(normal);
+		buttonColors[NORMAL_INDEX] = normal;
+		buttonColors[DOWN_INDEX] = down;
+		buttonColors[UP_INDEX] = up;
+	}
 	
 	public void setText(String text){
 		if(labelLayer==null){
@@ -178,21 +153,13 @@ public class ButtonLayer extends Layer{
 			labelLayer.getPaint().setColor(color);
 	}
 	
-//	@Override
-//	public boolean onTouchEvent(MotionEvent event) {
-//		// TODO Auto-generated method stub
-//		if(super.onTouchEvent(event)){
-//			return onTouch(event);
-//		}
-//		return false;
-//	}
-//	
 	public boolean onTouch(MotionEvent event){
 		float x = event.getX();
 		float y = event.getY();
 		if(event.getAction()==MotionEvent.ACTION_DOWN && this.dst.contains(x, y)){
-			if(buttonBitmaps[DOWN_BITMAP_INDEX]!=null){
-				this.bitmap = buttonBitmaps[DOWN_BITMAP_INDEX];
+			setBackgroundColor(buttonColors[DOWN_INDEX]);
+			if(buttonBitmaps[DOWN_INDEX]!=null){
+				this.bitmap = buttonBitmaps[DOWN_INDEX];
 			}
 			isClickCancled = false;
 			return true;
@@ -202,13 +169,15 @@ public class ButtonLayer extends Layer{
 			isClickCancled = true;
 			return false;			
 		}else if(event.getAction()==MotionEvent.ACTION_UP && isClickCancled){
-			if(buttonBitmaps[UP_BITMAP_INDEX]!=null){
-				this.bitmap = buttonBitmaps[UP_BITMAP_INDEX];
+			setBackgroundColor(buttonColors[UP_INDEX]);
+			if(buttonBitmaps[UP_INDEX]!=null){
+				this.bitmap = buttonBitmaps[UP_INDEX];
 			}
 			return true;
 		}else if(event.getAction()==MotionEvent.ACTION_UP && this.dst.contains(x, y) && !isClickCancled){
-			if(buttonBitmaps[UP_BITMAP_INDEX]!=null){
-				this.bitmap = buttonBitmaps[UP_BITMAP_INDEX];
+			setBackgroundColor(buttonColors[UP_INDEX]);
+			if(buttonBitmaps[UP_INDEX]!=null){
+				this.bitmap = buttonBitmaps[UP_INDEX];
 			}
 			onClickListener.onClick(this);
 			return true;
@@ -220,22 +189,24 @@ public class ButtonLayer extends Layer{
 	protected void onTouched(MotionEvent event) {
 		// TODO Auto-generated method stub
 		if(event.getAction()==MotionEvent.ACTION_DOWN && isPressed()){
-			if(buttonBitmaps[DOWN_BITMAP_INDEX]!=null){
-				this.bitmap = buttonBitmaps[DOWN_BITMAP_INDEX];
+			setBackgroundColor(buttonColors[DOWN_INDEX]);
+			if(buttonBitmaps[DOWN_INDEX]!=null){
+				this.bitmap = buttonBitmaps[DOWN_INDEX];
 			}
 			isClickCancled = false;
 		}else if(event.getAction()==MotionEvent.ACTION_MOVE && isPressed()){
 		}else if(event.getAction()==MotionEvent.ACTION_MOVE && !isPressed()){
 			isClickCancled = true;
 		}else if(event.getAction()==MotionEvent.ACTION_UP && isClickCancled && !isPressed()){
-			if(buttonBitmaps[UP_BITMAP_INDEX]!=null){
-				this.bitmap = buttonBitmaps[UP_BITMAP_INDEX];
+			setBackgroundColor(buttonColors[UP_INDEX]);
+			if(buttonBitmaps[UP_INDEX]!=null){
+				this.bitmap = buttonBitmaps[UP_INDEX];
 			}
 		}else if(event.getAction()==MotionEvent.ACTION_UP && isPressed() && !isClickCancled){
-			if(buttonBitmaps[UP_BITMAP_INDEX]!=null){
-				this.bitmap = buttonBitmaps[UP_BITMAP_INDEX];
+			setBackgroundColor(buttonColors[UP_INDEX]);
+			if(buttonBitmaps[UP_INDEX]!=null){
+				this.bitmap = buttonBitmaps[UP_INDEX];
 			}
-//			onClickListener.onClick(this);
 		}
 	}
 	

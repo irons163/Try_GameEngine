@@ -4,6 +4,8 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.graphics.RectF;
+import android.graphics.Region;
 import android.graphics.Typeface;
 import android.graphics.Paint.FontMetricsInt;
 
@@ -96,10 +98,37 @@ public class LabelLayer extends Layer{
 			break;
 		}
 		if(text!=null){
-			if(isComposite() && getParent()!=null)
-				canvas.drawText(text, getLocationInScene().x, getLocationInScene().y - y, paint!=null?paint:getPaint());
-			else
-				canvas.drawText(text, getLeft(), getTop() - y, paint!=null?paint:getPaint());
+//			if(isAncestorClipOutSide()){
+//				RectF rectF = null;
+//				if((rectF = getClipRange())!=null){
+//					canvas.save();
+//					Rect rect = new Rect();
+//					rectF.round(rect);
+//					canvas.clipRegion(new Region(rect));
+//				}
+//			}
+			
+			do{
+				if(isAncestorClipOutSide()){
+					canvas.save();
+					RectF rectF = null;
+					if((rectF = getClipRange())!=null){
+						Rect rect = new Rect();
+						rectF.round(rect);
+						canvas.clipRegion(new Region(rect));
+					}else{
+						break;
+					}
+				}
+				
+				if(isComposite() && getParent()!=null)
+					canvas.drawText(text, getLocationInScene().x - getAnchorPoint().x*getWidth(), getLocationInScene().y - getAnchorPoint().y*getHeight() - y, paint!=null?paint:getPaint());
+				else
+					canvas.drawText(text, getLeft(), getTop() - y, paint!=null?paint:getPaint());
+			}while(false);
+			
+			if(isAncestorClipOutSide())
+				canvas.restore();
 		}
 	}
 	
@@ -185,7 +214,7 @@ public class LabelLayer extends Layer{
 	
 	private void calculateWHByText(){
 		Paint paint = getPaint();
-		Rect bounds = new Rect();
+//		Rect bounds = new Rect();
 
 		int text_height = 0;
 		int text_width = 0;
@@ -201,10 +230,12 @@ public class LabelLayer extends Layer{
 //		text_width =  bounds.width();
 		
 		FontMetricsInt fontMetricsInt = paint.getFontMetricsInt();
-		paint.getTextBounds(text, 0, text.length(), bounds);
+//		paint.getTextBounds(text, 0, text.length(), bounds);
+		
 		
 		text_height = fontMetricsInt.bottom - fontMetricsInt.top;
-		text_width =  bounds.width();
+//		text_width =  bounds.width();
+		text_width = (int) paint.measureText(text);
 		
 		setInitHeight(text_height);
 		setInitWidth(text_width);
