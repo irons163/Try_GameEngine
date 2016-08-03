@@ -60,6 +60,8 @@ public abstract class ALayer implements ILayer{
 	
 	private boolean isTouching = false;
 	
+	private boolean canMoving = true;
+	
 	private boolean isEnable = true;
 	
 	private boolean isHidden = false;
@@ -161,6 +163,11 @@ public abstract class ALayer implements ILayer{
 	public static final int TOUCH_UP_CAN_OUTSIDE_SELF_RANGE = 1;
 	public static final int TOUCH_UP_CAN_WITHOUT_TOUCH_DOWN = 2;
 	public static final int TOUCH_UP_DISABLE_WHEN_CLICK_LISTENER_ENABLE = 4;
+	public static final int TOUCH_MOVE_CAN_WITHOUT_TOUCH_DOWN = 8;
+	public static final int TOUCH_MOVE_CAN_OUTSIDE_SELF_RANGE = 16;
+	public static final int TOUCH_EVENT_ONLY_ACTIVE_ON_SELF = 64;
+	public static final int TOUCH_EVENT_ONLY_ACTIVE_ON_CHILDREN = 128;
+	public static final int TOUCH_EVENT_ONLY_ACTIVE_ON_NOTHING = 192; // 64 & 128
 	
 	protected int flag = NO_FLAG;
 	
@@ -412,6 +419,7 @@ public abstract class ALayer implements ILayer{
 			if(layer.isComposite() && layer.getParent()!=null){
 				layer.setLocationInScene(null);
 				layer.setComposite(false);
+				layer.setFrameInScene(layer.frameInSceneByCompositeLocation());
 			}
 			layer.setParent(null);
 			LayerManager.deleteLayerByLayerLevel(layer, layer.getLayerLevel());
@@ -667,7 +675,8 @@ public abstract class ALayer implements ILayer{
 		setFrameInScene(frameInSceneByCompositeLocation());
 		
 		if(isComposite() && getParent()!=null)
-			locationInScene = parent.locationInSceneByCompositeLocation((float) (centerX - w / 2), (float) (centerY - h / 2));
+//			locationInScene = parent.locationInSceneByCompositeLocation((float) (centerX - w / 2), (float) (centerY - h / 2));
+			locationInScene = parent.locationInSceneByCompositeLocation(getX(), getY());
 		if(getLayers().size()!=0){
 			for(ILayer child : getLayers()){
 				if(child.isComposite()){
@@ -699,7 +708,8 @@ public abstract class ALayer implements ILayer{
 		setFrameInScene(frameInSceneByCompositeLocation());
 		
 		if(isComposite() && getParent()!=null)
-			locationInScene = parent.locationInSceneByCompositeLocation((float) (centerX - w / 2), (float) (centerY - h / 2));
+//			locationInScene = parent.locationInSceneByCompositeLocation((float) (centerX - w / 2), (float) (centerY - h / 2));
+			locationInScene = parent.locationInSceneByCompositeLocation(getX(), getY());
 		if(getLayers().size()!=0){
 			for(ILayer child : getLayers()){
 				if(child.isComposite()){
@@ -1076,10 +1086,19 @@ public abstract class ALayer implements ILayer{
 	
 	public boolean onTouchEvent(MotionEvent event) {
 		// TODO Auto-generated method stub
-		for(ILayer child : layers){
-			if(child.onTouchEvent(event)){
-				return false;
+		if((flag & TOUCH_EVENT_ONLY_ACTIVE_ON_SELF)==0){
+			for(ILayer child : layers){
+				if(child.onTouchEvent(event)){
+					if((flag & TOUCH_EVENT_ONLY_ACTIVE_ON_CHILDREN)!=0)
+						return true;
+					else
+						return false;
+				}
 			}
+		}
+		
+		if((flag & TOUCH_EVENT_ONLY_ACTIVE_ON_CHILDREN)!=0){
+			return false;
 		}
 
 		if(!isEnable())
@@ -1166,6 +1185,8 @@ public abstract class ALayer implements ILayer{
 			if(!isEnableMultiTouch())
 				return false;
 		case MotionEvent.ACTION_UP:
+			canMoving = true;
+			
 			if((flag & TOUCH_UP_DISABLE_WHEN_CLICK_LISTENER_ENABLE)==0 || onLayerClickListener == null){
 				if((flag & TOUCH_UP_CAN_WITHOUT_TOUCH_DOWN)!=0 && (flag & TOUCH_UP_CAN_OUTSIDE_SELF_RANGE)==0){
 					onTouched(event); 
@@ -1219,6 +1240,8 @@ public abstract class ALayer implements ILayer{
 			}
 			break;
 		case MotionEvent.ACTION_CANCEL:
+			canMoving = true;
+			
 			if (!isTouching) {
 				return false;
 //				break;
@@ -1232,15 +1255,27 @@ public abstract class ALayer implements ILayer{
 			removeLongPressCallback();
 			break;
 		case MotionEvent.ACTION_MOVE:
-			if (!pressed) {
+			if (((flag & TOUCH_MOVE_CAN_WITHOUT_TOUCH_DOWN)==0 && !pressed) || !canMoving) {
 				return false;
-//				break;
 			}
 
-			if (!f.contains(x, y)) {
-				removeLongPressCallback();
-				pressed = false;
+//			canMoving = true;
+			
+			if ((flag & TOUCH_MOVE_CAN_OUTSIDE_SELF_RANGE)!=0){
+				if (!f.contains(x, y)) {
+					removeLongPressCallback();
+				}
+			}else{
+				if (!f.contains(x, y)) {
+					removeLongPressCallback();
+					pressed = false;
+					if ((flag & TOUCH_MOVE_CAN_WITHOUT_TOUCH_DOWN)!=0){
+						canMoving = false;
+						return false;
+					}
+				}
 			}
+
 			onTouched(event);
 			break;
 		default:
