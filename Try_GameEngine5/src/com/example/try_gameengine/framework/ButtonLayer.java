@@ -18,6 +18,8 @@ public class ButtonLayer extends Layer{
 	private String text;
 	private Bitmap[] buttonBitmaps = new Bitmap[3];
 	private int[] buttonColors = new int[3];
+	private boolean hasButtonColors;
+	
 	private OnClickListener onClickListener = new OnClickListener() {
 		
 		@Override
@@ -31,27 +33,27 @@ public class ButtonLayer extends Layer{
 		super(bitmap, w, h, autoAdd, level);
 		// TODO Auto-generated constructor stub
 		buttonBitmaps[NORMAL_INDEX] = bitmap;
-		setFlag(ALayer.TOUCH_UP_CAN_OUTSIDE_SELF_RANGE);
+//		setFlag(ALayer.TOUCH_UP_CAN_OUTSIDE_SELF_RANGE);
 	}
 
 	public ButtonLayer(Bitmap bitmap, int w, int h, boolean autoAdd) {
 		super(bitmap, w, h, autoAdd);
 		// TODO Auto-generated constructor stub
 		buttonBitmaps[NORMAL_INDEX] = bitmap;
-		setFlag(ALayer.TOUCH_UP_CAN_OUTSIDE_SELF_RANGE);
+//		setFlag(ALayer.TOUCH_UP_CAN_OUTSIDE_SELF_RANGE);
 	}
 
 	public ButtonLayer(int w, int h, boolean autoAdd) {
 		super(w, h, autoAdd);
 		// TODO Auto-generated constructor stub
 		buttonBitmaps[NORMAL_INDEX] = bitmap;
-		setFlag(ALayer.TOUCH_UP_CAN_OUTSIDE_SELF_RANGE);
+//		setFlag(ALayer.TOUCH_UP_CAN_OUTSIDE_SELF_RANGE);
 	}
 
 	public ButtonLayer(String text, int w, int h, boolean autoAdd){
 		super(w, h, autoAdd);
 		initLabelLayer(text);
-		setFlag(ALayer.TOUCH_UP_CAN_OUTSIDE_SELF_RANGE);
+//		setFlag(ALayer.TOUCH_UP_CAN_OUTSIDE_SELF_RANGE);
 	}
 	
 	private void initLabelLayer(String text){
@@ -128,6 +130,15 @@ public class ButtonLayer extends Layer{
 		buttonColors[NORMAL_INDEX] = normal;
 		buttonColors[DOWN_INDEX] = down;
 		buttonColors[UP_INDEX] = up;
+		hasButtonColors = true;
+	}
+	
+	public void setButtonColorsNone(){
+		setBackgroundColorNone();
+		buttonColors[NORMAL_INDEX] = NONE_COLOR;
+		buttonColors[DOWN_INDEX] = NONE_COLOR;
+		buttonColors[UP_INDEX] = NONE_COLOR;
+		hasButtonColors = false;
 	}
 	
 	public void setText(String text){
@@ -188,22 +199,52 @@ public class ButtonLayer extends Layer{
 	@Override
 	protected void onTouched(MotionEvent event) {
 		// TODO Auto-generated method stub
-		if(event.getAction()==MotionEvent.ACTION_DOWN && isPressed()){
-			setBackgroundColor(buttonColors[DOWN_INDEX]);
+//		if(event.getAction()==MotionEvent.ACTION_DOWN && isPressed()){
+//			setBackgroundColor(buttonColors[DOWN_INDEX]);
+//			if(buttonBitmaps[DOWN_INDEX]!=null){
+//				this.bitmap = buttonBitmaps[DOWN_INDEX];
+//			}
+//			isClickCancled = false;
+//		}else if(event.getAction()==MotionEvent.ACTION_MOVE && isPressed()){
+//		}else if(event.getAction()==MotionEvent.ACTION_MOVE && !isPressed()){
+//			isClickCancled = true;
+//		}else if(event.getAction()==MotionEvent.ACTION_UP && isClickCancled && !isPressed()){
+//			setBackgroundColor(buttonColors[UP_INDEX]);
+//			if(buttonBitmaps[UP_INDEX]!=null){
+//				this.bitmap = buttonBitmaps[UP_INDEX];
+//			}
+//		}else if(event.getAction()==MotionEvent.ACTION_UP && isPressed() && !isClickCancled){
+//			setBackgroundColor(buttonColors[UP_INDEX]);
+//			if(buttonBitmaps[UP_INDEX]!=null){
+//				this.bitmap = buttonBitmaps[UP_INDEX];
+//			}
+//		}
+		
+		if((event.getAction()==MotionEvent.ACTION_DOWN || (event.getAction() & MotionEvent.ACTION_MASK)==MotionEvent.ACTION_POINTER_DOWN) && isPressed()){
+			if(hasButtonColors)
+				setBackgroundColor(buttonColors[DOWN_INDEX]);
 			if(buttonBitmaps[DOWN_INDEX]!=null){
 				this.bitmap = buttonBitmaps[DOWN_INDEX];
 			}
 			isClickCancled = false;
-		}else if(event.getAction()==MotionEvent.ACTION_MOVE && isPressed()){
-		}else if(event.getAction()==MotionEvent.ACTION_MOVE && !isPressed()){
+		}else if((event.getAction()==MotionEvent.ACTION_MOVE || (event.getAction() & MotionEvent.ACTION_MASK)==MotionEvent.ACTION_MOVE) && isPressed()){
+
+		}else if((event.getAction()==MotionEvent.ACTION_MOVE || (event.getAction() & MotionEvent.ACTION_MASK)==MotionEvent.ACTION_MOVE) && !isPressed()){
+			if(hasButtonColors)
+				setBackgroundColor(buttonColors[NORMAL_INDEX]);
+			if(buttonBitmaps[NORMAL_INDEX]!=null){
+				this.bitmap = buttonBitmaps[NORMAL_INDEX];
+			}
 			isClickCancled = true;
-		}else if(event.getAction()==MotionEvent.ACTION_UP && isClickCancled && !isPressed()){
-			setBackgroundColor(buttonColors[UP_INDEX]);
+		}else if((event.getAction()==MotionEvent.ACTION_UP || (event.getAction() & MotionEvent.ACTION_MASK)==MotionEvent.ACTION_POINTER_UP) && isClickCancled && !isPressed()){
+			if(hasButtonColors)	
+				setBackgroundColor(buttonColors[UP_INDEX]);
 			if(buttonBitmaps[UP_INDEX]!=null){
 				this.bitmap = buttonBitmaps[UP_INDEX];
 			}
-		}else if(event.getAction()==MotionEvent.ACTION_UP && isPressed() && !isClickCancled){
-			setBackgroundColor(buttonColors[UP_INDEX]);
+		}else if((event.getAction()==MotionEvent.ACTION_UP || (event.getAction() & MotionEvent.ACTION_MASK)==MotionEvent.ACTION_POINTER_UP) && isPressed() && !isClickCancled){
+			if(hasButtonColors)
+				setBackgroundColor(buttonColors[UP_INDEX]);
 			if(buttonBitmaps[UP_INDEX]!=null){
 				this.bitmap = buttonBitmaps[UP_INDEX];
 			}

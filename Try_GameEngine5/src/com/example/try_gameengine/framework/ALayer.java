@@ -887,6 +887,10 @@ public abstract class ALayer implements ILayer{
 	
 	public void setFrameInScene(RectF frameInScene){
 		this.frameInScene = frameInScene;
+		for(ILayer child : layers){
+			if(child.isComposite())
+				child.setFrameInScene(child.frameInSceneByCompositeLocation());	
+		}
 	}
 	
 	public void setBackgroundColor(int backgroundColor){
@@ -974,7 +978,8 @@ public abstract class ALayer implements ILayer{
 	public void setLocationInScene(PointF locationInScene) {
 		this.locationInScene = locationInScene;
 		for(ILayer child : layers){
-			child.setLocationInScene(locationInSceneByCompositeLocation(child.getX(), child.getY()));	
+			if(child.isComposite())
+				child.setLocationInScene(locationInSceneByCompositeLocation(child.getX(), child.getY()));	
 		}	
 	}
 
@@ -1109,10 +1114,17 @@ public abstract class ALayer implements ILayer{
 		
 		final int downPointerIndex = (event.getAction() & MotionEvent.ACTION_POINTER_INDEX_MASK) 
                 >> MotionEvent.ACTION_POINTER_INDEX_SHIFT;
-        if((event.getAction() & MotionEvent.ACTION_MASK) == MotionEvent.ACTION_POINTER_DOWN
-        	||(event.getAction() & MotionEvent.ACTION_MASK) == MotionEvent.ACTION_DOWN){
+        if((event.getAction() & MotionEvent.ACTION_MASK) == MotionEvent.ACTION_DOWN){
+        	if (isTouching || pressed) {
+				return false;
+			}
+                    mActivePointerId = event.getPointerId(downPointerIndex);
+        }if((event.getAction() & MotionEvent.ACTION_MASK) == MotionEvent.ACTION_POINTER_DOWN){
 //        	final int downPointerIndex = (event.getAction() & MotionEvent.ACTION_POINTER_INDEX_MASK) 
 //                    >> MotionEvent.ACTION_POINTER_INDEX_SHIFT;
+        	if(!isEnableMultiTouch())
+				return false;
+        	
         	if (isTouching || pressed) {
 				return false;
 			}
@@ -1137,11 +1149,12 @@ public abstract class ALayer implements ILayer{
 		
 //		RectF f = new RectF(0, 0, w,
 //				h);
-
+		boolean enablePerformClick = true;
+		
 		switch (event.getAction() & MotionEvent.ACTION_MASK) {
 		case MotionEvent.ACTION_POINTER_DOWN:
-			if(!isEnableMultiTouch())
-				return false;
+//			if(!isEnableMultiTouch())
+//				return false;
 			
 		case MotionEvent.ACTION_DOWN:
 //			RectF f = new RectF(
@@ -1183,17 +1196,33 @@ public abstract class ALayer implements ILayer{
 			break;
 		case MotionEvent.ACTION_POINTER_UP:
 			if(!isEnableMultiTouch())
-				return false;
+				enablePerformClick = false;
+//			if(!isEnableMultiTouch())
+//				return false;
 		case MotionEvent.ACTION_UP:
 			canMoving = true;
 			
 			if((flag & TOUCH_UP_DISABLE_WHEN_CLICK_LISTENER_ENABLE)==0 || onLayerClickListener == null){
-				if((flag & TOUCH_UP_CAN_WITHOUT_TOUCH_DOWN)!=0 && (flag & TOUCH_UP_CAN_OUTSIDE_SELF_RANGE)==0){
+				if((flag & TOUCH_UP_CAN_WITHOUT_TOUCH_DOWN)!=0 && (flag & TOUCH_UP_CAN_OUTSIDE_SELF_RANGE)!=0){
 					onTouched(event); 
-				}else if((flag & TOUCH_UP_CAN_WITHOUT_TOUCH_DOWN)!=0 && (flag & TOUCH_UP_CAN_OUTSIDE_SELF_RANGE)!=0){
+					
+					if(!pressed){
+						break;
+					}
+	
+					pressed = false;
+					
+				}else if((flag & TOUCH_UP_CAN_WITHOUT_TOUCH_DOWN)!=0 && (flag & TOUCH_UP_CAN_OUTSIDE_SELF_RANGE)==0){
 					if (f.contains(x, y)) {
 						onTouched(event);
 					}
+					
+					if(!pressed){
+						break;
+					}
+	
+					pressed = false;
+					
 				}else if((flag & TOUCH_UP_CAN_WITHOUT_TOUCH_DOWN)==0 && (flag & TOUCH_UP_CAN_OUTSIDE_SELF_RANGE)!=0){
 					if (!isTouching) {
 						return false;
@@ -1222,9 +1251,10 @@ public abstract class ALayer implements ILayer{
 						break;
 					}
 	
+					onTouched(event);
+					
 					pressed = false;
 					
-					onTouched(event);
 				}
 			}
 			
@@ -1232,11 +1262,14 @@ public abstract class ALayer implements ILayer{
 				break;
 			}
 			removeLongPressCallback();
-			if (mPerformClick == null) {
-				mPerformClick = new PerformClick();
-			}
-			if (!handler.post(mPerformClick)) {
-				performClick();
+			
+			if(enablePerformClick){
+				if (mPerformClick == null) {
+					mPerformClick = new PerformClick();
+				}
+				if (!handler.post(mPerformClick)) {
+					performClick();
+				}
 			}
 			break;
 		case MotionEvent.ACTION_CANCEL:
