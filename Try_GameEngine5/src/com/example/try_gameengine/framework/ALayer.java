@@ -419,7 +419,9 @@ public abstract class ALayer implements ILayer{
 			if(layer.isComposite() && layer.getParent()!=null){
 				layer.setLocationInScene(null);
 				layer.setComposite(false);
+//				layer.setFrameInScene(layer.frameInSceneByCompositeLocation());
 				layer.setFrameInScene(layer.frameInSceneByCompositeLocation());
+				layer.setX(layer.getX()); //want to do colculationMatrix();
 			}
 			layer.setParent(null);
 			LayerManager.deleteLayerByLayerLevel(layer, layer.getLayerLevel());
@@ -499,10 +501,12 @@ public abstract class ALayer implements ILayer{
 			layer.setLocationInScene(this.locationInSceneByCompositeLocation(layer.getX(), layer.getY()));
 //			layer.setFrameInScene(layer.frameInSceneByCompositeLocation(layer.getFrame()));
 			layer.setFrameInScene(layer.frameInSceneByCompositeLocation());
-			if(layer instanceof Sprite){
-				((Sprite)layer).locationLeftTopInScene = this.locationInSceneByCompositeLocation(layer.getLeft(), layer.getTop());
-				((Sprite)layer).setX(layer.getX()); //want to do colculationMatrix();
-			}
+			layer.setX(layer.getX()); //want to do colculationMatrix();
+			
+//			if(layer instanceof Sprite){
+//				((Sprite)layer).locationLeftTopInScene = this.locationInSceneByCompositeLocation(layer.getLeft(), layer.getTop());
+//				((Sprite)layer).setX(layer.getX()); //want to do colculationMatrix();
+//			}
 		}else{
 			throw new RuntimeException("child already has parent.");
 		}
@@ -559,6 +563,9 @@ public abstract class ALayer implements ILayer{
 				if(child.isComposite() && child.getLayerParam().isEnabledPercentagePositionX()){
 					child.setX(w * child.getLayerParam().getPercentageX());
 				}
+//				else if(child.isComposite()){
+//					child.setX(child.getX());
+//				}
 			}		
 		}
 	}
@@ -570,13 +577,16 @@ public abstract class ALayer implements ILayer{
 		setFrameInScene(frameInSceneByCompositeLocation());
 		
 		if(anchorPoint.y != 0)
-			setY(anchorPointXY.y);;
+			setY(anchorPointXY.y);
 		
 		if(getLayers().size()!=0){
 			for(ILayer child : getLayers()){
 				if(child.isComposite() && child.getLayerParam().isEnabledPercentagePositionY()){
 					child.setY(h * child.getLayerParam().getPercentageY());
 				}
+//				else if(child.isComposite()){
+//					child.setY(child.getY());
+//				}
 			}		
 		}
 	}
@@ -595,6 +605,9 @@ public abstract class ALayer implements ILayer{
 				if(child.isComposite() && child.getLayerParam().isEnabledPercentagePositionX()){
 					child.setX(w * child.getLayerParam().getPercentageX());
 				}
+//				else if(child.isComposite()){
+//					child.setX(child.getX());
+//				}
 			}		
 		}
 	}
@@ -613,6 +626,9 @@ public abstract class ALayer implements ILayer{
 				if(child.isComposite() && child.getLayerParam().isEnabledPercentagePositionY()){
 					child.setY(h * child.getLayerParam().getPercentageY());
 				}
+//				else if(child.isComposite()){
+//					child.setY(child.getY());
+//				}
 			}		
 		}
 	}
@@ -887,10 +903,11 @@ public abstract class ALayer implements ILayer{
 	
 	public void setFrameInScene(RectF frameInScene){
 		this.frameInScene = frameInScene;
-		for(ILayer child : layers){
-			if(child.isComposite())
-				child.setFrameInScene(child.frameInSceneByCompositeLocation());	
-		}
+//		setX(getX());
+//		for(ILayer child : layers){
+//			if(child.isComposite())
+//				child.setFrameInScene(child.frameInSceneByCompositeLocation());	
+//		}
 	}
 	
 	public void setBackgroundColor(int backgroundColor){
