@@ -29,6 +29,14 @@ public class ButtonLayer extends Layer{
 		}
 	};
 	
+	public ButtonLayer() {
+		super();
+	}
+	
+	public ButtonLayer(boolean autoAdd) {
+		super(autoAdd);
+	}
+	
 	public ButtonLayer(Bitmap bitmap, int w, int h, boolean autoAdd, int level) {
 		super(bitmap, w, h, autoAdd, level);
 		// TODO Auto-generated constructor stub
