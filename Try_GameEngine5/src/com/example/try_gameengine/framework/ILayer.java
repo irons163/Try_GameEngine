@@ -159,4 +159,12 @@ public interface ILayer extends Cloneable{
 	public boolean isClipOutside();
 	
 	public void setBackgroundColor(int backgroundColor);
+	
+	public void setFlag(int flag);
+	
+	public int getFlag();
+	
+	public void addFlag(int flag);
+	
+	public void removeFlag(int flag);
 }

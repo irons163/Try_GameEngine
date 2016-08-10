@@ -66,7 +66,9 @@ public abstract class ALayer implements ILayer{
 	
 	private boolean isHidden = false;
 	
-	private int mActivePointerId;
+	private static final int INVALID_POINTER_ID = -1;
+	
+	private int mActivePointerId = INVALID_POINTER_ID;
 	
 	private RectF frame = new RectF();
 	
@@ -1108,6 +1110,9 @@ public abstract class ALayer implements ILayer{
 	
 	public boolean onTouchEvent(MotionEvent event) {
 		// TODO Auto-generated method stub
+		if(!isEnable())
+			return false;
+		
 		if((flag & TOUCH_EVENT_ONLY_ACTIVE_ON_SELF)==0){
 			for(ILayer child : layers){
 				if(child.onTouchEvent(event)){
@@ -1123,9 +1128,6 @@ public abstract class ALayer implements ILayer{
 			return false;
 		}
 
-		if(!isEnable())
-			return false;
-          
 		float x;
 		float y;
 		
@@ -1147,7 +1149,14 @@ public abstract class ALayer implements ILayer{
 			}
                     mActivePointerId = event.getPointerId(downPointerIndex);
         }else if(event.getPointerId(downPointerIndex)!=mActivePointerId){
-        	return false;
+//        	if(!((flag & TOUCH_MOVE_CAN_WITHOUT_TOUCH_DOWN)!=0 && (event.getAction() & MotionEvent.ACTION_MASK) == MotionEvent.ACTION_MOVE))
+        	if((flag & TOUCH_MOVE_CAN_WITHOUT_TOUCH_DOWN)!=0){
+        		if((event.getAction() & MotionEvent.ACTION_MASK) != MotionEvent.ACTION_MOVE){
+        			mActivePointerId = INVALID_POINTER_ID;
+        			canMoving = true;
+        		}
+        	}else
+        		return false;
         }
 		
 		RectF f;
@@ -1217,6 +1226,7 @@ public abstract class ALayer implements ILayer{
 //			if(!isEnableMultiTouch())
 //				return false;
 		case MotionEvent.ACTION_UP:
+			mActivePointerId = INVALID_POINTER_ID;
 			canMoving = true;
 			
 			if((flag & TOUCH_UP_DISABLE_WHEN_CLICK_LISTENER_ENABLE)==0 || onLayerClickListener == null){
@@ -1290,6 +1300,8 @@ public abstract class ALayer implements ILayer{
 			}
 			break;
 		case MotionEvent.ACTION_CANCEL:
+			mActivePointerId = INVALID_POINTER_ID;
+			
 			canMoving = true;
 			
 			if (!isTouching) {

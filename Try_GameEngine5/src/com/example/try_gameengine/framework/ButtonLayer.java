@@ -70,6 +70,7 @@ public class ButtonLayer extends Layer{
 		labelLayer.setPosition(getWidth()/2, getHeight()/2);
 		labelLayer.setAnchorPoint(0.5f, 0.5f);
 		labelLayer.setLabelBaseLine(LabelBaseLine.BASELINE_FOR_TEXT_TOP);
+		labelLayer.setEnable(false);
 		addChild(labelLayer);
 	}
 	
@@ -255,6 +256,12 @@ public class ButtonLayer extends Layer{
 				setBackgroundColor(buttonColors[UP_INDEX]);
 			if(buttonBitmaps[UP_INDEX]!=null){
 				this.bitmap = buttonBitmaps[UP_INDEX];
+			}
+		}else if((event.getAction() & MotionEvent.ACTION_MASK)==MotionEvent.ACTION_CANCEL){
+			if(hasButtonColors)	
+				setBackgroundColor(buttonColors[NORMAL_INDEX]);
+			if(buttonBitmaps[UP_INDEX]!=null){
+				this.bitmap = buttonBitmaps[NORMAL_INDEX];
 			}
 		}
 	}
