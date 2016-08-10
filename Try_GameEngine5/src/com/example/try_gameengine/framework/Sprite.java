@@ -419,7 +419,8 @@ public class Sprite extends Layer {
 					
 //					canvas.save();
 					if(spriteMatrix!=null){
-						canvas.setMatrix(spriteMatrix);
+//						canvas.setMatrix(spriteMatrix);
+						canvas.concat(spriteMatrix);
 					}
 					canvas.drawBitmap(bitmap, dst.left, dst.top, paint);
 //					canvas.restore();
@@ -525,7 +526,8 @@ public class Sprite extends Layer {
 		RectF drawRectF = null;
 		
 		if(spriteMatrix!=null){
-			canvas.setMatrix(spriteMatrix);
+//			canvas.setMatrix(spriteMatrix);
+			canvas.concat(spriteMatrix);
 			
 			if(xScale*xScaleForBitmapWidth<0 && yScale*yScaleForBitmapHeight<0){
 				drawRectF = new RectF(x - ((float)bitmap.getWidth())/frameColNum*getAnchorPoint().x+drawOffsetX - frameWidth/(-1*xScaleForBitmapWidth), y - ((float)bitmap.getHeight())/frameRowNum*getAnchorPoint().y - frameHeight/(-1*yScaleForBitmapHeight), x - ((float)bitmap.getWidth())/frameColNum*getAnchorPoint().x +frameWidth/(-1*xScaleForBitmapWidth)+drawOffsetX - frameWidth/(-1*xScaleForBitmapWidth), y - ((float)bitmap.getHeight())/frameRowNum*getAnchorPoint().y+frameHeight/(-1*yScaleForBitmapHeight) - frameHeight/(-1*yScaleForBitmapHeight));
@@ -566,7 +568,8 @@ public class Sprite extends Layer {
 			canvas.drawBitmap(bitmap, x-(currentFrame%(bitmap.getWidth()/(int)frameWidth))*frameWidth+drawOffsetX, 
 					y - (currentFrame/(bitmap.getWidth()/(int)frameWidth))*frameHeight, paint);
 		}else{
-			canvas.setMatrix(spriteMatrix);
+//			canvas.setMatrix(spriteMatrix);
+			canvas.concat(spriteMatrix);
 			drawRectF = new RectF(x+drawOffsetX
 					, y
 					, x+frameWidth+drawOffsetX
