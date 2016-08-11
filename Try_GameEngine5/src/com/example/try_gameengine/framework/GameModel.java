@@ -3,6 +3,7 @@ package com.example.try_gameengine.framework;
 
 import java.util.Iterator;
 
+import com.example.try_gameengine.Camera.Camera;
 import com.example.try_gameengine.action.MovementAction;
 import com.example.try_gameengine.framework.GameController.BlockRunData;
 import com.example.try_gameengine.scene.Scene;
@@ -100,7 +101,13 @@ public class GameModel implements IGameModel{
 		this.backgroundColor = backgroundColor;
 	}
 
-
+	public Camera getCamera(){
+		return camera;
+	}
+	
+	public void setCamera(Camera camera){
+		this.camera = camera;
+	}
 
 	@Override
 	public void registerObserver(IMoveObserver moveObserver) {
@@ -145,12 +152,16 @@ public class GameModel implements IGameModel{
 		
 	}
 	
+	Camera camera = new Camera();
+	
 	Canvas canvas;
 	
 	private void draw(){
 		try {
 			canvas = surfaceHolder.lockCanvas();
 
+			canvas.concat(camera.getMatrix());
+			
 			canvas.drawColor(backgroundColor);
 
 			doDraw(canvas);

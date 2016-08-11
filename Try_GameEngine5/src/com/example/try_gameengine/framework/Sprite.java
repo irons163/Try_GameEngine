@@ -335,7 +335,8 @@ public class Sprite extends Layer {
 //				canvas.save();
 				Rect rect = new Rect();
 				rectF.round(rect);
-				canvas.clipRegion(new Region(rect));
+//				canvas.clipRegion(new Region(rect));
+				canvas.clipRect(rect);
 //					paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_IN));
 //					int c = paint.getColor();
 //					paint.setColor(Color.GREEN);
@@ -492,7 +493,16 @@ public class Sprite extends Layer {
 	public void setRotation(float rotation){
 		float offsetRotation = rotation - this.rotation;
 		this.rotation = rotation;
-		colculationMatrix();
+		
+		if(getParent()!=null && isComposite() && getLayerParam().isEnabledBindPositionXY()){
+			if(getParent() instanceof Sprite){
+				float position[] = new float[]{getParent().getLeft() + ((Sprite)getParent()).getAnchorPoint().x * ((Sprite)getParent()).getWidth(), getParent().getTop() + ((Sprite)getParent()).getAnchorPoint().y * ((Sprite)getParent()).getHeight()};
+				Matrix matrix = ((Sprite)getParent()).spriteMatrix;
+				matrix.mapPoints(position);
+				setPosition(position[0] - getParent().getLeft() , position[1] - getParent().getTop());
+			}
+		}else
+			colculationMatrix();
 		
 		if(getLayers().size()!=0){
 			for(ILayer child : getLayers()){
@@ -1130,63 +1140,50 @@ public class Sprite extends Layer {
 					spriteMatrix.postScale(xScaleForBitmapWidth, yScaleForBitmapHeight, getLeft() + getAnchorPoint().x*w,  getTop() + getAnchorPoint().y*h);
 			}
 			
-//			if(xScale*xScaleForBitmapWidth<0 && yScale*yScaleForBitmapHeight<0){
-//				spriteMatrix.postTranslate(w*scale,h*scale);
-//			}else if(xScale*xScaleForBitmapWidth<0){
-//				spriteMatrix.postTranslate(w*scale,0);
-//			}else if(yScale*yScaleForBitmapHeight<0){
-//				spriteMatrix.postTranslate(0,h*scale);
+//			if(this.length>0){
+//				if(xScale*xScaleForBitmapWidth<0 && yScale*yScaleForBitmapHeight<0){
+//					spriteMatrix.postTranslate(-2*w*scale*(getAnchorPoint().x-0.5f),-2*h*scale*(getAnchorPoint().y-0.5f));
+//				}else if(xScale*xScaleForBitmapWidth<0){
+//					spriteMatrix.postTranslate(-2*w*scale*(getAnchorPoint().x-0.5f),-h*scale*getAnchorPoint().y);
+//				}else if(yScale*yScaleForBitmapHeight<0){
+//					spriteMatrix.postTranslate(-w*scale*getAnchorPoint().x,-2*h*scale*(getAnchorPoint().y-0.5f));
+//				}else{
+//					spriteMatrix.postTranslate(-w*scale*getAnchorPoint().x,-h*scale*getAnchorPoint().y);
+//				}
+//			}else{
+//				if(xScale*xScaleForBitmapWidth<0 && yScale*yScaleForBitmapHeight<0){
+//					spriteMatrix.postTranslate(-1*w*scale*(getAnchorPoint().x-1.0f),-h*scale*(getAnchorPoint().y-1.0f));
+//				}else if(xScale*xScaleForBitmapWidth<0){
+//					spriteMatrix.postTranslate(-1*w*scale*(getAnchorPoint().x-1.0f),-h*scale*getAnchorPoint().y);
+//				}else if(yScale*yScaleForBitmapHeight<0){
+//					spriteMatrix.postTranslate(-1*w*scale*(getAnchorPoint().x),-h*scale*(getAnchorPoint().y-1.0f));
+//				}else{
+//					spriteMatrix.postTranslate(-w*scale*getAnchorPoint().x,-h*scale*getAnchorPoint().y);
+//				}
 //			}
-			
+
 			if(this.length>0){
 				if(xScale*xScaleForBitmapWidth<0 && yScale*yScaleForBitmapHeight<0){
-					spriteMatrix.postTranslate(-2*w*scale*(getAnchorPoint().x-0.5f),-2*h*scale*(getAnchorPoint().y-0.5f));
+					spriteMatrix.postTranslate(-2*w*(getAnchorPoint().x-0.5f),-2*h*(getAnchorPoint().y-0.5f));
 				}else if(xScale*xScaleForBitmapWidth<0){
-//					spriteMatrix.postTranslate(w*scale*0.5f,-h*scale*0.5f);
-//					spriteMatrix.postTranslate(-w*frameColNum/2.0f-2*w*scale*(getAnchorPoint().x-0.5f),h*scale*(getAnchorPoint().y-0.5f));
-//					spriteMatrix.postTranslate(-w*scale*0.5f,-h*scale*0.5f);
-					spriteMatrix.postTranslate(-2*w*scale*(getAnchorPoint().x-0.5f),-h*scale*getAnchorPoint().y);
+					spriteMatrix.postTranslate(-2*w*(getAnchorPoint().x-0.5f),-h*getAnchorPoint().y);
 				}else if(yScale*yScaleForBitmapHeight<0){
-					spriteMatrix.postTranslate(-w*scale*getAnchorPoint().x,-2*h*scale*(getAnchorPoint().y-0.5f));
+					spriteMatrix.postTranslate(-w*getAnchorPoint().x,-2*h*(getAnchorPoint().y-0.5f));
 				}else{
-					spriteMatrix.postTranslate(-w*scale*getAnchorPoint().x,-h*scale*getAnchorPoint().y);
+					spriteMatrix.postTranslate(-w*getAnchorPoint().x,-h*getAnchorPoint().y);
 				}
 			}else{
-				/*
 				if(xScale*xScaleForBitmapWidth<0 && yScale*yScaleForBitmapHeight<0){
-					spriteMatrix.postTranslate(-1*w*scale*(getAnchorPoint().x-1.0f),-h*scale*(getAnchorPoint().y-1.0f));
+					spriteMatrix.postTranslate(-1*(getAnchorPoint().x-1.0f),-h*(getAnchorPoint().y-1.0f));
 				}else if(xScale*xScaleForBitmapWidth<0){
-//					spriteMatrix.postTranslate(w*scale*0.5f,-h*scale*0.5f);
-					spriteMatrix.postTranslate(-1*w*scale*(getAnchorPoint().x-1.0f),-h*scale*getAnchorPoint().y);
-//					spriteMatrix.postTranslate(w*scale*(getAnchorPoint().x),h*scale*(getAnchorPoint().y-0.5f));
+					spriteMatrix.postTranslate(-1*(getAnchorPoint().x-1.0f),-h*getAnchorPoint().y);
 				}else if(yScale*yScaleForBitmapHeight<0){
-					spriteMatrix.postTranslate(-1*w*scale*(getAnchorPoint().x),-h*scale*(getAnchorPoint().y-1.0f));
+					spriteMatrix.postTranslate(-1*(getAnchorPoint().x),-h*(getAnchorPoint().y-1.0f));
 				}else{
-//					spriteMatrix.postTranslate(w*scale*(getAnchorPoint().x-0.5f),-h*scale*(getAnchorPoint().y-0.5f));
-					spriteMatrix.postTranslate(-w*scale*getAnchorPoint().x,h*scale*(getAnchorPoint().y-0.5f));
-				}*/
-				
-				if(xScale*xScaleForBitmapWidth<0 && yScale*yScaleForBitmapHeight<0){
-					spriteMatrix.postTranslate(-1*w*scale*(getAnchorPoint().x-1.0f),-h*scale*(getAnchorPoint().y-1.0f));
-				}else if(xScale*xScaleForBitmapWidth<0){
-//					spriteMatrix.postTranslate(w*scale*0.5f,-h*scale*0.5f);
-					spriteMatrix.postTranslate(-1*w*scale*(getAnchorPoint().x-1.0f),-h*scale*getAnchorPoint().y);
-//					spriteMatrix.postTranslate(w*scale*(getAnchorPoint().x),h*scale*(getAnchorPoint().y-0.5f));
-				}else if(yScale*yScaleForBitmapHeight<0){
-					spriteMatrix.postTranslate(-1*w*scale*(getAnchorPoint().x),-h*scale*(getAnchorPoint().y-1.0f));
-				}else{
-//					spriteMatrix.postTranslate(w*scale*(getAnchorPoint().x-0.5f),-h*scale*(getAnchorPoint().y-0.5f));
-					spriteMatrix.postTranslate(-w*scale*getAnchorPoint().x,-h*scale*getAnchorPoint().y);
+					spriteMatrix.postTranslate(-w*getAnchorPoint().x,-h*getAnchorPoint().y);
 				}
 			}
 			
-//			float objectNewX;
-//			if (xScale*xScaleForBitmapWidth >= 1){    
-//				  objectNewX = getLeft() + (getLeft() - getAnchorPointXY().x)*(xScale*xScaleForBitmapWidth - 1); 
-//			}else{   
-//				  objectNewX = getLeft() + (getLeft() - getAnchorPointXY().x)*(1 - xScale*xScaleForBitmapWidth); 
-//			}
-//			System.out.println(objectNewX);
 		}
 	}
 	

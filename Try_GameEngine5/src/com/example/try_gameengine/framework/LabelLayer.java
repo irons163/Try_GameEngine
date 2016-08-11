@@ -115,7 +115,8 @@ public class LabelLayer extends Layer{
 					if((rectF = getClipRange())!=null){
 						Rect rect = new Rect();
 						rectF.round(rect);
-						canvas.clipRegion(new Region(rect));
+//						canvas.clipRegion(new Region(rect));
+						canvas.clipRect(rect);
 					}else{
 						break;
 					}

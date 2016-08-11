@@ -1,5 +1,7 @@
 package com.example.try_gameengine.framework;
 
+import com.example.try_gameengine.Camera.Camera;
+
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.view.MotionEvent;
@@ -17,4 +19,6 @@ public interface IGameModel {
 	public void stop();
 	public int getBackgroundColor();
 	public void setBackgroundColor(int backgroundColor);
+	public Camera getCamera();
+	public void setCamera(Camera camera);
 }

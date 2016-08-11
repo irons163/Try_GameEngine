@@ -57,41 +57,21 @@ public class Layer extends ALayer{
 		
 		if(getBackgroundColor()!=NONE_COLOR || bitmap!=null){
 			canvas.save();
-//			canvas.saveLayer(0, 0, canvas.getWidth(), canvas.getHeight(), null, Canvas.HAS_ALPHA_LAYER_SAVE_FLAG
-//					| Canvas.FULL_COLOR_LAYER_SAVE_FLAG | Canvas.CLIP_TO_LAYER_SAVE_FLAG);
-//			int sc = canvas.saveLayerAlpha(left, top, right, bottom, alpha, saveFlags)(0, 0, 500, 1500, null, Canvas.ALL_SAVE_FLAG);
 			
 			do {
 				if(isAncestorClipOutSide()){
 					RectF rectF = null;
 					if((rectF = getClipRange())!=null){
-//						canvas.save();
 						Rect rect = new Rect();
 						rectF.round(rect);
-						canvas.clipRegion(new Region(rect));
-	//					paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_IN));
-	//					int c = paint.getColor();
-	//					paint.setColor(Color.GREEN);
-	//					paint.setStyle(Style.FILL);
-	//					canvas.drawRect(getClipRange(), paint);
-	//					paint.setXfermode(null);
-	//					paint.setColor(c);
+//						canvas.clipRegion(new Region(rect));
+						canvas.clipRect(rect);
 					}else{
 						break;
 					}
 				}
 				
 				Paint originalPaint = paint;
-				
-				/*//use input paint first 
-				int originalAlpha = 255;
-				if(paint==null){
-					paint = getPaint();
-				}else{
-					originalAlpha = paint.getAlpha();
-					paint.setAlpha(getAlpha());
-				}
-				*/
 				
 				//use self paint first
 				int oldColor = 0;

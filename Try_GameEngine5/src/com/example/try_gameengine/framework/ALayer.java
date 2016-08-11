@@ -5,10 +5,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import com.example.try_gameengine.scene.Scene;
+import com.example.try_gameengine.scene.SceneManager;
 import com.example.try_gameengine.stage.StageManager;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.PointF;
 import android.graphics.Rect;
@@ -89,13 +92,14 @@ public abstract class ALayer implements ILayer{
 		private boolean isEnabledPercentagePositionY;
 		private boolean isEnabledPercentageSizeW;
 		private boolean isEnabledPercentageSizeH;
+		private boolean isEnabledBindPositionXY;
 		
 		private float percentageX;
 		private float percentageY;
 		private float percentageW;
 		private float percentageH;
-
-		
+		private float bindPositionX;
+		private float bindPositionY;
 		
 		public boolean isEnabledPercentagePositionX() {
 			return isEnabledPercentagePositionX;
@@ -109,6 +113,10 @@ public abstract class ALayer implements ILayer{
 		public boolean isEnabledPercentageSizeH() {
 			return isEnabledPercentageSizeH;
 		}
+		public boolean isEnabledBindPositionXY() {
+			return isEnabledBindPositionXY;
+		}
+		
 		public void setEnabledPercentagePositionX(boolean isEnabledPercentagePositionX) {
 			this.isEnabledPercentagePositionX = isEnabledPercentagePositionX;
 		}
@@ -121,6 +129,10 @@ public abstract class ALayer implements ILayer{
 		public void setEnabledPercentageSizeH(boolean isEnabledPercentageSizeH) {
 			this.isEnabledPercentageSizeH = isEnabledPercentageSizeH;
 		}
+		public void setEnabledBindPositionXY(boolean isEnabledBindPositionXY) {
+			this.isEnabledBindPositionXY = isEnabledBindPositionXY;
+		}
+
 		public float getPercentageX() {
 			return percentageX;
 		}
@@ -132,6 +144,15 @@ public abstract class ALayer implements ILayer{
 		}
 		public float getPercentageH() {
 			return percentageH;
+		}
+		public float getBindPositionX() {
+			return bindPositionX;
+		}
+		public float getBindPositionY() {
+			return bindPositionY;
+		}
+		public PointF getBindPositionXY() {
+			return new PointF(bindPositionX, bindPositionY);
 		}
 
 		public void setPercentageX(float percentageX) {
@@ -145,6 +166,10 @@ public abstract class ALayer implements ILayer{
 		}
 		public void setPercentageH(float percentageH) {
 			this.percentageH = percentageH;
+		}
+		public void setBindPositionXY(float bindPositionX, float bindPositionY) {
+			this.bindPositionX = bindPositionX;
+			this.bindPositionY = bindPositionY;
 		}
 		
 		@Override
@@ -1160,7 +1185,17 @@ public abstract class ALayer implements ILayer{
         }
 		
 		RectF f;
-		if(isComposite()){
+        x = event.getX(downPointerIndex);
+        y = event.getY(downPointerIndex);
+		float a[] = new float[]{x, y};
+		boolean isIndentify = StageManager.getCurrentStage().getSceneManager().getCurrentActiveScene().getCamera().getMatrix().isIdentity();
+		if(!isIndentify){
+            f = getFrameInScene();
+			Scene scene = StageManager.getCurrentStage().getSceneManager().getCurrentActiveScene();
+			Matrix matrix = new Matrix();
+			scene.getCamera().getMatrix().invert(matrix);
+			matrix.mapPoints(a);
+		}else if(isComposite()){
             x = event.getX(downPointerIndex);
             y = event.getY(downPointerIndex);
 			PointF locationInLayer = locationInLayer(x, y);
@@ -1172,6 +1207,8 @@ public abstract class ALayer implements ILayer{
             y = event.getY(downPointerIndex);
 			f = new RectF(getLeft(), getTop(), getLeft()+w, getTop()+h);
 		}
+		
+
 		
 //		RectF f = new RectF(0, 0, w,
 //				h);
@@ -1195,7 +1232,11 @@ public abstract class ALayer implements ILayer{
 //									.width() / 2.0f, 
 //					rectF.bottom);
 			
-			if (!f.contains(x, y)) {
+			if(!isIndentify){
+				if (!f.contains(a[0], a[1])) {
+					return false;
+				}
+			}else if (!f.contains(x, y)) {
 				return false;
 			}
 			
@@ -1240,7 +1281,11 @@ public abstract class ALayer implements ILayer{
 					pressed = false;
 					
 				}else if((flag & TOUCH_UP_CAN_WITHOUT_TOUCH_DOWN)!=0 && (flag & TOUCH_UP_CAN_OUTSIDE_SELF_RANGE)==0){
-					if (f.contains(x, y)) {
+					if(!isIndentify){
+						if (f.contains(a[0], a[1])) {
+							onTouched(event);
+						}
+					}else if (f.contains(x, y)) {
 						onTouched(event);
 					}
 					
@@ -1324,11 +1369,24 @@ public abstract class ALayer implements ILayer{
 //			canMoving = true;
 			
 			if ((flag & TOUCH_MOVE_CAN_OUTSIDE_SELF_RANGE)!=0){
-				if (!f.contains(x, y)) {
+				if(!isIndentify){
+					if (!f.contains(a[0], a[1])) {
+						removeLongPressCallback();
+					}
+				}else if (!f.contains(x, y)) {
 					removeLongPressCallback();
 				}
 			}else{
-				if (!f.contains(x, y)) {
+				if(!isIndentify){
+					if (!f.contains(a[0], a[1])) {
+						removeLongPressCallback();
+						pressed = false;
+						if ((flag & TOUCH_MOVE_CAN_WITHOUT_TOUCH_DOWN)!=0){
+							canMoving = false;
+							return false;
+						}
+					}
+				}else if (!f.contains(x, y)) {
 					removeLongPressCallback();
 					pressed = false;
 					if ((flag & TOUCH_MOVE_CAN_WITHOUT_TOUCH_DOWN)!=0){

@@ -328,4 +328,8 @@ public class SceneManager {
 		}
 		scenes.clear();
 	}
+	
+	public Scene getCurrentActiveScene(){
+		return currentActiveScene;
+	}
 }

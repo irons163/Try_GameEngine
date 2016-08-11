@@ -6,6 +6,7 @@ import java.util.Iterator;
 import android.app.Activity;
 import android.content.Context;
 
+import com.example.try_gameengine.Camera.Camera;
 import com.example.try_gameengine.framework.ALayer;
 import com.example.try_gameengine.framework.Data;
 import com.example.try_gameengine.framework.IGameController;
@@ -138,6 +139,14 @@ public abstract class Scene extends Activity{
 
 	public void setBackgroundColor(int backgroundColor) {
 		gameModel.setBackgroundColor(backgroundColor);
+	}
+	
+	public Camera getCamera(){
+		return gameModel.getCamera();
+	}
+	
+	public void setCamera(Camera camera){
+		gameModel.setCamera(camera);
 	}
 	
 	@Override
