@@ -1174,11 +1174,11 @@ public class Sprite extends Layer {
 				}
 			}else{
 				if(xScale*xScaleForBitmapWidth<0 && yScale*yScaleForBitmapHeight<0){
-					spriteMatrix.postTranslate(-1*(getAnchorPoint().x-1.0f),-h*(getAnchorPoint().y-1.0f));
+					spriteMatrix.postTranslate(-1*w*(getAnchorPoint().x-1.0f),-h*(getAnchorPoint().y-1.0f));
 				}else if(xScale*xScaleForBitmapWidth<0){
-					spriteMatrix.postTranslate(-1*(getAnchorPoint().x-1.0f),-h*getAnchorPoint().y);
+					spriteMatrix.postTranslate(-1*w*(getAnchorPoint().x-1.0f),-h*getAnchorPoint().y);
 				}else if(yScale*yScaleForBitmapHeight<0){
-					spriteMatrix.postTranslate(-1*(getAnchorPoint().x),-h*(getAnchorPoint().y-1.0f));
+					spriteMatrix.postTranslate(-1*w*(getAnchorPoint().x),-h*(getAnchorPoint().y-1.0f));
 				}else{
 					spriteMatrix.postTranslate(-w*getAnchorPoint().x,-h*getAnchorPoint().y);
 				}
