@@ -970,12 +970,26 @@ public abstract class ALayer implements ILayer{
 	public void setAutoAdd(boolean autoAdd) {
 		if(this.autoAdd == autoAdd)
 			return;
-		this.autoAdd = autoAdd;
+		
 		if (autoAdd) {
 			this.autoAdd = autoAdd;
 			LayerManager.addLayer(this);// 在LayerManager类中添加本组件
 		}else{
 			removeFromAuto();
+//			this.autoAdd = autoAdd; //removeFromAuto() do this, so here is not need do again. 
+		}
+	}
+	
+	public void setAutoAdd(boolean autoAdd, int sceneLayerLevel){
+		if(this.autoAdd == autoAdd)
+			return;
+		
+		if (autoAdd) {
+			this.autoAdd = autoAdd;
+			LayerManager.addSceneLayerByLayerLevel(this, sceneLayerLevel);
+		}else{
+			removeFromAuto();
+//			this.autoAdd = autoAdd; //removeFromAuto() do this, so here is not need do again. 
 		}
 	}
 	

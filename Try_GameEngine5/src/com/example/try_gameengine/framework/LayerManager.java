@@ -311,13 +311,11 @@ public class LayerManager {
 		for(int i = 0; i < layerLevelList.size(); i++){
 			List<ILayer> layersByTheSameLevel = layerLevelList.get(i);
 			for(ILayer layer : layersByTheSameLevel){
-//				if(!layer.iszPositionValid())
-//					continue;
 				int layerZposition = layer.getzPosition();
 				List<ILayer> layersByTheSameZposition;
-				if(layerLevelListByZposition.containsValue(layerZposition)){
+				if(layerLevelListByZposition.containsKey(layerZposition)){
 					layersByTheSameZposition = layerLevelListByZposition.get(layerZposition);
-					layersByTheSameZposition.clear();
+					layersByTheSameZposition.remove(layer);
 				}else{
 					layersByTheSameZposition = new ArrayList<ILayer>();
 					layerLevelListByZposition.put(layerZposition, layersByTheSameZposition);
