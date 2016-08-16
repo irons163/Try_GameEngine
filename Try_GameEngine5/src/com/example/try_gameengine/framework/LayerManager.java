@@ -464,7 +464,7 @@ public class LayerManager {
 		List<ILayer> layersByTheSameLevel = layerLevelList.get(level);
 		for (int j = layersByTheSameLevel.size()-1; j >= 0 ; j--) {
 			ILayer layer = layersByTheSameLevel.get(j);
-			if(layer.onTouchEvent(event)){
+			if(!layer.isComposite() && layer.onTouchEvent(event)){
 				isTouched = true;
 				break;
 			}		
@@ -492,7 +492,7 @@ public class LayerManager {
 //			  System.out.println(layerZposition + " => " + layersByTheSameZposition.toString());
 			  for(int i = layersByTheSameZposition.size()-1; i >= 0; i--){
 				  ILayer layerByZposition = layersByTheSameZposition.get(i);
-				  if(layerByZposition.onTouchEvent(event)){
+				  if(!layerByZposition.isComposite() && layerByZposition.onTouchEvent(event)){
 					  return true; 
 				  }
 			  }
@@ -534,7 +534,7 @@ public class LayerManager {
 	public static void processLayersBySpecificLevel(int level) {
 		List<ILayer> layersByTheSameLevel = layerLevelList.get(level);
 		for (ILayer layer : layersByTheSameLevel) {
-			if(layer instanceof ALayer)
+			if(!layer.isComposite() && layer instanceof ALayer)
 				((ALayer)layer).frameTrig();
 		}
 	}
@@ -559,7 +559,7 @@ public class LayerManager {
 			  List<ILayer> layersByTheSameZposition = entry.getValue();
 //			  System.out.println(layerZposition + " => " + layersByTheSameZposition.toString());
 			  for(ILayer layerByZposition : layersByTheSameZposition){
-				  if(layerByZposition instanceof ALayer)
+				  if(!layerByZposition.isComposite() && layerByZposition instanceof ALayer)
 					  ((ALayer)layerByZposition).frameTrig();
 			  }
 		}
@@ -579,7 +579,7 @@ public class LayerManager {
 			  List<ILayer> layersByTheSameZposition = entry.getValue();
 //			  System.out.println(layerZposition + " => " + layersByTheSameZposition.toString());
 			  for(ILayer layerByZposition : layersByTheSameZposition){
-				  if(iterateLayersListener.dealWithLayer(layerByZposition))
+				  if(!layerByZposition.isComposite() && iterateLayersListener.dealWithLayer(layerByZposition))
 					  return true;
 			  }
 		}
@@ -593,7 +593,7 @@ public class LayerManager {
 			  List<ILayer> layersByTheSameZposition = entry.getValue();
 //			  System.out.println(layerZposition + " => " + layersByTheSameZposition.toString());
 			  for(ILayer layerByZposition : layersByTheSameZposition){
-				  if(iterateChildren(layerByZposition, iterateLayersListener))
+				  if(!layerByZposition.isComposite() && iterateChildren(layerByZposition, iterateLayersListener))
 					  return true;
 			  }
 		}
@@ -602,7 +602,7 @@ public class LayerManager {
 	
 	private static boolean iterateChildren(ILayer parentLayer, IterateLayersListener iterateLayersListener){
 		for(ILayer childLayer : parentLayer.getLayers()){
-			  if(iterateLayersListener.dealWithLayer(childLayer))
+			  if(!childLayer.isComposite() && iterateLayersListener.dealWithLayer(childLayer))
 				  return true;
 		  }
 		return false;
@@ -619,6 +619,7 @@ public class LayerManager {
 		// }
 	}
 
+	//This is very old, need modify.
 	public static synchronized RectF checkClickSmallView(MotionEvent event){
 		boolean isFirstRectF=true;
 		RectF maxRangeRectF = new RectF();

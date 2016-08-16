@@ -562,6 +562,8 @@ public abstract class ALayer implements ILayer{
 	public void moveAllChild(int offsetLayerLevel){
 		for(ILayer layer : layers){
 //			layer.moveAllChild(offsetLayerLevel);
+			if(layer.isComposite())
+				continue;
 			int oldLayerLevel = layer.getLayerLevel();
 			int newoldLayerLevel = layer.getLayerLevel() + offsetLayerLevel;
 			LayerManager.changeLayerToNewLayerLevel(layer, oldLayerLevel, newoldLayerLevel);

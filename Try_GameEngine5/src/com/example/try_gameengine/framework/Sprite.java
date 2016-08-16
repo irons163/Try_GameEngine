@@ -503,7 +503,8 @@ public class Sprite extends Layer {
 		
 		if(getParent()!=null && isComposite() && getLayerParam().isEnabledBindPositionXY()){
 			if(getParent() instanceof Sprite){
-				float position[] = new float[]{getParent().getLeft() + ((Sprite)getParent()).getAnchorPoint().x * ((Sprite)getParent()).getWidth(), getParent().getTop() + ((Sprite)getParent()).getAnchorPoint().y * ((Sprite)getParent()).getHeight()};
+//				float position[] = new float[]{getParent().getLeft() + ((Sprite)getParent()).getAnchorPoint().x * ((Sprite)getParent()).getWidth(), getParent().getTop() + ((Sprite)getParent()).getAnchorPoint().y * ((Sprite)getParent()).getHeight()};
+				float position[] = new float[]{getParent().getLeft() + ((Sprite)getParent()).getAnchorPoint().x * ((Sprite)getParent()).getWidth() + getLayerParam().getBindPositionX(), getParent().getTop() + ((Sprite)getParent()).getAnchorPoint().y * ((Sprite)getParent()).getHeight() + getLayerParam().getBindPositionY()};
 				Matrix matrix = ((Sprite)getParent()).spriteMatrix;
 				matrix.mapPoints(position);
 				setPosition(position[0] - getParent().getLeft() , position[1] - getParent().getTop());
@@ -526,6 +527,7 @@ public class Sprite extends Layer {
 	
 	public void setRotationType(RotationType rotationType){
 		this.rotationType = rotationType;
+		setRotation(getRotation()); //reset rotation to reset the child layers' position.
 	}
 	
 	public RotationType getRotationType(){

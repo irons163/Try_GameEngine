@@ -143,7 +143,7 @@ public class SceneManager {
 				for(int i = 0; i < 3; i++){
 					try {
 						if(i==0){
-							scene = sceneClass.getValue().getConstructor(Context.class, String.class, Integer.class, int.class).newInstance(context, id, sceneLayerLevel, mode);
+							scene = sceneClass.getValue().getConstructor(Context.class, String.class, int.class, int.class).newInstance(context, id, sceneLayerLevel, mode);
 						}else if(i==1){
 							scene = sceneClass.getValue().getConstructor(Context.class, String.class, int.class).newInstance(context, id, sceneLayerLevel);
 						}else{
