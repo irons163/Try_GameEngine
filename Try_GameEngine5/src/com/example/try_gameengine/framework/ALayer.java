@@ -220,8 +220,8 @@ public abstract class ALayer implements ILayer{
 	
 	protected ALayer(Bitmap bitmap, int w, int h, boolean autoAdd) {
 		this.bitmap = bitmap;
-		this.setWidth(w);
-		this.setHeight(h);
+		setWidthPrivate(w);
+		setHeightPrivate(h);
 //		this.w = w;
 //		this.h = h;
 //		this.centerX = w / 2;
@@ -239,8 +239,8 @@ public abstract class ALayer implements ILayer{
 	}
 	
 	protected ALayer(int w, int h, boolean autoAdd) {
-		this.setWidth(w);
-		this.setHeight(h);
+		setWidthPrivate(w);
+		setHeightPrivate(h);
 //		this.bitmap = bitmap;
 //		this.w = w;
 //		this.h = h;
@@ -285,8 +285,8 @@ public abstract class ALayer implements ILayer{
 	
 	protected ALayer(Bitmap bitmap, int w, int h, boolean autoAdd, int level) {
 		this.bitmap = bitmap;
-		this.setWidth(w);
-		this.setHeight(h);
+		setWidthPrivate(w);
+		setHeightPrivate(h);
 //		this.w = w;
 //		this.h = h;
 //		this.centerX = w / 2;
@@ -619,6 +619,10 @@ public abstract class ALayer implements ILayer{
 	}
 	
 	public void setWidth(int w){
+		setWidthPrivate(w);
+	}
+	
+	private void setWidthPrivate(int w){
 		this.w = w;
 		this.centerX = x + w / 2;
 		getFrame().set(x, y, x+w, y+h);
@@ -640,6 +644,10 @@ public abstract class ALayer implements ILayer{
 	}
 	
 	public void setHeight(int h){
+		setHeightPrivate(h);
+	}
+	
+	private void setHeightPrivate(int h){
 		this.h= h;
 		this.centerY = y + h / 2;
 		getFrame().set(x, y, x+w, y+h);

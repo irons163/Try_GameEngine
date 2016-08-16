@@ -77,9 +77,16 @@ public class Sprite extends Layer {
 	private int heightWithoutyScale;
 	
 	private float rotation;
+	private RotationType rotationType = RotationType.AUTO;
 	
 	public enum MoveRageType{
 		StopOneSide, StopInCurrentPosition, StopAll, Reflect
+	}
+	
+	public enum RotationType{
+		AUTO, // Default, the root layer rotate with center and the child layers rotate with anchor point.
+		ROTATE_WITH_CENTER,
+		ROTATE_WITH_ANCHOR_POINT
 	}
 	
 	public Sprite(Bitmap bitmap, int w, int h, boolean autoAdd) {
@@ -515,6 +522,14 @@ public class Sprite extends Layer {
 	
 	public float getRotation(){
 		return rotation;
+	}
+	
+	public void setRotationType(RotationType rotationType){
+		this.rotationType = rotationType;
+	}
+	
+	public RotationType getRotationType(){
+		return rotationType;
 	}
 	
 	private void paint(int oldColor, Style oldStyle, Canvas canvas,Paint paint)
@@ -1190,10 +1205,36 @@ public class Sprite extends Layer {
 	private void colculationMatrix(){
 		colculationScale();
 		
+//		if(isComposite()){
+//			spriteMatrix.postRotate(rotation, locationLeftTopInScene.x + w/2, locationLeftTopInScene.y + h/2);
+//		}else{
+//			spriteMatrix.postRotate(rotation, getLeft() + w/2,  getTop() + h/2);
+//		}
+		
 		if(isComposite()){
-			spriteMatrix.postRotate(rotation, locationLeftTopInScene.x + w/2, locationLeftTopInScene.y + h/2);
+			switch (rotationType) {
+			case AUTO: // child layer rotate the same of ROTATE_WITH_ANCHOR_POINT.
+				spriteMatrix.postRotate(rotation, locationLeftTopInScene.x + getAnchorPoint().x*w, locationLeftTopInScene.y + getAnchorPoint().y*w);
+				break;
+			case ROTATE_WITH_CENTER:
+				spriteMatrix.postRotate(rotation, locationLeftTopInScene.x + w/2, locationLeftTopInScene.y + h/2);
+				break;
+			case ROTATE_WITH_ANCHOR_POINT:
+				spriteMatrix.postRotate(rotation, locationLeftTopInScene.x + getAnchorPoint().x*w, locationLeftTopInScene.y + getAnchorPoint().y*w);
+				break;
+			}
 		}else{
-			spriteMatrix.postRotate(rotation, getLeft() + w/2,  getTop() + h/2);
+			switch (rotationType) {
+			case AUTO: // root layer rotate the same of ROTATE_WITH_CENTER.
+				spriteMatrix.postRotate(rotation, getLeft() + w/2,  getTop() + h/2);
+				break;
+			case ROTATE_WITH_CENTER:
+				spriteMatrix.postRotate(rotation, getLeft() + w/2,  getTop() + h/2);
+				break;
+			case ROTATE_WITH_ANCHOR_POINT:
+				spriteMatrix.postRotate(rotation, getLeft() + getAnchorPoint().x*w,  getTop() + getAnchorPoint().y*h);
+				break;
+			}
 		}
 		
 		if(getBitmap()!=null){
@@ -1213,7 +1254,7 @@ public class Sprite extends Layer {
 					spriteMatrix.mapRect(getFrameInScene(), new RectF(getAnchorPointXY().x, getAnchorPointXY().y, getAnchorPointXY().x+getBitmap().getWidth(), getAnchorPointXY().y+getBitmap().getHeight()));
 			}
 			
-		}else // not test yet
+		}else // not test yet //test in 2016/08/15
 			spriteMatrix.mapRect(getFrameInScene(), new RectF(getAnchorPointXY().x, getAnchorPointXY().y, getAnchorPointXY().x+getWidth(), getAnchorPointXY().y+getHeight()));
 		
 		dealWithSpriteMatrixAfterCalculationMatrix(spriteMatrix);
