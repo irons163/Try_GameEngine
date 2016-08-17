@@ -17,6 +17,7 @@ public class SceneManager {
 	private Scene currentActiveScene;
 	private int currentSceneIndex;
 	private Map<SceneClassInfo, Class<? extends Scene>> sceneClassMap;
+	private int nextSceneIndexForAdd = currentSceneIndex;
 	
 	class SceneClassInfo{
 		private Context context;
@@ -55,17 +56,22 @@ public class SceneManager {
 	public void addScene(Scene scene){
 		scenes.add(scene);
 		if(scene.sceneLayerLevel<0){
-			LayerManager.setLayerBySenceIndex(scenes.size()-1);
-			scene.setLayerLevel(scenes.size()-1);
+//			LayerManager.setLayerBySenceIndex(scenes.size()-1);
+//			scene.setLayerLevel(scenes.size()-1);
+			LayerManager.setLayerBySenceIndex(nextSceneIndexForAdd);
+			scene.setLayerLevel(nextSceneIndexForAdd);
+			nextSceneIndexForAdd = nextSceneIndexForAdd+1;
+		}else{
+			nextSceneIndexForAdd = scene.getLayerLevel()+1;
 		}
 	}
 	
 	public void addScene(Class<? extends Scene> sceneClass, Context context, String id){
-		addScene(sceneClass, context, id, scenes.size(), Scene.RESTART);
+		addScene(sceneClass, context, id, nextSceneIndexForAdd, Scene.RESTART);
 	}
 	
 	public void addScene(Class<? extends Scene> sceneClass, Context context, String id, int sceneLayerLevel){
-		addScene(sceneClass, context, id, scenes.size(), Scene.RESTART);
+		addScene(sceneClass, context, id, nextSceneIndexForAdd, Scene.RESTART);
 	}
 	
 	public void addScene(Class<? extends Scene> sceneClass, Context context, String id, int sceneLayerLevel, int mode){
@@ -99,38 +105,17 @@ public class SceneManager {
 		int targetSceneIndex = -1;
 		for(int i =0; i<scenes.size(); i++){
 			Scene scene = scenes.get(i);
-			if(scene.getId().equals(id)){
-				targetSceneIndex = i;
+			if(scene.getId()!=null && scene.getId().equals(id)){
+				targetSceneIndex = scene.getLayerLevel();
 			}
 		}
 
 		return targetSceneIndex;
 	}
 	
-	public void startScene(String id){
-		if(currentActiveScene!=null)
-			currentActiveScene.stop(); 
-		Scene scene = getScene(id);
-		if(scene!=null){
-			scene.start();
-			currentActiveScene = scene;
-		}
-	}
-	
-	public void stopScene(String id){
-		Scene scene = getScene(id);
-		if(scene!=null){
-			scene.stop();
-		}
-	}
-	
-	public void startScene(int index){
-		startScene(index, null);
-	}
-	
-	public void startScene(int index, Object objForSendToScene){
-		boolean isNeedStopCurrentActiveScene = true;
+	private Scene createScene(int index){
 		Entry<SceneClassInfo, Class<? extends Scene>> sceneClassForStart = null;
+		Scene scene = null;
 		if(sceneClassMap!=null)
 		for(Entry<SceneClassInfo, Class<? extends Scene>> sceneClass : sceneClassMap.entrySet()){
 			
@@ -139,7 +124,9 @@ public class SceneManager {
 				String id = sceneClass.getKey().getId();
 				int sceneLayerLevel = sceneClass.getKey().getSceneLayerLevel();
 				int mode = sceneClass.getKey().getMode();
-				Scene scene = null;
+				
+				LayerManager.setLayerBySenceIndex(index);
+				
 				for(int i = 0; i < 3; i++){
 					try {
 						if(i==0){
@@ -173,35 +160,69 @@ public class SceneManager {
 
 				if(scene==null)
 					throw new RuntimeException();
-				scenes.add(index, scene);		
+//				scenes.add(index, scene);
+				scenes.add(scene);
 				sceneClassForStart = sceneClass;
 			}
 		}
 		if(sceneClassForStart!=null)
 			sceneClassMap.remove(sceneClassForStart.getKey());
 		
-		if(index >=0 && index < scenes.size()){
-			Scene scene = scenes.get(index);
-			if(scene instanceof DialogScene){
-				isNeedStopCurrentActiveScene = ((DialogScene) scene).getIsNeedToStopTheActiveScene();
+		if(scene == null){
+			for(Scene sceneExist : scenes){
+				if(index == sceneExist.getLayerLevel()){
+					scene = sceneExist;
+					break;
+				}
 			}
 		}
+		
+		return scene;
+	}
+	
+	public void startScene(String id){
+		if(currentActiveScene!=null)
+			currentActiveScene.stop(); 
+		int index = getSceneIndex(id);
+		startScene(index);
+	}
+	
+	public void stopScene(String id){
+		Scene scene = getScene(id);
+		if(scene!=null){
+			scene.stop();
+		}
+	}
+	
+	public void startScene(int index){
+		startScene(index, null);
+	}
+	
+	public void startScene(int index, Object objForSendToScene){
+		boolean isNeedStopCurrentActiveScene = true;
+
+		Scene scene = createScene(index);
+		
+		if(scene == null)
+			return;
+		
+		if(scene instanceof DialogScene){
+			isNeedStopCurrentActiveScene = ((DialogScene) scene).getIsNeedToStopTheActiveScene();
+		}
+
 		if(currentActiveScene!=null){
 			if(isNeedStopCurrentActiveScene){
 				currentActiveScene.stop();
 				currentActiveScene.addMode(Scene.BLOCK);
 			}
 		}
-		if(index >=0 && index < scenes.size()){
-			Scene scene = scenes.get(index);
+
 			LayerManager.setLayerBySenceIndex(index);
-			scene.setLayerLevel(index);
 
 			scene.startWithObj(objForSendToScene);
 //			scene.start();
 			currentActiveScene = scene;
 			currentSceneIndex = index;
-		}
 	}
 	
 	public void startLastScene(){
@@ -219,24 +240,31 @@ public class SceneManager {
 	}
 	
 	public void nextWithCycle(){
-		nextWithCycle(null);
+		nextWithCycle(true, null);
 	}
 	
-	public void nextWithCycle(Object objForSendToScene){
-		currentSceneIndex++;
-//		if(currentActiveScene!=null)
-//			currentActiveScene.stop(); 
-		if(currentSceneIndex == scenes.size()){
-			if(sceneClassMap!=null && sceneClassMap.size()==0){
-				currentSceneIndex = 0;
+	public void nextWithCycle(boolean isCycle, Object objForSendToScene){
+		int currentActiveSceneOrderInScenes = 0;
+		for(int i = 0; i < scenes.size(); i++){
+			if(scenes.get(i).equals(currentActiveScene)){
+				currentActiveSceneOrderInScenes = i;
+				break;
 			}
 		}
 		
-		startScene(currentSceneIndex, objForSendToScene);
-//		Scene scene = scenes.get(currentSceneIndex);
-//		scene.startWithObj(objForSendToScene);
+		currentActiveSceneOrderInScenes++;
+//		if(currentActiveScene!=null)
+//			currentActiveScene.stop(); 
+		if(currentActiveSceneOrderInScenes == scenes.size()){
+			currentActiveSceneOrderInScenes = 0;
+		}
+		
+//		startScene(currentActiveSceneOrderInScenes, objForSendToScene);
+		Scene scene = scenes.get(currentActiveSceneOrderInScenes);
+		scene.startWithObj(objForSendToScene);
 ////		scene.start();
-//		currentActiveScene = scene;
+		currentActiveScene = scene;
+		currentSceneIndex = scene.getLayerLevel();
 	}
 	
 	public boolean next(){
@@ -244,28 +272,106 @@ public class SceneManager {
 	}
 	
 	public boolean next(Object objForSendToScene){
-		if(currentSceneIndex==scenes.size()-1 && (sceneClassMap==null || sceneClassMap.size()==0)){
+		if(currentSceneIndex==scenes.size()-1){
 			return false;
 		}else{
-			nextWithCycle(objForSendToScene);
+			nextWithCycle(false, objForSendToScene);
 			return true;
 		}
 	}
 	
-	public void previousWithCycle(){
-		currentSceneIndex--;
+	public boolean startSceneWithNextSceneIndexWithCycle(boolean isCycle, Object objForSendToScene){
+//		if(currentActiveScene!=null){
+//			currentActiveScene.stop();
+//			if(currentActiveScene instanceof DialogScene)
+//				currentActiveScene.finish();
+//		}
+		
+		Scene scene = null;
+		for(int i = 0; i < nextSceneIndexForAdd; i++){
+			currentSceneIndex++;
+			if(currentSceneIndex == nextSceneIndexForAdd){
+				if(!isCycle){
+					currentSceneIndex = nextSceneIndexForAdd-1;
+					break;
+				}
+				currentSceneIndex = 0;
+			}
+	//		Scene scene = scenes.get(currentSceneIndex);
+	//		startScene(currentSceneIndex);
+	//		if(!(scene instanceof DialogScene)){
+	//			LayerManager.setLayerBySenceIndex(currentSceneIndex);
+	//		}
+			
+			scene = createScene(currentSceneIndex);
+			
+			if(scene!=null)
+				break;
+		}
+		
+		if(scene==null)
+			return false;
+		
 		if(currentActiveScene!=null){
 			currentActiveScene.stop();
 			if(currentActiveScene instanceof DialogScene)
 				currentActiveScene.finish();
 		}
-		if(currentSceneIndex == -1){
-			currentSceneIndex = scenes.size()-1;
+		
+		LayerManager.setLayerBySenceIndex(currentSceneIndex);
+		
+		scene.startWithObj(objForSendToScene);
+		
+		currentActiveScene = scene;
+		
+		return true;
+	}
+	
+	public boolean startSceneWithNextSceneIndex(){
+		return startSceneWithNextSceneIndex(null);
+	}
+	
+	public boolean startSceneWithNextSceneIndex(Object objForSendToScene){
+		if(currentSceneIndex==nextSceneIndexForAdd-1){
+			return false;
+		}else{
+			if(startSceneWithNextSceneIndexWithCycle(false, objForSendToScene))
+				return true;
+			else{
+				if(currentActiveScene!=null){
+					currentActiveScene.stop();
+					scenes.remove(currentActiveScene);
+					currentActiveScene.finish();
+					currentActiveScene = null;
+				}
+				return false;
+			}
 		}
-		Scene scene = scenes.get(currentSceneIndex);
-		if(!(scene instanceof DialogScene)){
-			LayerManager.setLayerBySenceIndex(currentSceneIndex);
+	}
+	
+	public void previousWithCycle(){
+		int currentActiveSceneOrderInScenes = 0;
+		for(int i = 0; i < scenes.size(); i++){
+			if(scenes.get(i).equals(currentActiveScene)){
+				currentActiveSceneOrderInScenes = i;
+				break;
+			}
 		}
+		
+		currentActiveSceneOrderInScenes--;
+		
+		if(currentActiveScene!=null){
+			currentActiveScene.stop();
+			if(currentActiveScene instanceof DialogScene)
+				currentActiveScene.finish();
+		}
+		if(currentActiveSceneOrderInScenes == -1){
+			currentActiveSceneOrderInScenes = scenes.size()-1;
+		}
+		Scene scene = scenes.get(currentActiveSceneOrderInScenes);
+//		if(!(scene instanceof DialogScene)){
+			LayerManager.setLayerBySenceIndex(currentActiveSceneOrderInScenes);
+//		}
 		if(currentActiveScene instanceof DialogScene){
 			int savedMode = scene.getMode();
 			scene.setMode(Scene.RESUME_WITHOUT_SET_VIEW);
@@ -277,6 +383,7 @@ public class SceneManager {
 		}
 		
 		currentActiveScene = scene;
+		currentSceneIndex = scene.getLayerLevel();
 	}
 	
 	/**
@@ -289,11 +396,87 @@ public class SceneManager {
 				currentActiveScene.stop();
 				scenes.remove(currentActiveScene);
 				currentActiveScene.finish();
+				currentActiveScene = null;
 			}
 			return false;
 		}else{
 			previousWithCycle();
 			return true;
+		}
+	}
+	
+	public boolean startSceneWithPreviousSceneIndexWithCycle(boolean isCycle){
+//		boolean success = false;
+		
+		if(currentActiveScene!=null){
+			currentActiveScene.stop();
+			if(currentActiveScene instanceof DialogScene)
+				currentActiveScene.finish();
+		}
+		
+		Scene scene = null;
+		for(int i = 0; i < nextSceneIndexForAdd; i++){
+			currentSceneIndex--;
+			if(currentSceneIndex == -1){
+				if(!isCycle){
+					currentSceneIndex = 0;
+					break;
+				}
+				currentSceneIndex = nextSceneIndexForAdd-1;
+			}
+	//		Scene scene = scenes.get(currentSceneIndex);
+	//		startScene(currentSceneIndex);
+	//		if(!(scene instanceof DialogScene)){
+	//			LayerManager.setLayerBySenceIndex(currentSceneIndex);
+	//		}
+			
+			scene = createScene(currentSceneIndex);
+			
+			if(scene!=null)
+				break;
+		}
+		
+		if(scene==null)
+			return false;
+		
+		LayerManager.setLayerBySenceIndex(currentSceneIndex);
+			
+		if(currentActiveScene instanceof DialogScene){
+			int savedMode = scene.getMode();
+			scene.setMode(Scene.RESUME_WITHOUT_SET_VIEW);
+			scene.start();
+			scene.setMode(savedMode);
+			scene.removeMode(Scene.BLOCK);
+		}else{
+			scene.start();
+		}
+		
+		currentActiveScene = scene;
+		
+		return true;
+	}
+	
+	public boolean startSceneWithPreviousSceneIndex(){
+		if(currentSceneIndex==0){
+			if(currentActiveScene!=null){
+				currentActiveScene.stop();
+				scenes.remove(currentActiveScene);
+				currentActiveScene.finish();
+				currentActiveScene = null;
+			}
+			return false;
+		}else{
+			if(startSceneWithPreviousSceneIndexWithCycle(false))
+				return true;
+			else{
+				if(currentActiveScene!=null){
+					currentActiveScene.stop();
+					scenes.remove(currentActiveScene);
+					currentActiveScene.finish();
+					currentActiveScene = null;
+				}
+				return false;
+			}
 		}
 	}
 	
