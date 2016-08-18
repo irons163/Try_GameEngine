@@ -81,12 +81,13 @@ public abstract class ALayer implements ILayer{
 	
 	protected boolean isClipOutside = false;
 	
+	private boolean isAutoSizeByChildren = false;
+	
 	protected RectF frameInScene = new RectF();
 	
 	private LayerParam layerParam = new LayerParam();
 	
 	//Adjust position and size by parent layer.
-	//the size function not implement yet.
 	public static class LayerParam implements Cloneable{
 		private boolean isEnabledPercentagePositionX;
 		private boolean isEnabledPercentagePositionY;
@@ -374,6 +375,7 @@ public abstract class ALayer implements ILayer{
 		}
 //		this.centerX = x - w / 2;
 //		this.centerX = y - h / 2;
+		checkAndDoAutoSize();
 	}
 
 	public void frameTrig(){
@@ -526,6 +528,14 @@ public abstract class ALayer implements ILayer{
 			}
 			
 			layer.setLocationInScene(this.locationInSceneByCompositeLocation(layer.getX(), layer.getY()));
+			
+			if(layer.getLayerParam().isEnabledPercentageSizeW()){
+				layer.setWidth((int)(w * layer.getLayerParam().getPercentageW()));	
+			}
+			if(layer.getLayerParam().isEnabledPercentageSizeH()){
+				layer.setHeight((int)(h * layer.getLayerParam().getPercentageH()));
+			}
+			
 //			layer.setFrameInScene(layer.frameInSceneByCompositeLocation(layer.getFrame()));
 			layer.setFrameInScene(layer.frameInSceneByCompositeLocation());
 			layer.setX(layer.getX()); //want to do colculationMatrix();
@@ -592,11 +602,13 @@ public abstract class ALayer implements ILayer{
 				if(child.isComposite() && child.getLayerParam().isEnabledPercentagePositionX()){
 					child.setX(w * child.getLayerParam().getPercentageX());
 				}
-//				else if(child.isComposite()){
-//					child.setX(child.getX());
-//				}
+				if(child.isComposite() && child.getLayerParam().isEnabledPercentageSizeW()){
+					child.setWidth((int)(w * child.getLayerParam().getPercentageW()));
+				}
 			}		
 		}
+		
+		checkAndDoAutoSize();
 	}
 	
 	public void setInitHeight(int h){
@@ -613,11 +625,13 @@ public abstract class ALayer implements ILayer{
 				if(child.isComposite() && child.getLayerParam().isEnabledPercentagePositionY()){
 					child.setY(h * child.getLayerParam().getPercentageY());
 				}
-//				else if(child.isComposite()){
-//					child.setY(child.getY());
-//				}
+				if(child.isComposite() && child.getLayerParam().isEnabledPercentageSizeH()){
+					child.setHeight((int)(h * child.getLayerParam().getPercentageH()));
+				}
 			}		
 		}
+		
+		checkAndDoAutoSize();
 	}
 	
 	public void setWidth(int w){
@@ -638,11 +652,13 @@ public abstract class ALayer implements ILayer{
 				if(child.isComposite() && child.getLayerParam().isEnabledPercentagePositionX()){
 					child.setX(w * child.getLayerParam().getPercentageX());
 				}
-//				else if(child.isComposite()){
-//					child.setX(child.getX());
-//				}
+				if(child.isComposite() && child.getLayerParam().isEnabledPercentageSizeW()){
+					child.setWidth((int)(w * child.getLayerParam().getPercentageW()));
+				}
 			}		
 		}
+		
+		checkAndDoAutoSize();
 	}
 	
 	public void setHeight(int h){
@@ -663,11 +679,13 @@ public abstract class ALayer implements ILayer{
 				if(child.isComposite() && child.getLayerParam().isEnabledPercentagePositionY()){
 					child.setY(h * child.getLayerParam().getPercentageY());
 				}
-//				else if(child.isComposite()){
-//					child.setY(child.getY());
-//				}
+				if(child.isComposite() && child.getLayerParam().isEnabledPercentageSizeH()){
+					child.setHeight((int)(h * child.getLayerParam().getPercentageH()));
+				}
 			}		
 		}
+		
+		checkAndDoAutoSize();
 	}
 	
 	public int getWidth(){
@@ -706,6 +724,22 @@ public abstract class ALayer implements ILayer{
 		}
 	}
 	
+	public boolean isAutoSizeByChildren() {
+		return isAutoSizeByChildren;
+	}
+
+	public void setAutoSizeByChildren(boolean isAutoSizeByChildren) {
+		this.isAutoSizeByChildren = isAutoSizeByChildren;
+	}
+	
+	private void checkAndDoAutoSize(){
+		if(isAutoSizeByChildren()){
+			if(!getLayerParam().isEnabledPercentageSizeW() && !getLayerParam().isEnabledPercentageSizeH()){
+				calculateWHByChildern();
+			}
+		}
+	}
+
 	public float getX(){
 		return anchorPointXY.x;
 	}
@@ -737,6 +771,8 @@ public abstract class ALayer implements ILayer{
 				}
 			}		
 		}
+		
+		checkAndDoAutoSize();
 	}
 	
 	public float getY(){
@@ -770,6 +806,8 @@ public abstract class ALayer implements ILayer{
 				}
 			}		
 		}
+		
+		checkAndDoAutoSize();
 	}
 	
 	public PointF getAnchorPoint() {
