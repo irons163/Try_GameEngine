@@ -1226,7 +1226,7 @@ public abstract class ALayer implements ILayer{
 	
 	public boolean onTouchEvent(MotionEvent event) {
 		// TODO Auto-generated method stub
-		if(!isEnable() || isAutoAdd())
+		if(!isEnable())
 			return false;
 		
 		float x;
@@ -1297,7 +1297,7 @@ public abstract class ALayer implements ILayer{
 		
 		if((flag & TOUCH_EVENT_ONLY_ACTIVE_ON_SELF)==0){
 			for(ILayer child : layers){
-				if(child.onTouchEvent(event)){
+				if(!child.isAutoAdd() && child.onTouchEvent(event)){
 					/*
 					if((flag & TOUCH_EVENT_ONLY_ACTIVE_ON_CHILDREN)!=0)
 						return true;
