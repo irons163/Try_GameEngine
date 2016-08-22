@@ -18,6 +18,7 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Region;
 import android.graphics.Paint.Style;
+import android.graphics.Region.Op;
 import android.util.Log;
 
 import com.example.try_gameengine.action.MAction;
@@ -329,13 +330,8 @@ public class Sprite extends Layer {
 	public MoveRageType getMoveRageType(){
 		return moveRageType;
 	}
-
-	@Override
-	public void drawSelf(Canvas canvas, Paint paint) {
-		
-		canvas.save();
-		
-		do {
+	
+	private boolean doClip(Canvas canvas){
 		if(isAncestorClipOutSide()){
 			RectF rectF = null;
 			if((rectF = getClipRange())!=null){
@@ -351,29 +347,90 @@ public class Sprite extends Layer {
 //					canvas.drawRect(getClipRange(), paint);
 //					paint.setXfermode(null);
 //					paint.setColor(c);
+				return true;
 			}else{
-				break;
+				return false;
 			}
 		}
+		return true;
+	}
+	
+
+	
+//	private boolean doClip2(Canvas canvas){
+//		if(isAncestorClipOutSide()){
+//			RectF rectF = null;
+//			if((rectF = getClipRange2())!=null){
+////				canvas.save();
+//				Rect rect = new Rect();
+//				rectF.round(rect);
+////				canvas.clipRegion(new Region(rect));
+//				canvas.clipRect(rect);
+////					paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_IN));
+////					int c = paint.getColor();
+////					paint.setColor(Color.GREEN);
+////					paint.setStyle(Style.FILL);
+////					canvas.drawRect(getClipRange(), paint);
+////					paint.setXfermode(null);
+////					paint.setColor(c);
+//				return true;
+//			}else{
+//				return false;
+//			}
+//		}
+//		return true;
+//	}
+	
+//	protected RectF getClipRange2(){
+//		Sprite layer = this;
+////		RectF clipRange = new RectF(this.getFrameInScene());
+//////		RectF clipRange = new RectF(this.getFrame());
+////		while((layer = layer.getParent()) != null){
+////			if(!layer.isClipOutside())
+////				continue;
+////			if(!clipRange.intersect(layer.getFrameInScene()))
+////			if(!clipRange.intersect(layer.getFrame()))
+////				clipRange = null;
+////		}
+//		Canvas canvas; 
+//		layer = this.getParent().clipRange;
+//		return clipRange;
+//	}
+
+	@Override
+	public void drawSelf(Canvas canvas, Paint paint) {
+		
+		canvas.save();
+		
+		do {
+//		if(isAncestorClipOutSide()){
+//			RectF rectF = null;
+//			if((rectF = getClipRange())!=null){
+////				canvas.save();
+//				Rect rect = new Rect();
+//				rectF.round(rect);
+////				canvas.clipRegion(new Region(rect));
+//				canvas.clipRect(rect);
+////					paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_IN));
+////					int c = paint.getColor();
+////					paint.setColor(Color.GREEN);
+////					paint.setStyle(Style.FILL);
+////					canvas.drawRect(getClipRange(), paint);
+////					paint.setXfermode(null);
+////					paint.setColor(c);
+//			}else{
+//				break;
+//			}
+//		}
+			
+		canvas = getC(canvas, paint);
 		
 		Paint originalPaint = paint;		
-		//use input paint first
-		int oldColor = 0;
-		Style oldStyle = null;
-		if(originalPaint==null && getPaint()!=null){
-			paint = getPaint();
-			if(getBackgroundColor()!=NONE_COLOR && getPaint()!=null){
-				oldColor = getPaint().getColor();
-				oldStyle = getPaint().getStyle();
-				getPaint().setColor(getBackgroundColor());
-				getPaint().setStyle(Style.FILL);
-				canvas.drawRect(getFrameInScene(), paint);
-			}
-		}
+
 		
 		if(bitmap!=null){		
 			if(length>0){
-				paint(oldColor, oldStyle, canvas,paint);		
+				paint(canvas,paint);		
 				//use input paint first
 				paint = originalPaint;
 			}else{
@@ -430,6 +487,11 @@ public class Sprite extends Layer {
 //						canvas.setMatrix(spriteMatrix);
 						canvas.concat(spriteMatrix);
 					}
+//					if(!doClip(canvas))
+//						break;
+					
+					drawBackgroundColor(canvas, paint, getFrameInScene());
+					
 					canvas.drawBitmap(bitmap, dst.left, dst.top, paint);
 //					canvas.restore();
 			}
@@ -534,7 +596,27 @@ public class Sprite extends Layer {
 		return rotationType;
 	}
 	
-	private void paint(int oldColor, Style oldStyle, Canvas canvas,Paint paint)
+	private void drawBackgroundColor(Canvas canvas, Paint paint, RectF drawRectF){
+		//use input paint first
+		int oldColor = 0;
+		Style oldStyle = null;
+		if(paint==null && getPaint()!=null){
+			paint = getPaint();
+			if(getBackgroundColor()!=NONE_COLOR && getPaint()!=null){
+				oldColor = getPaint().getColor();
+				oldStyle = getPaint().getStyle();
+				getPaint().setColor(getBackgroundColor());
+				getPaint().setStyle(Style.FILL);
+//				canvas.drawRect(x, y, x + w, y + h,paint);
+				canvas.drawRect(drawRectF, paint);
+				getPaint().setColor(oldColor);
+				getPaint().setStyle(oldStyle);
+			}
+		}
+	}
+	
+	RectF drawRectF = null;
+	private void paint(Canvas canvas,Paint paint)
 	{	
 		if(spriteMatrix==null)
 			spriteMatrix = new Matrix();
@@ -550,11 +632,18 @@ public class Sprite extends Layer {
 			}
 		}
 		
-		RectF drawRectF = null;
+		
 		
 		if(spriteMatrix!=null){
 //			canvas.setMatrix(spriteMatrix);
+			
+			
+			
 			canvas.concat(spriteMatrix);
+//			if(!doClip(canvas))
+//				return;
+			
+			
 			
 			if(xScale*xScaleForBitmapWidth<0 && yScale*yScaleForBitmapHeight<0){
 				drawRectF = new RectF(x - ((float)bitmap.getWidth())/frameColNum*getAnchorPoint().x+drawOffsetX - frameWidth/(-1*xScaleForBitmapWidth), y - ((float)bitmap.getHeight())/frameRowNum*getAnchorPoint().y - frameHeight/(-1*yScaleForBitmapHeight), x - ((float)bitmap.getWidth())/frameColNum*getAnchorPoint().x +frameWidth/(-1*xScaleForBitmapWidth)+drawOffsetX - frameWidth/(-1*xScaleForBitmapWidth), y - ((float)bitmap.getHeight())/frameRowNum*getAnchorPoint().y+frameHeight/(-1*yScaleForBitmapHeight) - frameHeight/(-1*yScaleForBitmapHeight));
@@ -571,7 +660,10 @@ public class Sprite extends Layer {
 			else{
 				drawRectF = new RectF(x+drawOffsetX , y , x+frameWidth/(xScaleForBitmapWidth)+drawOffsetX , y+frameHeight/(yScaleForBitmapHeight));
 				canvas.clipRect(drawRectF);
+//				canvas.clipRect(drawRectF, Op.REVERSE_DIFFERENCE);
 			}
+			
+			drawBackgroundColor(canvas, paint, drawRectF);
 
 			if(xScale*xScaleForBitmapWidth<0 && yScale*yScaleForBitmapHeight<0){
 				canvas.drawBitmap(bitmap, x - ((float)bitmap.getWidth())/frameColNum*getAnchorPoint().x - (currentFrame%(int)frameColNum)*(((float)bitmap.getWidth())/frameColNum)+drawOffsetX, 
@@ -592,15 +684,20 @@ public class Sprite extends Layer {
 		}else if(!drawWithoutClip){
 			drawRectF = new RectF(x+drawOffsetX, y, x+frameWidth+drawOffsetX, y+frameHeight);
 			canvas.clipRect(drawRectF);
+			drawBackgroundColor(canvas, paint, drawRectF);
 			canvas.drawBitmap(bitmap, x-(currentFrame%(bitmap.getWidth()/(int)frameWidth))*frameWidth+drawOffsetX, 
 					y - (currentFrame/(bitmap.getWidth()/(int)frameWidth))*frameHeight, paint);
 		}else{
 //			canvas.setMatrix(spriteMatrix);
 			canvas.concat(spriteMatrix);
+//			if(!doClip(canvas))
+//				return;
+			
 			drawRectF = new RectF(x+drawOffsetX
 					, y
 					, x+frameWidth+drawOffsetX
 					, y+frameHeight);
+			drawBackgroundColor(canvas, paint, drawRectF);
 			canvas.drawBitmap(bitmap, new Rect((int)(currentFrame%(bitmap.getWidth()/bitmapOrginalFrameWidth))*bitmapOrginalFrameWidth+(int)drawOffsetX
 					, (int)(currentFrame/(bitmap.getWidth()/bitmapOrginalFrameWidth))*bitmapOrginalFrameHeight
 					,(int)(currentFrame%(bitmap.getWidth()/bitmapOrginalFrameWidth))*bitmapOrginalFrameWidth+bitmapOrginalFrameWidth+(int)drawOffsetX

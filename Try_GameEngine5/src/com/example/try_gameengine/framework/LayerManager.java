@@ -492,7 +492,8 @@ public class LayerManager {
 //			  System.out.println(layerZposition + " => " + layersByTheSameZposition.toString());
 			  for(int i = layersByTheSameZposition.size()-1; i >= 0; i--){
 				  ILayer layerByZposition = layersByTheSameZposition.get(i);
-				  if(!layerByZposition.isComposite() && layerByZposition.onTouchEvent(event)){
+//				  if(!layerByZposition.isComposite() && layerByZposition.onTouchEvent(event)){
+				  if(layerByZposition.onTouchEvent(event)){
 					  return true; 
 				  }
 			  }

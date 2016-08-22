@@ -1157,13 +1157,42 @@ public abstract class ALayer implements ILayer{
 	protected RectF getClipRange(){
 		ILayer layer = this;
 		RectF clipRange = new RectF(this.getFrameInScene());
+//		RectF clipRange = new RectF(this.getFrame());
 		while((layer = layer.getParent()) != null){
 			if(!layer.isClipOutside())
 				continue;
 			if(!clipRange.intersect(layer.getFrameInScene()))
+			if(!clipRange.intersect(layer.getFrame()))
 				clipRange = null;
 		}
 		return clipRange;
+	}
+	
+//	Matrix matrix;
+	public Canvas getCC(Canvas canvas, Paint paint) {
+		if(isAncestorClipOutSide()){
+//			matrix = canvas.getMatrix();
+			getC(canvas, paint);
+		}
+		return canvas;
+	}
+	
+	public Canvas getC(Canvas canvas, Paint paint){
+		if(isAncestorClipOutSide()){
+			if(getParent().isClipOutside()){
+//				canvas.saveLayer(0, 0, canvas.getWidth(), canvas.getHeight(), null, Canvas.MATRIX_SAVE_FLAG | Canvas.HAS_ALPHA_LAYER_SAVE_FLAG | Canvas.HAS_ALPHA_LAYER_SAVE_FLAG | Canvas.FULL_COLOR_LAYER_SAVE_FLAG | Canvas.CLIP_TO_LAYER_SAVE_FLAG);
+				canvas.save(Canvas.MATRIX_SAVE_FLAG | Canvas.HAS_ALPHA_LAYER_SAVE_FLAG | Canvas.HAS_ALPHA_LAYER_SAVE_FLAG | Canvas.FULL_COLOR_LAYER_SAVE_FLAG | Canvas.CLIP_TO_LAYER_SAVE_FLAG);
+				if(getParent() instanceof Sprite){
+					canvas.concat(((Sprite)getParent()).spriteMatrix);
+					canvas.clipRect(((Sprite)getParent()).drawRectF);
+				}else{
+					canvas.clipRect(getParent().getFrameInScene());
+				}
+				canvas.restore();
+			}
+			((ALayer)getParent()).getC(canvas, paint);
+		}
+		return canvas;
 	}
 	
 	public ILayer getRootLayer(){
@@ -1197,29 +1226,94 @@ public abstract class ALayer implements ILayer{
 	
 	public boolean onTouchEvent(MotionEvent event) {
 		// TODO Auto-generated method stub
-		if(!isEnable())
+		if(!isEnable() || isAutoAdd())
 			return false;
+		
+		float x;
+		float y;
+		
+		final int downPointerIndex = (event.getAction() & MotionEvent.ACTION_POINTER_INDEX_MASK) 
+                >> MotionEvent.ACTION_POINTER_INDEX_SHIFT;
+
+		
+		RectF f;
+        x = event.getX(downPointerIndex);
+        y = event.getY(downPointerIndex);
+		float a[] = new float[]{x, y};
+		boolean isIndentify = StageManager.getCurrentStage().getSceneManager().getCurrentActiveScene().getCamera().getMatrix().isIdentity();
+		if(isIndentify && this instanceof Sprite){
+			if(((Sprite)this).spriteMatrix!=null){
+				synchronized (((Sprite)this).spriteMatrix) {
+					isIndentify = isIndentify && ((Sprite)this).spriteMatrix.isIdentity();
+				}
+			}
+		}
+			
+		if(!isIndentify){
+//            f = getFrameInScene();
+			f = frameInSceneByCompositeLocation();
+//			f = new RectF(getLeft(), getTop(), getLeft()+w, getTop()+h);
+			Scene scene = StageManager.getCurrentStage().getSceneManager().getCurrentActiveScene();
+			Matrix matrix = new Matrix();
+			if(this instanceof Sprite){
+				matrix = new Matrix(scene.getCamera().getMatrix());
+				if(((Sprite)this).spriteMatrix!=null){
+					synchronized (((Sprite)this).spriteMatrix) {
+						Matrix matrix2 =  new Matrix(((Sprite)this).spriteMatrix);
+						matrix2.setTranslate(0, 0);
+						matrix.postConcat(matrix2);
+					}
+				}
+				matrix.invert(matrix);
+//				matrix = matrix2;
+			}else{
+				scene.getCamera().getMatrix().invert(matrix);
+			}
+
+			
+			matrix.mapPoints(a);
+		}else if(isComposite()){
+            x = event.getX(downPointerIndex);
+            y = event.getY(downPointerIndex);
+			PointF locationInLayer = locationInLayer(x, y);
+			x = locationInLayer.x;
+			y = locationInLayer.y;
+			f = new RectF(0, 0, w, h);
+		}else{
+            x = event.getX(downPointerIndex);
+            y = event.getY(downPointerIndex);
+			f = new RectF(getLeft(), getTop(), getLeft()+w, getTop()+h);
+		}
+		
+		if(isClipOutside()){
+			if(!isIndentify){
+				if (!f.contains(a[0], a[1])) {
+					return false;
+				}
+			}else if(!f.contains(x, y)){
+				return false;
+			}
+		}
 		
 		if((flag & TOUCH_EVENT_ONLY_ACTIVE_ON_SELF)==0){
 			for(ILayer child : layers){
 				if(child.onTouchEvent(event)){
+					/*
 					if((flag & TOUCH_EVENT_ONLY_ACTIVE_ON_CHILDREN)!=0)
 						return true;
 					else
 						return false;
+					*/
+					return true; //if child accept the touch event, not do self touch event and return true.
 				}
-			}
+			} 
 		}
 		
 		if((flag & TOUCH_EVENT_ONLY_ACTIVE_ON_CHILDREN)!=0){
 			return false;
 		}
 
-		float x;
-		float y;
-		
-		final int downPointerIndex = (event.getAction() & MotionEvent.ACTION_POINTER_INDEX_MASK) 
-                >> MotionEvent.ACTION_POINTER_INDEX_SHIFT;
+
         if((event.getAction() & MotionEvent.ACTION_MASK) == MotionEvent.ACTION_DOWN){
         	if (isTouching || pressed) {
 				return false;
@@ -1245,31 +1339,6 @@ public abstract class ALayer implements ILayer{
         	}else
         		return false;
         }
-		
-		RectF f;
-        x = event.getX(downPointerIndex);
-        y = event.getY(downPointerIndex);
-		float a[] = new float[]{x, y};
-		boolean isIndentify = StageManager.getCurrentStage().getSceneManager().getCurrentActiveScene().getCamera().getMatrix().isIdentity();
-		if(!isIndentify){
-            f = getFrameInScene();
-			Scene scene = StageManager.getCurrentStage().getSceneManager().getCurrentActiveScene();
-			Matrix matrix = new Matrix();
-			scene.getCamera().getMatrix().invert(matrix);
-			matrix.mapPoints(a);
-		}else if(isComposite()){
-            x = event.getX(downPointerIndex);
-            y = event.getY(downPointerIndex);
-			PointF locationInLayer = locationInLayer(x, y);
-			x = locationInLayer.x;
-			y = locationInLayer.y;
-			f = new RectF(0, 0, w, h);
-		}else{
-            x = event.getX(downPointerIndex);
-            y = event.getY(downPointerIndex);
-			f = new RectF(getLeft(), getTop(), getLeft()+w, getTop()+h);
-		}
-		
 
 		
 //		RectF f = new RectF(0, 0, w,
