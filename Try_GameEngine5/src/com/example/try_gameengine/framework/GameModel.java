@@ -152,6 +152,10 @@ public class GameModel implements IGameModel{
 		
 	}
 	
+	protected void afterProcess(){
+		getCamera().bindLayerX();
+	}
+	
 	Camera camera = new Camera();
 	
 	Canvas canvas;
@@ -160,7 +164,12 @@ public class GameModel implements IGameModel{
 		try {
 			canvas = surfaceHolder.lockCanvas();
 
+			
+			
 			canvas.concat(camera.getMatrix());
+			
+			if(camera.getViewPortRectF()!=null)
+				canvas.clipRect(camera.getViewPortRectF());
 			
 			canvas.drawColor(backgroundColor);
 
@@ -245,6 +254,7 @@ public class GameModel implements IGameModel{
 				}
 				
 				process();
+				afterProcess();
 				draw();
 				if(isGameStop){
 					synchronized (GameModel.this) {

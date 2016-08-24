@@ -375,7 +375,8 @@ public abstract class ALayer implements ILayer{
 		}
 //		this.centerX = x - w / 2;
 //		this.centerX = y - h / 2;
-		checkAndDoAutoSize();
+//		checkAndDoAutoSize();
+		checkParentAndDoParentAutoSize();
 	}
 
 	public void frameTrig(){
@@ -608,7 +609,8 @@ public abstract class ALayer implements ILayer{
 			}		
 		}
 		
-		checkAndDoAutoSize();
+//		checkAndDoAutoSize();
+		checkParentAndDoParentAutoSize();
 	}
 	
 	public void setInitHeight(int h){
@@ -631,7 +633,8 @@ public abstract class ALayer implements ILayer{
 			}		
 		}
 		
-		checkAndDoAutoSize();
+//		checkAndDoAutoSize();
+		checkParentAndDoParentAutoSize();
 	}
 	
 	public void setWidth(int w){
@@ -658,7 +661,8 @@ public abstract class ALayer implements ILayer{
 			}		
 		}
 		
-		checkAndDoAutoSize();
+//		checkAndDoAutoSize();
+		checkParentAndDoParentAutoSize();
 	}
 	
 	public void setHeight(int h){
@@ -685,7 +689,8 @@ public abstract class ALayer implements ILayer{
 			}		
 		}
 		
-		checkAndDoAutoSize();
+//		checkAndDoAutoSize();
+		checkParentAndDoParentAutoSize();
 	}
 	
 	public int getWidth(){
@@ -730,16 +735,35 @@ public abstract class ALayer implements ILayer{
 
 	public void setAutoSizeByChildren(boolean isAutoSizeByChildren) {
 		this.isAutoSizeByChildren = isAutoSizeByChildren;
+		checkAndDoAutoSize();
 	}
 	
-	private void checkAndDoAutoSize(){
+	private void checkAndDoAutoSize(){ // has some limit conditions.
 		if(isAutoSizeByChildren()){
-			if(!getLayerParam().isEnabledPercentageSizeW() && !getLayerParam().isEnabledPercentageSizeH()){
-				calculateWHByChildern();
+			for(ILayer child : getLayers()){
+				if(child.isComposite() && child.getLayerParam().isEnabledPercentagePositionX() || child.getLayerParam().isEnabledPercentagePositionY() 
+						|| child.getLayerParam().isEnabledPercentageSizeW() || child.getLayerParam().isEnabledPercentageSizeH()){
+					break;
+				}
+				if(!getLayerParam().isEnabledPercentageSizeW() && !getLayerParam().isEnabledPercentageSizeH()){
+					calculateWHByChildern();
+				}
 			}
 		}
 	}
 
+	private void checkParentAndDoParentAutoSize(){ // has some limit conditions.
+		if(isComposite() && ((ALayer)getParent()).isAutoSizeByChildren()){
+			if(getLayerParam().isEnabledPercentagePositionX() || getLayerParam().isEnabledPercentagePositionY() 
+					|| getLayerParam().isEnabledPercentageSizeW() || getLayerParam().isEnabledPercentageSizeH()){
+				return;
+			}
+			if(!getParent().getLayerParam().isEnabledPercentageSizeW() && !getParent().getLayerParam().isEnabledPercentageSizeH()){
+				((ALayer)getParent()).calculateWHByChildern();
+			}
+		}
+	}
+	
 	public float getX(){
 		return anchorPointXY.x;
 	}
@@ -772,7 +796,8 @@ public abstract class ALayer implements ILayer{
 			}		
 		}
 		
-		checkAndDoAutoSize();
+//		checkAndDoAutoSize();
+		checkParentAndDoParentAutoSize();
 	}
 	
 	public float getY(){
@@ -807,7 +832,8 @@ public abstract class ALayer implements ILayer{
 			}		
 		}
 		
-		checkAndDoAutoSize();
+//		checkAndDoAutoSize();
+		checkParentAndDoParentAutoSize();
 	}
 	
 	public PointF getAnchorPoint() {
