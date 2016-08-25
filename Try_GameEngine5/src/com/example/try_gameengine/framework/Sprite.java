@@ -1336,25 +1336,24 @@ public class Sprite extends Layer {
 			}
 		}
 		
+		RectF newFrameInScene = new RectF();
 		if(getBitmap()!=null){
 			if(isComposite()){
 				if(this.length>0)//not test yet //test in 2016/08/01
-//					spriteMatrix.mapRect(getFrameInScene(), new RectF(getAnchorPointXY().x, getAnchorPointXY().y, getAnchorPointXY().x+((float)getBitmap().getWidth())/frameColNum, getAnchorPointXY().y+((float)getBitmap().getHeight())/frameRowNum));
-					spriteMatrix.mapRect(getFrameInScene(), new RectF(locationLeftTopInScene.x + getAnchorPoint().x*w, locationLeftTopInScene.y + getAnchorPoint().y*h, locationLeftTopInScene.x + getAnchorPoint().x*w + ((float)getBitmap().getWidth())/frameColNum, locationLeftTopInScene.y + getAnchorPoint().y*h + ((float)getBitmap().getHeight())/frameRowNum));
+					spriteMatrix.mapRect(newFrameInScene, new RectF(locationLeftTopInScene.x + getAnchorPoint().x*w, locationLeftTopInScene.y + getAnchorPoint().y*h, locationLeftTopInScene.x + getAnchorPoint().x*w + ((float)getBitmap().getWidth())/frameColNum, locationLeftTopInScene.y + getAnchorPoint().y*h + ((float)getBitmap().getHeight())/frameRowNum));
 				else //not test yet //test in 2016/08/01
-					spriteMatrix.mapRect(getFrameInScene(), new RectF(locationLeftTopInScene.x + getAnchorPoint().x*w, locationLeftTopInScene.y + getAnchorPoint().y*h, locationLeftTopInScene.x + getAnchorPoint().x*w + getBitmap().getWidth(), locationLeftTopInScene.y + getAnchorPoint().y*h + getBitmap().getHeight()));
-//					spriteMatrix.mapRect(getFrameInScene(), new RectF(locationLeftTopInScene.x, locationLeftTopInScene.y, locationLeftTopInScene.x + getBitmap().getWidth(), locationLeftTopInScene.y + getBitmap().getHeight()));
-//					spriteMatrix.mapRect(getFrameInScene(), new RectF(locationLeftTopInScene.x, locationLeftTopInScene.y, locationLeftTopInScene.x + getWidth(), locationLeftTopInScene.y + getHeight()));
-//					spriteMatrix.mapRect(getFrameInScene(), new RectF(getAnchorPointXY().x, getAnchorPointXY().y, getAnchorPointXY().x+getBitmap().getWidth(), getAnchorPointXY().y+getBitmap().getHeight()));
+					spriteMatrix.mapRect(newFrameInScene, new RectF(locationLeftTopInScene.x + getAnchorPoint().x*w, locationLeftTopInScene.y + getAnchorPoint().y*h, locationLeftTopInScene.x + getAnchorPoint().x*w + getBitmap().getWidth(), locationLeftTopInScene.y + getAnchorPoint().y*h + getBitmap().getHeight()));
 			}else{
 				if(this.length>0)
-					spriteMatrix.mapRect(getFrameInScene(), new RectF(getAnchorPointXY().x, getAnchorPointXY().y, getAnchorPointXY().x+((float)getBitmap().getWidth())/frameColNum, getAnchorPointXY().y+((float)getBitmap().getHeight())/frameRowNum));
+					spriteMatrix.mapRect(newFrameInScene, new RectF(getAnchorPointXY().x, getAnchorPointXY().y, getAnchorPointXY().x+((float)getBitmap().getWidth())/frameColNum, getAnchorPointXY().y+((float)getBitmap().getHeight())/frameRowNum));
 				else //not test yet
-					spriteMatrix.mapRect(getFrameInScene(), new RectF(getAnchorPointXY().x, getAnchorPointXY().y, getAnchorPointXY().x+getBitmap().getWidth(), getAnchorPointXY().y+getBitmap().getHeight()));
+					spriteMatrix.mapRect(newFrameInScene, new RectF(getAnchorPointXY().x, getAnchorPointXY().y, getAnchorPointXY().x+getBitmap().getWidth(), getAnchorPointXY().y+getBitmap().getHeight()));
 			}
 			
 		}else // not test yet //test in 2016/08/15
-			spriteMatrix.mapRect(getFrameInScene(), new RectF(getAnchorPointXY().x, getAnchorPointXY().y, getAnchorPointXY().x+getWidth(), getAnchorPointXY().y+getHeight()));
+			spriteMatrix.mapRect(newFrameInScene, new RectF(getAnchorPointXY().x, getAnchorPointXY().y, getAnchorPointXY().x+getWidth(), getAnchorPointXY().y+getHeight()));
+		
+		setFrameInScene(newFrameInScene);
 		
 		dealWithSpriteMatrixAfterCalculationMatrix(spriteMatrix);
 	}

@@ -238,7 +238,7 @@ public class GameModel implements IGameModel{
 		public void run() {
 			// TODO Auto-generated method stub
 			while(isGameRun){
-				if(surfaceHolder==null) //when game secen start, the surfaceHolder may not stand by.
+				if(surfaceHolder==null) //when game scene start, the surfaceHolder may not stand by.
 					continue;
 				if(Config.enableFPSInterval){
 					startTime = System.currentTimeMillis();

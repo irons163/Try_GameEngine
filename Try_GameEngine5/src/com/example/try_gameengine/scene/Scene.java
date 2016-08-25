@@ -11,11 +11,12 @@ import com.example.try_gameengine.framework.ALayer;
 import com.example.try_gameengine.framework.Data;
 import com.example.try_gameengine.framework.IGameController;
 import com.example.try_gameengine.framework.IGameModel;
+import com.example.try_gameengine.framework.Layer;
 import com.example.try_gameengine.framework.LayerManager;
 import com.example.try_gameengine.remotecontroller.IRemoteController;
 import com.example.try_gameengine.remotecontroller.RemoteController;
 
-public abstract class Scene extends Activity{
+public abstract class Scene extends Layer{
 	protected IGameModel gameModel;
 	protected IGameController gameController;
 	private String id;
@@ -136,7 +137,7 @@ public abstract class Scene extends Activity{
 		
 //		layer.setAutoAdd(true);
 	}
-	
+	@Override
 	public int getBackgroundColor() {
 		return gameModel.getBackgroundColor();
 	}
@@ -153,10 +154,10 @@ public abstract class Scene extends Activity{
 		gameModel.setCamera(camera);
 	}
 	
-	@Override
+//	@Override
 	public void finish() {
 		// TODO Auto-generated method stub
-		super.finish();
+//		super.finish();
 //		((Activity)context).finish();
 		setMode(FINISHED);
 		gameModel.setData(new DestoryData());

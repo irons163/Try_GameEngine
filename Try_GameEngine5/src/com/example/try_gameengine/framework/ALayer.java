@@ -375,8 +375,8 @@ public abstract class ALayer implements ILayer{
 		}
 //		this.centerX = x - w / 2;
 //		this.centerX = y - h / 2;
-//		checkAndDoAutoSize();
-		checkParentAndDoParentAutoSize();
+		checkAndDoAutoSize();
+//		checkParentAndDoParentAutoSize();
 	}
 
 	public void frameTrig(){
@@ -537,14 +537,8 @@ public abstract class ALayer implements ILayer{
 				layer.setHeight((int)(h * layer.getLayerParam().getPercentageH()));
 			}
 			
-//			layer.setFrameInScene(layer.frameInSceneByCompositeLocation(layer.getFrame()));
 			layer.setFrameInScene(layer.frameInSceneByCompositeLocation());
 			layer.setX(layer.getX()); //want to do colculationMatrix();
-			
-//			if(layer instanceof Sprite){
-//				((Sprite)layer).locationLeftTopInScene = this.locationInSceneByCompositeLocation(layer.getLeft(), layer.getTop());
-//				((Sprite)layer).setX(layer.getX()); //want to do colculationMatrix();
-//			}
 		}else{
 			throw new RuntimeException("child already has parent.");
 		}
@@ -609,8 +603,8 @@ public abstract class ALayer implements ILayer{
 			}		
 		}
 		
-//		checkAndDoAutoSize();
-		checkParentAndDoParentAutoSize();
+		checkAndDoAutoSize();
+//		checkParentAndDoParentAutoSize();
 	}
 	
 	public void setInitHeight(int h){
@@ -633,8 +627,8 @@ public abstract class ALayer implements ILayer{
 			}		
 		}
 		
-//		checkAndDoAutoSize();
-		checkParentAndDoParentAutoSize();
+		checkAndDoAutoSize();
+//		checkParentAndDoParentAutoSize();
 	}
 	
 	public void setWidth(int w){
@@ -661,8 +655,8 @@ public abstract class ALayer implements ILayer{
 			}		
 		}
 		
-//		checkAndDoAutoSize();
-		checkParentAndDoParentAutoSize();
+		checkAndDoAutoSize();
+//		checkParentAndDoParentAutoSize();
 	}
 	
 	public void setHeight(int h){
@@ -689,8 +683,8 @@ public abstract class ALayer implements ILayer{
 			}		
 		}
 		
-//		checkAndDoAutoSize();
-		checkParentAndDoParentAutoSize();
+		checkAndDoAutoSize();
+//		checkParentAndDoParentAutoSize();
 	}
 	
 	public int getWidth(){
@@ -733,25 +727,97 @@ public abstract class ALayer implements ILayer{
 		return isAutoSizeByChildren;
 	}
 
-	public void setAutoSizeByChildren(boolean isAutoSizeByChildren) {
-		this.isAutoSizeByChildren = isAutoSizeByChildren;
+	ALayer aLayer;
+	
+	public void setAutoSizeByChildren(ALayer layer) {
+		if(layer != null){
+			this.isAutoSizeByChildren = true;
+			aLayer = layer;
+//			addChild(layer);
+			aLayer.setAutoAdd(true);
+		}else{
+			this.isAutoSizeByChildren = false;
+			remove(aLayer);
+			aLayer = null;
+		}
+		
 		checkAndDoAutoSize();
 	}
 	
-	private void checkAndDoAutoSize(){ // has some limit conditions.
-		if(isAutoSizeByChildren()){
-			for(ILayer child : getLayers()){
-				if(child.isComposite() && child.getLayerParam().isEnabledPercentagePositionX() || child.getLayerParam().isEnabledPercentagePositionY() 
-						|| child.getLayerParam().isEnabledPercentageSizeW() || child.getLayerParam().isEnabledPercentageSizeH()){
-					break;
-				}
-				if(!getLayerParam().isEnabledPercentageSizeW() && !getLayerParam().isEnabledPercentageSizeH()){
-					calculateWHByChildern();
-				}
-			}
+	private void checkAndDoAutoSize(){ 
+//		if(!isAutoSizeByChildren())
+//			return;
+//		if(isAutoSizeByChildren()){
+				
+//				PointF locationInLayer = locationInLayer(0, 0);
+//				RectF rectF = getRootLayer().autoCalculateSizeByChildern();
+//				rectF.offset(locationInLayer.x, locationInLayer.y);
+//				layer.setFrame(rectF);
+//		}
+		
+		ALayer theFirstAutoSizeLayer = null;
+		ILayer targetLayer = this;
+		if(((ALayer)targetLayer).isAutoSizeByChildren())
+			theFirstAutoSizeLayer = (ALayer) targetLayer;
+		while(targetLayer.getParent()!=null && targetLayer.isComposite()){
+			if(((ALayer)targetLayer.getParent()).isAutoSizeByChildren())
+				theFirstAutoSizeLayer = (ALayer) targetLayer.getParent();
+			targetLayer = targetLayer.getParent();
 		}
+		
+		if(theFirstAutoSizeLayer != null)
+			theFirstAutoSizeLayer.autoCalculateSizeByChildern();
 	}
 
+	public RectF autoCalculateSizeByChildern(){
+		RectF pointWHMax;
+		if(isAncestorClipOutSide()){
+			pointWHMax = getClipRange();
+			if(pointWHMax==null)
+				pointWHMax = new RectF();
+		}else{
+			pointWHMax = new RectF(getFrameInScene());
+		}
+		
+		if(getLayers().size()!=0){
+			
+			for(ILayer child : getLayers()){
+				if(child.isComposite()){
+					RectF childFrame = ((ALayer)child).autoCalculateSizeByChildern();
+//					float w = ((ALayer)child).w + child.getX();
+//					float h = ((ALayer)child).h + child.getY();
+//					float right = ((ALayer)child).w + child.getLeft();
+//					float top = ((ALayer)child).h + child.getTop();
+//					PointF childPointWH = new PointF(w, h);
+//					if(pointWHMax==null)
+//						pointWHMax = child.getFrameInScene();
+//					else{
+						if(childFrame.left < pointWHMax.left)
+							pointWHMax.left = childFrame.left;
+						if(childFrame.top < pointWHMax.top)
+							pointWHMax.top = childFrame.top;
+						if(childFrame.right > pointWHMax.right)
+							pointWHMax.right = childFrame.right;
+						if(childFrame.bottom > pointWHMax.bottom)
+							pointWHMax.bottom = childFrame.bottom;
+//					}
+				}
+			}
+//			if(pointWHMax!=null){
+//				pointWHMax.union(getFrameInScene());
+//			}
+		}
+		
+		if(isAutoSizeByChildren()){
+//			PointF locationInLayer = locationInLayer(0, 0);
+			RectF resizeFrame = new RectF(pointWHMax);
+//			resizeFrame.offset(locationInLayer.x, locationInLayer.y);
+			aLayer.setFrame(resizeFrame);
+		}
+		
+		return pointWHMax;
+	}
+	
 	private void checkParentAndDoParentAutoSize(){ // has some limit conditions.
 		if(isComposite() && ((ALayer)getParent()).isAutoSizeByChildren()){
 			if(getLayerParam().isEnabledPercentagePositionX() || getLayerParam().isEnabledPercentagePositionY() 
@@ -796,8 +862,8 @@ public abstract class ALayer implements ILayer{
 			}		
 		}
 		
-//		checkAndDoAutoSize();
-		checkParentAndDoParentAutoSize();
+		checkAndDoAutoSize();
+//		checkParentAndDoParentAutoSize();
 	}
 	
 	public float getY(){
@@ -832,8 +898,8 @@ public abstract class ALayer implements ILayer{
 			}		
 		}
 		
-//		checkAndDoAutoSize();
-		checkParentAndDoParentAutoSize();
+		checkAndDoAutoSize();
+//		checkParentAndDoParentAutoSize();
 	}
 	
 	public PointF getAnchorPoint() {
@@ -1004,6 +1070,7 @@ public abstract class ALayer implements ILayer{
 	
 	public void setFrameInScene(RectF frameInScene){
 		this.frameInScene = frameInScene;
+		autoCalculateSizeByChildern();
 //		setX(getX());
 //		for(ILayer child : layers){
 //			if(child.isComposite())
