@@ -331,29 +331,29 @@ public class Sprite extends Layer {
 		return moveRageType;
 	}
 	
-	private boolean doClip(Canvas canvas){
-		if(isAncestorClipOutSide()){
-			RectF rectF = null;
-			if((rectF = getClipRange())!=null){
-//				canvas.save();
-				Rect rect = new Rect();
-				rectF.round(rect);
-//				canvas.clipRegion(new Region(rect));
-				canvas.clipRect(rect);
-//					paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_IN));
-//					int c = paint.getColor();
-//					paint.setColor(Color.GREEN);
-//					paint.setStyle(Style.FILL);
-//					canvas.drawRect(getClipRange(), paint);
-//					paint.setXfermode(null);
-//					paint.setColor(c);
-				return true;
-			}else{
-				return false;
-			}
-		}
-		return true;
-	}
+//	private boolean doClip(Canvas canvas){
+//		if(isAncestorClipOutSide()){
+//			RectF rectF = null;
+//			if((rectF = getClipRange())!=null){
+////				canvas.save();
+//				Rect rect = new Rect();
+//				rectF.round(rect);
+////				canvas.clipRegion(new Region(rect));
+//				canvas.clipRect(rect);
+////					paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_IN));
+////					int c = paint.getColor();
+////					paint.setColor(Color.GREEN);
+////					paint.setStyle(Style.FILL);
+////					canvas.drawRect(getClipRange(), paint);
+////					paint.setXfermode(null);
+////					paint.setColor(c);
+//				return true;
+//			}else{
+//				return false;
+//			}
+//		}
+//		return true;
+//	}
 	
 
 	
@@ -1354,6 +1354,8 @@ public class Sprite extends Layer {
 			spriteMatrix.mapRect(newFrameInScene, new RectF(getAnchorPointXY().x, getAnchorPointXY().y, getAnchorPointXY().x+getWidth(), getAnchorPointXY().y+getHeight()));
 		
 		setFrameInScene(newFrameInScene);
+		
+		autoCalculateSizeByChildern();
 		
 		dealWithSpriteMatrixAfterCalculationMatrix(spriteMatrix);
 	}

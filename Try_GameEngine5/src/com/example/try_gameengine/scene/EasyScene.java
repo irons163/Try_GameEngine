@@ -36,6 +36,7 @@ import com.example.try_gameengine.framework.GameView;
 import com.example.try_gameengine.framework.IGameController;
 import com.example.try_gameengine.framework.IGameModel;
 import com.example.try_gameengine.framework.IMoveObserver;
+import com.example.try_gameengine.framework.LayerManager;
 import com.example.try_gameengine.remotecontroller.RemoteController;
 import com.example.try_gameengine.scene.Scene;
 
@@ -80,18 +81,21 @@ public abstract class EasyScene extends Scene implements ContactListener{
 	public EasyScene(Context context, String id) {
 		super(context, id);
 		// TODO Auto-generated constructor stub
+		setAutoAdd(true);
 		initPhysical();
 	}
 
 	public EasyScene(Context context, String id, int level) {
 		super(context, id, level);
 		// TODO Auto-generated constructor stub
+		setAutoAdd(true);
 		initPhysical();
 	}
 	
 	public EasyScene(Context context, String id, int level, int mode) {
 		super(context, id, level, mode);
 		// TODO Auto-generated constructor stub
+		setAutoAdd(true);
 		initPhysical();
 	}
 	
@@ -275,11 +279,11 @@ public abstract class EasyScene extends Scene implements ContactListener{
 //		super.stop();
 //	}
 	
-	@Override
-	public boolean onTouchEvent(MotionEvent event) {
-		// TODO Auto-generated method stub
-		return true;
-	}
+//	@Override
+//	public boolean onTouchEvent(MotionEvent event) {
+//		// TODO Auto-generated method stub
+//		return false;
+//	}
 	
 	public abstract void initGameView(Activity activity, IGameController gameController,IGameModel gameModel);
 
@@ -293,9 +297,30 @@ public abstract class EasyScene extends Scene implements ContactListener{
 //		gameModel.restart();
 //	}
 	
-	public abstract void process();
+//	public abstract void process();
+//	
+//	public abstract void doDraw(Canvas canvas);
 	
-	public abstract void doDraw(Canvas canvas);
+	// If override, need super.process().
+	public void process(){
+		LayerManager.processLayersForNegativeZOrder();
+		LayerManager.processLayersForOppositeZOrder();
+	}
+	
+	// If override, need super.doDraw(Canvas canvas).
+	public void doDraw(Canvas canvas){
+		LayerManager.drawLayersForNegativeZOrder(canvas, null);
+		LayerManager.drawLayersForOppositeZOrder(canvas, null);
+	}
+	
+	// If override, need super.onSceneTouchEvent(MotionEvent event).
+	public boolean onSceneTouchEvent(MotionEvent event) {
+		// TODO Auto-generated method stub
+		boolean isTouched =  
+				LayerManager.onTouchLayersForOppositeZOrder(event) ||
+				LayerManager.onTouchLayersForNegativeZOrder(event);
+		return isTouched;
+	}
 	
 	public abstract void beforeGameStart();
 
@@ -427,7 +452,17 @@ public abstract class EasyScene extends Scene implements ContactListener{
 		public void doDraw(Canvas canvas) {
 			// TODO Auto-generated method stub
 //			super.doDraw(canvas);
+			/*
+			LayerManager.drawLayersForNegativeZOrder(canvas, null);
+			EasyScene.this.drawSelf(canvas, null);
+			LayerManager.drawLayersForOppositeZOrder(canvas, null);
 			EasyScene.this.doDraw(canvas);
+			*/
+			
+//			LayerManager.drawLayersForNegativeZOrder(canvas, null);
+//			LayerManager.drawLayersForOppositeZOrder(canvas, null);
+			EasyScene.this.doDraw(canvas);
+			
 			if(isEnableRemoteController && remoteController!=null)
 				remoteController.drawRemoteController(canvas, null);
 			if(isEnablePhysical){
@@ -456,8 +491,17 @@ public abstract class EasyScene extends Scene implements ContactListener{
 		@Override
 		public void onTouchEvent(MotionEvent event) {
 			// TODO Auto-generated method stub
-			EasyScene.this.onTouchEvent(event);
+			/*
+			boolean isTouched =  
+					LayerManager.onTouchLayersForOppositeZOrder(event) ||
+					EasyScene.this.onTouchEvent(event) ||
+					LayerManager.onTouchLayersForNegativeZOrder(event);
+			*/
+//			boolean isTouched =  
+//					LayerManager.onTouchLayersForOppositeZOrder(event) ||
+//					LayerManager.onTouchLayersForNegativeZOrder(event);
 //			super.onTouchEvent(event);
+			EasyScene.this.onSceneTouchEvent(event);
 		}
 	}
 	

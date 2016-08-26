@@ -537,7 +537,7 @@ public abstract class ALayer implements ILayer{
 				layer.setHeight((int)(h * layer.getLayerParam().getPercentageH()));
 			}
 			
-			layer.setFrameInScene(layer.frameInSceneByCompositeLocation());
+//			layer.setFrameInScene(layer.frameInSceneByCompositeLocation());
 			layer.setX(layer.getX()); //want to do colculationMatrix();
 		}else{
 			throw new RuntimeException("child already has parent.");
@@ -1070,7 +1070,7 @@ public abstract class ALayer implements ILayer{
 	
 	public void setFrameInScene(RectF frameInScene){
 		this.frameInScene = frameInScene;
-		autoCalculateSizeByChildern();
+//		autoCalculateSizeByChildern();
 //		setX(getX());
 //		for(ILayer child : layers){
 //			if(child.isComposite())
@@ -1247,16 +1247,18 @@ public abstract class ALayer implements ILayer{
 		return isAncestorClipOutSide;
 	}
 	
-	protected RectF getClipRange(){
+	private RectF getClipRange(){
 		ILayer layer = this;
 		RectF clipRange = new RectF(this.getFrameInScene());
 //		RectF clipRange = new RectF(this.getFrame());
 		while((layer = layer.getParent()) != null){
 			if(!layer.isClipOutside())
 				continue;
-			if(!clipRange.intersect(layer.getFrameInScene()))
-			if(!clipRange.intersect(layer.getFrame()))
+			if(!clipRange.intersect(layer.getFrameInScene())){
+//			if(!clipRange.intersect(layer.getFrame()))
 				clipRange = null;
+				break;
+			}
 		}
 		return clipRange;
 	}

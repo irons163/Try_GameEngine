@@ -109,18 +109,20 @@ public class LabelLayer extends Layer{
 //			}
 			
 			do{
-				if(isAncestorClipOutSide()){
-					canvas.save();
-					RectF rectF = null;
-					if((rectF = getClipRange())!=null){
-						Rect rect = new Rect();
-						rectF.round(rect);
-//						canvas.clipRegion(new Region(rect));
-						canvas.clipRect(rect);
-					}else{
-						break;
-					}
-				}
+//				if(isAncestorClipOutSide()){
+//					canvas.save();
+//					RectF rectF = null;
+//					if((rectF = getClipRange())!=null){
+//						Rect rect = new Rect();
+//						rectF.round(rect);
+////						canvas.clipRegion(new Region(rect));
+//						canvas.clipRect(rect);
+//					}else{
+//						break;
+//					}
+//				}
+				
+				canvas = getC(canvas, paint);
 				
 				if(isComposite() && getParent()!=null)
 					canvas.drawText(text, getLocationInScene().x - getAnchorPoint().x*getWidth(), getLocationInScene().y - getAnchorPoint().y*getHeight() - y, paint!=null?paint:getPaint());

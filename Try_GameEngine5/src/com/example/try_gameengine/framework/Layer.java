@@ -59,17 +59,19 @@ public class Layer extends ALayer{
 			canvas.save();
 			
 			do {
-				if(isAncestorClipOutSide()){
-					RectF rectF = null;
-					if((rectF = getClipRange())!=null){
-						Rect rect = new Rect();
-						rectF.round(rect);
-//						canvas.clipRegion(new Region(rect));
-						canvas.clipRect(rect);
-					}else{
-						break;
-					}
-				}
+//				if(isAncestorClipOutSide()){
+//					RectF rectF = null;
+//					if((rectF = getClipRange())!=null){
+//						Rect rect = new Rect();
+//						rectF.round(rect);
+////						canvas.clipRegion(new Region(rect));
+//						canvas.clipRect(rect);
+//					}else{
+//						break;
+//					}
+//				}
+				
+				canvas = getC(canvas, paint);
 				
 				Paint originalPaint = paint;
 				

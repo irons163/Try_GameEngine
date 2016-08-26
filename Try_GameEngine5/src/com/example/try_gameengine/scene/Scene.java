@@ -137,12 +137,12 @@ public abstract class Scene extends Layer{
 		
 //		layer.setAutoAdd(true);
 	}
-	@Override
-	public int getBackgroundColor() {
+	
+	public int getViewBackgroundColor() {
 		return gameModel.getBackgroundColor();
 	}
 
-	public void setBackgroundColor(int backgroundColor) {
+	public void setViewBackgroundColor(int backgroundColor) {
 		gameModel.setBackgroundColor(backgroundColor);
 	}
 	
