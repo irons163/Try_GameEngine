@@ -492,7 +492,7 @@ public class Sprite extends Layer {
 					
 					drawRectF = dst;
 					
-					drawBackgroundColor(canvas, paint, getFrameInScene());
+					drawBackgroundColor(canvas, paint, drawRectF);
 					
 					if(bitmap!=null)
 						canvas.drawBitmap(bitmap, dst.left, dst.top, paint);
