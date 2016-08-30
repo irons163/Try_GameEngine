@@ -153,10 +153,11 @@ public class GameModel implements IGameModel{
 	}
 	
 	protected void afterProcess(){
-		getCamera().bindLayerX();
+		if(getCamera()!=null)
+			getCamera().bindLayerX();
 	}
 	
-	Camera camera = new Camera();
+	Camera camera;
 	
 	Canvas canvas;
 	
@@ -164,12 +165,14 @@ public class GameModel implements IGameModel{
 		try {
 			canvas = surfaceHolder.lockCanvas();
 
+			if(camera==null)
+				camera = new Camera(canvas.getWidth(), canvas.getHeight());
 			
-			
+//			camera.apply(canvas);
 			canvas.concat(camera.getMatrix());
 			
-			if(camera.getViewPortRectF()!=null)
-				canvas.clipRect(camera.getViewPortRectF());
+//			if(camera.getViewPortRectF()!=null)
+//				canvas.clipRect(camera.getViewPortRectF());
 			
 			canvas.drawColor(backgroundColor);
 

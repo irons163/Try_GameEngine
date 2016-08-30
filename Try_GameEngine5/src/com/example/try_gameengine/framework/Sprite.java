@@ -428,7 +428,7 @@ public class Sprite extends Layer {
 		Paint originalPaint = paint;		
 
 		
-		if(bitmap!=null){		
+//		if(bitmap!=null){		
 			if(length>0){
 				paint(canvas,paint);		
 				//use input paint first
@@ -490,12 +490,15 @@ public class Sprite extends Layer {
 //					if(!doClip(canvas))
 //						break;
 					
+					drawRectF = dst;
+					
 					drawBackgroundColor(canvas, paint, getFrameInScene());
 					
-					canvas.drawBitmap(bitmap, dst.left, dst.top, paint);
+					if(bitmap!=null)
+						canvas.drawBitmap(bitmap, dst.left, dst.top, paint);
 //					canvas.restore();
 			}
-		}
+//		}
 		
 //		if(isAncestorClipOutSide()){
 //			paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_IN));

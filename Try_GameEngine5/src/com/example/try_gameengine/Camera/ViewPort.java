@@ -4,6 +4,8 @@ import android.graphics.RectF;
 
 public class ViewPort {
 	private RectF viewportRectF = new RectF();
+	private float scale = 1.0f;
+	private float rotation;
 
 	public float getX() {
 		return viewportRectF.left;
@@ -54,6 +56,23 @@ public class ViewPort {
 		setHeight(h);
 	}
 	
+	// not implement yet
+	public float getScale() {
+		return scale;
+	}
+	// not implement yet
+	public void setScale(float scale) {
+		this.scale = scale;
+	}
+	
+	public float getRotation() {
+		return rotation;
+	}
+
+	public void setRotation(float rotation) {
+		this.rotation = rotation;
+	}
+
 	public void setViewPortRectF(RectF rectF){
 		viewportRectF = rectF;
 	}

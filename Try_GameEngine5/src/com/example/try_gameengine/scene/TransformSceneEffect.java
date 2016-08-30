@@ -6,9 +6,7 @@ import com.example.try_gameengine.Camera.Camera;
 public class TransformSceneEffect {
 	Camera camera;
 	public void shakeSceneEffect(Scene scene){
-	 camera = scene.getCamera();
-		
-		
+		camera = scene.getCamera();
 	}
 	
 	public void process(){
@@ -18,5 +16,13 @@ public class TransformSceneEffect {
 		}else{
 			
 		}
+	}
+	
+	public void rotateSceneEffect(Scene scene){
+		camera = scene.getCamera();
+	}
+	
+	public void process2(){
+		camera.rotation(camera.getRotation() +1);
 	}
 }
