@@ -1383,10 +1383,28 @@ public abstract class ALayer implements ILayer{
 		if(isClipOutside()){
 			if(!isIndentify){
 				if (!f.contains(a[0], a[1])) {
-					return false;
+//					return false;
+					if((event.getAction() & MotionEvent.ACTION_MASK) != MotionEvent.ACTION_DOWN
+							&& (event.getAction() & MotionEvent.ACTION_MASK) != MotionEvent.ACTION_POINTER_DOWN){
+						/*// It seems not need.
+						MotionEvent cancelEvent = MotionEvent.obtain(event);
+						cancelEvent.setAction(MotionEvent.ACTION_CANCEL);
+						*/
+					}else{
+						return false;
+					}
 				}
 			}else if(!f.contains(x, y)){
-				return false;
+//				return false;
+				if((event.getAction() & MotionEvent.ACTION_MASK) != MotionEvent.ACTION_DOWN
+						&& (event.getAction() & MotionEvent.ACTION_MASK) != MotionEvent.ACTION_POINTER_DOWN){
+					/*// It seems not need.
+					MotionEvent cancelEvent = MotionEvent.obtain(event);
+					cancelEvent.setAction(MotionEvent.ACTION_CANCEL);
+					*/
+				}else{
+					return false;
+				}
 			}
 		}
 		

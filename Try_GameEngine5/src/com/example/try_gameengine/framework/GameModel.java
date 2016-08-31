@@ -39,6 +39,7 @@ public class GameModel implements IGameModel{
 	Paint paint = new Paint();
 	private int backgroundColor = Color.BLACK;
 //	private Bitmap lastCanvas;
+	private boolean canUseLockHardwareCanvas = false;
 	
 	public GameModel(Context context, Data data) {
 		// TODO Auto-generated constructor stub
@@ -51,6 +52,8 @@ public class GameModel implements IGameModel{
 //		initPlayerManager();
 //		
 //		setPlayersBySquential();
+		if(android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M)
+			canUseLockHardwareCanvas = true;
 	}
 	
 	public long getStartTime(){
@@ -163,7 +166,11 @@ public class GameModel implements IGameModel{
 	
 	private void draw(){
 		try {
-			canvas = surfaceHolder.lockCanvas();
+//			canvas = surfaceHolder.lockCanvas();
+			if(canUseLockHardwareCanvas)
+				canvas = surfaceHolder.getSurface().lockHardwareCanvas();
+			else
+				canvas = surfaceHolder.lockCanvas();
 
 			if(camera==null)
 				camera = new Camera(canvas.getWidth(), canvas.getHeight());
@@ -224,7 +231,11 @@ public class GameModel implements IGameModel{
 	    } 
 		finally {
 	            if (canvas != null)
-	            	surfaceHolder.unlockCanvasAndPost(canvas);
+//	            	surfaceHolder.unlockCanvasAndPost(canvas);
+	            	if(canUseLockHardwareCanvas)
+	            		surfaceHolder.getSurface().unlockCanvasAndPost(canvas);
+	            	else
+	            		surfaceHolder.unlockCanvasAndPost(canvas);
 		}
 //			if (canvas != null)
 //            	surfaceHolder.unlockCanvasAndPost(canvas);
