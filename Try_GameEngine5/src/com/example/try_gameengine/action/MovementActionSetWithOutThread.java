@@ -61,25 +61,6 @@ public class MovementActionSetWithOutThread extends MovementAction {
 				isActionFinish = true;
 				actionListener.actionFinish();
 			}
-			
-//			isActionFinish = false;
-
-//					actionListener.actionStart();
-//					do{
-//						for(MovementAction action : actions){
-//							if(isStop){
-//								isLoop = false;
-//								break;
-//							}
-//							cancelAction = action;
-//							action.start();	
-//						}
-//						actionListener.actionCycleFinish();
-//					}while(isLoop);
-
-//					isActionFinish = true;
-//					actionListener.actionFinish();
-
 		}
 	}
 	
@@ -176,11 +157,12 @@ public class MovementActionSetWithOutThread extends MovementAction {
 	@Override
 	public void trigger() {
 		// TODO Auto-generated method stub
-//		for (MovementAction action : this.actions) {
-//			action.trigger();
-//		}
-		if(isActionFinish)
+		if(isActionFinish){
+			synchronized (this) {
+				this.notifyAll();
+			}
 			return;
+		}
 		
 		if(actions.size()>0 && actionIndex < actions.size()){
 			MovementAction action = actions.get(actionIndex);
@@ -193,6 +175,10 @@ public class MovementActionSetWithOutThread extends MovementAction {
 		}else{
 			isActionFinish = true;
 			actionListener.actionFinish();
+			
+			synchronized (this) {
+				this.notifyAll();
+			}
 		}
 	}
 	

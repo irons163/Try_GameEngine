@@ -819,8 +819,7 @@ public class Sprite extends Layer {
 		actions.put(name, sp);
 	}
 
-	public void process(){
-		long a = System.currentTimeMillis();
+	private void process(){
 		if (currentAction != null) {
 			if(currentAction.frames!=null){
 				currentAction.nextFrame();
@@ -828,7 +827,6 @@ public class Sprite extends Layer {
 				currentAction.nextBitmap();
 			}		
 		}	
-		a = System.currentTimeMillis() - a;
 	}
 	
 	public void move(float dx, float dy) {

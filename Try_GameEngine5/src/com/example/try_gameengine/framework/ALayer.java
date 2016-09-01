@@ -1290,6 +1290,13 @@ public abstract class ALayer implements ILayer{
 		return canvas;
 	}
 	
+	public void bindAllChildrenPositionXY(){
+		for(ILayer child : getLayers()){
+			child.getLayerParam().setBindPositionXY(child.getX(), child.getY());
+			child.getLayerParam().setEnabledBindPositionXY(true);
+		}
+	}
+	
 	public ILayer getRootLayer(){
 		ILayer rootLayer = this;
 		while(rootLayer.getParent()!=null){

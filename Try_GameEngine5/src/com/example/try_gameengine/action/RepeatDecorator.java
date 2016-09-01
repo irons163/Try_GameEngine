@@ -6,6 +6,11 @@ import java.util.List;
 import com.example.try_gameengine.action.CopyMoveDecorator.CopyMoveDecoratorMementoImpl;
 import com.example.try_gameengine.action.MovementAction.MovementActionMementoImpl;
 import com.example.try_gameengine.action.MovementAction.TimerOnTickListener;
+import com.example.try_gameengine.action.visitor.IMovementActionVisitor;
+import com.example.try_gameengine.action.visitor.MovementActionCreateMementoVisitor;
+import com.example.try_gameengine.action.visitor.MovementActionObjectStructure;
+import com.example.try_gameengine.action.visitor.MovementActionRestoreMementoVisitor;
+import com.example.try_gameengine.action.visitor.MovementActionSetDefaultTimeOnTickListenerIfNotSetYetVisitor;
 
 //import com.rits.cloning.Cloner;
 
@@ -22,6 +27,9 @@ public class RepeatDecorator extends MovementDecorator {
 		allMovementActoinList.add(this);
 		this.copyMovementActionList = action.copyMovementActionList;
 		
+		List<MovementAction> actions = new ArrayList<MovementAction>(); // add 105/09/01
+		actions.add(this.action);
+		this.actions = actions; 
 //		getCurrentInfoList();
 	}
 
@@ -35,6 +43,7 @@ public class RepeatDecorator extends MovementDecorator {
 		if(isTheOuterActionForInitMovementAction){
 			MovementAction movementAction = new MovementActionSetWithThreadPool();
 			movementAction.addMovementAction(createStartActionBlock());
+			movementAction.start(); //add 105/09/01
 		}else{
 			runRepeat();
 		}
@@ -65,9 +74,13 @@ public class RepeatDecorator extends MovementDecorator {
 //					isActionFinish =false;
 				}
 			}
-			for(MovementAction movementAction : movementItemList){
-				movementAction.restoreMovementActionMemento(null);
-			}
+//			for(MovementAction movementAction : movementItemList){
+//				movementAction.restoreMovementActionMemento(null);
+//			}
+			MovementActionObjectStructure objectStructure = new MovementActionObjectStructure();
+			objectStructure.setRoot(this);
+			IMovementActionVisitor movementActionVisitor = new MovementActionRestoreMementoVisitor();
+			objectStructure.handleRequest(movementActionVisitor);
 			count--;
 		}
 		synchronized (RepeatDecorator.this) {
@@ -109,9 +122,14 @@ public class RepeatDecorator extends MovementDecorator {
 			doIn();
 		}
 		
-		for(MovementAction movementAction : getCurrentActionList()){
-			movementAction.createMovementActionMemento();
-		}
+//		for(MovementAction movementAction : getCurrentActionList()){
+//			movementAction.createMovementActionMemento();
+//		}
+		
+		MovementActionObjectStructure objectStructure = new MovementActionObjectStructure();
+		objectStructure.setRoot(this);
+		IMovementActionVisitor movementActionVisitor = new MovementActionCreateMementoVisitor();
+		objectStructure.handleRequest(movementActionVisitor);
 		
 		return this;
 	}

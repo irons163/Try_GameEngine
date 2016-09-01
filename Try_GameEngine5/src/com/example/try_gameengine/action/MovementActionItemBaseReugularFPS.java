@@ -87,8 +87,6 @@ public class MovementActionItemBaseReugularFPS extends MovementAction{
 		// TODO Auto-generated method stub
 
 	}
-
-	
 	
 	@Override
 	public void start() {
@@ -207,8 +205,6 @@ public class MovementActionItemBaseReugularFPS extends MovementAction{
 			}
 		}
 	}
-	
-
 	
 	@Override
 	protected MovementAction initTimer(){

@@ -40,7 +40,7 @@ public abstract class MovementAction {
 	
 	protected MovementAction cancelAction;
 	
-	// contans set, decorator, item
+	// contans set, decorator, item //need remove, not use.
 	protected List<MovementAction> allMovementActoinList = new ArrayList<MovementAction>();
 	
 	public boolean isRepeatSpriteActionIfMovementActionRepeat = true;

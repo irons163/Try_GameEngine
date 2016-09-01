@@ -13,10 +13,11 @@ import com.example.try_gameengine.framework.IGameController;
 import com.example.try_gameengine.framework.IGameModel;
 import com.example.try_gameengine.framework.Layer;
 import com.example.try_gameengine.framework.LayerManager;
+import com.example.try_gameengine.framework.Sprite;
 import com.example.try_gameengine.remotecontroller.IRemoteController;
 import com.example.try_gameengine.remotecontroller.RemoteController;
 
-public abstract class Scene extends Layer{
+public abstract class Scene extends Sprite{
 	protected IGameModel gameModel;
 	protected IGameController gameController;
 	private String id;
