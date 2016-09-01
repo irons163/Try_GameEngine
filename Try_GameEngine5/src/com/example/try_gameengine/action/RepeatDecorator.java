@@ -24,13 +24,11 @@ public class RepeatDecorator extends MovementDecorator {
 	public RepeatDecorator(MovementAction action, long count) {
 		this.action = action;
 		this.count = count;
-		allMovementActoinList.add(this);
 		this.copyMovementActionList = action.copyMovementActionList;
 		
 		List<MovementAction> actions = new ArrayList<MovementAction>(); // add 105/09/01
 		actions.add(this.action);
 		this.actions = actions; 
-//		getCurrentInfoList();
 	}
 
 	private MovementActionInfo coreCalculationMovementActionInfo(
@@ -221,7 +219,7 @@ public class RepeatDecorator extends MovementDecorator {
 	}
 	
 	public IMovementActionMemento createMovementActionMemento(){
-		movementActionMemento = new RepeatDecoratorMementoImpl(actions, thread, timerOnTickListener, description, copyMovementActionList, currentInfoList, movementItemList, totalCopyMovementActionList, isCancelFocusAppendPart, isFinish, isLoop, isSigleThread, name, cancelAction, allMovementActoinList, action, count);
+		movementActionMemento = new RepeatDecoratorMementoImpl(actions, thread, timerOnTickListener, description, copyMovementActionList, currentInfoList, movementItemList, totalCopyMovementActionList, isCancelFocusAppendPart, isFinish, isLoop, isSigleThread, name, cancelAction, action, count);
 		return movementActionMemento;
 	}
 	
@@ -246,9 +244,9 @@ public class RepeatDecorator extends MovementDecorator {
 				List<MovementAction> totalCopyMovementActionList,
 				boolean isCancelFocusAppendPart, boolean isFinish,
 				boolean isLoop, boolean isSigleThread, String name,
-				MovementAction cancelAction, List<MovementAction> allMovementActoinList,
+				MovementAction cancelAction,
 				MovementAction action, long count) {
-			super(actions, thread, timerOnTickListener, description, copyMovementActionList, currentInfoList, movementItemList, totalCopyMovementActionList, isCancelFocusAppendPart, isFinish, isLoop, isSigleThread, name, cancelAction, allMovementActoinList);
+			super(actions, thread, timerOnTickListener, description, copyMovementActionList, currentInfoList, movementItemList, totalCopyMovementActionList, isCancelFocusAppendPart, isFinish, isLoop, isSigleThread, name, cancelAction);
 			this.action = action;
 			this.count = count;
 		}

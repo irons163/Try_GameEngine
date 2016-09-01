@@ -40,9 +40,6 @@ public abstract class MovementAction {
 	
 	protected MovementAction cancelAction;
 	
-	// contans set, decorator, item //need remove, not use.
-	protected List<MovementAction> allMovementActoinList = new ArrayList<MovementAction>();
-	
 	public boolean isRepeatSpriteActionIfMovementActionRepeat = true;
 	
 	public MovementAction addMovementAction(MovementAction action) {
@@ -228,17 +225,13 @@ public abstract class MovementAction {
 		}
 	}
 	
-	public List<MovementAction> allMovementActoinList() {
-		return allMovementActoinList;
-	}
-	
 	public abstract void accept(IMovementActionVisitor movementActionVisitor);
 	
 	IMovementActionMemento movementActionMemento=null;
 	
 	//not use yet
 	public IMovementActionMemento createMovementActionMemento(){
-		movementActionMemento = new MovementActionMementoImpl(actions, thread, timerOnTickListener, description, copyMovementActionList, currentInfoList, movementItemList, totalCopyMovementActionList, isCancelFocusAppendPart, isFinish, isLoop, isSigleThread, name, cancelAction, allMovementActoinList);
+		movementActionMemento = new MovementActionMementoImpl(actions, thread, timerOnTickListener, description, copyMovementActionList, currentInfoList, movementItemList, totalCopyMovementActionList, isCancelFocusAppendPart, isFinish, isLoop, isSigleThread, name, cancelAction);
 		return movementActionMemento;
 	}
 	
@@ -266,7 +259,6 @@ public abstract class MovementAction {
 		this.isSigleThread = mementoImpl.isSigleThread;
 		this.name = mementoImpl.name;
 		this.cancelAction = mementoImpl.cancelAction;
-		this.allMovementActoinList = mementoImpl.allMovementActoinList;
 	}
 	
 	protected static class MovementActionMementoImpl implements IMovementActionMemento{
@@ -293,8 +285,6 @@ public abstract class MovementAction {
 
 		private MovementAction cancelAction;
 		
-		protected List<MovementAction> allMovementActoinList;
-		
 		public MovementActionMementoImpl(List<MovementAction> actions,
 				Thread thread, TimerOnTickListener timerOnTickListener,
 				String description,
@@ -304,7 +294,7 @@ public abstract class MovementAction {
 				List<MovementAction> totalCopyMovementActionList,
 				boolean isCancelFocusAppendPart, boolean isFinish,
 				boolean isLoop, boolean isSigleThread, String name,
-				MovementAction cancelAction, List<MovementAction> allMovementActoinList) {
+				MovementAction cancelAction) {
 			super();
 			this.actions = actions;
 			this.thread = thread;
@@ -320,7 +310,6 @@ public abstract class MovementAction {
 			this.isSigleThread = isSigleThread;
 			this.name = name;
 			this.cancelAction = cancelAction;
-			this.allMovementActoinList = allMovementActoinList;
 		}
 
 		public List<MovementAction> getActions() {
@@ -436,14 +425,6 @@ public abstract class MovementAction {
 		public void setCancelAction(MovementAction cancelAction) {
 			this.cancelAction = cancelAction;
 		}
-
-		public List<MovementAction> getAllMovementActoinList() {
-			return allMovementActoinList;
-		}
-
-		public void setAllMovementActoinList(List<MovementAction> allMovementActoinList) {
-			this.allMovementActoinList = allMovementActoinList;
-		}	
 		
 		protected void setThreadPool(int nThreads){
 			executor.shutdown();

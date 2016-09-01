@@ -16,7 +16,6 @@ public class DoubleDecorator extends MovementDecorator {
 
 	public DoubleDecorator(MovementAction action) {
 		this.action = action;
-		allMovementActoinList.add(this);
 		this.copyMovementActionList = action.copyMovementActionList;
 	}
 
@@ -127,7 +126,7 @@ public class DoubleDecorator extends MovementDecorator {
 	}
 	
 	public IMovementActionMemento createMovementActionMemento(){
-		movementActionMemento = new DoubleDecoratorMementoImpl(actions, thread, timerOnTickListener, description, copyMovementActionList, currentInfoList, movementItemList, totalCopyMovementActionList, isCancelFocusAppendPart, isFinish, isLoop, isSigleThread, name, cancelAction, allMovementActoinList, action);
+		movementActionMemento = new DoubleDecoratorMementoImpl(actions, thread, timerOnTickListener, description, copyMovementActionList, currentInfoList, movementItemList, totalCopyMovementActionList, isCancelFocusAppendPart, isFinish, isLoop, isSigleThread, name, cancelAction, action);
 		return movementActionMemento;
 	}
 	
@@ -151,8 +150,8 @@ public class DoubleDecorator extends MovementDecorator {
 				List<MovementAction> totalCopyMovementActionList,
 				boolean isCancelFocusAppendPart, boolean isFinish,
 				boolean isLoop, boolean isSigleThread, String name,
-				MovementAction cancelAction, List<MovementAction> allMovementActoinList, MovementAction action) {
-			super(actions, thread, timerOnTickListener, description, copyMovementActionList, currentInfoList, movementItemList, totalCopyMovementActionList, isCancelFocusAppendPart, isFinish, isLoop, isSigleThread, name, cancelAction, allMovementActoinList);
+				MovementAction cancelAction, MovementAction action) {
+			super(actions, thread, timerOnTickListener, description, copyMovementActionList, currentInfoList, movementItemList, totalCopyMovementActionList, isCancelFocusAppendPart, isFinish, isLoop, isSigleThread, name, cancelAction);
 			this.action = action;
 		}
 

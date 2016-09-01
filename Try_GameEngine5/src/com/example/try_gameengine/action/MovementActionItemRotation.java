@@ -332,7 +332,7 @@ public class MovementActionItemRotation extends MovementAction{
 	}
 	
 	public IMovementActionMemento createMovementActionMemento(){
-		movementActionMemento = new MovementActionItemBaseReugularFPSMementoImpl(actions, thread, timerOnTickListener, name, copyMovementActionList, currentInfoList, movementItemList, totalCopyMovementActionList, isCycleFinish, isCycleFinish, isCycleFinish, isCycleFinish, name, cancelAction, allMovementActoinList, millisTotal, millisDelay, info, resumeTotal, resetTotal, name, updateTime, frameIdx, isStop, isCycleFinish, triggerEnable, frameTimes, resumeFrameIndex, resumeFrameCount, pauseFrameNum, pauseFrameCounter, nextframeTrigger, lastTriggerFrameNum);
+		movementActionMemento = new MovementActionItemBaseReugularFPSMementoImpl(actions, thread, timerOnTickListener, name, copyMovementActionList, currentInfoList, movementItemList, totalCopyMovementActionList, isCycleFinish, isCycleFinish, isCycleFinish, isCycleFinish, name, cancelAction, millisTotal, millisDelay, info, resumeTotal, resetTotal, name, updateTime, frameIdx, isStop, isCycleFinish, triggerEnable, frameTimes, resumeFrameIndex, resumeFrameCount, pauseFrameNum, pauseFrameCounter, nextframeTrigger, lastTriggerFrameNum);
 		if(this.info!=null){
 			this.info.createIMovementActionInfoMemento();
 		}
@@ -401,8 +401,7 @@ public class MovementActionItemRotation extends MovementAction{
 				List<MovementAction> totalCopyMovementActionList,
 				boolean isCancelFocusAppendPart, boolean isFinish,
 				boolean isLoop, boolean isSigleThread, String name,
-				MovementAction cancelAction,
-				List<MovementAction> allMovementActoinList, long millisTotal,
+				MovementAction cancelAction, long millisTotal,
 				long millisDelay, MovementActionInfo info,
 				long resumeTotal, long resetTotal, String name2,
 				long updateTime, int frameIdx, boolean isStop,
@@ -413,8 +412,7 @@ public class MovementActionItemRotation extends MovementAction{
 			super(actions, thread, timerOnTickListener, description,
 					copyMovementActionList, currentInfoList, movementItemList,
 					totalCopyMovementActionList, isCancelFocusAppendPart,
-					isFinish, isLoop, isSigleThread, name, cancelAction,
-					allMovementActoinList);
+					isFinish, isLoop, isSigleThread, name, cancelAction);
 			this.millisTotal = millisTotal;
 			this.millisDelay = millisDelay;
 			this.info = info;
