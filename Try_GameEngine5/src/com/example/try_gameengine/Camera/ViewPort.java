@@ -1,11 +1,13 @@
 package com.example.try_gameengine.Camera;
 
+import android.graphics.Matrix;
 import android.graphics.RectF;
 
 public class ViewPort {
 	private RectF viewportRectF = new RectF();
 	private float scale = 1.0f;
 	private float rotation;
+	private Matrix matrix = new Matrix();
 
 	public float getX() {
 		return viewportRectF.left;
@@ -56,6 +58,7 @@ public class ViewPort {
 		setHeight(h);
 	}
 	
+	/*
 	// not implement yet
 	public float getScale() {
 		return scale;
@@ -64,6 +67,7 @@ public class ViewPort {
 	public void setScale(float scale) {
 		this.scale = scale;
 	}
+	*/
 	
 	public float getRotation() {
 		return rotation;
@@ -71,6 +75,7 @@ public class ViewPort {
 
 	public void setRotation(float rotation) {
 		this.rotation = rotation;
+		matrix.setRotate(rotation);
 	}
 
 	public void setViewPortRectF(RectF rectF){
@@ -79,5 +84,9 @@ public class ViewPort {
 	
 	public RectF getViewPortRectF(){
 		return viewportRectF;
+	}
+	
+	public Matrix getMatrix(){
+		return matrix;
 	}
 }

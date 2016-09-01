@@ -175,7 +175,7 @@ public class GameModel implements IGameModel{
 			if(camera==null)
 				camera = new Camera(canvas.getWidth(), canvas.getHeight());
 			
-//			camera.apply(canvas);
+			camera.applyViewPort(canvas);
 			canvas.concat(camera.getMatrix());
 			
 //			if(camera.getViewPortRectF()!=null)

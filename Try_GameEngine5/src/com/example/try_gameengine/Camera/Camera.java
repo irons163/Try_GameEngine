@@ -11,7 +11,7 @@ public class Camera extends ACamera{
 //	private float locationX, locationY;
 	private float rotation;
 //	private float scale = 1.0f;
-	private float dx, dy;
+	private float offsetX, offsetY;
 	private ViewPort viewPort;
 	
 	private RectF cameraRange = new RectF();
@@ -25,7 +25,7 @@ public class Camera extends ACamera{
 		// TODO Auto-generated constructor stub
 		cameraRange.right = cameraRange.left + width;
 		cameraRange.bottom = cameraRange.top + height;
-		cameraRangeOri = cameraRange;
+		cameraRangeOri.set(cameraRange);
 	}
 	
 	public Camera(float left, float top, float width, float height){
@@ -35,7 +35,7 @@ public class Camera extends ACamera{
 		cameraRange.top = top;
 		cameraRange.right = cameraRange.left + width;
 		cameraRange.bottom = cameraRange.top + height;
-		cameraRangeOri = cameraRange;
+		cameraRangeOri.set(cameraRange);
 	}
 	
 //	public void setLocation(float locationX, float locationY){
@@ -43,9 +43,15 @@ public class Camera extends ACamera{
 //		this.locationY = locationY;
 //	}
 	
+	public void setFrame(RectF frame){
+		cameraRange.set(frame);
+	}
+	
 	public void setWH(float w, float h){
+//		cameraRange.set(cameraRangeOri);
 		cameraRange.right = cameraRange.left + w;
 		cameraRange.bottom = cameraRange.top + h;
+//		cameraRangeOri.set(cameraRange);
 	}
 	
 	public void setCameraScaleBeforeApply(float scale){
@@ -54,15 +60,43 @@ public class Camera extends ACamera{
         this.setYscale(scale);
 	}
 	
+	public void setCameraScaleBeforeApply(float scale, float locationX, float locationY){
+		scale = Math.max(minScaleFactor, Math.min(scale, maxScaleFactor));
+        this.setXscale(scale, locationX);
+        this.setYscale(scale, locationY);
+	}
+	
+	public void setCameraXScaleBeforeApply(float xscale){
+		xscale = Math.max(minScaleFactor, Math.min(xscale, maxScaleFactor));
+        this.setXscale(xscale);
+	}
+	
+	public void setCameraXScaleBeforeApply(float xscale, float locationX){
+		xscale = Math.max(minScaleFactor, Math.min(xscale, maxScaleFactor));
+        this.setXscale(xscale, locationX);
+	}
+	
+	public void setCameraYScaleBeforeApply(float yscale){
+		yscale = Math.max(minScaleFactor, Math.min(yscale, maxScaleFactor));
+        this.setYscale(yscale);
+	}
+	
+	public void setCameraYScaleBeforeApply(float yscale, float locationY){
+		yscale = Math.max(minScaleFactor, Math.min(yscale, maxScaleFactor));
+        this.setYscale(yscale, locationY);
+	}
+	
 	public void setCameraRotateBeforeApply(float rotation){
 		this.rotation = rotation;
 	}
 	
-	public void setCameraTranslateBeforeApply(float dx, float dy){
-		this.dx = dx;
-		this.dy = dy;
-		cameraRange.set(cameraRangeOri);
-		cameraRange.offset(dx, dy);
+	public void setCameraTranslateBeforeApply(float offsetX, float offsetY){
+
+//		cameraRange.set(cameraRangeOri);
+		cameraRange.offset(offsetX-this.offsetX, offsetY-this.offsetY);
+//		cameraRangeOri.set(cameraRange);
+		this.offsetX = offsetX;
+		this.offsetY = offsetY;
 	}
 	
 	private void setXscale(float xscale){
@@ -74,15 +108,19 @@ public class Camera extends ACamera{
 	}
 	
 	private void setXscale(float xscale, float locationX){
+		if(xscale==0)
+			return;
+		cameraRange.left = locationX - ((locationX - cameraRange.left) * Math.abs(xscale/this.xscale));
+		cameraRange.right = locationX + ((cameraRange.right - locationX) * Math.abs(xscale/this.xscale));
 		this.xscale = xscale;
-		cameraRange.left = locationX - ((locationX - cameraRange.left) * Math.abs(xscale));
-		cameraRange.right = locationX + ((cameraRange.right - locationX) * Math.abs(xscale));
 	}
 	
 	private void setYscale(float yscale, float locationY){
+		if(yscale==0)
+			return;
+		cameraRange.top = locationY - ((locationY - cameraRange.top) * Math.abs(yscale/this.yscale));
+		cameraRange.bottom = locationY + ((cameraRange.bottom - locationY) * Math.abs(yscale/this.yscale));
 		this.yscale = yscale;
-		cameraRange.top = locationY - ((locationY - cameraRange.top) * Math.abs(yscale));
-		cameraRange.bottom = locationY + ((cameraRange.bottom - locationY) * Math.abs(yscale));
 	}
 	
 	private float getXscale(){
@@ -93,30 +131,54 @@ public class Camera extends ACamera{
 		return yscale;
 	}
 	
+	/*
+	public void applyCamera(){
+		cameraRange.right = cameraRange.left + w;
+		cameraRange.bottom = cameraRange.top + h;
+		
+		cameraRange.offset(dx, dy);
+		
+		cameraRange.left = locationX - ((locationX - cameraRange.left) * Math.abs(xscale));
+		cameraRange.right = locationX + ((cameraRange.right - locationX) * Math.abs(xscale));
+		cameraRange.top = locationY - ((locationY - cameraRange.top) * Math.abs(yscale));
+		cameraRange.bottom = locationY + ((cameraRange.bottom - locationY) * Math.abs(yscale));
+	}*/
+	
+	public float getOffsetX() {
+		return offsetX;
+	}
+
+	public float getOffsetY() {
+		return offsetY;
+	}
+
 	@Override
 	public void rotation(float rotation) {
 		// TODO Auto-generated method stub
-		this.rotation = rotation;
+		setCameraRotateBeforeApply(getRotation()+rotation);
+//		this.rotation += rotation;
 //		resetMatrix();
-		applyCameraRotate();
+//		applyCameraRotate();
 	}
 	@Override
-	public void translate(float dx, float dy) {
+	public void translate(float offsetX, float offsetY) {
 		// TODO Auto-generated method stub
-		this.dx = dx;
-		this.dy = dy;
-		cameraRange.offset(dx, dy);
+//		this.dx = dx;
+//		this.dy = dy;
+//		cameraRange.offset(dx, dy);
 //		resetMatrix();
-		applyCameraTranslate();
+//		applyCameraTranslate();
+		setCameraTranslateBeforeApply(getOffsetX() + offsetX, getOffsetY() + offsetY);
 	}
 	@Override
 	public void zoom(float scale) {
 		// TODO Auto-generated method stub
-		setXscale(scale);
-		setYscale(scale);
-		applyCameraScale();
+		setXscale(getXscale() * scale);
+		setYscale(getYscale() * scale);
+//		applyCameraScale();
 //		resetMatrix();
 	}
+	
 	@Override
 	public void bindLayerXY() {
 		// TODO Auto-generated method stub
@@ -173,79 +235,97 @@ public class Camera extends ACamera{
 		return null;
 	}
 	
-	public void applyViewPort(Canvas canvas){
-		if(viewPort == null){
-			return;
-		}
-		
-		//viewport
-		viewPort.getHeight();
-//		canvas.save();
-		canvas.rotate(dx);
-		canvas.clipRect(getViewPortRectF());
-		
-		// camera
-		canvas.rotate(rotation, cameraRange.centerX(), cameraRange.centerY());
-		
-		dx = viewPort.getX() - cameraRange.left;
-		dy = viewPort.getY() - cameraRange.top;
-		canvas.translate(dx, dy);
-		float xscaleFactor = viewPort.getWidth()/cameraRange.width();
-//		canvas.scale(xscaleFactor, xscaleFactor);
-		float yscaleFactor = viewPort.getHeight()/cameraRange.height();
-		canvas.scale(xscaleFactor, yscaleFactor);
-		
-//		canvas.save();
-	}
+//	public void applyViewPort(Canvas canvas){
+//		if(viewPort == null){
+//			return;
+//		}
+//		
+//		//viewport
+//		viewPort.getHeight();
+////		canvas.save();
+//		canvas.rotate(dx);
+//		canvas.clipRect(getViewPortRectF());
+//		
+//		// camera
+//		canvas.rotate(rotation, cameraRange.centerX(), cameraRange.centerY());
+//		
+//		dx = viewPort.getX() - cameraRange.left;
+//		dy = viewPort.getY() - cameraRange.top;
+//		canvas.translate(dx, dy);
+//		float xscaleFactor = viewPort.getWidth()/cameraRange.width();
+////		canvas.scale(xscaleFactor, xscaleFactor);
+//		float yscaleFactor = viewPort.getHeight()/cameraRange.height();
+//		canvas.scale(xscaleFactor, yscaleFactor);
+//		
+////		canvas.save();
+//	}
 	
-	public void apply(Canvas canvas){
-		resetMatrix();
+	public void applyViewPort(Canvas canvas){
+//		resetMatrix();
 		//viewport
 		if(viewPort!=null){
 			canvas.save(Canvas.MATRIX_SAVE_FLAG | Canvas.HAS_ALPHA_LAYER_SAVE_FLAG | Canvas.HAS_ALPHA_LAYER_SAVE_FLAG | Canvas.FULL_COLOR_LAYER_SAVE_FLAG | Canvas.CLIP_TO_LAYER_SAVE_FLAG);
-			canvas.rotate(viewPort.getScale());
+//			canvas.rotate(viewPort.getRotation());
+			canvas.setMatrix(viewPort.getMatrix());
 			canvas.clipRect(getViewPortRectF());
 			canvas.restore();
 		}
-		calculateMatrix();
+//		calculateMatrix();
 	}
 	
-	public void applyCameraRotate(){
-		matrix.postRotate(rotation, cameraRange.centerX(), cameraRange.centerY());
-	}
-	
-	public void applyCameraTranslate(){
-		if(viewPort!=null){
-			dx = viewPort.getX() - cameraRange.left;
-			dy = viewPort.getY() - cameraRange.top;
-		}else{
-			dx = 0 - cameraRange.left;
-			dy = 0 - cameraRange.top;
-		}
-		matrix.postTranslate(dx, dy);
-	}
-	
-	public void applyCameraScale(){
+	private void applyCameraSpaceScaleToViewPort(){
 		if(viewPort!=null){
 			float xscaleFactor = viewPort.getWidth()/cameraRange.width();
 //			matrix.postScale(xscaleFactor, xscaleFactor);
 			float yscaleFactor = viewPort.getHeight()/cameraRange.height();
-			matrix.postScale(xscaleFactor, yscaleFactor);
+			matrix.postScale(xscaleFactor, yscaleFactor, cameraRange.left, cameraRange.top);
 		}
 	}
 	
-
+	private void applyCameraSpaceRotate(){
+		matrix.postRotate(-rotation, cameraRange.centerX(), cameraRange.centerY());
+	}
 	
+	private void applyCameraSpaceTranslateToViewPort(){
+		if(viewPort!=null){
+			offsetX = viewPort.getX() - cameraRange.left;
+			offsetY = viewPort.getY() - cameraRange.top;
+		}else{
+			offsetX = 0 - cameraRange.left;
+			offsetY = 0 - cameraRange.top;
+		}
+		matrix.postTranslate(offsetX, offsetY);
+	}
+	
+	private void applyCameraSpaceLRDirectionAndTBDirection(){
+		int lrDir = xscale<0 ? -1:1;
+		int tbDir = yscale<0 ? -1:1;
+		matrix.postScale(lrDir, tbDir, cameraRange.centerX(), cameraRange.centerY());
+	}
+	
+	public void applyCameraSpaceToViewPort(){
+		resetMatrix();
+		
+		applyCameraSpaceRotate();
+		
+		applyCameraSpaceLRDirectionAndTBDirection();
+		
+		applyCameraSpaceScaleToViewPort();
+		
+		applyCameraSpaceTranslateToViewPort();
+	}
+	
+	/*
 	private void calculateMatrix(){
 		matrix.postRotate(rotation, cameraRange.centerX(), cameraRange.centerY());
 		if(viewPort!=null){
-			dx = viewPort.getX() - cameraRange.left;
-			dy = viewPort.getY() - cameraRange.top;
+			offsetX = viewPort.getX() - cameraRange.left;
+			offsetY = viewPort.getY() - cameraRange.top;
 		}else{
-			dx = 0 - cameraRange.left;
-			dy = 0 - cameraRange.top;
+			offsetX = 0 - cameraRange.left;
+			offsetY = 0 - cameraRange.top;
 		}
-		matrix.postTranslate(dx, dy);
+		matrix.postTranslate(offsetX, offsetY);
 		
 		if(viewPort!=null){
 			float xscaleFactor = viewPort.getWidth()/cameraRange.width();
@@ -253,7 +333,7 @@ public class Camera extends ACamera{
 			float yscaleFactor = viewPort.getHeight()/cameraRange.height();
 			matrix.postScale(xscaleFactor, yscaleFactor);
 		}
-	}
+	}*/
 	
 	private void resetMatrix(){
 		matrix.reset();
@@ -266,6 +346,7 @@ public class Camera extends ACamera{
 		return matrix; 
 	}
 	
+	/*
 	public void postCameraTranslate(float dx, float dy){
 		float xscaleFactor = viewPort.getWidth()/cameraRange.width();
 		dx = dx * xscaleFactor;
@@ -299,6 +380,12 @@ public class Camera extends ACamera{
         yscale = xscale*xyFactor;
         this.setXscale(xscale);
         this.setYscale(yscale);
-        applyCameraScale();
-	}
+//        applyCameraScale();
+		if(viewPort!=null){
+			float xscaleFactor = viewPort.getWidth()/cameraRange.width();
+//			matrix.postScale(xscaleFactor, xscaleFactor);
+			float yscaleFactor = viewPort.getHeight()/cameraRange.height();
+			matrix.postScale(xscaleFactor, yscaleFactor, cameraRange.left, cameraRange.top);
+		}
+	}*/
 }
