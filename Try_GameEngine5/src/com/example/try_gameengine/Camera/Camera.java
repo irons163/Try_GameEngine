@@ -228,6 +228,10 @@ public class Camera extends ACamera{
 		viewPort.setXYWH(x, y, w, h);
 	}
 	
+	public ViewPort getViewPort(){
+		return viewPort;
+	}
+	
 	public RectF getViewPortRectF(){
 		if(viewPort != null){
 			return viewPort.getViewPortRectF();

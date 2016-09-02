@@ -19,61 +19,20 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.view.MotionEvent;
 
-/**
- * * 缁勪欢?锟界?锟界被,?锟斤拷?瀛樻斁缁勪欢锛岋拷??锟斤拷??锟斤拷?浠讹拷?娣伙拷?锟�锟斤拷缁勪欢锛岋拷??锟斤拷?涓拷?浠讹拷? ?锟藉叆锟�?锟�* * * @author Administrator *
- */
 public class LayerManager {
-	private static Vector<ILayer> vec = new Vector<ILayer>(); // Vector瀵硅薄?锟斤拷?瀛樻斁???缁勪欢
-
 	private static List<List<ILayer>> layerLevelList = new ArrayList<List<ILayer>>();
 	
 	private static Map<String, List<List<ILayer>>> sceneLayerLevelList = new HashMap<String, List<List<ILayer>>>();
 
 	private static int sceneLayerLevelByRecentlySet;
 	
-	/** * 缁樺埗???缁勪欢?锟芥柟锟�* * @param canvas * @param paint */
-//	public static void drawLayerManager(Canvas canvas, Paint paint) {
-//		for (int i = 0; i < vec.size(); i++) {
-//			vec.elementAt(i).drawSelf(canvas, paint);// ?锟斤拷??锟斤拷?Vector瀵硅薄涓拷?缁勪欢缁樺埗?锟芥潵
-//		}
-//	}
-
-	/** * 娣伙拷?锟�锟斤拷缁勪欢?锟芥柟锟�* * @param layer */
-	// public static synchronized void addLayer(ILayer layer) {
-	// vec.add(layer);// ?锟絍ector瀵硅薄涓坊?锟芥缁勪欢
-	// }
-
-	/** * ?锟介櫎锟�锟斤拷缁勪欢?锟芥柟锟�* * @param layer */
-	// public static synchronized void deleteLayer(ILayer layer) {
-	// vec.remove(layer);// ?锟絍ector瀵硅薄涓拷??锟芥缁勪欢
-	// }
-
-	/**
-	 * * ?锟絙efore?锟斤拷??锟斤拷?缃拷??锟絣ayer锛岋拷??锟藉璞′互?锟芥?锟斤拷?瀵硅薄渚濇锟�?椤哄欢??* * @param layer * @param before
-	 */
-
-//	public static void insert(ILayer layer, ILayer before) {
-//		for (int i = 0; i < vec.size(); i++) {
-//			// ?锟斤拷?Vector瀵硅薄
-//			if (before == vec.elementAt(i)) {
-//				vec.insertElementAt(layer, i);// ?锟絙efore瀵硅薄?锟介潰?锟藉叆layer,璇ュ璞★拷?浜巄efore涔嬶拷?
-//				return;
-//			}
-//		}
-//	}
-
+	private static List<ILayer> hudLayerslList = new ArrayList<ILayer>();
+	
 	private static void initLayerManager() {
-		// TODO Auto-generated constructor stub
 		layerLevelList.add(new ArrayList<ILayer>());
 	}
 	
 	public static void setLayerBySenceIndex(int index){
-//		if(index < layerLevelList.size()){
-//			layerLevelList = sceneLayerLevelList.get(index);
-//		}else{
-//			layerLevelList = new ArrayList<List<ILayer>>();
-//			sceneLayerLevelList.add(layerLevelList);
-//		}
 		sceneLayerLevelByRecentlySet = index;
 		
 		if(sceneLayerLevelList.containsKey(index+""))
@@ -83,7 +42,6 @@ public class LayerManager {
 			initLayerManager();
 			sceneLayerLevelList.put(index+"", layerLevelList);
 		}
-			
 	}
 	
 	public static void setNoSceneLayer(){
@@ -108,6 +66,53 @@ public class LayerManager {
 		layersByTheSameLevel.add(layer);
 		
 		updateLayersDrawOrderByZposition(layerLevelList, sceneLayerLevelByRecentlySet);
+	}
+	
+	///////////////////////////////////
+	//// HUD
+	///////////////////////////////////
+	public static void addHUDLayer(ILayer layer){
+		hudLayerslList.add(layer);
+	}
+	
+	public static void deleteHUDLayer(ILayer layer){
+		hudLayerslList.remove(layer);
+	}
+	
+	// +1 = moveToFont 1 order.
+	public static boolean moveHUDLayerOrder(ILayer hudLayer, int moveFrontCount){
+		for(int i = 0; i < hudLayerslList.size(); i++){
+			ILayer layer = hudLayerslList.get(i);
+			if(layer == hudLayer){
+				int newIndex = i + moveFrontCount;
+				if(newIndex < 0 || newIndex >= hudLayerslList.size())
+					return false;
+				hudLayerslList.set(newIndex, layer);
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public static void processHUDLayers(){
+		for(ILayer layer : hudLayerslList){
+			if(!layer.isComposite() && layer instanceof ALayer)
+				((ALayer)layer).frameTrig();
+		}
+	}
+	
+	public static boolean onTouchHUDLayers(MotionEvent event){
+		for(ILayer layer : hudLayerslList){
+			if(layer.onTouchEvent(event))
+				return true;
+		}
+		return false;
+	}
+	
+	public static void drawHUDLayers(Canvas canvas, Paint paint){
+		for(ILayer layer : hudLayerslList){
+			layer.drawSelf(canvas, paint);
+		}
 	}
 
 	public static void insertLayer(ILayer layer, ILayer before) {
@@ -243,7 +248,6 @@ public class LayerManager {
 					List<ILayer> layersByTheSameLevel = layerLevelList.get(0);
 					layersByTheSameLevel.add(layer);
 				}
-				
 				updateLayersDrawOrderByZposition(layerLevelList, sceneLayerLevel);
 			}
 		}
@@ -338,7 +342,6 @@ public class LayerManager {
 						layersByTheSameLevel.clear();
 					}
 				}
-				
 				updateLayersDrawOrderByZposition(layerLevelList, sceneLayerLevel);
 			}
 		}
@@ -403,7 +406,6 @@ public class LayerManager {
 			  if((doNegativeZOrder && layerZposition >= 0) || (!doNegativeZOrder && layerZposition < 0))
 				  continue;
 			  List<ILayer> layersByTheSameZposition = entry.getValue();
-//			  System.out.println(layerZposition + " => " + layersByTheSameZposition.toString());
 			  for(ILayer layerByZposition : layersByTheSameZposition){
 				  layerByZposition.drawSelf(canvas, paint);
 			  }
@@ -481,10 +483,8 @@ public class LayerManager {
 			  if((doNegativeZOrder && layerZposition >= 0) || (!doNegativeZOrder && layerZposition < 0))
 				  continue;
 			  List<ILayer> layersByTheSameZposition = entry.getValue();
-//			  System.out.println(layerZposition + " => " + layersByTheSameZposition.toString());
 			  for(int i = layersByTheSameZposition.size()-1; i >= 0; i--){
 				  ILayer layerByZposition = layersByTheSameZposition.get(i);
-//				  if(!layerByZposition.isComposite() && layerByZposition.onTouchEvent(event)){
 				  if(layerByZposition.onTouchEvent(event)){
 					  return true; 
 				  }
@@ -561,7 +561,6 @@ public class LayerManager {
 			  if((doNegativeZOrder && layerZposition >= 0) || (!doNegativeZOrder && layerZposition < 0))
 				  continue;
 			  List<ILayer> layersByTheSameZposition = entry.getValue();
-//			  System.out.println(layerZposition + " => " + layersByTheSameZposition.toString());
 			  for(ILayer layerByZposition : layersByTheSameZposition){
 				  if(!layerByZposition.isComposite() && layerByZposition instanceof ALayer)
 					  ((ALayer)layerByZposition).frameTrig();
@@ -581,7 +580,6 @@ public class LayerManager {
 		for(Map.Entry<Integer, List<ILayer>> entry : layerLevelListByZposition.entrySet()) {
 			  int layerZposition = entry.getKey();
 			  List<ILayer> layersByTheSameZposition = entry.getValue();
-//			  System.out.println(layerZposition + " => " + layersByTheSameZposition.toString());
 			  for(ILayer layerByZposition : layersByTheSameZposition){
 				  if(!layerByZposition.isComposite() && iterateLayersListener.dealWithLayer(layerByZposition))
 					  return true;
@@ -595,7 +593,6 @@ public class LayerManager {
 		for(Map.Entry<Integer, List<ILayer>> entry : layerLevelListByZposition.entrySet()) {
 			  int layerZposition = entry.getKey();
 			  List<ILayer> layersByTheSameZposition = entry.getValue();
-//			  System.out.println(layerZposition + " => " + layersByTheSameZposition.toString());
 			  for(ILayer layerByZposition : layersByTheSameZposition){
 				  if(!layerByZposition.isComposite() && iterateChildren(layerByZposition, iterateLayersListener))
 					  return true;
@@ -618,9 +615,6 @@ public class LayerManager {
 
 	public static List<ILayer> getLayersBySpecificLevel(int level) {
 		return layerLevelList.get(level);
-		// for(ILayer layer : layersByTheSameLevel){
-		// layer.drawSelf(canvas, paint);
-		// }
 	}
 
 	//This is very old, need modify.
@@ -658,7 +652,7 @@ public class LayerManager {
 				}
 			}
 		}
-	return maxRangeRectF;
+		return maxRangeRectF;
 	}
 	
 	private static void setMaxRangeRectF(RectF maxRangeRectF, RectF childRfct){
@@ -676,14 +670,6 @@ public class LayerManager {
 	public static synchronized void drawGroupRange(Canvas canvas, Paint paint, RectF groupRangeRectF) {
 		canvas.drawRect(groupRangeRectF, paint);
 	}
-	
-//	public static synchronized RectF getRootParent(ILayer layer){
-//		RectF rootRectF = null;
-//		if(layer.parent!=null){
-//			rootRectF = getRootParent(layer.parent);
-//		}
-//		return rootRectF;
-//	}
 	
 	public static List<List<ILayer>> getLayerLevelList(){
 		return layerLevelList;

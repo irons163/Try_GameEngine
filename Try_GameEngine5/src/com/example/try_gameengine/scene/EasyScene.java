@@ -409,22 +409,13 @@ public abstract class EasyScene extends Scene implements ContactListener{
 		@Override
 		public void onTouchEvent(MotionEvent event) {
 			// TODO Auto-generated method stub
-			boolean isRemoteControllerCatchTouchEvent = false;
-			if(isEnableRemoteController && remoteController!=null)
-				isRemoteControllerCatchTouchEvent = remoteController.onTouchEvent(event);
-			
-			if(!isRemoteControllerCatchTouchEvent)
-				super.onTouchEvent(event);
-			
-			
-			
-//			float x = event.getX();
-//			float y = event.getY();
+//			boolean isRemoteControllerCatchTouchEvent = false;
+//			if(isEnableRemoteController && remoteController!=null)
+//				isRemoteControllerCatchTouchEvent = remoteController.onTouchEvent(event);
 //			
-//			if(event.getAction()==MotionEvent.ACTION_DOWN)
-//			remoteController.pressDown(x, y);
-			
-			
+//			if(!isRemoteControllerCatchTouchEvent)
+//				super.onTouchEvent(event);
+				super.onTouchEvent(event);
 		}
 	}
 
@@ -446,6 +437,7 @@ public abstract class EasyScene extends Scene implements ContactListener{
 			// TODO Auto-generated method stub
 //			super.process();
 			EasyScene.this.process();
+			LayerManager.processHUDLayers();
 		}
 		
 		@Override
@@ -486,6 +478,15 @@ public abstract class EasyScene extends Scene implements ContactListener{
 	//				body = body.m_next;
 				}
 			}
+			
+			if(getCamera().getViewPort()!=null){
+				canvas.save(Canvas.MATRIX_SAVE_FLAG | Canvas.HAS_ALPHA_LAYER_SAVE_FLAG | Canvas.HAS_ALPHA_LAYER_SAVE_FLAG | Canvas.FULL_COLOR_LAYER_SAVE_FLAG | Canvas.CLIP_TO_LAYER_SAVE_FLAG);
+				canvas.setMatrix(getCamera().getViewPort().getMatrix());
+				LayerManager.drawHUDLayers(canvas, paint);
+				canvas.restore();
+			}else{
+				LayerManager.drawHUDLayers(canvas, paint);
+			}
 		}
 		
 		@Override
@@ -501,7 +502,14 @@ public abstract class EasyScene extends Scene implements ContactListener{
 //					LayerManager.onTouchLayersForOppositeZOrder(event) ||
 //					LayerManager.onTouchLayersForNegativeZOrder(event);
 //			super.onTouchEvent(event);
-			EasyScene.this.onSceneTouchEvent(event);
+			if(!LayerManager.onTouchHUDLayers(event)){
+				boolean isRemoteControllerCatchTouchEvent = false;
+				if(isEnableRemoteController && remoteController!=null)
+					isRemoteControllerCatchTouchEvent = remoteController.onTouchEvent(event);
+				
+				if(!isRemoteControllerCatchTouchEvent)
+					EasyScene.this.onSceneTouchEvent(event);
+			}
 		}
 	}
 	

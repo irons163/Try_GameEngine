@@ -210,23 +210,7 @@ public class EnemyManager {
 //		newaction4.setMovementActionController(new MovementAtionController());
 //		enemies.add(enemyFactory.createSpecialEnemy5(RedEnemy.class, new int[]{500, 800}, newaction4));
 		
-		MovementAction newaction4 = new SimultaneouslyMultiCircleMovementActionSet();
-		newaction4.addMovementAction(new MovementActionItem(MovementInfoFactory.create3CircleMovementInfo()));
-		newaction4.addMovementAction(new MovementActionItem(MovementInfoFactory.create3SubCircleMovementInfo()));
-		((SimultaneouslyMultiCircleMovementActionSet)newaction4).setMediator();
-		newaction4.setMovementActionController(new MovementAtionController());
-		Enemy enemy = enemyFactory.createSpecialEnemy5(RedEnemy.class, new int[]{500, 800}, newaction4);
-		enemies.add(enemy);
-		
-		MovementAction newaction5 = new SimultaneouslyMultiCircleMovementActionSet();
-		newaction5.addMovementAction(new MovementActionItem(MovementInfoFactory.create32CircleMovementInfo()));
-		newaction5.addMovementAction(new MovementActionItem(MovementInfoFactory.create3Sub2CircleMovementInfo()));
-		((SimultaneouslyMultiCircleMovementActionSet)newaction5).setMediator();
-		newaction5.setMovementActionController(new MovementAtionController());
-		Enemy layer = enemyFactory.createSpecialEnemy5(RedEnemy.class, new int[]{600, 900}, newaction5);
-		enemies.add((Enemy)layer);
-		
-		enemy.registerObserver(layer);
+
 		
 		
 		

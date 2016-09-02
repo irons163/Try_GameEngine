@@ -16,13 +16,7 @@ public class DialogLayer extends HUDLayer{
 		}
 	};
 	
-	
 	public ButtonLayer leftButton, midButton, rightButton;
-	
-	protected DialogLayer(float x, float y, boolean autoAdd) {
-		super(x, y, autoAdd);
-		// TODO Auto-generated constructor stub
-	}
 	
 	public void setCostumeButton(ButtonLayer buttonLayer){
 		
@@ -41,8 +35,6 @@ public class DialogLayer extends HUDLayer{
 		addChild(midButton);
 	}
 	
-	
-	
 	public void setButtonOnClickListener(ButtonLayer.OnClickListener onClickListener){
 		this.onClickListener = onClickListener;
 	}
@@ -55,17 +47,4 @@ public class DialogLayer extends HUDLayer{
 		if(midButton!=null)
 			midButton.drawSelf(canvas, paint);
 	}
-
-//	@Override
-//	public void drawSelf(Canvas canvas, Paint paint) {
-//		// TODO Auto-generated method stub
-//		
-//	}
-
-//	@Override
-//	public boolean onTouchEvent(MotionEvent event) {
-//		// TODO Auto-generated method stub
-//		super.onTouchEvent(event);
-//		return true;
-//	}
 }

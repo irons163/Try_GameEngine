@@ -115,7 +115,6 @@ public class GameModel implements IGameModel{
 	@Override
 	public void registerObserver(IMoveObserver moveObserver) {
 		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
@@ -184,6 +183,13 @@ public class GameModel implements IGameModel{
 			canvas.drawColor(backgroundColor);
 
 			doDraw(canvas);
+			
+//			if(camera.getViewPort()!=null){
+//				canvas.save(Canvas.MATRIX_SAVE_FLAG | Canvas.HAS_ALPHA_LAYER_SAVE_FLAG | Canvas.HAS_ALPHA_LAYER_SAVE_FLAG | Canvas.FULL_COLOR_LAYER_SAVE_FLAG | Canvas.CLIP_TO_LAYER_SAVE_FLAG);
+//				canvas.setMatrix(camera.getViewPort().getMatrix());
+//				LayerManager.drawHUDLayers(canvas, paint);
+//				canvas.restore();
+//			}
 			
 			if(Config.showFPS){
 				

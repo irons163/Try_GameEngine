@@ -1,31 +1,45 @@
 package com.example.try_gameengine.framework;
 
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Paint;
 
 public class HUDLayer extends Layer{
 
-	public HUDLayer(Bitmap bitmap, float x, float y, boolean autoAdd) {
-		super(bitmap, x, y, autoAdd);
-		// TODO Auto-generated constructor stub
-		setzPosition(Integer.MAX_VALUE);
+	public HUDLayer(){
+		super();
+	}
+	
+	@Override
+	public void setzPosition(int zPosition) {
+		throw new RuntimeException("HUD Layer not support the setzPosition method");
+	}
+	
+	@Override
+	public void setAutoAdd(boolean autoAdd) {
+		throw new RuntimeException("HUD Layer not support the setAutoAdd method");
+	}
+	
+	@Override
+	public void setAutoAdd(boolean autoAdd, int sceneLayerLevel) {
+		throw new RuntimeException("HUD Layer not support the setAutoAdd method");
+	}
+	
+	@Override
+	public void addWithLayerLevelIncrease(ILayer layer) {
+		throw new RuntimeException("HUD Layer not support the setAutoAdd method");
+	}
+	
+	@Override
+	public void addWithLayerLevelIncrease(ILayer layer, int increaseNum) {
+		throw new RuntimeException("HUD Layer not support the setAutoAdd method");
 	}
 
-	public HUDLayer(float x, float y, boolean autoAdd) {
-		super(x, y, autoAdd);
-		// TODO Auto-generated constructor stub
-		setzPosition(Integer.MAX_VALUE);
+	@Override
+	public void addWithOutLayerLevelIncrease(ILayer layer){
+		throw new RuntimeException("HUD Layer not support the setAutoAdd method");
 	}
 	
-//	@Override
-//	public void drawSelf(Canvas canvas, Paint paint) {
-//		// TODO Auto-generated method stub
-//		super.drawSelf(canvas, paint);
-//		
-//		for(ALayer layer : layers){
-//			layer.drawSelf(canvas, paint);
-//		}
-//	}
-	
+	@Override
+	public void addWithLayerLevel(ILayer layer, int layerLevel) {
+		throw new RuntimeException("HUD Layer not support the setAutoAdd method");
+	}
 }
