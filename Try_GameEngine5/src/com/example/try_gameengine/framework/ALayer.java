@@ -1342,7 +1342,9 @@ public abstract class ALayer implements ILayer{
         x = event.getX(downPointerIndex);
         y = event.getY(downPointerIndex);
 		float a[] = new float[]{x, y};
-		boolean isIndentify = StageManager.getCurrentStage().getSceneManager().getCurrentActiveScene().getCamera().getMatrix().isIdentity();
+		boolean isIndentify = true;
+		if(StageManager.getCurrentStage().getSceneManager()!=null && StageManager.getCurrentStage().getSceneManager().getCurrentActiveScene()!=null)
+			isIndentify = StageManager.getCurrentStage().getSceneManager().getCurrentActiveScene().getCamera().getMatrix().isIdentity();
 		if(isIndentify && this instanceof Sprite){
 			if(((Sprite)this).spriteMatrix!=null){
 				synchronized (((Sprite)this).spriteMatrix) {
@@ -1358,7 +1360,8 @@ public abstract class ALayer implements ILayer{
 			Scene scene = StageManager.getCurrentStage().getSceneManager().getCurrentActiveScene();
 			Matrix matrix = new Matrix();
 			if(this instanceof Sprite){
-				matrix = new Matrix(scene.getCamera().getMatrix());
+				if(scene!=null) // If user not use scene system, scene is null.
+					matrix = new Matrix(scene.getCamera().getMatrix());
 				if(((Sprite)this).spriteMatrix!=null){
 					synchronized (((Sprite)this).spriteMatrix) {
 						Matrix matrix2 =  new Matrix(((Sprite)this).spriteMatrix);
@@ -1369,7 +1372,8 @@ public abstract class ALayer implements ILayer{
 				matrix.invert(matrix);
 //				matrix = matrix2;
 			}else{
-				scene.getCamera().getMatrix().invert(matrix);
+				if(scene!=null) // If user not use scene system, scene is null.
+					scene.getCamera().getMatrix().invert(matrix);
 			}
 
 			

@@ -88,6 +88,8 @@ public class Layer extends ALayer{
 						getPaint().setStyle(Style.FILL);
 						canvas.drawRect(getFrameInScene(), paint);
 					}
+				}else if(originalPaint!=null){
+					canvas.drawRect(getFrameInScene(), paint);
 				}
 				
 				if(isComposite()){
@@ -140,7 +142,7 @@ public class Layer extends ALayer{
 					dst.right = (float) (dst.left + w);
 					dst.bottom = (float) (dst.top + h);
 					
-					if(getBackgroundColor()!=NONE_COLOR){
+					if(originalPaint==null && getBackgroundColor()!=NONE_COLOR){
 	//					canvas.drawRect(getFrame(), paint);
 						getPaint().setColor(oldColor);
 						getPaint().setStyle(oldStyle);

@@ -3,6 +3,7 @@ package com.example.try_gameengine.Camera;
 import com.example.try_gameengine.framework.ILayer;
 
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.RectF;
 
@@ -264,8 +265,31 @@ public class Camera extends ACamera{
 ////		canvas.save();
 //	}
 	
+	private boolean isNeedClearView = true;
+	private int clearCount = 0;
+	private final int SurfaceBufferCount = 1;
+	private int clearColor = Color.BLACK;
+	
+	public void enableClearViewNextTime(){
+		this.isNeedClearView = true;
+	}
+	
+	public void setClearColor(int clearColor){
+		this.clearColor = clearColor;
+	}
+	
+	public int getClearColor(){
+		return clearColor;
+	}
+	
 	public void applyViewPort(Canvas canvas){
 //		resetMatrix();
+		if(isNeedClearView){
+			if(clearCount > SurfaceBufferCount)
+				isNeedClearView = false;
+			canvas.drawColor(clearColor);
+			clearCount++;
+		}
 		//viewport
 		if(viewPort!=null){
 			canvas.save(Canvas.MATRIX_SAVE_FLAG | Canvas.HAS_ALPHA_LAYER_SAVE_FLAG | Canvas.HAS_ALPHA_LAYER_SAVE_FLAG | Canvas.FULL_COLOR_LAYER_SAVE_FLAG | Canvas.CLIP_TO_LAYER_SAVE_FLAG);

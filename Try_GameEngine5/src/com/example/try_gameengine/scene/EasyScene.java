@@ -482,10 +482,10 @@ public abstract class EasyScene extends Scene implements ContactListener{
 			if(getCamera().getViewPort()!=null){
 				canvas.save(Canvas.MATRIX_SAVE_FLAG | Canvas.HAS_ALPHA_LAYER_SAVE_FLAG | Canvas.HAS_ALPHA_LAYER_SAVE_FLAG | Canvas.FULL_COLOR_LAYER_SAVE_FLAG | Canvas.CLIP_TO_LAYER_SAVE_FLAG);
 				canvas.setMatrix(getCamera().getViewPort().getMatrix());
-				LayerManager.drawHUDLayers(canvas, paint);
+				LayerManager.drawHUDLayers(canvas, null);
 				canvas.restore();
 			}else{
-				LayerManager.drawHUDLayers(canvas, paint);
+				LayerManager.drawHUDLayers(canvas, null);
 			}
 		}
 		

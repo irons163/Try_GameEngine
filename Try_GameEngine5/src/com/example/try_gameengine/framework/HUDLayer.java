@@ -6,6 +6,7 @@ public class HUDLayer extends Layer{
 
 	public HUDLayer(){
 		super();
+		LayerManager.addHUDLayer(this);
 	}
 	
 	@Override
