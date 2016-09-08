@@ -1,11 +1,10 @@
 package com.example.try_gameengine.action;
 
-import com.example.try_gameengine.BitmapUtil;
-
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.util.Log;
+
+import com.example.try_gameengine.framework.BitmapUtil;
 
 public class CircleController implements IRotationController {
 	float rotation;

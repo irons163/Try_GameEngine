@@ -3,8 +3,6 @@ package com.example.try_gameengine.action;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.example.try_gameengine.GameView;
-
 public class MovementInfoFactory {
 	private static List<MovementActionInfo> infos = new ArrayList<MovementActionInfo>();
 	
