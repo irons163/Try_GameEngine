@@ -167,4 +167,8 @@ public interface ILayer extends Cloneable{
 	public void addFlag(int flag);
 	
 	public void removeFlag(int flag);
+	
+	public boolean isUsedzPosition();
+	
+	public void setAutoAdd(boolean autoAdd);
 }

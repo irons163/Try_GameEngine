@@ -10,6 +10,12 @@ public class HUDLayer extends Layer{
 	}
 	
 	@Override
+	public void setParent(ILayer parent) {
+		// TODO Auto-generated method stub
+		throw new RuntimeException("HUD Layer not support the setParent method");
+	}
+	
+	@Override
 	public void setzPosition(int zPosition) {
 		throw new RuntimeException("HUD Layer not support the setzPosition method");
 	}

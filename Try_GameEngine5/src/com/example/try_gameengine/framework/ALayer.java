@@ -22,6 +22,10 @@ import android.view.MotionEvent;
 
 
 /** * 层类，组件的父类，添加组件，设置组件位置，绘制自己， 是所有人物和背景的基类 * * @author Administrator * */
+/**
+ * @author user
+ *
+ */
 public abstract class ALayer implements ILayer{
 	private float x;// 层的x坐标
 	private float y;// 层的y坐标
@@ -48,6 +52,8 @@ public abstract class ALayer implements ILayer{
 	private Paint paint;
 	
 	private int zPosition = 0; //default 0
+	
+	private boolean isUsedzPosition = false;
 	
 	private Runnable mPendingCheckForLongPress;
 	private Runnable mPerformClick;
@@ -455,6 +461,8 @@ public abstract class ALayer implements ILayer{
 			}
 			layer.setParent(null);
 			LayerManager.deleteLayerByLayerLevel(layer, layer.getLayerLevel());
+			if(layer.isAutoAdd())
+				((ALayer)layer).autoAdd = false;
 		}
 	}
 	
@@ -481,6 +489,7 @@ public abstract class ALayer implements ILayer{
 		layer.setLayerLevel(layerLevel + 1);
 		layers.add(layer);
 		layer.setParent(this);
+		((ALayer)layer).autoAdd = true;
 		LayerManager.addLayerByLayerLevel(layer, layer.getLayerLevel());
 	}
 	
@@ -493,6 +502,7 @@ public abstract class ALayer implements ILayer{
 		}
 		layers.add(layer);
 		layer.setParent(this);
+		((ALayer)layer).autoAdd = true;
 		LayerManager.addLayerByLayerLevel(layer, layer.getLayerLevel());
 	}
 
@@ -500,6 +510,7 @@ public abstract class ALayer implements ILayer{
 		layer.setLayerLevel(layerLevel);
 		layers.add(layer);
 		layer.setParent(this);
+		((ALayer)layer).autoAdd = true;
 		LayerManager.addLayerByLayerLevel(layer, layer.getLayerLevel());
 	}
 	
@@ -511,6 +522,7 @@ public abstract class ALayer implements ILayer{
 //		}
 		layers.add(layer);
 		layer.setParent(this);
+		((ALayer)layer).autoAdd = true;
 		LayerManager.addLayerByLayerLevel(layer, layerLevel);
 	}
 	
@@ -520,6 +532,9 @@ public abstract class ALayer implements ILayer{
 			layer.setComposite(true);
 			layers.add(layer);
 			layer.setParent(this);
+			
+			if(layer.isUsedzPosition())
+				layer.setAutoAdd(true);
 			
 			if(layer.getLayerParam().isEnabledPercentagePositionX()){
 				layer.setX(w * layer.getLayerParam().getPercentageX());	
@@ -1005,13 +1020,31 @@ public abstract class ALayer implements ILayer{
 	//Need add LayerManager.(AutoDraw)
 	public void setzPosition(int zPosition) {
 		this.zPosition = zPosition;
+		this.isUsedzPosition = true;
 		if(!autoAdd){
 			autoAdd = true;
 			LayerManager.addLayer(this);
 		}
 		LayerManager.updateLayersDrawOrderByZposition(this);
 	}
+	
+	/**
+	 * 
+	 */
+	public void resetzPosition(){
+		this.isUsedzPosition = false;
+		setAutoAdd(false);
+	}
+	
+	@Override
+	public boolean isUsedzPosition() {
+		// TODO Auto-generated method stub
+		return isUsedzPosition;
+	}
 
+	/**
+	 * @param isClipOutside
+	 */
 	public void setIsClipOutside(boolean isClipOutside){
 		this.isClipOutside = isClipOutside;
 		if(isClipOutside && getPaint()==null)
@@ -1182,6 +1215,9 @@ public abstract class ALayer implements ILayer{
 		}	
 	}
 
+	/* (non-Javadoc)
+	 * @see com.example.try_gameengine.framework.ILayer#locationInLayer(float, float)
+	 */
 	public PointF locationInLayer(float x, float y){
 		PointF locationInLayer = new PointF(x, y);
 //		if(isComposite()){
@@ -1195,6 +1231,9 @@ public abstract class ALayer implements ILayer{
 		return locationInLayer;
 	}
 	
+	/* (non-Javadoc)
+	 * @see com.example.try_gameengine.framework.ILayer#locationInSceneByCompositeLocation(float, float)
+	 */
 	public PointF locationInSceneByCompositeLocation(float locationInLayerX, float locationInLayerY){
 		PointF locationInScene = new PointF(locationInLayerX, locationInLayerY);
 //		if(isComposite()){
@@ -1208,6 +1247,9 @@ public abstract class ALayer implements ILayer{
 		return locationInScene;
 	}
 	
+	/* (non-Javadoc)
+	 * @see com.example.try_gameengine.framework.ILayer#frameInSceneByCompositeLocation()
+	 */
 	public RectF frameInSceneByCompositeLocation(){
 		RectF frameInScene = new RectF();
 //		if(isComposite()){
@@ -1236,6 +1278,10 @@ public abstract class ALayer implements ILayer{
 //		return frameInScene;
 //	}
 	
+	
+	/**
+	 * @return
+	 */
 	protected boolean isAncestorClipOutSide(){
 		boolean isAncestorClipOutSide = false;
 		ILayer layer = this;
@@ -1247,6 +1293,9 @@ public abstract class ALayer implements ILayer{
 		return isAncestorClipOutSide;
 	}
 	
+	/**
+	 * @return
+	 */
 	private RectF getClipRange(){
 		ILayer layer = this;
 		RectF clipRange = new RectF(this.getFrameInScene());
@@ -1717,6 +1766,8 @@ public abstract class ALayer implements ILayer{
 	    if(locationInScene!=null)
 	    	layer.locationInScene = new PointF(locationInScene.x, locationInScene.y);
 	    
+	    layer.zPosition = this.zPosition;
+	    
 	    if(autoAdd){
 	    	LayerManager.addLayerByLayerLevel(layer, getLayerLevel());
 	    }
@@ -1754,6 +1805,8 @@ public abstract class ALayer implements ILayer{
 		layer.flag = this.flag;
 				
 		layer.backgroundColor = this.backgroundColor;
+		
+		layer.isUsedzPosition = this.isUsedzPosition;
 		
 //		private OnLayerClickListener onLayerClickListener;
 //		private OnLayerLongClickListener onLayerLongClickListener;
