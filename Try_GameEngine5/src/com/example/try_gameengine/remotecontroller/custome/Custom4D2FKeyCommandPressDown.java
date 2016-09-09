@@ -3,12 +3,20 @@ package com.example.try_gameengine.remotecontroller.custome;
 import android.view.MotionEvent;
 
 
-public class Custome4D2FKeyCommandPressDown implements Custome4D2FCommand{
+/**
+ * @author irons
+ *
+ */
+public class Custom4D2FKeyCommandPressDown implements Custom4D2FCommand{
 	Key key;
-	Custome4D2FCommandType custome4D2FCommandType;
+	Custom4D2FCommandType custome4D2FCommandType;
 	private int pointerId = -1;
 	
-	public Custome4D2FKeyCommandPressDown(Key key, Custome4D2FCommandType custome4D2FCommandType) {
+	/**
+	 * @param key
+	 * @param custome4D2FCommandType
+	 */
+	public Custom4D2FKeyCommandPressDown(Key key, Custom4D2FCommandType custome4D2FCommandType) {
 		// TODO Auto-generated constructor stub
 		this.key = key;
 		this.custome4D2FCommandType = custome4D2FCommandType;
@@ -21,7 +29,7 @@ public class Custome4D2FKeyCommandPressDown implements Custome4D2FCommand{
 	}
 
 	@Override
-	public Custome4D2FCommandType execute() {
+	public Custom4D2FCommandType execute() {
 		// TODO Auto-generated method stub
 		return this.custome4D2FCommandType;
 	}
