@@ -14,25 +14,21 @@ public class RightKeyCommandPressDown implements Command{
 	
 	@Override
 	public CommandType execute() {
-		// TODO Auto-generated method stub
 		return CommandType.RightKeyDownCommand;
 	}
 
 	@Override
 	public boolean checkExecute(float x, float y, MotionEvent event) {
-		// TODO Auto-generated method stub
 		return rightKey.pressDown(x, y, event);
 	}
 
 	@Override
 	public void setMotionEventPointerId(int pointerId) {
-		// TODO Auto-generated method stub
 		this.pointerId = pointerId;
 	}
 
 	@Override
 	public int getMotionEventPointerId() {
-		// TODO Auto-generated method stub
 		return pointerId;
 	}
 

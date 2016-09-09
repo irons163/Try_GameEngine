@@ -9,25 +9,21 @@ public class NoCommand implements Command{
 	
 	@Override
 	public CommandType execute() {
-		// TODO Auto-generated method stub
 		return CommandType.None;
 	}
 
 	@Override
 	public boolean checkExecute(float x, float y, MotionEvent event) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public void setMotionEventPointerId(int pointerId) {
-		// TODO Auto-generated method stub
-		
+		this.pointerId = pointerId;
 	}
 
 	@Override
 	public int getMotionEventPointerId() {
-		// TODO Auto-generated method stub
 		return pointerId;
 	}
 
