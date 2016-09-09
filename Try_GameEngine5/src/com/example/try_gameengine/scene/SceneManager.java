@@ -81,6 +81,7 @@ public class SceneManager {
 		sceneClassInfo.setSceneLayerLevel(sceneLayerLevel);
 		sceneClassInfo.setMode(mode);
 		sceneClassMap.put(sceneClassInfo, sceneClass);
+		nextSceneIndexForAdd = sceneLayerLevel+1;
 	}
 	
 	public List<Scene> getScenes(){

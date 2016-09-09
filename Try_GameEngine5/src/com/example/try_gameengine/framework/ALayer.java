@@ -1178,13 +1178,13 @@ public abstract class ALayer implements ILayer{
 	public boolean isEnable() {
 		return isEnable;
 	}
+	
+	public void setEnable(boolean isEnable) {
+		this.isEnable = isEnable;
+	}
 
 	public boolean isHidden() {
 		return isHidden;
-	}
-
-	public void setEnable(boolean isEnable) {
-		this.isEnable = isEnable;
 	}
 
 	public void setHidden(boolean isHidden) {
@@ -1204,6 +1204,39 @@ public abstract class ALayer implements ILayer{
 					child.setHidden(isHidden);
 				}
 			}		
+		}
+	}
+	
+	public boolean checkIsFlagEnable(int flagForCheck){
+//		return ((getFlag() & flagForCheck) != 0); // not correct if flagForCheck is a mix flag, like: flagForCheck = (Aflag & Bflag);
+		return ((getFlag() & flagForCheck) == flagForCheck);
+	}
+	
+	public boolean isEnableTouchOnSlef(){
+		return !checkIsFlagEnable(TOUCH_EVENT_ONLY_ACTIVE_ON_CHILDREN); // If only active children, means not active self.
+	}
+	
+	public void setEnableTouchOnSlef(boolean enableTouchOnSelf){
+		if(isEnableTouchOnSlef() == enableTouchOnSelf)
+			return;
+		if(!enableTouchOnSelf){
+			addFlag(TOUCH_EVENT_ONLY_ACTIVE_ON_CHILDREN);
+		}else{
+			removeFlag(TOUCH_EVENT_ONLY_ACTIVE_ON_CHILDREN);
+		}
+	}
+	
+	public boolean isEnableTouchOnSlefAndChildren(){
+		return !(checkIsFlagEnable(TOUCH_EVENT_ONLY_ACTIVE_ON_CHILDREN) || checkIsFlagEnable(TOUCH_EVENT_ONLY_ACTIVE_ON_SELF)); // Need active on self and children.
+	}
+	
+	public void setEnableTouchOnSlefAndChildren(boolean enableTouchOnSelfAndChildren){
+		if(isEnableTouchOnSlefAndChildren() == enableTouchOnSelfAndChildren)
+			return;
+		if(!enableTouchOnSelfAndChildren){
+			addFlag(TOUCH_EVENT_ONLY_ACTIVE_ON_NOTHING);
+		}else{
+			removeFlag(TOUCH_EVENT_ONLY_ACTIVE_ON_NOTHING);
 		}
 	}
 	
