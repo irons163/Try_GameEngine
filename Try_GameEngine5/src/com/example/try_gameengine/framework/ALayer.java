@@ -1354,6 +1354,7 @@ public abstract class ALayer implements ILayer{
 		return canvas;
 	}
 	
+	// This has a better clip out side method, not need to access every parent now.
 	public Canvas getC(Canvas canvas, Paint paint){
 		if(isAncestorClipOutSide()){
 			if(getParent().isClipOutside()){

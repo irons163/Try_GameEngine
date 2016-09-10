@@ -4,6 +4,7 @@ import com.example.try_gameengine.framework.LabelLayer.LabelBaseLine;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.view.MotionEvent;
@@ -31,37 +32,40 @@ public class ButtonLayer extends Layer{
 	
 	public ButtonLayer() {
 		super();
+		initButtonColors();
 	}
 	
 	public ButtonLayer(boolean autoAdd) {
 		super(autoAdd);
+		initButtonColors();
 	}
 	
 	public ButtonLayer(Bitmap bitmap, int w, int h, boolean autoAdd, int level) {
 		super(bitmap, w, h, autoAdd, level);
-		// TODO Auto-generated constructor stub
+		initButtonColors();
 		buttonBitmaps[NORMAL_INDEX] = bitmap;
-//		setFlag(ALayer.TOUCH_UP_CAN_OUTSIDE_SELF_RANGE);
 	}
 
 	public ButtonLayer(Bitmap bitmap, int w, int h, boolean autoAdd) {
 		super(bitmap, w, h, autoAdd);
-		// TODO Auto-generated constructor stub
+		initButtonColors();
 		buttonBitmaps[NORMAL_INDEX] = bitmap;
-//		setFlag(ALayer.TOUCH_UP_CAN_OUTSIDE_SELF_RANGE);
 	}
 
 	public ButtonLayer(int w, int h, boolean autoAdd) {
 		super(w, h, autoAdd);
-		// TODO Auto-generated constructor stub
+		initButtonColors();
 		buttonBitmaps[NORMAL_INDEX] = bitmap;
-//		setFlag(ALayer.TOUCH_UP_CAN_OUTSIDE_SELF_RANGE);
 	}
 
 	public ButtonLayer(String text, int w, int h, boolean autoAdd){
 		super(w, h, autoAdd);
+		initButtonColors();
 		initLabelLayer(text);
-//		setFlag(ALayer.TOUCH_UP_CAN_OUTSIDE_SELF_RANGE);
+	}
+	
+	private void initButtonColors(){
+		setButtonColors(Color.GRAY, Color.DKGRAY, Color.GRAY);
 	}
 	
 	private void initLabelLayer(String text){
