@@ -2,6 +2,10 @@ package com.example.try_gameengine.action.visitor;
 
 import com.example.try_gameengine.action.MovementAction;
 
+/**
+ * @author irons
+ *
+ */
 public class MovementActionNoRepeatSpriteActionVisitor implements IMovementActionVisitor{
 
 	@Override

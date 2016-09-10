@@ -6,6 +6,11 @@ import java.util.List;
 import android.graphics.PointF;
 import android.graphics.RectF;
 
+/**
+ * {@code SpriteDetectAreaHandler} is use for deal with detect area controller.
+ * @author irons
+ *
+ */
 public class SpriteDetectAreaHandler implements ISpriteDetectAreaHandler{
 	private ISpriteDetectAreaBehavior spriteDetectAreaBehavior;
 	private List<DetectArea> detectAreas = new ArrayList<DetectArea>();
@@ -16,66 +21,89 @@ public class SpriteDetectAreaHandler implements ISpriteDetectAreaHandler{
 	
 	@Override
 	public void setSpriteDetectAreaBehavior(ISpriteDetectAreaBehavior spriteDetectAreaBehavior) {
-		// TODO Auto-generated method stub
 		this.spriteDetectAreaBehavior = spriteDetectAreaBehavior;
 	}
 	
 	@Override
 	public ISpriteDetectAreaBehavior getSpriteDetectAreaBehavior() {
-		// TODO Auto-generated method stub
 		return spriteDetectAreaBehavior;
 	}
 
+	/**
+	 * @param point
+	 */
 	public void addSuccessorDetectAreaByPoint(PointF point) {
-		// TODO Auto-generated method stub
 		DetectAreaPoint detectAreaPoint = new DetectAreaPoint(point);
 		detectAreas.add(detectAreaPoint);
 	}
 	
+	/**
+	 * @param point
+	 * @param spriteDetectAreaListener
+	 */
 	public void addSuccessorDetectAreaByPoint(PointF point , ISpriteDetectAreaListener spriteDetectAreaListener) {
-		// TODO Auto-generated method stub
 		DetectAreaPoint detectAreaPoint = new DetectAreaPoint(point);
 		detectAreaPoint.setSpriteDetectAreaListener(spriteDetectAreaListener);
 		detectAreas.add(detectAreaPoint);
 	}
 	
+	/**
+	 * @param center
+	 * @param radius
+	 */
 	public void addSuccessorDetectAreaByRound(PointF center, float radius) {
-		// TODO Auto-generated method stub
 		DetectAreaRound detectAreaRound = new DetectAreaRound(center, radius);
 		detectAreas.add(detectAreaRound);
 	}
 	
+	/**
+	 * @param center
+	 * @param radius
+	 * @param spriteDetectAreaListener
+	 */
 	public void addSuccessorDetectAreaByRound(PointF center, float radius, ISpriteDetectAreaListener spriteDetectAreaListener) {
-		// TODO Auto-generated method stub
 		DetectAreaRound detectAreaRound = new DetectAreaRound(center, radius);
 		detectAreaRound.setSpriteDetectAreaListener(spriteDetectAreaListener);
 		detectAreas.add(detectAreaRound);
 	}
 	
+	/**
+	 * @param rect
+	 */
 	public void addSuccessorDetectAreaByRect(RectF rect) {
-		// TODO Auto-generated method stub
 		DetectAreaRect detectAreaRect = new DetectAreaRect(rect);
 		detectAreas.add(detectAreaRect);
 	}
 	
+	/**
+	 * @param rect
+	 * @param spriteDetectAreaListener
+	 */
 	public void addSuccessorDetectAreaByRect(RectF rect, ISpriteDetectAreaListener spriteDetectAreaListener) {
-		// TODO Auto-generated method stub
 		DetectAreaRect detectAreaRect = new DetectAreaRect(rect);
 		detectAreaRect.setSpriteDetectAreaListener(spriteDetectAreaListener);
 		detectAreas.add(detectAreaRect);
 	}
 	
+	/**
+	 * @param detectArea
+	 */
 	public void addSuccessorDetectArea(DetectArea detectArea) {
-		// TODO Auto-generated method stub
 		detectAreas.add(detectArea);
 	}
 	
+	/**
+	 * @param detectArea
+	 * @param spriteDetectAreaListener
+	 */
 	public void addSuccessorDetectArea(DetectArea detectArea, ISpriteDetectAreaListener spriteDetectAreaListener) {
-		// TODO Auto-generated method stub
 		detectArea.setSpriteDetectAreaListener(spriteDetectAreaListener);
 		detectAreas.add(detectArea);
 	}
 	
+	/**
+	 * @param spriteDetectAreaListener
+	 */
 	public void addSpriteDetectAreaListenerToLastSuccessor(ISpriteDetectAreaListener spriteDetectAreaListener){
 		if(detectAreas.size()==0)
 			return;
@@ -83,6 +111,11 @@ public class SpriteDetectAreaHandler implements ISpriteDetectAreaHandler{
 		detectArea.setSpriteDetectAreaListener(spriteDetectAreaListener);
 	}
 	
+	/**
+	 * @param oldDetectArea
+	 * @param newDetectArea
+	 * @return
+	 */
 	public boolean replaceDetectArea(DetectArea oldDetectArea, DetectArea newDetectArea){
 		if(detectAreas.size()==0)
 			return false;
@@ -102,6 +135,9 @@ public class SpriteDetectAreaHandler implements ISpriteDetectAreaHandler{
 		}
 	}
 	
+	/**
+	 * 
+	 */
 	public void apply(){
 		if(detectAreas.size()==0)
 			return;
@@ -116,36 +152,63 @@ public class SpriteDetectAreaHandler implements ISpriteDetectAreaHandler{
 		spriteDetectAreaBehavior.setSpriteDetectArea(firstDetectAreaOfDetectAreaChain);
 	}
 
+	/**
+	 * update
+	 * @param center
+	 */
 	public void updateSpriteDetectAreaCenter(PointF center) {
-		// TODO Auto-generated method stub
 		spriteDetectAreaBehavior.updateSpriteDetectAreaCenter(center);
 	}
 
+	/**
+	 * detect
+	 * @param point
+	 * @return
+	 */
 	public boolean detectByPoint(PointF point) {
-		// TODO Auto-generated method stub
 		return spriteDetectAreaBehavior.detect(new DetectAreaPoint(point));
 	}
 	
+	/**
+	 * detect by round area.
+	 * @param center 
+	 * 		round center of the detected area .
+	 * @param radius 
+	 * 		the round radius.
+	 * @return
+	 */
 	public boolean detectByRound(PointF center, float radius) {
-		// TODO Auto-generated method stub
 		return spriteDetectAreaBehavior.detect(new DetectAreaRound(center, radius));
 	}
 	
+	/**
+	 * @param rect
+	 * @return
+	 */
 	public boolean detectByRect(RectF rect) {
-		// TODO Auto-generated method stub
 		return spriteDetectAreaBehavior.detect(new DetectAreaRect(rect));
 	}
 	
+	/**
+	 * @param request
+	 * @return
+	 */
 	public boolean detectByDetectArea(DetectArea request) {
-		// TODO Auto-generated method stub
 		return spriteDetectAreaBehavior.detect(request);
 	}
 	
+	/**
+	 * @param request
+	 * @return
+	 */
 	public boolean detectByDetectAreaRequest(IDetectAreaRequest request) {
-		// TODO Auto-generated method stub
 		return spriteDetectAreaBehavior.detect(request);
 	}
 
+	/**
+	 * set a tag to all {@code DetectArea}. This is useful for deal with the group by the same tag.
+	 * @param tag
+	 */
 	public void setTag(String tag) {
 		for(int i = 0; i < detectAreas.size(); i++){
 			DetectArea detectArea = detectAreas.get(i);
@@ -153,6 +216,10 @@ public class SpriteDetectAreaHandler implements ISpriteDetectAreaHandler{
 		}	
 	}
 
+	/**
+	 * set an object as tag to all {@code DetectArea}. This is useful for deal with the group by the same object.
+	 * @param objectTag
+	 */
 	public void setObjectTag(Object objectTag) {
 		for(int i = 0; i < detectAreas.size(); i++){
 			DetectArea detectArea = detectAreas.get(i);
@@ -160,6 +227,9 @@ public class SpriteDetectAreaHandler implements ISpriteDetectAreaHandler{
 		}
 	}
 	
+	/**
+	 * reset spriteDetectAreaBehavior and clear the object tag in detectAreas and clear detectArea.
+	 */
 	public void reset(){
 		spriteDetectAreaBehavior.setSpriteDetectArea(null);
 		for(DetectArea detectArea : detectAreas){

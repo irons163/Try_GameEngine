@@ -4,6 +4,10 @@ import com.example.try_gameengine.action.MovementAction;
 import com.example.try_gameengine.action.MovementAction.TimerOnTickListener;
 import com.example.try_gameengine.framework.Sprite;
 
+/**
+ * @author irons
+ *
+ */
 public class MovementActionSetDefaultTimeOnTickListenerIfNotSetYetVisitor implements IMovementActionVisitor{
 	private Sprite sprite;
 	private TimerOnTickListener defaultTimerOnTickListener = new MovementAction.TimerOnTickListener() {
@@ -15,6 +19,9 @@ public class MovementActionSetDefaultTimeOnTickListenerIfNotSetYetVisitor implem
 		}
 	};
 	
+	/**
+	 * @param sprite
+	 */
 	public MovementActionSetDefaultTimeOnTickListenerIfNotSetYetVisitor(Sprite sprite) {
 		// TODO Auto-generated constructor stub
 		this.sprite = sprite;

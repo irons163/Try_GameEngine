@@ -5,6 +5,10 @@ import android.view.MotionEvent;
 
 import com.example.try_gameengine.framework.Sprite;
 
+/**
+ * @author irons
+ *
+ */
 public class LeftKey extends Sprite{
 	
 	public LeftKey(Bitmap bitmap, float x, float y, int scale, boolean autoAdd) {

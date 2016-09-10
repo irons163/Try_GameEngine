@@ -3,8 +3,12 @@ package com.example.try_gameengine.utils;
 import android.graphics.PointF;
 import android.util.Log;
 
+/**
+ * 
+ * @author irons
+ *
+ */
 public class DetectAreaPoint extends DetectArea{
-//	private PointF point;
 	
 	public DetectAreaPoint(PointF point){
 		super(DetectAreaType.POINT);
@@ -28,6 +32,9 @@ public class DetectAreaPoint extends DetectArea{
 		return isDetected;
 	}
 	
+	/**
+	 * @return
+	 */
 	public PointF getPoint(){
 		return center;
 	}
