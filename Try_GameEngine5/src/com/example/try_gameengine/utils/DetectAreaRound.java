@@ -4,6 +4,7 @@ import android.graphics.PointF;
 import android.util.Log;
 
 /**
+ * {@code DetectAreaRound} is an class for an round to detect collision. It extends {@link DetectArea}.
  * @author irons
  *
  */
@@ -11,8 +12,11 @@ public class DetectAreaRound extends DetectArea{
 	private float radius;
 	
 	/**
+	 * Constructor of DetectAreaRound.
 	 * @param center
+	 * 			center of the round.
 	 * @param radius
+	 * 			radius of the round.
 	 */
 	public DetectAreaRound(PointF center, float radius){
 		super(DetectAreaType.ROUND);
@@ -39,13 +43,15 @@ public class DetectAreaRound extends DetectArea{
 
 	
 	/**
-	 * @return
+	 * get radius of this DetectAreaRect.
+	 * @return radius.
 	 */
 	public float getRadius(){
 		return radius;
 	}
 	
 	/**
+	 * set radius to this DetectAreaRect.
 	 * @param radius
 	 */
 	public void setRadius(float radius){

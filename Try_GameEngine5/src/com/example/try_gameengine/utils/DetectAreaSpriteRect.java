@@ -7,19 +7,19 @@ import android.graphics.RectF;
 import android.util.Log;
 
 /**
+ * {@code DetectAreaSpriteRect} is an class for an {@code SpriteRect} to detect collision. It extends {@link DetectArea}.
  * @author irons
- *
  */
 public class DetectAreaSpriteRect extends DetectAreaRect{
 	private Sprite sprite;
 	
 	/**
-	 * 
+	 * An default {@code SpriteRectListener} to listen frame of Sprite and center of Sprite.  
 	 */
 	private SpriteRectListener spriteRectListener = new DetectAreaSpriteRect.SpriteRectListener() {
 		
 		@Override
-		public RectF caculateSpriteRect() {
+		public RectF calculateSpriteRect() {
 			// TODO Auto-generated method stub
 			if(sprite==null)
 				return null;
@@ -32,7 +32,7 @@ public class DetectAreaSpriteRect extends DetectAreaRect{
 		}
 		
 		@Override
-		public PointF caculateSpriteCenter() {
+		public PointF calculateSpriteCenter() {
 			// TODO Auto-generated method stub;
 			if(sprite==null)
 				return null;
@@ -45,31 +45,41 @@ public class DetectAreaSpriteRect extends DetectAreaRect{
 		}
 	};
 	
+	/**
+	 * {@code SpriteRectListener} is use to calculate the rect(frame) of sprite and center of sprite. 
+	 * @author irons
+	 *
+	 */
 	public interface SpriteRectListener{
 		/**
-		 * @return
+		 * calculate the rect of sprite. 
+		 * @return RectF
 		 */
-		public RectF caculateSpriteRect();
+		public RectF calculateSpriteRect();
 		/**
-		 * @return
+		 * calculate the center of sprite. 
+		 * @return PointF
 		 */
-		public PointF caculateSpriteCenter();
+		public PointF calculateSpriteCenter();
 	}
 	
 	/**
+	 * constructor
 	 * @param sprite
 	 */
 	public DetectAreaSpriteRect(Sprite sprite){
 		super(new RectF());
 		this.sprite = sprite;
-//		setRectF(getRectF()); //not good.
 	}
 	
+	/**
+	 * constructor
+	 * @param rectF
+	 * @param spriteRectListener
+	 */
 	public DetectAreaSpriteRect(RectF rectF, SpriteRectListener spriteRectListener){
 		super(rectF);
-//		setRectF(rectF);
 		this.spriteRectListener = spriteRectListener;
-//		setRectF(rectF); //not good.
 	}
 	
 	@Override
@@ -97,9 +107,9 @@ public class DetectAreaSpriteRect extends DetectAreaRect{
 	public void setRectF(RectF rectF){
 //		this.rectF = rectF;
 		if(spriteRectListener!=null)
-			super.setRectF(spriteRectListener.caculateSpriteRect());
+			super.setRectF(spriteRectListener.calculateSpriteRect());
 		if(getRectF()!=null && spriteRectListener!=null)
-			this.center = spriteRectListener.caculateSpriteCenter();
+			this.center = spriteRectListener.calculateSpriteCenter();
 	}
 	
 	@Override
@@ -109,6 +119,6 @@ public class DetectAreaSpriteRect extends DetectAreaRect{
 //		this.center = center;
 		setRectF(getRectF());
 		if(spriteRectListener!=null)
-			this.center = spriteRectListener.caculateSpriteCenter();
+			this.center = spriteRectListener.calculateSpriteCenter();
 	}
 }

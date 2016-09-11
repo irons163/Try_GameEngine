@@ -4,12 +4,16 @@ import android.graphics.PointF;
 import android.util.Log;
 
 /**
- * 
+ * {@code DetectAreaPoint} is an class for an point to detect collision. It extends {@link DetectArea}.
  * @author irons
  *
  */
 public class DetectAreaPoint extends DetectArea{
 	
+	/**
+	 * Constructor of DetectAreaPoint.
+	 * @param point
+	 */
 	public DetectAreaPoint(PointF point){
 		super(DetectAreaType.POINT);
 		this.center = point;
@@ -33,7 +37,8 @@ public class DetectAreaPoint extends DetectArea{
 	}
 	
 	/**
-	 * @return
+	 * get point of this DetectAreaPoint.
+	 * @return PointF.
 	 */
 	public PointF getPoint(){
 		return center;
