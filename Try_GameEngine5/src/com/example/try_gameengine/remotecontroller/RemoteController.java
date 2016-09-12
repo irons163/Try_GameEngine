@@ -7,11 +7,6 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.view.MotionEvent;
-
-import com.example.try_gameengine.framework.ALayer;
-import com.example.try_gameengine.framework.ILayer;
-import com.example.try_gameengine.framework.LayerManager;
-import com.example.try_gameengine.framework.Sprite;
 import com.example.try_gameengine.utils.GameTimeUtil;
 
 public class RemoteController implements IRemoteController{
@@ -45,7 +40,7 @@ public class RemoteController implements IRemoteController{
 	
 	private static final int INVALID_POINTER_ID = -1;
 
-	// The ¡¥active pointer¡¦ is the one currently moving our object.
+	// The active pointer is the one currently moving our object.
 	private int mActivePointerId = INVALID_POINTER_ID;
 	
 	private RemoteContollerOnTouchEventListener defaultRemoteContollerOnTouchEventListener = new RemoteContollerOnTouchEventListener() {
@@ -53,11 +48,6 @@ public class RemoteController implements IRemoteController{
 		@Override
 		public boolean onTouchEvent(MotionEvent event) {
 			// TODO Auto-generated method stub
-//			if (((event.getAction() & event.ACTION_MASK) == event.ACTION_POINTER_DOWN)
-//					|| ((event.getAction() & event.ACTION_MASK) == event.ACTION_POINTER_UP)) {
-//				_x = event.getX(event.getActionIndex());
-//				_y = event.getY(event.getActionIndex());
-//			}
 			boolean isCatchTouchEvent = false;
 			float x = event.getX();
 			float y = event.getY();
@@ -68,7 +58,6 @@ public class RemoteController implements IRemoteController{
 		    		isCatchTouchEvent = pressDown(x, y, mActivePointerId, event);
 		    		break;
 		    	case MotionEvent.ACTION_POINTER_DOWN: 
-//		    		mActivePointerId = event.getPointerId(0);
 		    		final int downPointerIndex = (action & MotionEvent.ACTION_POINTER_INDEX_MASK) 
                     >> MotionEvent.ACTION_POINTER_INDEX_SHIFT;
                     mActivePointerId = event.getPointerId(downPointerIndex);
@@ -77,7 +66,6 @@ public class RemoteController implements IRemoteController{
 	                isCatchTouchEvent = pressDown(x, y, mActivePointerId, event);
 		    		break;
 		    	case MotionEvent.ACTION_UP: 
-//		            mActivePointerId = INVALID_POINTER_ID;
 		    		mActivePointerId = event.getPointerId(0);
 		    		isCatchTouchEvent = pressUp(x, y, mActivePointerId, event);
 		            break;
@@ -94,15 +82,6 @@ public class RemoteController implements IRemoteController{
 		            x = event.getX(pointerIndex);
 	                y = event.getY(pointerIndex);
 	                isCatchTouchEvent = pressUp(x, y, pointerId, event);
-//		            if (pointerId == mActivePointerId) {
-		                // This was our active pointer going up. Choose a new
-		                // active pointer and adjust accordingly.
-//		                final int newPointerIndex = pointerIndex == 0 ? 1 : 0;
-//		                mLastTouchX = ev.getX(newPointerIndex);
-//		                mLastTouchY = ev.getY(newPointerIndex);
-//		                mActivePointerId = ev.getPointerId(newPointerIndex);
-//		            	
-//		            }
 		            break;
 			}
 			return isCatchTouchEvent;
@@ -179,26 +158,6 @@ public class RemoteController implements IRemoteController{
 		return remoteController;
 	}
 	
-//	public void pressDown(float x, float y){
-//		CommandType commandType = remoteControl.executePressDown(x, y, INVALID_POINTER_ID, null);
-//		commandTypes.add(commandType);
-//		
-//		if(remoteControllerTimeUtil.isArriveExecuteTime()){
-//			remoteContollerListener.pressDown(commandTypes);
-//			commandTypes.clear();
-//		}
-//	}
-//	
-//	public void pressUp(float x, float y){
-//		CommandType commandType = remoteControl.executePressUp(x, y, INVALID_POINTER_ID, null);
-//		commandTypes.add(commandType);
-//		
-//		if(remoteControllerTimeUtil.isArriveExecuteTime()){
-//			remoteContollerListener.pressDown(commandTypes);
-//			commandTypes.clear();
-//		}
-//	}
-	
 	public boolean pressDown(float x, float y, int motionEventPointerId, MotionEvent event){
 		CommandType commandType = remoteControl.executePressDown(x, y, motionEventPointerId, event);
 		commandTypes.add(commandType);
@@ -213,10 +172,6 @@ public class RemoteController implements IRemoteController{
 		}else{
 			return true;
 		}
-//		if(remoteControl.executePressDown(x, y)){
-//			
-//		}
-//		remoteControl.onButtonWasPushed(0);
 	}
 	
 	public boolean pressUp(float x, float y, int motionEventPointerId, MotionEvent event){

@@ -9,6 +9,12 @@ import com.example.try_gameengine.application.GameApplication;
 import android.content.Context;
 import android.content.Intent;
 
+/**
+ * {@code StageManager} use to manage the stages work, include add, start , stop, change , next , previous etc.
+ * {@code StageManager} is a static class, it means only one StageManager used.
+ * @author irons
+ *
+ */
 public class StageManager {
 	public static List<Stage> stages = new ArrayList<Stage>();
 	private static Stage currentActiveStage;
@@ -24,14 +30,25 @@ public class StageManager {
 		addStage(currentActiveStage);
 	}
 	
+	/**
+	 * add Stage into stageManager.
+	 * @param stage
+	 */
 	public static void addStage(Stage stage){
 		stages.add(stage);
 	}
 	
+	/**
+	 * @return
+	 */
 	public static List<Stage> getStages(){
 		return stages;
 	}
 	
+	/**
+	 * @param id
+	 * @return
+	 */
 	public static Stage getStage(String id){
 		Stage targetStage = null;
 		for(int i =0; i<stages.size(); i++){
@@ -44,6 +61,10 @@ public class StageManager {
 		return targetStage;
 	}
 	
+	/**
+	 * @param id
+	 * @return
+	 */
 	public static int getStageIndex(String id){
 		int targetStageIndex = -1;
 		for(int i =0; i<stages.size(); i++){
@@ -56,6 +77,9 @@ public class StageManager {
 		return targetStageIndex;
 	}
 	
+	/**
+	 * @param id
+	 */
 	public static void startStage(String id){
 		if(currentActiveStage!=null)
 			currentActiveStage.stop(); 
@@ -66,6 +90,9 @@ public class StageManager {
 		}
 	}
 	
+	/**
+	 * @param id
+	 */
 	public static void stopStage(String id){
 		Stage stage = getStage(id);
 		if(stage!=null){
@@ -73,6 +100,9 @@ public class StageManager {
 		}
 	}
 	
+	/**
+	 * @param index
+	 */
 	public static void startStage(int index){
 		if(currentActiveStage!=null)
 			currentActiveStage.stop(); 
@@ -85,17 +115,27 @@ public class StageManager {
 		}
 	}
 	
+	/**
+	 * @param index
+	 */
 	public static void stopStage(int index){
 		if(index >=0 && index < stages.size()){
 			stages.get(index).stop();
 		}
 	}
 	
+	/**
+	 * @param context
+	 * @param targetStage
+	 */
 	private static void startStage(Context context, Stage targetStage){
 		Intent intent = new Intent(context, targetStage.getClass());
 		context.startActivity(intent);
 	}
 	
+	/**
+	 * 
+	 */
 	public static void next(){
 		currentStageIndex++;
 		if(currentActiveStage!=null)
@@ -108,10 +148,18 @@ public class StageManager {
 		currentActiveStage = stage;
 	}
 	
+	/**
+	 * 
+	 */
 	public static void previous(){
 		previous(false);
 	}
 	
+	/**
+	 * changeStage to previous stage.
+	 * @param isCloseCurrentStage 
+	 * 			to control when change, close current stage or not.
+	 */
 	public static void previous(boolean isCloseCurrentStage){
 		currentStageIndex--;
 		if(currentActiveStage!=null)
@@ -124,6 +172,15 @@ public class StageManager {
 		currentActiveStage = stage;
 	}
 	
+	/**
+	 * change stage from current to target class(Stage). The class can be a Activity because Stage also a kind of Activity. 
+	 * @param currentStage
+	 * 			which stage used now.
+	 * @param cls
+	 * 			target class to show.
+	 * @param isCloseCurrentStage
+	 * 			to control when change, close current stage or not.
+	 */
 	public static void changeStage(Stage currentStage, Class<?> cls, boolean isCloseCurrentStage){
 		Intent intent = new Intent(currentStage, cls);
 		currentStage.startActivity(intent);
@@ -132,6 +189,17 @@ public class StageManager {
 			currentStage.finish();
 	}
 	
+	/**
+	 * change stage from current to target class(Stage). The class can be a Activity because Stage also a kind of Activity. 
+	 * @param currentStage
+	 * 			which stage used now.
+	 * @param cls
+	 * 			target class to show.
+	 * @param flag
+	 * 			
+	 * @param isCloseCurrentStage
+	 * 			to control when change, close current stage or not.
+	 */
 	public static void changeStage(Stage currentStage, Class<?> cls, int flag, boolean isCloseCurrentStage){
 		Intent intent = new Intent(currentStage, cls);
 		intent.addFlags(flag);
@@ -140,6 +208,13 @@ public class StageManager {
 			currentStage.finish();
 	}
 	
+	/**
+	 *  change stage from current to target class(Stage). The class can be a Activity because Stage also a kind of Activity. 
+	 * @param currentStage
+	 * @param StargeId
+	 * @param isCloseCurrentStage
+	 * 			to control when change, close current stage or not.
+	 */
 	public static void changeStage(Stage currentStage, String StargeId, boolean isCloseCurrentStage){
 		Stage stage = StageManager.getStage(StargeId);
 		Intent intent = new Intent(currentStage, stage.getClass());
@@ -152,6 +227,11 @@ public class StageManager {
 		
 	}
 	
+	/**
+	 * @param currentStage
+	 * @param targetStage
+	 * @param isCloseCurrentStage
+	 */
 	public static void changeStage(Stage currentStage, Stage targetStage, boolean isCloseCurrentStage){
 		Intent intent = new Intent(currentStage, targetStage.getClass());
 		currentStage.startActivity(intent);
@@ -159,10 +239,16 @@ public class StageManager {
 			currentStage.finish();
 	}
 	
+	/**
+	 * @return
+	 */
 	public static Stage getCurrentStage(){
 		return currentActiveStage;
 	}
 	
+	/**
+	 * @param currentStage
+	 */
 	private static void stopStage(Stage currentStage){
 		currentStage.stop();
 	}

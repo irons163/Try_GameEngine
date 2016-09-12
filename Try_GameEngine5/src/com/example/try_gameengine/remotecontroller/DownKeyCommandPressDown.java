@@ -1,17 +1,16 @@
 package com.example.try_gameengine.remotecontroller;
 
 import android.view.MotionEvent;
-
 import com.example.try_gameengine.remotecontroller.RemoteController.CommandType;
 
-public class DownKeyCommandPressDown implements Command{
+public class DownKeyCommandPressDown implements Command {
 	DownKey downKey;
 	private int pointerId = -1;
-	
-	public DownKeyCommandPressDown(DownKey downKey){
+
+	public DownKeyCommandPressDown(DownKey downKey) {
 		this.downKey = downKey;
 	}
-	
+
 	@Override
 	public CommandType execute() {
 		// TODO Auto-generated method stub

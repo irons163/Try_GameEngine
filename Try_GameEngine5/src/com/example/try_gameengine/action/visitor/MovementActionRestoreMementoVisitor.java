@@ -4,6 +4,10 @@ import com.example.try_gameengine.action.MovementAction;
 import com.example.try_gameengine.action.MovementAction.TimerOnTickListener;
 import com.example.try_gameengine.framework.Sprite;
 
+/**
+ * @author irons
+ *
+ */
 public class MovementActionRestoreMementoVisitor implements IMovementActionVisitor{
 	public MovementActionRestoreMementoVisitor() {
 		// TODO Auto-generated constructor stub

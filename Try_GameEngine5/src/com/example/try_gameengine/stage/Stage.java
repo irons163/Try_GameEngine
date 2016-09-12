@@ -3,14 +3,19 @@ package com.example.try_gameengine.stage;
 import com.example.try_gameengine.scene.SceneManager;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 
+/**
+ * {@code Stage} is first thing of whole system, it entends Activity and it like a window.
+ * It is also a place to show scenes display. The architecture is :
+ * Stage -> Scene -> Layer. 
+ * @author irons
+ *
+ */
 public abstract class Stage extends Activity{
 	private String id;
-//	protected Context context;
 	
 	public static final int CLEAR_TASK = Intent.FLAG_ACTIVITY_CLEAR_TASK;
 	public static final int CLEAR_TOP = Intent.FLAG_ACTIVITY_CLEAR_TOP;
@@ -25,100 +30,82 @@ public abstract class Stage extends Activity{
 	public static final int SINGLE_TOP = Intent.FLAG_ACTIVITY_SINGLE_TOP;
 	public static final int TASK_ON_HOME = Intent.FLAG_ACTIVITY_TASK_ON_HOME;
 	
-//	protected int mode = RESTART;
-	
-//	public Scene(){
-//		
-//	}
 	protected int level;
 	private SceneManager sceneManager;
 	
-//	public Stage(Context context, String id){
-////		this(context, id, 0);
-//		this.context = context;
-//		this.id = id;
-//		
-//		initSceneManager();
-//	}
-	
+	/**
+	 * Construct and init for addSatge to StageManager.
+	 */
 	public Stage() {
-		// TODO Auto-generated constructor stub
 		StageManager.addStage(this);
-		
 	}
 	
-//	public Stage(Context context, String id, int level, int mode){
-//		this.context = context;
-//		this.id = id;
-//		this.level = level;
-//		this.mode = mode;
-//		initGameModel();
-//		initGameController();
-//	}
-	
+	/**
+	 * get stage id
+	 * @return String
+	 */
 	public String getId(){
 		return id;
 	}
 	
+	/**
+	 * init own SceneManager
+	 * @return
+	 */
 	public abstract SceneManager initSceneManager();
 	
+	/**
+	 * start stage like startActivity.
+	 */
 	public void start(){
 		startActivity(new Intent(getApplicationContext(), getClass()));
 	}
 	
+	/**
+	 * stop all scenes in this stage.
+	 */
 	public void stop(){
 		sceneManager.stopAllScenes();
 	}
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
-		
 	}
 	
+	/**
+	 * init stage.
+	 */
 	protected void initStage(){
-		StageManager.init(this);
-		sceneManager = initSceneManager();
+		StageManager.init(this); //init self in StageManger 
+		sceneManager = initSceneManager(); // init scene manager.
 	}
 	
+	/**
+	 * get own scene manager.
+	 * @return SceneManager
+	 */
 	public SceneManager getSceneManager(){
 		return sceneManager;
 	}
 	
 	@Override
 	public void onBackPressed() {
-		// TODO Auto-generated method stub
-//		super.onBackPressed();
-		
 		if(!sceneManager.previous())
 			finish();
 	}
 	
 	@Override
 	public void finish() {
-		// TODO Auto-generated method stub
 		super.finish();
-		
 		sceneManager.removeAllScenes();
 		Log.d("Stage", "Finish.");
 	}
 	
 	@Override
 	protected void onDestroy() {
-		// TODO Auto-generated method stub
 		super.onDestroy();
-		
 		sceneManager.removeAllScenes();
 		Log.d("Stage", "Destroy.");
 	}
-	
-//	public int getMode() {
-//		return mode;
-//	}
-//
-//	public void setMode(int mode) {
-//		this.mode = mode;
-//	}
-
 }

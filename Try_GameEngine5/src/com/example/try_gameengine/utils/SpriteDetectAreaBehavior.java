@@ -2,6 +2,10 @@ package com.example.try_gameengine.utils;
 
 import android.graphics.PointF;
 
+/**
+ * @author irons
+ *
+ */
 public class SpriteDetectAreaBehavior implements ISpriteDetectAreaBehavior{
 	private DetectArea detectArea;
 	
@@ -39,10 +43,16 @@ public class SpriteDetectAreaBehavior implements ISpriteDetectAreaBehavior{
 		return detectArea.detect(requestDetectArea);
 	}
 	
+	/**
+	 * @param spriteDetectAreaListener
+	 */
 	public void setSpriteDetectAreaListener(ISpriteDetectAreaListener spriteDetectAreaListener){
 		detectArea.setSpriteDetectAreaListener(spriteDetectAreaListener);
 	}
 	
+	/**
+	 * @return
+	 */
 	public ISpriteDetectAreaListener getSpriteDetectAreaListener(){
 		return detectArea.getSpriteDetectAreaListener();
 	}

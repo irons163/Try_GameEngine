@@ -1,7 +1,5 @@
 package com.example.try_gameengine.remotecontroller;
 
-import java.util.List;
-
 import com.example.try_gameengine.framework.BitmapUtil;
 import com.example.try_gameengine.framework.Config;
 
@@ -14,7 +12,6 @@ public class RemoteLoader {
 	private RemoteControl remoteControl;
 	
 	public RemoteLoader() {
-		// TODO Auto-generated constructor stub
 		load();
 	}
 	

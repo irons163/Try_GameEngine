@@ -3,9 +3,17 @@ package com.example.try_gameengine.utils;
 import android.graphics.PointF;
 import android.util.Log;
 
+/**
+ * @author irons
+ *
+ */
 public class DetectAreaRound extends DetectArea{
 	private float radius;
 	
+	/**
+	 * @param center
+	 * @param radius
+	 */
 	public DetectAreaRound(PointF center, float radius){
 		super(DetectAreaType.ROUND);
 		this.center = center;
@@ -30,10 +38,16 @@ public class DetectAreaRound extends DetectArea{
 	}
 
 	
+	/**
+	 * @return
+	 */
 	public float getRadius(){
 		return radius;
 	}
 	
+	/**
+	 * @param radius
+	 */
 	public void setRadius(float radius){
 		this.radius = radius;
 	}

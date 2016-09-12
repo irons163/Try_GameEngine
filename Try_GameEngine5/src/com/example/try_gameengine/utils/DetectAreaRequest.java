@@ -1,5 +1,9 @@
 package com.example.try_gameengine.utils;
 
+/**
+ * @author irons
+ *
+ */
 public class DetectAreaRequest implements IDetectAreaRequest{
 	private DetectArea detectArea;
 	

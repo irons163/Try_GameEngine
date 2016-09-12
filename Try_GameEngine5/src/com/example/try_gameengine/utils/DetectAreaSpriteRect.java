@@ -6,10 +6,16 @@ import android.graphics.PointF;
 import android.graphics.RectF;
 import android.util.Log;
 
+/**
+ * @author irons
+ *
+ */
 public class DetectAreaSpriteRect extends DetectAreaRect{
-//	private RectF rectF;
 	private Sprite sprite;
 	
+	/**
+	 * 
+	 */
 	private SpriteRectListener spriteRectListener = new DetectAreaSpriteRect.SpriteRectListener() {
 		
 		@Override
@@ -40,10 +46,19 @@ public class DetectAreaSpriteRect extends DetectAreaRect{
 	};
 	
 	public interface SpriteRectListener{
+		/**
+		 * @return
+		 */
 		public RectF caculateSpriteRect();
+		/**
+		 * @return
+		 */
 		public PointF caculateSpriteCenter();
 	}
 	
+	/**
+	 * @param sprite
+	 */
 	public DetectAreaSpriteRect(Sprite sprite){
 		super(new RectF());
 		this.sprite = sprite;

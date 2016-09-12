@@ -2,13 +2,13 @@ package com.example.try_gameengine.remotecontroller.custome;
 
 import android.view.MotionEvent;
 
-public class Custome4D2FNoCommand implements Custome4D2FCommand{
+public class Custom4D2FNoCommand implements Custom4D2FCommand{
 	private int pointerId = -1;
 	
 	@Override
-	public Custome4D2FCommandType execute() {
+	public Custom4D2FCommandType execute() {
 		// TODO Auto-generated method stub
-		return Custome4D2FCommandType.None;
+		return Custom4D2FCommandType.None;
 	}
 
 	@Override
