@@ -3,6 +3,7 @@ package com.example.try_gameengine.framework;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import com.example.try_gameengine.framework.ALayer.LayerParam;
@@ -44,7 +45,7 @@ public interface ILayer extends Cloneable{
 
 	public ILayer getChild(int i);
 	
-	public ConcurrentLinkedQueue<ILayer> getLayers();
+	public List<ILayer> getLayers();
 
 	public Iterator createIterator();
 

@@ -3,10 +3,11 @@ package com.example.try_gameengine.framework;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.ListIterator;
+import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import com.example.try_gameengine.scene.Scene;
-import com.example.try_gameengine.scene.SceneManager;
 import com.example.try_gameengine.stage.StageManager;
 
 import android.graphics.Bitmap;
@@ -40,7 +41,7 @@ public abstract class ALayer implements ILayer{
 	public RectF dst;
 	public Bitmap bitmap;// 引用Bitmap类
 	
-	ConcurrentLinkedQueue<ILayer> layers = new ConcurrentLinkedQueue<ILayer>();
+	List<ILayer> layers = new CopyOnWriteArrayList<ILayer>();
 	ILayer parent;
 	RectF smallViewRect;
 	PointF locationInScene;
@@ -570,7 +571,7 @@ public abstract class ALayer implements ILayer{
 		return null;
 	}
 
-	public ConcurrentLinkedQueue<ILayer> getLayers() {
+	public List<ILayer> getLayers() {
 		return layers;
 	}
 
@@ -1503,7 +1504,12 @@ public abstract class ALayer implements ILayer{
 		}
 		
 		if((flag & TOUCH_EVENT_ONLY_ACTIVE_ON_SELF)==0){
-			for(ILayer child : layers){
+//			for(int i = layers.size(); i < layers.size(); i++){
+//				
+//			}
+			ListIterator<ILayer> iterator = layers.listIterator(layers.size());
+			while(iterator.hasPrevious()){
+				ILayer child = iterator.previous();
 				if(!child.isAutoAdd() && child.onTouchEvent(event)){
 					/*
 					if((flag & TOUCH_EVENT_ONLY_ACTIVE_ON_CHILDREN)!=0)
@@ -1512,8 +1518,8 @@ public abstract class ALayer implements ILayer{
 						return false;
 					*/
 					return true; //if child accept the touch event, not do self touch event and return true.
-				}
-			} 
+				}	
+			}
 		}
 		
 		if((flag & TOUCH_EVENT_ONLY_ACTIVE_ON_CHILDREN)!=0){
@@ -1782,8 +1788,8 @@ public abstract class ALayer implements ILayer{
 		if(dst!=null)
 			layer.dst = new RectF(dst);
 		
-//		layer.layers = new ArrayList<ILayer>(layers.size());
-		layer.layers = new ConcurrentLinkedQueue<ILayer>();
+		layer.layers = new ArrayList<ILayer>(layers.size());
+//		layer.layers = new ConcurrentLinkedDeque<ILayer>();
 		
 		for(ILayer item: layers) layer.layers.add((ALayer) ((ALayer)item).clone());
 //	    for(ILayer item: layers) {
