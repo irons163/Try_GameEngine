@@ -114,19 +114,21 @@ public class ButtonLayer extends Layer{
 		super.drawSelf(canvas, paint);
 	}
 	
-	@Override
-	public void setBitmap(Bitmap normal){
-		this.bitmap = normal;
-		buttonBitmaps[NORMAL_INDEX] = normal;
-	}
+//	@Override
+//	public void setBitmap(Bitmap normal){
+//		this.bitmap = normal;
+//		buttonBitmaps[NORMAL_INDEX] = normal;
+//	}
 	
-	@Override
-	public void setBitmapAndAutoChangeWH(Bitmap bitmap){
-		this.bitmap = bitmap;
-		buttonBitmaps[NORMAL_INDEX] = bitmap;
-		setInitWidth(bitmap.getWidth());
-		setInitHeight(bitmap.getHeight());
-	}
+//	@Override
+//	public void setBitmapAndAutoChangeWH(Bitmap bitmap){
+//		this.bitmap = bitmap;
+//		buttonBitmaps[NORMAL_INDEX] = bitmap;
+//		setInitWidth(bitmap.getWidth());
+//		setInitHeight(bitmap.getHeight());
+//	}
+	
+	
 	
 	public void setButtonBitmap(Bitmap normal, Bitmap down , Bitmap up){
 		buttonBitmaps[NORMAL_INDEX] = normal;

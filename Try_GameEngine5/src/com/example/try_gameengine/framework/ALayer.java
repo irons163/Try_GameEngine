@@ -76,6 +76,8 @@ public abstract class ALayer implements ILayer{
 	
 	private boolean isHidden = false;
 	
+	private boolean isBitmapChangedFitToAutoSize = false;
+	
 	private static final int INVALID_POINTER_ID = -1;
 	
 	private int mActivePointerId = INVALID_POINTER_ID;
@@ -577,7 +579,6 @@ public abstract class ALayer implements ILayer{
 
 	public Iterator createIterator(){
 		return new CompositeIterator(layers.iterator());
-		
 	}
 
 	public void moveAllChild(int offsetLayerLevel){
@@ -834,17 +835,17 @@ public abstract class ALayer implements ILayer{
 		return pointWHMax;
 	}
 	
-	private void checkParentAndDoParentAutoSize(){ // has some limit conditions.
-		if(isComposite() && ((ALayer)getParent()).isAutoSizeByChildren()){
-			if(getLayerParam().isEnabledPercentagePositionX() || getLayerParam().isEnabledPercentagePositionY() 
-					|| getLayerParam().isEnabledPercentageSizeW() || getLayerParam().isEnabledPercentageSizeH()){
-				return;
-			}
-			if(!getParent().getLayerParam().isEnabledPercentageSizeW() && !getParent().getLayerParam().isEnabledPercentageSizeH()){
-				((ALayer)getParent()).calculateWHByChildern();
-			}
-		}
-	}
+//	private void checkParentAndDoParentAutoSize(){ // has some limit conditions.
+//		if(isComposite() && ((ALayer)getParent()).isAutoSizeByChildren()){
+//			if(getLayerParam().isEnabledPercentagePositionX() || getLayerParam().isEnabledPercentagePositionY() 
+//					|| getLayerParam().isEnabledPercentageSizeW() || getLayerParam().isEnabledPercentageSizeH()){
+//				return;
+//			}
+//			if(!getParent().getLayerParam().isEnabledPercentageSizeW() && !getParent().getLayerParam().isEnabledPercentageSizeH()){
+//				((ALayer)getParent()).calculateWHByChildern();
+//			}
+//		}
+//	}
 	
 	public float getX(){
 		return anchorPointXY.x;
@@ -945,7 +946,10 @@ public abstract class ALayer implements ILayer{
 	}
 
 	public void setBitmap(Bitmap bitmap){
-		this.bitmap = bitmap;
+		if(isBitmapChangedFitToAutoSize())
+			setBitmapAndAutoChangeWH(bitmap);
+		else
+			this.bitmap = bitmap;
 	}
 	
 	public Bitmap getBitmap() {
@@ -1206,6 +1210,14 @@ public abstract class ALayer implements ILayer{
 				}
 			}		
 		}
+	}
+	
+	public boolean isBitmapChangedFitToAutoSize() {
+		return isBitmapChangedFitToAutoSize;
+	}
+
+	public void setBitmapChangedFitToAutoSize(boolean isBitmapChangedFitToAutoSize) {
+		this.isBitmapChangedFitToAutoSize = isBitmapChangedFitToAutoSize;
 	}
 	
 	public boolean checkIsFlagEnable(int flagForCheck){
@@ -1847,6 +1859,8 @@ public abstract class ALayer implements ILayer{
 		layer.backgroundColor = this.backgroundColor;
 		
 		layer.isUsedzPosition = this.isUsedzPosition;
+		
+		layer.isBitmapChangedFitToAutoSize = this.isBitmapChangedFitToAutoSize;
 		
 //		private OnLayerClickListener onLayerClickListener;
 //		private OnLayerLongClickListener onLayerLongClickListener;
