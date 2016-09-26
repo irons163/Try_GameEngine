@@ -1450,18 +1450,19 @@ public abstract class ALayer implements ILayer{
 		}
 			
 		if(!isIndentify){
-            f = getFrameInScene();
+//          f = getFrameInScene();
 //			f = frameInSceneByCompositeLocation();
 //			f = new RectF(getLeft(), getTop(), getLeft()+w, getTop()+h);
 			Scene scene = StageManager.getCurrentStage().getSceneManager().getCurrentActiveScene();
 			Matrix matrix = new Matrix();
 			if(this instanceof Sprite){
+				f = ((Sprite)this).drawRectF;
 				if(scene!=null) // If user not use scene system, scene is null.
 					matrix = new Matrix(scene.getCamera().getMatrix());
 				if(((Sprite)this).spriteMatrix!=null){
 					synchronized (((Sprite)this).spriteMatrix) {
 						Matrix matrix2 =  new Matrix(((Sprite)this).spriteMatrix);
-						matrix2.setTranslate(0, 0);
+//						matrix2.setTranslate(0, 0);
 						matrix.postConcat(matrix2);
 						
 //						Matrix matrix2 =  new Matrix(((Sprite)this).spriteMatrix);
@@ -1498,6 +1499,7 @@ public abstract class ALayer implements ILayer{
 				matrix.invert(matrix);
 //				matrix = matrix2;
 			}else{
+				f = getFrameInScene();
 				if(scene!=null) // If user not use scene system, scene is null.
 					scene.getCamera().getMatrix().invert(matrix);
 			}

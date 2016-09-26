@@ -453,8 +453,8 @@ public class Sprite extends Layer {
 						if(parent!=null){
 							dst.left = locationLeftTopInScene.x + getAnchorPoint().x*w;
 							dst.top = locationLeftTopInScene.y + getAnchorPoint().y*h;
-							dst.right = (float) (dst.left + w * scale);
-							dst.bottom = (float) (dst.top + h * scale);
+							dst.right = (float) (dst.left + w/xScaleForBitmapWidth * scale);
+							dst.bottom = (float) (dst.top + h/yScaleForBitmapHeight * scale);
 							
 //							if(getBackgroundColor()!=NONE_COLOR){
 //								canvas.drawRect(new RectF(locationLeftTopInScene.x, locationLeftTopInScene.y, locationLeftTopInScene.x + getWidth(), locationLeftTopInScene.y + getHeight()), paint);
@@ -472,8 +472,8 @@ public class Sprite extends Layer {
 					}else{
 						dst.left = (float) (getAnchorPointXY().x);//try mix anchor point
 						dst.top = (float) (getAnchorPointXY().y);
-						dst.right = (float) (dst.left + w * scale);
-						dst.bottom = (float) (dst.top + h * scale);
+						dst.right = (float) (dst.left + w/xScaleForBitmapWidth * scale);
+						dst.bottom = (float) (dst.top + h/yScaleForBitmapHeight * scale);
 						
 //						if(getBackgroundColor()!=NONE_COLOR){
 //							canvas.drawRect(dst, paint);
