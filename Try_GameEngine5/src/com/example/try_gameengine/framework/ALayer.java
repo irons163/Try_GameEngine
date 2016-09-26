@@ -1450,8 +1450,8 @@ public abstract class ALayer implements ILayer{
 		}
 			
 		if(!isIndentify){
-//            f = getFrameInScene();
-			f = frameInSceneByCompositeLocation();
+            f = getFrameInScene();
+//			f = frameInSceneByCompositeLocation();
 //			f = new RectF(getLeft(), getTop(), getLeft()+w, getTop()+h);
 			Scene scene = StageManager.getCurrentStage().getSceneManager().getCurrentActiveScene();
 			Matrix matrix = new Matrix();
@@ -1463,6 +1463,36 @@ public abstract class ALayer implements ILayer{
 						Matrix matrix2 =  new Matrix(((Sprite)this).spriteMatrix);
 						matrix2.setTranslate(0, 0);
 						matrix.postConcat(matrix2);
+						
+//						Matrix matrix2 =  new Matrix(((Sprite)this).spriteMatrix);
+//						float[] values = new float[9];
+//						matrix2.getValues(values);
+//						//matrix2.postTranslate(-values[2], -values[5]);
+//						
+//						matrix2.postTranslate(-w*getAnchorPoint().x,-h*getAnchorPoint().y);
+////						if(this.length>0){
+////							if(xScale*xScaleForBitmapWidth<0 && yScale*yScaleForBitmapHeight<0){
+////								spriteMatrix.postTranslate(-2*w*(getAnchorPoint().x-0.5f),-2*h*(getAnchorPoint().y-0.5f));
+////							}else if(xScale*xScaleForBitmapWidth<0){
+////								spriteMatrix.postTranslate(-2*w*(getAnchorPoint().x-0.5f),-h*getAnchorPoint().y);
+////							}else if(yScale*yScaleForBitmapHeight<0){
+////								spriteMatrix.postTranslate(-w*getAnchorPoint().x,-2*h*(getAnchorPoint().y-0.5f));
+////							}else{
+////								spriteMatrix.postTranslate(-w*getAnchorPoint().x,-h*getAnchorPoint().y);
+////							}
+////						}else{
+////							if(xScale*xScaleForBitmapWidth<0 && yScale*yScaleForBitmapHeight<0){
+////								spriteMatrix.postTranslate(-1*w*(getAnchorPoint().x-1.0f),-h*(getAnchorPoint().y-1.0f));
+////							}else if(xScale*xScaleForBitmapWidth<0){
+////								spriteMatrix.postTranslate(-1*w*(getAnchorPoint().x-1.0f),-h*getAnchorPoint().y);
+////							}else if(yScale*yScaleForBitmapHeight<0){
+////								spriteMatrix.postTranslate(-1*w*(getAnchorPoint().x),-h*(getAnchorPoint().y-1.0f));
+////							}else{
+////								spriteMatrix.postTranslate(-w*getAnchorPoint().x,-h*getAnchorPoint().y);
+////							}
+////						}
+//						
+//						matrix.postConcat(matrix2);
 					}
 				}
 				matrix.invert(matrix);
@@ -1724,6 +1754,8 @@ public abstract class ALayer implements ILayer{
 
 //			canMoving = true;
 			
+			boolean isOutRange = false;
+			
 			if ((flag & TOUCH_MOVE_CAN_OUTSIDE_SELF_RANGE)!=0){
 				if(!isIndentify){
 					if (!f.contains(a[0], a[1])) {
@@ -1736,23 +1768,68 @@ public abstract class ALayer implements ILayer{
 				if(!isIndentify){
 					if (!f.contains(a[0], a[1])) {
 						removeLongPressCallback();
-						pressed = false;
+						
 						if ((flag & TOUCH_MOVE_CAN_WITHOUT_TOUCH_DOWN)!=0){
+							if(pressed){
+								pressed = false;
+								onTouched(event);
+							}
+							
 							canMoving = false;
+							isOutRange = true;
+//							onTouched(event);
 							return false;
 						}
+						pressed = false;
+						isOutRange = true;
 					}
+//					else if((flag & TOUCH_MOVE_CAN_WITHOUT_TOUCH_DOWN)!=0){
+//						pressed = true;
+//					}
 				}else if (!f.contains(x, y)) {
 					removeLongPressCallback();
-					pressed = false;
+					
 					if ((flag & TOUCH_MOVE_CAN_WITHOUT_TOUCH_DOWN)!=0){
+						if(pressed){
+							pressed = false;
+							onTouched(event);
+						}
+						
 						canMoving = false;
+						isOutRange = true;
+//						onTouched(event);
 						return false;
 					}
+					pressed = false;
+					isOutRange = true;
 				}
+//				else if((flag & TOUCH_MOVE_CAN_WITHOUT_TOUCH_DOWN)!=0){
+//					pressed = true;
+//				}
 			}
 
-			onTouched(event);
+			boolean oriPressed = pressed;
+			
+			if ((flag & TOUCH_MOVE_CAN_WITHOUT_TOUCH_DOWN)!=0){
+				pressed = !isOutRange;
+				onTouched(event);
+				pressed = oriPressed;
+			}
+			/*
+			if ((flag & TOUCH_MOVE_CAN_WITHOUT_TOUCH_DOWN)!=0 && (flag & TOUCH_MOVE_CAN_OUTSIDE_SELF_RANGE)==0){
+				pressed = !isOutRange;
+				onTouched(event);
+				pressed = oriPressed;
+			}
+			else if ((flag & TOUCH_MOVE_CAN_WITHOUT_TOUCH_DOWN)!=0 && (flag & TOUCH_MOVE_CAN_OUTSIDE_SELF_RANGE)!=0){
+				pressed = !isOutRange;
+				onTouched(event);
+				pressed = oriPressed;
+			}*/
+			else{
+				onTouched(event);
+			}
+			
 			break;
 		default:
 			break;
