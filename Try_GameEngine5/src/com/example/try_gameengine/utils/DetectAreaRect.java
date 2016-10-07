@@ -5,6 +5,7 @@ import android.graphics.RectF;
 import android.util.Log;
 
 /**
+ * {@code DetectAreaRect} is an class for an rect to detect collision. It extends {@link DetectArea}.
  * @author irons
  *
  */
@@ -12,6 +13,7 @@ public class DetectAreaRect extends DetectArea{
 	private RectF rectF;
 	
 	/**
+	 * Constructor of DetectAreaRect.
 	 * @param rectF
 	 */
 	public DetectAreaRect(RectF rectF){
@@ -36,13 +38,15 @@ public class DetectAreaRect extends DetectArea{
 	}	
 	
 	/**
-	 * @return
+	 * get rect of this DetectAreaRect.
+	 * @return RectF.
 	 */
 	public RectF getRectF(){
 		return rectF;
 	}
 	
 	/**
+	 * set RectF to this DetectAreaRect.
 	 * @param rectF
 	 */
 	public void setRectF(RectF rectF){

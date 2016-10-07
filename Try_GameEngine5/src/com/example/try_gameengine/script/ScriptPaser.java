@@ -8,6 +8,11 @@ import com.example.try_gameengine.framework.ALayer;
 import com.example.try_gameengine.framework.Sprite;
 import com.example.try_gameengine.viewport.FileUtil;
 
+/**
+ * ScriptPaser is paser to pase the txt for script. 
+ * @author irons
+ *
+ */
 public class ScriptPaser {
 	String move = "Move";
 	String random = "R";
@@ -19,15 +24,28 @@ public class ScriptPaser {
 	
 	boolean isScriptFinish = false;
 	
+	/**
+	 * @param context
+	 * @param scriptName
+	 * @return
+	 */
 	private String getScript(Context context, String scriptName){
 		String s = FileUtil.readFileFromAssetsF(context, scriptName);
 		return s;
 	}
 	
+	/**
+	 * @param s
+	 * @return
+	 */
 	private String[] splitLine(String s){
 		return s.split("\n");
 	}
 	
+	/**
+	 * @param s
+	 * @return
+	 */
 	private String[] splitToken(String s){
 		return s.split(" ");
 	}
@@ -37,6 +55,11 @@ public class ScriptPaser {
 	float dx, dy;
 	String command;
 	
+	/**
+	 * @param context
+	 * @param sprite
+	 * @param scriptName
+	 */
 	public void paser(Context context, Sprite sprite, String scriptName){
 		
 		this.sprite = sprite;
@@ -54,6 +77,9 @@ public class ScriptPaser {
 	int triggerCycle = 0;
 	int pauseCount = 0;
 	
+	/**
+	 * 
+	 */
 	public void nextScriptLine(){
 		
 		if(canGoNextScriptLine){
@@ -158,6 +184,9 @@ public class ScriptPaser {
 		}
 	}
 	
+	/**
+	 * 
+	 */
 	public void triggerAndDoCommandInSprite(){		
 		if(command.equals(move)){
 			if(triggerCount!=0 && triggerCount%triggerLimit==0){
@@ -184,39 +213,69 @@ public class ScriptPaser {
 		}
 	}
 	
+	/**
+	 * @return
+	 */
 	public boolean isPause(){
 		return command.equals(pause);
 	}
 	
+	/**
+	 * @return
+	 */
 	public boolean isMove(){
 		return command.equals(move);
 	}
 	
+	/**
+	 * @return
+	 */
 	public float getDx(){
 		return dx;
 	}
 	
+	/**
+	 * @return
+	 */
 	public float getDy(){
 		return dy;
 	}
 	
+	/**
+	 * @return
+	 */
 	public boolean isScriptFinish(){
 		return isScriptFinish;
 	}
 	
+	/**
+	 * @param dx
+	 */
 	public void setDx(float dx){
 		this.dx = dx;
 	}
 	
+	/**
+	 * @param dy
+	 */
 	public void setDy(float dy){
 		this.dy = dy;
 	}
 	
+	/**
+	 * @author irons
+	 *
+	 */
 	public interface ScriptTriggerLisener{
 		void onTriggerBefforeCommand();
 		void onTriggerAffterCommand();
 	}
 	
+	/**
+	 * this listener used for script trigger do command.
+	 * @author irons
+	 *
+	 */
 	public interface ScriptTriggerDoCommandLisener{
 		void onCommandMove(float dx, float dy);
 		void onCommandPause();
@@ -252,10 +311,18 @@ public class ScriptPaser {
 		}
 	};
 	
+	/**
+	 * set listener.
+	 * @param scriptTriggerLisener
+	 */
 	public void setScriptTriggerLisener(ScriptTriggerLisener scriptTriggerLisener){
 		this.scriptTriggerLisener = scriptTriggerLisener;
 	}
 	
+	/**
+	 * get listener.
+	 * @param scriptTriggerDoCommandLisener
+	 */
 	public void setScriptTriggerDoCommandLisener(ScriptTriggerDoCommandLisener scriptTriggerDoCommandLisener){
 		this.scriptTriggerDoCommandLisener = scriptTriggerDoCommandLisener;
 	}

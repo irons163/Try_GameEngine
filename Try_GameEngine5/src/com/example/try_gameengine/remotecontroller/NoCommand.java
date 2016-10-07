@@ -4,6 +4,11 @@ import android.view.MotionEvent;
 
 import com.example.try_gameengine.remotecontroller.RemoteController.CommandType;
 
+/**
+ * This no command is a default for remote controller.
+ * @author irons
+ *
+ */
 public class NoCommand implements Command{
 	private int pointerId = -1;
 	

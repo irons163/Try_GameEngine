@@ -4,6 +4,7 @@ import android.view.MotionEvent;
 
 
 /**
+ * {@code Custom4D2FKeyCommandPressDown}, this is press down command.
  * @author irons
  *
  */
@@ -13,8 +14,9 @@ public class Custom4D2FKeyCommandPressDown implements Custom4D2FCommand{
 	private int pointerId = -1;
 	
 	/**
-	 * @param key
-	 * @param custome4D2FCommandType
+	 * constructor.
+	 * @param key key.
+	 * @param custome4D2FCommandType command type.
 	 */
 	public Custom4D2FKeyCommandPressDown(Key key, Custom4D2FCommandType custome4D2FCommandType) {
 		// TODO Auto-generated constructor stub

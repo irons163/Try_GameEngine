@@ -4,6 +4,11 @@ import android.view.MotionEvent;
 
 import com.example.try_gameengine.remotecontroller.RemoteController.CommandType;
 
+/**
+ * left key press up.
+ * @author irons
+ *
+ */
 public class LeftKeyCommandPressUp implements Command{
 	LeftKey leftKey;
 	private int pointerId = -1;

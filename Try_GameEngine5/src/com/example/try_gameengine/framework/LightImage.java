@@ -7,6 +7,12 @@ import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.graphics.RectF;
 
+/**
+ * {@code LightImage} is a class that provide a easy and light image.
+ * The light mean it can not instance while need.
+ * @author irons
+ *
+ */
 public class LightImage {
 	private Bitmap bitmap;
 	private ClipInfo clipInfo;

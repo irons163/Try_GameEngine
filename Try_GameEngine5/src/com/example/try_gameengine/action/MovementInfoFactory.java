@@ -3,6 +3,11 @@ package com.example.try_gameengine.action;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * MovementInfoFactory create MovementInfo. This is maybe removed.
+ * @author irons
+ *
+ */
 public class MovementInfoFactory {
 	private static List<MovementActionInfo> infos = new ArrayList<MovementActionInfo>();
 	
@@ -20,6 +25,9 @@ public class MovementInfoFactory {
 		return infos;
 	}
 	
+	/**
+	 * @return
+	 */
 	public static List<MovementActionInfo> createSquare12MovementInfo(){
 		infos.clear();
 		MovementActionInfo right = new MovementActionInfo(1000, 100, 10, 0, "R");

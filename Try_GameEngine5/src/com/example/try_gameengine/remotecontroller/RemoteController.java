@@ -9,6 +9,11 @@ import android.graphics.Paint;
 import android.view.MotionEvent;
 import com.example.try_gameengine.utils.GameTimeUtil;
 
+/**
+ * 
+ * @author irons
+ *
+ */
 public class RemoteController implements IRemoteController{
 	
 	private static RemoteController remoteController;

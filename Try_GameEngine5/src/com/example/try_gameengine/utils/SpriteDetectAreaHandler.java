@@ -15,6 +15,9 @@ public class SpriteDetectAreaHandler implements ISpriteDetectAreaHandler{
 	private ISpriteDetectAreaBehavior spriteDetectAreaBehavior;
 	private List<DetectArea> detectAreas = new ArrayList<DetectArea>();
 	
+	/**
+	 * constructor of SpriteDetectAreaHandler
+	 */
 	public SpriteDetectAreaHandler(){
 		this.spriteDetectAreaBehavior = new SpriteDetectAreaBehavior();
 	}
@@ -30,6 +33,7 @@ public class SpriteDetectAreaHandler implements ISpriteDetectAreaHandler{
 	}
 
 	/**
+	 * add point to make {@code DetectAreaByPoint} for successor. It will be run when previous DetectAreas not catch the detect event. 
 	 * @param point
 	 */
 	public void addSuccessorDetectAreaByPoint(PointF point) {
@@ -38,8 +42,11 @@ public class SpriteDetectAreaHandler implements ISpriteDetectAreaHandler{
 	}
 	
 	/**
+	 * add point to make {@code DetectAreaByPoint} for successor and add an ISpriteDetectAreaListener for it. It will be run when previous DetectAreas not catch the detect event. 
 	 * @param point
+	 * 			
 	 * @param spriteDetectAreaListener
+	 * 			
 	 */
 	public void addSuccessorDetectAreaByPoint(PointF point , ISpriteDetectAreaListener spriteDetectAreaListener) {
 		DetectAreaPoint detectAreaPoint = new DetectAreaPoint(point);
@@ -48,8 +55,11 @@ public class SpriteDetectAreaHandler implements ISpriteDetectAreaHandler{
 	}
 	
 	/**
+	 * add center and radius to make a {@code DetectAreaByRound} for successor. It will be run when previous DetectAreas not catch the detect event. 
 	 * @param center
+	 * 			the center of round for detected.
 	 * @param radius
+	 * 			the radius of round for detected.
 	 */
 	public void addSuccessorDetectAreaByRound(PointF center, float radius) {
 		DetectAreaRound detectAreaRound = new DetectAreaRound(center, radius);
@@ -57,9 +67,13 @@ public class SpriteDetectAreaHandler implements ISpriteDetectAreaHandler{
 	}
 	
 	/**
+	 * add center and radius to make a {@code DetectAreaByRound} for successor and add an ISpriteDetectAreaListener for it. It will be run when previous DetectAreas not catch the detect event. 
 	 * @param center
+	 * 			the center of round for detected.
 	 * @param radius
+	 * 			the radius of round for detected.
 	 * @param spriteDetectAreaListener
+	 * 			for listen the detect status.
 	 */
 	public void addSuccessorDetectAreaByRound(PointF center, float radius, ISpriteDetectAreaListener spriteDetectAreaListener) {
 		DetectAreaRound detectAreaRound = new DetectAreaRound(center, radius);
@@ -68,7 +82,9 @@ public class SpriteDetectAreaHandler implements ISpriteDetectAreaHandler{
 	}
 	
 	/**
+	 * add point to make {@code DetectAreaByRect} for successor. It will be run when previous DetectAreas not catch the detect event. 
 	 * @param rect
+	 * 			for detected.
 	 */
 	public void addSuccessorDetectAreaByRect(RectF rect) {
 		DetectAreaRect detectAreaRect = new DetectAreaRect(rect);
@@ -76,8 +92,11 @@ public class SpriteDetectAreaHandler implements ISpriteDetectAreaHandler{
 	}
 	
 	/**
+	 * add rect to make a {@code DetectAreaByRect} for successor and add an ISpriteDetectAreaListener for it. It will be run when previous DetectAreas not catch the detect event. 
 	 * @param rect
+	 * 			for detected.
 	 * @param spriteDetectAreaListener
+	 * 			for listen the detect status.
 	 */
 	public void addSuccessorDetectAreaByRect(RectF rect, ISpriteDetectAreaListener spriteDetectAreaListener) {
 		DetectAreaRect detectAreaRect = new DetectAreaRect(rect);
@@ -86,15 +105,20 @@ public class SpriteDetectAreaHandler implements ISpriteDetectAreaHandler{
 	}
 	
 	/**
+	 * add {@code DetectArea} for successor. It will be run when previous DetectAreas not catch the detect event. 
 	 * @param detectArea
+	 * 			for detected.
 	 */
 	public void addSuccessorDetectArea(DetectArea detectArea) {
 		detectAreas.add(detectArea);
 	}
 	
 	/**
+	 * add {@code DetectArea} for successor and add an ISpriteDetectAreaListener for it. It will be run when previous DetectAreas not catch the detect event. 
 	 * @param detectArea
+	 * 			for detected.
 	 * @param spriteDetectAreaListener
+	 * 			for listen the detect status.
 	 */
 	public void addSuccessorDetectArea(DetectArea detectArea, ISpriteDetectAreaListener spriteDetectAreaListener) {
 		detectArea.setSpriteDetectAreaListener(spriteDetectAreaListener);
@@ -112,9 +136,10 @@ public class SpriteDetectAreaHandler implements ISpriteDetectAreaHandler{
 	}
 	
 	/**
+	 * replace oldDetectArea to newDetectArea.
 	 * @param oldDetectArea
 	 * @param newDetectArea
-	 * @return
+	 * @return {@code true} is the replace success.
 	 */
 	public boolean replaceDetectArea(DetectArea oldDetectArea, DetectArea newDetectArea){
 		if(detectAreas.size()==0)
@@ -136,7 +161,7 @@ public class SpriteDetectAreaHandler implements ISpriteDetectAreaHandler{
 	}
 	
 	/**
-	 * 
+	 * apply the successors after set these successors. If not call this method, the new setting not work.  
 	 */
 	public void apply(){
 		if(detectAreas.size()==0)
@@ -172,34 +197,42 @@ public class SpriteDetectAreaHandler implements ISpriteDetectAreaHandler{
 	/**
 	 * detect by round area.
 	 * @param center 
-	 * 		round center of the detected area .
+	 * 			round center of the detected area .
 	 * @param radius 
-	 * 		the round radius.
-	 * @return
-	 */
+	 * 			the round radius.
+	 * @return {@code true} if detected, {@code false} otherwise.
+	 * 
+	 */	
 	public boolean detectByRound(PointF center, float radius) {
 		return spriteDetectAreaBehavior.detect(new DetectAreaRound(center, radius));
 	}
 	
 	/**
+	 * detect by rect area.
 	 * @param rect
-	 * @return
+	 * 			rect of the detected area .
+	 * @return {@code true} if detected, {@code false} otherwise.
+	 * 
 	 */
 	public boolean detectByRect(RectF rect) {
 		return spriteDetectAreaBehavior.detect(new DetectAreaRect(rect));
 	}
 	
 	/**
+	 * detect by {@link DetectArea}.
 	 * @param request
-	 * @return
+	 * 			the detected area for detect.
+	 * @return {@code true} if detected, {@code false} otherwise.
 	 */
 	public boolean detectByDetectArea(DetectArea request) {
 		return spriteDetectAreaBehavior.detect(request);
 	}
 	
 	/**
+	 * detect by {@link IDetectAreaRequest}.
 	 * @param request
-	 * @return
+	 * 			the IDetectAreaRequest for detect.
+	 * @return {@code true} if detected, {@code false} otherwise.
 	 */
 	public boolean detectByDetectAreaRequest(IDetectAreaRequest request) {
 		return spriteDetectAreaBehavior.detect(request);

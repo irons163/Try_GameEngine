@@ -11,8 +11,9 @@ import android.view.MotionEvent;
  */
 public interface Custom4D2FCommand {
 	/**
-	 * 
+	 * checkExecute 
 	 * @param x
+	 * 			not
 	 * @param y
 	 * @param event
 	 * @return
@@ -20,6 +21,7 @@ public interface Custom4D2FCommand {
 	public boolean checkExecute(float x, float y, MotionEvent event);
 
 	/**
+	 * execute.
 	 * @return
 	 */
 	public Custom4D2FCommandType execute();

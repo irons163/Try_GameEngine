@@ -3,6 +3,7 @@ package com.example.try_gameengine.utils;
 import android.graphics.PointF;
 
 /**
+ * {@code SpriteDetectAreaBehavior} has a set of DetectArea methods. It can be detected the chain of member DetectArea.
  * @author irons
  *
  */
@@ -44,6 +45,7 @@ public class SpriteDetectAreaBehavior implements ISpriteDetectAreaBehavior{
 	}
 	
 	/**
+	 * set {@code SpriteDetectAreaListener} for the member DetectArea.
 	 * @param spriteDetectAreaListener
 	 */
 	public void setSpriteDetectAreaListener(ISpriteDetectAreaListener spriteDetectAreaListener){
@@ -51,7 +53,8 @@ public class SpriteDetectAreaBehavior implements ISpriteDetectAreaBehavior{
 	}
 	
 	/**
-	 * @return
+	 * get {@code SpriteDetectAreaListener} for the member DetectArea.
+	 * @return {@code SpriteDetectAreaListener}
 	 */
 	public ISpriteDetectAreaListener getSpriteDetectAreaListener(){
 		return detectArea.getSpriteDetectAreaListener();

@@ -2,7 +2,6 @@ package com.example.try_gameengine.action;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -11,9 +10,13 @@ import com.example.try_gameengine.action.listener.DefaultActionListener;
 import com.example.try_gameengine.action.listener.IActionListener;
 import com.example.try_gameengine.action.visitor.IMovementActionVisitor;
 
-import android.os.CountDownTimer;
 import android.util.Log;
 
+/**
+ * This base MovementAction which can do action.
+ * @author irons
+ *
+ */
 public abstract class MovementAction {
 	protected List<MovementAction> actions = new ArrayList<MovementAction>();
 	protected Thread thread;
@@ -59,14 +62,25 @@ public abstract class MovementAction {
 		
 	}
 	
+	/**
+	 * 
+	 */
 	public void setTimer(){
 		
 	}
 
+	/**
+	 * 
+	 */
 	public void start() {
 
 	}
 	
+	/**
+	 * this is listener for old movement action which use timer.
+	 * @author irons
+	 *
+	 */
 	public interface TimerOnTickListener{
 		public void onTick(float dx, float dy);
 	}
@@ -75,62 +89,114 @@ public abstract class MovementAction {
 		return initTimer();
 	}
 	
+	/**
+	 * @return
+	 */
 	protected MovementAction initTimer(){
 		return this;
 		
 	}
 	
+	/**
+	 * 
+	 * @return
+	 */
 	public MovementAction getAction(){
 		return this;
 	}
 	
+	/**
+	 * 
+	 * @return
+	 */
 	public List<MovementAction> getActions(){
 		return actions;
 	}
 	
+	/**
+	 * 
+	 * @return
+	 */
 	public abstract MovementActionInfo getInfo();
 	
 	public void setInfo(MovementActionInfo info){
 		
 	}
 	
+	/**
+	 * get description.
+	 * @return string
+	 */
 	public String getDescription(){
 		return description;
 	}
 	
+	/**
+	 * get current active list.
+	 * @return list
+	 */
 	public abstract List<MovementAction> getCurrentActionList();
 	
+	/**
+	 * get current info list.
+	 * @return list
+	 */
 	public abstract List<MovementActionInfo> getCurrentInfoList();
 	
+	/**
+	 * 
+	 */
 	public void doInfo(){
 		getCurrentInfoList();
 	}
 
+	/**
+	 * get movement action list.
+	 * @return
+	 */
 	public List<MovementAction> getMovementItemList() {
 		return movementItemList;
 	}
 	
+	/**
+	 * @return
+	 */
 	public List<MovementActionInfo> getMovementInfoList() {
 		return currentInfoList;
 	}
 
+	/**
+	 * 
+	 */
 	public void doIn(){
 		
 	}
 
+	/**
+	 * @return
+	 */
 	public List<MovementActionInfo> getStartMovementInfoList() {
 		getCurrentInfoList();
 		return getMovementInfoList();
 	}
 
+	/**
+	 * @return
+	 */
 	public boolean isCancelFocusAppendPart() {
 		return isCancelFocusAppendPart;
 	}
 
+	/**
+	 * @param isCancelFocusAppendPart
+	 */
 	public void setCancelFocusAppendPart(boolean isCancelFocusAppendPart) {
 		this.isCancelFocusAppendPart = isCancelFocusAppendPart;
 	}
 	
+	/**
+	 * cancel all movementActions.
+	 */
 	void cancelAllMove(){
 		if(this.getAction().actions.size()!=0){
 			for(MovementAction action : this.getAction().actions){
@@ -144,6 +210,9 @@ public abstract class MovementAction {
 		}
 	}
 	
+	/**
+	 * cancel movement action which current active.
+	 */
 	void cancelMove(){
 		for(MovementAction action : cancelAction.getAction().actions){
 			action.cancelMove();
@@ -161,33 +230,61 @@ public abstract class MovementAction {
 			this.thread.interrupt();
 	}
 	
+	/**
+	 * 
+	 */
 	void pause(){
 		cancelAction.getAction().pause();
 	}
 	
 	public MovementAtionController controller;
 	
+	/**
+	 * @param controller
+	 */
 	public void setMovementActionController(MovementAtionController controller){
 		this.controller = controller;
 		this.controller.setMovementAction(this);
 	}
 	
+	/**
+	 * check is cancelAction Finish or not.
+	 * @return
+	 */
 	public boolean isFinish(){
 		return cancelAction.getAction().isFinish();
 	}
 	
+	/**
+	 * set a name like tag.
+	 * @param name
+	 */
 	public void setName(String name){
 		this.name = name;
 	}
 	
+	/**
+	 * get name from movement action.
+	 * @return
+	 */
 	public String getName() {
 		return name;
 	}
 	
+	/**
+	 * get specific movement from the movementAction composites.
+	 * @param name
+	 * @return
+	 */
 	public MovementAction getPartOfMovementActionByName(String name){
 		return getMovement(this, name);
 	} 
 	
+	/**
+	 * @param action
+	 * @param name
+	 * @return
+	 */
 	private MovementAction getMovement(MovementAction action, String name){
 		for(MovementAction movementAction : action.getAction().getActions()){
 			if(action.name.equals(name))
@@ -197,20 +294,35 @@ public abstract class MovementAction {
 		return null;
 	}
 	
+	/**
+	 * This is important. It the way to process the movement actions.
+	 */
 	public void trigger(){
 		this.getAction().trigger();
 	}
 	
+	/**
+	 * Set an action listener as a callback to deal with movement action.
+	 * @param actionListener as call back.
+	 */
 	public void setActionListener(IActionListener actionListener){
 		this.actionListener = actionListener;
 	}
 	
 	protected IActionListener actionListener = new DefaultActionListener();
 	
+	/**
+	 * get action listener from movement action.
+	 * @return IActionListener.
+	 */
 	public IActionListener getActionListener(){ 
 		return actionListener;
 	} 
 	
+	/**
+	 * set movement action loop or not.
+	 * @param isLoop
+	 */
 	public void setIsLoop(boolean isLoop){
 		this.getAction().isLoop = isLoop;
 	}
@@ -219,12 +331,20 @@ public abstract class MovementAction {
 		this.isSigleThread = isSigleThread;
 	}
 	
+	/**
+	 * @param spriteX
+	 * @param spriteY
+	 */
 	public void modifyWithSpriteXY(float spriteX, float spriteY){
 		for(MovementActionInfo movementActionInfo : currentInfoList){
 			movementActionInfo.modifyInfoWithSpriteXY(spriteX, spriteY);
 		}
 	}
 	
+	/**
+	 * accept visitor to control or change the movement action.
+	 * @param movementActionVisitor
+	 */
 	public abstract void accept(IMovementActionVisitor movementActionVisitor);
 	
 	IMovementActionMemento movementActionMemento=null;
@@ -235,6 +355,10 @@ public abstract class MovementAction {
 		return movementActionMemento;
 	}
 	
+	/**
+	 * get what index in thread pool.
+	 * @return index
+	 */
 	public static int getThreadPoolNumber(){
 		if(executor instanceof ThreadPoolExecutor){
 			return ((ThreadPoolExecutor)executor).getActiveCount();
@@ -242,6 +366,10 @@ public abstract class MovementAction {
 		return 0;
 	}
 	
+	/**
+	 * restore movement action from memento.
+	 * @param movementActionMemento
+	 */
 	public void restoreMovementActionMemento(IMovementActionMemento movementActionMemento){
 //		MovementActionMementoImpl mementoImpl = (MovementActionMementoImpl) movementActionMemento;
 		MovementActionMementoImpl mementoImpl = (MovementActionMementoImpl) this.movementActionMemento;
@@ -261,6 +389,11 @@ public abstract class MovementAction {
 		this.cancelAction = mementoImpl.cancelAction;
 	}
 	
+	/**
+	 * MovementActionMementoImpl is implement for IMovementActionMemento. Use to save status.
+	 * @author irons
+	 *
+	 */
 	protected static class MovementActionMementoImpl implements IMovementActionMemento{
 		private List<MovementAction> actions;
 		private Thread thread;

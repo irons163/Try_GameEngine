@@ -1,12 +1,15 @@
 package com.example.try_gameengine.action;
 
-import java.util.ArrayList;
 import java.util.List;
 
 //import com.rits.cloning.Cloner;
 
 import android.util.Log;
 
+/**
+ * @author irons
+ *
+ */
 public class LooperDecorator extends MovementDecorator {
 	private MovementAction action;
 
@@ -15,6 +18,10 @@ public class LooperDecorator extends MovementDecorator {
 		this.copyMovementActionList = action.copyMovementActionList;
 	}
 
+	/**
+	 * @param info
+	 * @return
+	 */
 	private MovementActionInfo coreCalculationMovementActionInfo(
 			MovementActionInfo info) {
 		return info;

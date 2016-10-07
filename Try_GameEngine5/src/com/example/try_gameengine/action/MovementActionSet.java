@@ -1,11 +1,14 @@
 package com.example.try_gameengine.action;
 
-import java.util.ArrayList;
 import java.util.List;
-//import com.rits.cloning.Cloner;
 
 import com.example.try_gameengine.action.visitor.IMovementActionVisitor;
 
+/**
+ * MovementActionSet is a set of MovementAcion.
+ * @author irons
+ *
+ */
 public class MovementActionSet extends MovementAction {
 	private boolean isActionFinish = true;
 	private MovementActionInfo info;
