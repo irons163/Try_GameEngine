@@ -96,6 +96,8 @@ public abstract class ALayer implements ILayer{
 	
 	private LayerParam layerParam = new LayerParam();
 	
+	private Matrix layerMatrix = new Matrix();
+	
 	//Adjust position and size by parent layer.
 	public static class LayerParam implements Cloneable{
 		private boolean isEnabledPercentagePositionX;
@@ -576,6 +578,14 @@ public abstract class ALayer implements ILayer{
 	public List<ILayer> getLayers() {
 		return layers;
 	}
+	
+	public int getChildCount(){
+		return layers.size();
+	}
+	
+	public ILayer getChildAt(int index){
+		return layers.get(index);
+	}
 
 	public Iterator createIterator(){
 		return new CompositeIterator(layers.iterator());
@@ -987,6 +997,27 @@ public abstract class ALayer implements ILayer{
 
 	public void setPaint(Paint paint) {
 		this.paint = paint;
+	}
+	
+	public Matrix getLayerMatrix(){
+		return layerMatrix;
+	}
+	
+	//not include self.
+	public Matrix calculateMatrixForAncesterNotIncludeSelf(){
+//		Matrix matrix = new Matrix(getLayerMatrix());
+		Matrix matrix = new Matrix();
+//		List<ILayer> layersFromRootLayerToCurrentLayer = new ArrayList<ILayer>();
+//		layersFromRootLayerToCurrentLayer.add(0, this);
+		ALayer rootLayer = this;
+		while(rootLayer.getParent()!=null){
+			if(!rootLayer.isComposite())
+				break;
+			rootLayer = (ALayer) rootLayer.getParent();
+//			layersFromRootLayerToCurrentLayer.add(0, rootLayer);
+			matrix.preConcat(rootLayer.getLayerMatrix());
+		}
+		return matrix;
 	}
 	
 	public void removeFromParent(){
@@ -1441,12 +1472,18 @@ public abstract class ALayer implements ILayer{
 		boolean isIndentify = true;
 		if(StageManager.getCurrentStage().getSceneManager()!=null && StageManager.getCurrentStage().getSceneManager().getCurrentActiveScene()!=null)
 			isIndentify = StageManager.getCurrentStage().getSceneManager().getCurrentActiveScene().getCamera().getMatrix().isIdentity();
+		
 		if(isIndentify && this instanceof Sprite){
 			if(((Sprite)this).spriteMatrix!=null){
 				synchronized (((Sprite)this).spriteMatrix) {
 					isIndentify = isIndentify && ((Sprite)this).spriteMatrix.isIdentity();
 				}
 			}
+		}
+		
+		Matrix matrixForAncester = calculateMatrixForAncesterNotIncludeSelf();
+		if(isIndentify){
+			isIndentify = isIndentify && matrixForAncester.isIdentity();
 		}
 			
 		if(!isIndentify){
@@ -1462,38 +1499,8 @@ public abstract class ALayer implements ILayer{
 				if(((Sprite)this).spriteMatrix!=null){
 					synchronized (((Sprite)this).spriteMatrix) {
 						Matrix matrix2 =  new Matrix(((Sprite)this).spriteMatrix);
-//						matrix2.setTranslate(0, 0);
+						matrix.postConcat(matrixForAncester);
 						matrix.postConcat(matrix2);
-						
-//						Matrix matrix2 =  new Matrix(((Sprite)this).spriteMatrix);
-//						float[] values = new float[9];
-//						matrix2.getValues(values);
-//						//matrix2.postTranslate(-values[2], -values[5]);
-//						
-//						matrix2.postTranslate(-w*getAnchorPoint().x,-h*getAnchorPoint().y);
-////						if(this.length>0){
-////							if(xScale*xScaleForBitmapWidth<0 && yScale*yScaleForBitmapHeight<0){
-////								spriteMatrix.postTranslate(-2*w*(getAnchorPoint().x-0.5f),-2*h*(getAnchorPoint().y-0.5f));
-////							}else if(xScale*xScaleForBitmapWidth<0){
-////								spriteMatrix.postTranslate(-2*w*(getAnchorPoint().x-0.5f),-h*getAnchorPoint().y);
-////							}else if(yScale*yScaleForBitmapHeight<0){
-////								spriteMatrix.postTranslate(-w*getAnchorPoint().x,-2*h*(getAnchorPoint().y-0.5f));
-////							}else{
-////								spriteMatrix.postTranslate(-w*getAnchorPoint().x,-h*getAnchorPoint().y);
-////							}
-////						}else{
-////							if(xScale*xScaleForBitmapWidth<0 && yScale*yScaleForBitmapHeight<0){
-////								spriteMatrix.postTranslate(-1*w*(getAnchorPoint().x-1.0f),-h*(getAnchorPoint().y-1.0f));
-////							}else if(xScale*xScaleForBitmapWidth<0){
-////								spriteMatrix.postTranslate(-1*w*(getAnchorPoint().x-1.0f),-h*getAnchorPoint().y);
-////							}else if(yScale*yScaleForBitmapHeight<0){
-////								spriteMatrix.postTranslate(-1*w*(getAnchorPoint().x),-h*(getAnchorPoint().y-1.0f));
-////							}else{
-////								spriteMatrix.postTranslate(-w*getAnchorPoint().x,-h*getAnchorPoint().y);
-////							}
-////						}
-//						
-//						matrix.postConcat(matrix2);
 					}
 				}
 				matrix.invert(matrix);
@@ -1501,9 +1508,12 @@ public abstract class ALayer implements ILayer{
 			}else{
 				f = getFrameInScene();
 				if(scene!=null) // If user not use scene system, scene is null.
-					scene.getCamera().getMatrix().invert(matrix);
+					matrix = new Matrix(scene.getCamera().getMatrix());
+//				if(scene!=null) // If user not use scene system, scene is null.
+//					scene.getCamera().getMatrix().invert(matrix);
+				matrix.postConcat(matrixForAncester);
+				matrix.invert(matrix);
 			}
-
 			
 			matrix.mapPoints(a);
 		}else if(isComposite()){
