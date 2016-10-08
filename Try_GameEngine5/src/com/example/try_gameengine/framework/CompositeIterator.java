@@ -10,35 +10,6 @@ public class CompositeIterator implements Iterator{
 		stack.push(iterator);
 	}
 	
-//	public boolean hasNextByTheSameLevel(int Level) {
-//		// TODO Auto-generated method stub
-//		if(stack.empty()){
-//			return false;
-//		}else {
-//			Iterator iterator = (Iterator) stack.peek();
-//			ALayer layer = (ALayer) iterator.next();
-//			layer.layerLevel
-//			if(!iterator.hasNext()){
-//				stack.pop();
-//				return hasNext();
-//			}else{
-//				return true;
-//			}
-//		}
-//	}
-//	
-//	public Object nextByTheSameLevel() {
-//		// TODO Auto-generated method stub
-//		if(hasNext()){
-//			Iterator iterator = (Iterator) stack.peek();
-//			ALayer layer = (ALayer) iterator.next();
-//			stack.push(layer.createIterator());
-//			return layer;
-//		}else{
-//			return null;
-//		}	
-//	}
-	
 	@Override
 	public boolean hasNext() {
 		// TODO Auto-generated method stub

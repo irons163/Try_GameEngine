@@ -6,15 +6,18 @@ import java.util.List;
 
 import android.util.Log;
 
-import com.example.try_gameengine.action.MovementAction.MovementActionMementoImpl;
-import com.example.try_gameengine.action.MovementAction.TimerOnTickListener;
-import com.example.try_gameengine.action.MovementActionItemAlpha.FrameTrigger;
-import com.example.try_gameengine.action.MovementActionItemAlpha.MovementActionItemBaseReugularFPSMementoImpl;
 import com.example.try_gameengine.action.listener.IActionListener;
 import com.example.try_gameengine.action.visitor.IMovementActionVisitor;
 import com.example.try_gameengine.framework.Config;
-import com.example.try_gameengine.framework.Minimax;
 
+/**
+ * @author irons
+ *
+ */
+/**
+ * @author irons
+ *
+ */
 public class MovementActionItemScale extends MovementAction{
 	long millisTotal;
 	long millisDelay;
@@ -45,6 +48,11 @@ public class MovementActionItemScale extends MovementAction{
 	
 	private ScaleType scaleType = ScaleType.ScaleTo;
 	
+	/**
+	 * These are scale types. Like. 
+	 * @author irons
+	 *
+	 */
 	public enum ScaleType{
 		ScaleTo, ScaleBy, ScaleToWith
 	}
@@ -55,6 +63,11 @@ public class MovementActionItemScale extends MovementAction{
 		return bigDecimal.floatValue();
 	}
 	
+	/**
+	 * @param millisTotal
+	 * @param scaleX
+	 * @param scaleY
+	 */
 	public MovementActionItemScale(long millisTotal, float scaleX, float scaleY){
 //		this((long) (millisTotal/(1000.0f/Config.fps)), 1, doubelToFloat(scaleX,1/(long) (millisTotal/(1000.0f/Config.fps))), scaleY, "MovementActionItemAlpha");
 		this((long) (millisTotal/(1000.0f/Config.fps)), 1, scaleX, scaleY, "MovementActionItemAlpha");
@@ -68,6 +81,12 @@ public class MovementActionItemScale extends MovementAction{
 //		this(triggerTotal, triggerTotal, NO_ORGINAL_ALPHA, alpha, "MovementActionItemAlpha");
 //	}
 	
+	/**
+	 * @param triggerTotal
+	 * @param triggerInterval
+	 * @param scaleX
+	 * @param scaleY
+	 */
 	public MovementActionItemScale(long triggerTotal, long triggerInterval, float scaleX, float scaleY){
 		this(triggerTotal, triggerInterval, scaleX, scaleY, "MovementActionItemAlpha");
 	}
@@ -175,6 +194,10 @@ public class MovementActionItemScale extends MovementAction{
 		isEnableSetSpriteAction = isRepeatSpriteActionIfMovementActionRepeat;
 	}
 
+	/**
+	 * @author irons
+	 *
+	 */
 	public interface FrameTrigger{
 		public void trigger();
 	}
@@ -203,6 +226,11 @@ public class MovementActionItemScale extends MovementAction{
 			
 		}
 	};
+	
+	/**
+	 * @param nextframeTrigger
+	 * @return
+	 */
 	public FrameTrigger setNextFrameTrigger(FrameTrigger nextframeTrigger){
 		
 		this.nextframeTrigger = nextframeTrigger;
@@ -210,6 +238,7 @@ public class MovementActionItemScale extends MovementAction{
 		return myTrigger;
 	}
 	
+	@Override
 	public void setActionListener(IActionListener actionListener){
 		this.actionListener = actionListener;
 	}
@@ -372,6 +401,7 @@ public class MovementActionItemScale extends MovementAction{
 		return isStop;
 	}
 	
+	@Override
 	public IMovementActionMemento createMovementActionMemento(){
 		movementActionMemento = new MovementActionItemBaseReugularFPSMementoImpl(actions, thread, timerOnTickListener, name, copyMovementActionList, currentInfoList, movementItemList, totalCopyMovementActionList, isCycleFinish, isCycleFinish, isCycleFinish, isCycleFinish, name, cancelAction, millisTotal, millisDelay, info, resumeTotal, resetTotal, name, updateTime, frameIdx, isStop, isCycleFinish, triggerEnable, frameTimes, resumeFrameIndex, resumeFrameCount, pauseFrameNum, pauseFrameCounter, nextframeTrigger, lastTriggerFrameNum);
 		if(this.info!=null){
@@ -380,6 +410,7 @@ public class MovementActionItemScale extends MovementAction{
 		return movementActionMemento;
 	}
 	
+	@Override
 	public void restoreMovementActionMemento(IMovementActionMemento movementActionMemento){
 //		MovementActionMementoImpl mementoImpl = (MovementActionMementoImpl) movementActionMemento;
 		super.restoreMovementActionMemento(this.movementActionMemento);
@@ -411,6 +442,10 @@ public class MovementActionItemScale extends MovementAction{
 
 	}
 	
+	/**
+	 * @author irons
+	 *
+	 */
 	protected static class MovementActionItemBaseReugularFPSMementoImpl extends MovementActionMementoImpl{
 	
 		long millisTotal;

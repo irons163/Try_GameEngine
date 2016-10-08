@@ -7,6 +7,12 @@ import com.example.try_gameengine.action.listener.IActionListener;
 import com.example.try_gameengine.action.visitor.IMovementActionVisitor;
 import com.example.try_gameengine.framework.Config;
 
+
+/**
+ * MovementActionItemAlpha is a movement action that control alpha value.
+ * @author irons
+ *
+ */
 public class MovementActionItemAlpha extends MovementAction{ 
 	long millisTotal;
 	long millisDelay;
@@ -33,22 +39,49 @@ public class MovementActionItemAlpha extends MovementAction{
 	
 	private static final int NO_ORGINAL_ALPHA = -1;
 	
+	/**
+	 * @param millisTotal
+	 * @param alpha
+	 */
 	public MovementActionItemAlpha(long millisTotal, int alpha){
 		this((long) (millisTotal/(1000.0f/Config.fps)), 1, NO_ORGINAL_ALPHA, alpha, "MovementActionItemAlpha");
 	}
 	
+	/**
+	 * @param millisTotal
+	 * @param originalAlpha
+	 * @param alpha
+	 */
 	public MovementActionItemAlpha(long millisTotal, int originalAlpha, int alpha){
 		this((long) (millisTotal/(1000.0f/Config.fps)), 1, originalAlpha, alpha, "MovementActionItemAlpha");
 	}
 	
+	/**
+	 * @param triggerTotal
+	 * @param triggerInterval
+	 * @param alpha
+	 */
 	public MovementActionItemAlpha(long triggerTotal, long triggerInterval, int alpha){
 		this(triggerTotal, triggerTotal, NO_ORGINAL_ALPHA, alpha, "MovementActionItemAlpha");
 	}
 	
+	/**
+	 * @param triggerTotal
+	 * @param triggerInterval
+	 * @param originalAlpha
+	 * @param alpha
+	 */
 	public MovementActionItemAlpha(long triggerTotal, long triggerInterval, int originalAlpha, int alpha){
 		this(triggerTotal, triggerInterval, originalAlpha, alpha, "MovementActionItemAlpha");
 	}
 	
+	/**
+	 * @param millisTotal
+	 * @param millisDelay
+	 * @param originalAlpha
+	 * @param alpha
+	 * @param description
+	 */
 	public MovementActionItemAlpha(long millisTotal, long millisDelay, int originalAlpha, int alpha, String description){
 //		super(millisTotal, millisDelay, dx, dy, description);
 		

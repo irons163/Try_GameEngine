@@ -3,6 +3,10 @@ package com.example.try_gameengine.remotecontroller;
 import com.example.try_gameengine.framework.BitmapUtil;
 import com.example.try_gameengine.framework.Config;
 
+/**
+ * @author irons
+ *
+ */
 public class RemoteLoader {
 	
 	private UpKey upKey;

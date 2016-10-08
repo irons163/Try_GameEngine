@@ -55,6 +55,12 @@ public class Layer extends ALayer{
 	public void drawSelf(Canvas canvas, Paint paint) {
 		// TODO Auto-generated method stub
 		
+		doDrawself(canvas, paint);
+		
+		doDrawChildren(canvas, paint);
+	}
+	
+	protected void doDrawself(Canvas canvas, Paint paint) {
 		if(getBackgroundColor()!=NONE_COLOR || bitmap!=null){
 			canvas.save();
 			
@@ -169,7 +175,9 @@ public class Layer extends ALayer{
 			canvas.restore();
 //			canvas.restoreToCount(sc);
 		}
-		
+	}
+	
+	protected void doDrawChildren(Canvas canvas, Paint paint) {
 		for(ILayer layer : getLayers()){
 			if(layer.isComposite() && !layer.isAutoAdd()) //if the layer is auto add, not draw.
 				layer.drawSelf(canvas, paint);

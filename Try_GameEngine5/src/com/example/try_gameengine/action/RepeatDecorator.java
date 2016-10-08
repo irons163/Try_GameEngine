@@ -3,24 +3,30 @@ package com.example.try_gameengine.action;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.example.try_gameengine.action.CopyMoveDecorator.CopyMoveDecoratorMementoImpl;
-import com.example.try_gameengine.action.MovementAction.MovementActionMementoImpl;
-import com.example.try_gameengine.action.MovementAction.TimerOnTickListener;
 import com.example.try_gameengine.action.visitor.IMovementActionVisitor;
 import com.example.try_gameengine.action.visitor.MovementActionCreateMementoVisitor;
 import com.example.try_gameengine.action.visitor.MovementActionObjectStructure;
 import com.example.try_gameengine.action.visitor.MovementActionRestoreMementoVisitor;
-import com.example.try_gameengine.action.visitor.MovementActionSetDefaultTimeOnTickListenerIfNotSetYetVisitor;
 
 //import com.rits.cloning.Cloner;
 
-import android.util.Log;
-
+/**
+ * RepeatDecorator is a decorator for repeat.
+ * @author irons
+ *
+ */
 public class RepeatDecorator extends MovementDecorator {
 	private MovementAction action;
 	private long count;
 	private boolean isTheOuterActionForInitMovementAction;
 	
+	/**
+	 * constructor.
+	 * @param action
+	 * 			action for repeat.
+	 * @param count
+	 * 			count for repeat.
+	 */
 	public RepeatDecorator(MovementAction action, long count) {
 		this.action = action;
 		this.count = count;
@@ -31,6 +37,12 @@ public class RepeatDecorator extends MovementDecorator {
 		this.actions = actions; 
 	}
 
+	/**
+	 * coreCalculationMovementActionInfo for calculate.
+	 * @param info
+	 * 			info for calculate.
+	 * @return
+	 */
 	private MovementActionInfo coreCalculationMovementActionInfo(
 			MovementActionInfo info) {
 		return info;
@@ -48,6 +60,10 @@ public class RepeatDecorator extends MovementDecorator {
 			
 	}
 	
+	/**
+	 * 
+	 * @return
+	 */
 	private MovementAction createStartActionBlock(){
 		return MAction.runBlockNoDelay(new MAction.MActionBlock() {
 			
@@ -59,6 +75,9 @@ public class RepeatDecorator extends MovementDecorator {
 		});
 	}
 	
+	/**
+	 * 
+	 */
 	private void runRepeat(){
 		while(count>0 || isLoop){
 			
@@ -91,7 +110,8 @@ public class RepeatDecorator extends MovementDecorator {
 //		return action.getAction();
 		return this;
 	}
-
+	
+	@Override
 	public void trigger(){
 		action.trigger();
 	}
@@ -218,11 +238,15 @@ public class RepeatDecorator extends MovementDecorator {
 		action.getAction().pause();
 	}
 	
+	@Override
 	public IMovementActionMemento createMovementActionMemento(){
 		movementActionMemento = new RepeatDecoratorMementoImpl(actions, thread, timerOnTickListener, description, copyMovementActionList, currentInfoList, movementItemList, totalCopyMovementActionList, isCancelFocusAppendPart, isFinish, isLoop, isSigleThread, name, cancelAction, action, count);
 		return movementActionMemento;
 	}
 	
+	/* (non-Javadoc)
+	 * @see com.example.try_gameengine.action.MovementAction#restoreMovementActionMemento(com.example.try_gameengine.action.IMovementActionMemento)
+	 */
 	public void restoreMovementActionMemento(IMovementActionMemento movementActionMemento){
 //		MovementActionMementoImpl mementoImpl = (MovementActionMementoImpl) movementActionMemento;
 		super.restoreMovementActionMemento(this.movementActionMemento);

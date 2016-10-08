@@ -3,6 +3,10 @@ package com.example.try_gameengine.remotecontroller;
 import android.view.MotionEvent;
 import com.example.try_gameengine.remotecontroller.RemoteController.CommandType;
 
+/**
+ * @author irons
+ *
+ */
 public class RemoteControl {
 	Command slot;
 	Command[] onCommands;

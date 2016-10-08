@@ -4,6 +4,11 @@ import android.view.MotionEvent;
 
 import com.example.try_gameengine.remotecontroller.RemoteController.CommandType;
 
+/**
+ * 
+ * @author irons
+ *
+ */
 public class DownCommand implements Command {
 	UpKey upKey;
 	private int pointerId = -1;
@@ -33,7 +38,8 @@ public class DownCommand implements Command {
 	@Override
 	public int getMotionEventPointerId() {
 		// TODO Auto-generated method stub
-		return -1;
+//		return -1;
+		return pointerId;
 	}
 
 }

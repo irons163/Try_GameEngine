@@ -4,17 +4,15 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-import android.util.Log;
-
-import com.example.try_gameengine.action.MovementAction.MovementActionMementoImpl;
-import com.example.try_gameengine.action.MovementAction.TimerOnTickListener;
-import com.example.try_gameengine.action.MovementActionItemAlpha.FrameTrigger;
-import com.example.try_gameengine.action.MovementActionItemAlpha.MovementActionItemBaseReugularFPSMementoImpl;
 import com.example.try_gameengine.action.listener.IActionListener;
 import com.example.try_gameengine.action.visitor.IMovementActionVisitor;
 import com.example.try_gameengine.framework.Config;
-import com.example.try_gameengine.framework.Minimax;
 
+/**
+ * MovementActionItemRotation is for rotation.
+ * @author irons
+ *
+ */
 public class MovementActionItemRotation extends MovementAction{
 	long millisTotal;
 	long millisDelay;
@@ -72,10 +70,21 @@ public class MovementActionItemRotation extends MovementAction{
 //		this(triggerTotal, triggerTotal, NO_ORGINAL_ALPHA, alpha, "MovementActionItemAlpha");
 //	}
 	
+	/**
+	 * @param triggerTotal
+	 * @param triggerInterval
+	 * @param rotation
+	 */
 	public MovementActionItemRotation(long triggerTotal, long triggerInterval, float rotation){
 		this(triggerTotal, triggerInterval, rotation, "MovementActionItemAlpha");
 	}
 	
+	/**
+	 * @param triggerTotal
+	 * @param triggerInterval
+	 * @param rotation
+	 * @param description
+	 */
 	public MovementActionItemRotation(long triggerTotal, long triggerInterval, float rotation, String description){
 		this.rotation = rotation;
 //		super(millisTotal, millisDelay, dx, dy, description);
@@ -87,6 +96,9 @@ public class MovementActionItemRotation extends MovementAction{
 		info = new MovementActionInfo(millisTotal, millisDelay, 0, 0);
 	}
 	
+	/**
+	 * @param rotationType
+	 */
 	public void setScaleType(RotationType rotationType){
 		this.rotationType = rotationType;
 	}
@@ -148,6 +160,10 @@ public class MovementActionItemRotation extends MovementAction{
 		isEnableSetSpriteAction = isRepeatSpriteActionIfMovementActionRepeat;
 	}
 
+	/**
+	 * @author irons
+	 *
+	 */
 	public interface FrameTrigger{
 		public void trigger();
 	}
@@ -183,6 +199,9 @@ public class MovementActionItemRotation extends MovementAction{
 		return myTrigger;
 	}
 	
+	/* (non-Javadoc)
+	 * @see com.example.try_gameengine.action.MovementAction#setActionListener(com.example.try_gameengine.action.listener.IActionListener)
+	 */
 	public void setActionListener(IActionListener actionListener){
 		this.actionListener = actionListener;
 	}
@@ -331,6 +350,8 @@ public class MovementActionItemRotation extends MovementAction{
 		return isStop;
 	}
 	
+	
+	@Override
 	public IMovementActionMemento createMovementActionMemento(){
 		movementActionMemento = new MovementActionItemBaseReugularFPSMementoImpl(actions, thread, timerOnTickListener, name, copyMovementActionList, currentInfoList, movementItemList, totalCopyMovementActionList, isCycleFinish, isCycleFinish, isCycleFinish, isCycleFinish, name, cancelAction, millisTotal, millisDelay, info, resumeTotal, resetTotal, name, updateTime, frameIdx, isStop, isCycleFinish, triggerEnable, frameTimes, resumeFrameIndex, resumeFrameCount, pauseFrameNum, pauseFrameCounter, nextframeTrigger, lastTriggerFrameNum);
 		if(this.info!=null){
@@ -339,6 +360,7 @@ public class MovementActionItemRotation extends MovementAction{
 		return movementActionMemento;
 	}
 	
+	@Override
 	public void restoreMovementActionMemento(IMovementActionMemento movementActionMemento){
 //		MovementActionMementoImpl mementoImpl = (MovementActionMementoImpl) movementActionMemento;
 		super.restoreMovementActionMemento(this.movementActionMemento);

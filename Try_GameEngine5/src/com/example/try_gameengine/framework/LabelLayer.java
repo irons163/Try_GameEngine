@@ -83,7 +83,8 @@ public class LabelLayer extends Layer{
 	@Override
 	public void drawSelf(Canvas canvas, Paint paint) {
 		// TODO Auto-generated method stub
-		super.drawSelf(canvas, paint);
+//		super.drawSelf(canvas, paint);
+		super.doDrawself(canvas, paint);
 		
 		if(paint!=null)
 			calculateY(paint);
@@ -133,6 +134,8 @@ public class LabelLayer extends Layer{
 			if(isAncestorClipOutSide())
 				canvas.restore();
 		}
+		
+		super.doDrawChildren(canvas, paint);
 	}
 	
 	private void autoHWByText(){
