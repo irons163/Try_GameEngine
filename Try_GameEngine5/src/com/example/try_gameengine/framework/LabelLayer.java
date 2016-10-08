@@ -99,6 +99,8 @@ public class LabelLayer extends Layer{
 			break;
 		}
 		if(text!=null){
+			canvas.save();
+			
 //			if(isAncestorClipOutSide()){
 //				RectF rectF = null;
 //				if((rectF = getClipRange())!=null){
@@ -131,7 +133,7 @@ public class LabelLayer extends Layer{
 					canvas.drawText(text, getLeft(), getTop() - y, paint!=null?paint:getPaint());
 			}while(false);
 			
-			if(isAncestorClipOutSide())
+//			if(isAncestorClipOutSide())
 				canvas.restore();
 		}
 		

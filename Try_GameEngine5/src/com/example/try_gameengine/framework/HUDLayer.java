@@ -6,6 +6,13 @@ public class HUDLayer extends Layer{
 
 	public HUDLayer(){
 		super();
+		LayerManager.addHUDLayer(this);
+	}
+	
+	@Override
+	public void setParent(ILayer parent) {
+		// TODO Auto-generated method stub
+		throw new RuntimeException("HUD Layer not support the setParent method");
 	}
 	
 	@Override

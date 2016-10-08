@@ -3,6 +3,7 @@ package com.example.try_gameengine.Camera;
 import com.example.try_gameengine.framework.ILayer;
 
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.RectF;
 
@@ -340,12 +341,56 @@ public class Camera extends ACamera{
 		return null;
 	}
 	
-	/**
-	 * apply view port for it's setting.
-	 * @param canvas 
-	 * 			the canvas to draw.
-	 */
+//	public void applyViewPort(Canvas canvas){
+//		if(viewPort == null){
+//			return;
+//		}
+//		
+//		//viewport
+//		viewPort.getHeight();
+////		canvas.save();
+//		canvas.rotate(dx);
+//		canvas.clipRect(getViewPortRectF());
+//		
+//		// camera
+//		canvas.rotate(rotation, cameraRange.centerX(), cameraRange.centerY());
+//		
+//		dx = viewPort.getX() - cameraRange.left;
+//		dy = viewPort.getY() - cameraRange.top;
+//		canvas.translate(dx, dy);
+//		float xscaleFactor = viewPort.getWidth()/cameraRange.width();
+////		canvas.scale(xscaleFactor, xscaleFactor);
+//		float yscaleFactor = viewPort.getHeight()/cameraRange.height();
+//		canvas.scale(xscaleFactor, yscaleFactor);
+//		
+////		canvas.save();
+//	}
+	
+	private boolean isNeedClearView = true;
+	private int clearCount = 0;
+	private final int SurfaceBufferCount = 1;
+	private int clearColor = Color.BLACK;
+	
+	public void enableClearViewNextTime(){
+		this.isNeedClearView = true;
+	}
+	
+	public void setClearColor(int clearColor){
+		this.clearColor = clearColor;
+	}
+	
+	public int getClearColor(){
+		return clearColor;
+	}
+	
 	public void applyViewPort(Canvas canvas){
+//		resetMatrix();
+		if(isNeedClearView){
+			if(clearCount > SurfaceBufferCount)
+				isNeedClearView = false;
+			canvas.drawColor(clearColor);
+			clearCount++;
+		}
 		//viewport
 		if(viewPort!=null){
 			canvas.save(Canvas.MATRIX_SAVE_FLAG | Canvas.HAS_ALPHA_LAYER_SAVE_FLAG | Canvas.HAS_ALPHA_LAYER_SAVE_FLAG | Canvas.FULL_COLOR_LAYER_SAVE_FLAG | Canvas.CLIP_TO_LAYER_SAVE_FLAG);

@@ -3,10 +3,11 @@ package com.example.try_gameengine.framework;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.ListIterator;
+import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import com.example.try_gameengine.scene.Scene;
-import com.example.try_gameengine.scene.SceneManager;
 import com.example.try_gameengine.stage.StageManager;
 
 import android.graphics.Bitmap;
@@ -22,6 +23,10 @@ import android.view.MotionEvent;
 
 
 /** * 层类，组件的父类，添加组件，设置组件位置，绘制自己， 是所有人物和背景的基类 * * @author Administrator * */
+/**
+ * @author user
+ *
+ */
 public abstract class ALayer implements ILayer{
 	private float x;// 层的x坐标
 	private float y;// 层的y坐标
@@ -36,7 +41,7 @@ public abstract class ALayer implements ILayer{
 	public RectF dst;
 	public Bitmap bitmap;// 引用Bitmap类
 	
-	ConcurrentLinkedQueue<ILayer> layers = new ConcurrentLinkedQueue<ILayer>();
+	List<ILayer> layers = new CopyOnWriteArrayList<ILayer>();
 	ILayer parent;
 	RectF smallViewRect;
 	PointF locationInScene;
@@ -48,6 +53,8 @@ public abstract class ALayer implements ILayer{
 	private Paint paint;
 	
 	private int zPosition = 0; //default 0
+	
+	private boolean isUsedzPosition = false;
 	
 	private Runnable mPendingCheckForLongPress;
 	private Runnable mPerformClick;
@@ -68,6 +75,8 @@ public abstract class ALayer implements ILayer{
 	private boolean isEnable = true;
 	
 	private boolean isHidden = false;
+	
+	private boolean isBitmapChangedFitToAutoSize = false;
 	
 	private static final int INVALID_POINTER_ID = -1;
 	
@@ -455,6 +464,8 @@ public abstract class ALayer implements ILayer{
 			}
 			layer.setParent(null);
 			LayerManager.deleteLayerByLayerLevel(layer, layer.getLayerLevel());
+			if(layer.isAutoAdd())
+				((ALayer)layer).autoAdd = false;
 		}
 	}
 	
@@ -481,6 +492,7 @@ public abstract class ALayer implements ILayer{
 		layer.setLayerLevel(layerLevel + 1);
 		layers.add(layer);
 		layer.setParent(this);
+		((ALayer)layer).autoAdd = true;
 		LayerManager.addLayerByLayerLevel(layer, layer.getLayerLevel());
 	}
 	
@@ -493,6 +505,7 @@ public abstract class ALayer implements ILayer{
 		}
 		layers.add(layer);
 		layer.setParent(this);
+		((ALayer)layer).autoAdd = true;
 		LayerManager.addLayerByLayerLevel(layer, layer.getLayerLevel());
 	}
 
@@ -500,6 +513,7 @@ public abstract class ALayer implements ILayer{
 		layer.setLayerLevel(layerLevel);
 		layers.add(layer);
 		layer.setParent(this);
+		((ALayer)layer).autoAdd = true;
 		LayerManager.addLayerByLayerLevel(layer, layer.getLayerLevel());
 	}
 	
@@ -511,6 +525,7 @@ public abstract class ALayer implements ILayer{
 //		}
 		layers.add(layer);
 		layer.setParent(this);
+		((ALayer)layer).autoAdd = true;
 		LayerManager.addLayerByLayerLevel(layer, layerLevel);
 	}
 	
@@ -520,6 +535,9 @@ public abstract class ALayer implements ILayer{
 			layer.setComposite(true);
 			layers.add(layer);
 			layer.setParent(this);
+			
+			if(layer.isUsedzPosition())
+				layer.setAutoAdd(true);
 			
 			if(layer.getLayerParam().isEnabledPercentagePositionX()){
 				layer.setX(w * layer.getLayerParam().getPercentageX());	
@@ -555,13 +573,12 @@ public abstract class ALayer implements ILayer{
 		return null;
 	}
 
-	public ConcurrentLinkedQueue<ILayer> getLayers() {
+	public List<ILayer> getLayers() {
 		return layers;
 	}
 
 	public Iterator createIterator(){
 		return new CompositeIterator(layers.iterator());
-		
 	}
 
 	public void moveAllChild(int offsetLayerLevel){
@@ -818,17 +835,17 @@ public abstract class ALayer implements ILayer{
 		return pointWHMax;
 	}
 	
-	private void checkParentAndDoParentAutoSize(){ // has some limit conditions.
-		if(isComposite() && ((ALayer)getParent()).isAutoSizeByChildren()){
-			if(getLayerParam().isEnabledPercentagePositionX() || getLayerParam().isEnabledPercentagePositionY() 
-					|| getLayerParam().isEnabledPercentageSizeW() || getLayerParam().isEnabledPercentageSizeH()){
-				return;
-			}
-			if(!getParent().getLayerParam().isEnabledPercentageSizeW() && !getParent().getLayerParam().isEnabledPercentageSizeH()){
-				((ALayer)getParent()).calculateWHByChildern();
-			}
-		}
-	}
+//	private void checkParentAndDoParentAutoSize(){ // has some limit conditions.
+//		if(isComposite() && ((ALayer)getParent()).isAutoSizeByChildren()){
+//			if(getLayerParam().isEnabledPercentagePositionX() || getLayerParam().isEnabledPercentagePositionY() 
+//					|| getLayerParam().isEnabledPercentageSizeW() || getLayerParam().isEnabledPercentageSizeH()){
+//				return;
+//			}
+//			if(!getParent().getLayerParam().isEnabledPercentageSizeW() && !getParent().getLayerParam().isEnabledPercentageSizeH()){
+//				((ALayer)getParent()).calculateWHByChildern();
+//			}
+//		}
+//	}
 	
 	public float getX(){
 		return anchorPointXY.x;
@@ -929,7 +946,10 @@ public abstract class ALayer implements ILayer{
 	}
 
 	public void setBitmap(Bitmap bitmap){
-		this.bitmap = bitmap;
+		if(isBitmapChangedFitToAutoSize())
+			setBitmapAndAutoChangeWH(bitmap);
+		else
+			this.bitmap = bitmap;
 	}
 	
 	public Bitmap getBitmap() {
@@ -1005,13 +1025,31 @@ public abstract class ALayer implements ILayer{
 	//Need add LayerManager.(AutoDraw)
 	public void setzPosition(int zPosition) {
 		this.zPosition = zPosition;
+		this.isUsedzPosition = true;
 		if(!autoAdd){
 			autoAdd = true;
 			LayerManager.addLayer(this);
 		}
 		LayerManager.updateLayersDrawOrderByZposition(this);
 	}
+	
+	/**
+	 * 
+	 */
+	public void resetzPosition(){
+		this.isUsedzPosition = false;
+		setAutoAdd(false);
+	}
+	
+	@Override
+	public boolean isUsedzPosition() {
+		// TODO Auto-generated method stub
+		return isUsedzPosition;
+	}
 
+	/**
+	 * @param isClipOutside
+	 */
 	public void setIsClipOutside(boolean isClipOutside){
 		this.isClipOutside = isClipOutside;
 		if(isClipOutside && getPaint()==null)
@@ -1145,13 +1183,13 @@ public abstract class ALayer implements ILayer{
 	public boolean isEnable() {
 		return isEnable;
 	}
+	
+	public void setEnable(boolean isEnable) {
+		this.isEnable = isEnable;
+	}
 
 	public boolean isHidden() {
 		return isHidden;
-	}
-
-	public void setEnable(boolean isEnable) {
-		this.isEnable = isEnable;
 	}
 
 	public void setHidden(boolean isHidden) {
@@ -1174,6 +1212,47 @@ public abstract class ALayer implements ILayer{
 		}
 	}
 	
+	public boolean isBitmapChangedFitToAutoSize() {
+		return isBitmapChangedFitToAutoSize;
+	}
+
+	public void setBitmapChangedFitToAutoSize(boolean isBitmapChangedFitToAutoSize) {
+		this.isBitmapChangedFitToAutoSize = isBitmapChangedFitToAutoSize;
+	}
+	
+	public boolean checkIsFlagEnable(int flagForCheck){
+//		return ((getFlag() & flagForCheck) != 0); // not correct if flagForCheck is a mix flag, like: flagForCheck = (Aflag & Bflag);
+		return ((getFlag() & flagForCheck) == flagForCheck);
+	}
+	
+	public boolean isEnableTouchOnSlef(){
+		return !checkIsFlagEnable(TOUCH_EVENT_ONLY_ACTIVE_ON_CHILDREN); // If only active children, means not active self.
+	}
+	
+	public void setEnableTouchOnSlef(boolean enableTouchOnSelf){
+		if(isEnableTouchOnSlef() == enableTouchOnSelf)
+			return;
+		if(!enableTouchOnSelf){
+			addFlag(TOUCH_EVENT_ONLY_ACTIVE_ON_CHILDREN);
+		}else{
+			removeFlag(TOUCH_EVENT_ONLY_ACTIVE_ON_CHILDREN);
+		}
+	}
+	
+	public boolean isEnableTouchOnSlefAndChildren(){
+		return !(checkIsFlagEnable(TOUCH_EVENT_ONLY_ACTIVE_ON_CHILDREN) || checkIsFlagEnable(TOUCH_EVENT_ONLY_ACTIVE_ON_SELF)); // Need active on self and children.
+	}
+	
+	public void setEnableTouchOnSlefAndChildren(boolean enableTouchOnSelfAndChildren){
+		if(isEnableTouchOnSlefAndChildren() == enableTouchOnSelfAndChildren)
+			return;
+		if(!enableTouchOnSelfAndChildren){
+			addFlag(TOUCH_EVENT_ONLY_ACTIVE_ON_NOTHING);
+		}else{
+			removeFlag(TOUCH_EVENT_ONLY_ACTIVE_ON_NOTHING);
+		}
+	}
+	
 	public void setLocationInScene(PointF locationInScene) {
 		this.locationInScene = locationInScene;
 		for(ILayer child : layers){
@@ -1182,6 +1261,9 @@ public abstract class ALayer implements ILayer{
 		}	
 	}
 
+	/* (non-Javadoc)
+	 * @see com.example.try_gameengine.framework.ILayer#locationInLayer(float, float)
+	 */
 	public PointF locationInLayer(float x, float y){
 		PointF locationInLayer = new PointF(x, y);
 //		if(isComposite()){
@@ -1195,6 +1277,9 @@ public abstract class ALayer implements ILayer{
 		return locationInLayer;
 	}
 	
+	/* (non-Javadoc)
+	 * @see com.example.try_gameengine.framework.ILayer#locationInSceneByCompositeLocation(float, float)
+	 */
 	public PointF locationInSceneByCompositeLocation(float locationInLayerX, float locationInLayerY){
 		PointF locationInScene = new PointF(locationInLayerX, locationInLayerY);
 //		if(isComposite()){
@@ -1208,6 +1293,9 @@ public abstract class ALayer implements ILayer{
 		return locationInScene;
 	}
 	
+	/* (non-Javadoc)
+	 * @see com.example.try_gameengine.framework.ILayer#frameInSceneByCompositeLocation()
+	 */
 	public RectF frameInSceneByCompositeLocation(){
 		RectF frameInScene = new RectF();
 //		if(isComposite()){
@@ -1236,6 +1324,10 @@ public abstract class ALayer implements ILayer{
 //		return frameInScene;
 //	}
 	
+	
+	/**
+	 * @return
+	 */
 	protected boolean isAncestorClipOutSide(){
 		boolean isAncestorClipOutSide = false;
 		ILayer layer = this;
@@ -1247,6 +1339,9 @@ public abstract class ALayer implements ILayer{
 		return isAncestorClipOutSide;
 	}
 	
+	/**
+	 * @return
+	 */
 	private RectF getClipRange(){
 		ILayer layer = this;
 		RectF clipRange = new RectF(this.getFrameInScene());
@@ -1272,6 +1367,7 @@ public abstract class ALayer implements ILayer{
 		return canvas;
 	}
 	
+	// This has a better clip out side method, not need to access every parent now.
 	public Canvas getC(Canvas canvas, Paint paint){
 		if(isAncestorClipOutSide()){
 			if(getParent().isClipOutside()){
@@ -1342,7 +1438,9 @@ public abstract class ALayer implements ILayer{
         x = event.getX(downPointerIndex);
         y = event.getY(downPointerIndex);
 		float a[] = new float[]{x, y};
-		boolean isIndentify = StageManager.getCurrentStage().getSceneManager().getCurrentActiveScene().getCamera().getMatrix().isIdentity();
+		boolean isIndentify = true;
+		if(StageManager.getCurrentStage().getSceneManager()!=null && StageManager.getCurrentStage().getSceneManager().getCurrentActiveScene()!=null)
+			isIndentify = StageManager.getCurrentStage().getSceneManager().getCurrentActiveScene().getCamera().getMatrix().isIdentity();
 		if(isIndentify && this instanceof Sprite){
 			if(((Sprite)this).spriteMatrix!=null){
 				synchronized (((Sprite)this).spriteMatrix) {
@@ -1352,24 +1450,58 @@ public abstract class ALayer implements ILayer{
 		}
 			
 		if(!isIndentify){
-//            f = getFrameInScene();
-			f = frameInSceneByCompositeLocation();
+//          f = getFrameInScene();
+//			f = frameInSceneByCompositeLocation();
 //			f = new RectF(getLeft(), getTop(), getLeft()+w, getTop()+h);
 			Scene scene = StageManager.getCurrentStage().getSceneManager().getCurrentActiveScene();
 			Matrix matrix = new Matrix();
 			if(this instanceof Sprite){
-				matrix = new Matrix(scene.getCamera().getMatrix());
+				f = ((Sprite)this).drawRectF;
+				if(scene!=null) // If user not use scene system, scene is null.
+					matrix = new Matrix(scene.getCamera().getMatrix());
 				if(((Sprite)this).spriteMatrix!=null){
 					synchronized (((Sprite)this).spriteMatrix) {
 						Matrix matrix2 =  new Matrix(((Sprite)this).spriteMatrix);
-						matrix2.setTranslate(0, 0);
+//						matrix2.setTranslate(0, 0);
 						matrix.postConcat(matrix2);
+						
+//						Matrix matrix2 =  new Matrix(((Sprite)this).spriteMatrix);
+//						float[] values = new float[9];
+//						matrix2.getValues(values);
+//						//matrix2.postTranslate(-values[2], -values[5]);
+//						
+//						matrix2.postTranslate(-w*getAnchorPoint().x,-h*getAnchorPoint().y);
+////						if(this.length>0){
+////							if(xScale*xScaleForBitmapWidth<0 && yScale*yScaleForBitmapHeight<0){
+////								spriteMatrix.postTranslate(-2*w*(getAnchorPoint().x-0.5f),-2*h*(getAnchorPoint().y-0.5f));
+////							}else if(xScale*xScaleForBitmapWidth<0){
+////								spriteMatrix.postTranslate(-2*w*(getAnchorPoint().x-0.5f),-h*getAnchorPoint().y);
+////							}else if(yScale*yScaleForBitmapHeight<0){
+////								spriteMatrix.postTranslate(-w*getAnchorPoint().x,-2*h*(getAnchorPoint().y-0.5f));
+////							}else{
+////								spriteMatrix.postTranslate(-w*getAnchorPoint().x,-h*getAnchorPoint().y);
+////							}
+////						}else{
+////							if(xScale*xScaleForBitmapWidth<0 && yScale*yScaleForBitmapHeight<0){
+////								spriteMatrix.postTranslate(-1*w*(getAnchorPoint().x-1.0f),-h*(getAnchorPoint().y-1.0f));
+////							}else if(xScale*xScaleForBitmapWidth<0){
+////								spriteMatrix.postTranslate(-1*w*(getAnchorPoint().x-1.0f),-h*getAnchorPoint().y);
+////							}else if(yScale*yScaleForBitmapHeight<0){
+////								spriteMatrix.postTranslate(-1*w*(getAnchorPoint().x),-h*(getAnchorPoint().y-1.0f));
+////							}else{
+////								spriteMatrix.postTranslate(-w*getAnchorPoint().x,-h*getAnchorPoint().y);
+////							}
+////						}
+//						
+//						matrix.postConcat(matrix2);
 					}
 				}
 				matrix.invert(matrix);
 //				matrix = matrix2;
 			}else{
-				scene.getCamera().getMatrix().invert(matrix);
+				f = getFrameInScene();
+				if(scene!=null) // If user not use scene system, scene is null.
+					scene.getCamera().getMatrix().invert(matrix);
 			}
 
 			
@@ -1416,7 +1548,12 @@ public abstract class ALayer implements ILayer{
 		}
 		
 		if((flag & TOUCH_EVENT_ONLY_ACTIVE_ON_SELF)==0){
-			for(ILayer child : layers){
+//			for(int i = layers.size(); i < layers.size(); i++){
+//				
+//			}
+			ListIterator<ILayer> iterator = layers.listIterator(layers.size());
+			while(iterator.hasPrevious()){
+				ILayer child = iterator.previous();
 				if(!child.isAutoAdd() && child.onTouchEvent(event)){
 					/*
 					if((flag & TOUCH_EVENT_ONLY_ACTIVE_ON_CHILDREN)!=0)
@@ -1425,8 +1562,8 @@ public abstract class ALayer implements ILayer{
 						return false;
 					*/
 					return true; //if child accept the touch event, not do self touch event and return true.
-				}
-			} 
+				}	
+			}
 		}
 		
 		if((flag & TOUCH_EVENT_ONLY_ACTIVE_ON_CHILDREN)!=0){
@@ -1619,6 +1756,8 @@ public abstract class ALayer implements ILayer{
 
 //			canMoving = true;
 			
+			boolean isOutRange = false;
+			
 			if ((flag & TOUCH_MOVE_CAN_OUTSIDE_SELF_RANGE)!=0){
 				if(!isIndentify){
 					if (!f.contains(a[0], a[1])) {
@@ -1631,23 +1770,68 @@ public abstract class ALayer implements ILayer{
 				if(!isIndentify){
 					if (!f.contains(a[0], a[1])) {
 						removeLongPressCallback();
-						pressed = false;
+						
 						if ((flag & TOUCH_MOVE_CAN_WITHOUT_TOUCH_DOWN)!=0){
+							if(pressed){
+								pressed = false;
+								onTouched(event);
+							}
+							
 							canMoving = false;
+							isOutRange = true;
+//							onTouched(event);
 							return false;
 						}
+						pressed = false;
+						isOutRange = true;
 					}
+//					else if((flag & TOUCH_MOVE_CAN_WITHOUT_TOUCH_DOWN)!=0){
+//						pressed = true;
+//					}
 				}else if (!f.contains(x, y)) {
 					removeLongPressCallback();
-					pressed = false;
+					
 					if ((flag & TOUCH_MOVE_CAN_WITHOUT_TOUCH_DOWN)!=0){
+						if(pressed){
+							pressed = false;
+							onTouched(event);
+						}
+						
 						canMoving = false;
+						isOutRange = true;
+//						onTouched(event);
 						return false;
 					}
+					pressed = false;
+					isOutRange = true;
 				}
+//				else if((flag & TOUCH_MOVE_CAN_WITHOUT_TOUCH_DOWN)!=0){
+//					pressed = true;
+//				}
 			}
 
-			onTouched(event);
+			boolean oriPressed = pressed;
+			
+			if ((flag & TOUCH_MOVE_CAN_WITHOUT_TOUCH_DOWN)!=0){
+				pressed = !isOutRange;
+				onTouched(event);
+				pressed = oriPressed;
+			}
+			/*
+			if ((flag & TOUCH_MOVE_CAN_WITHOUT_TOUCH_DOWN)!=0 && (flag & TOUCH_MOVE_CAN_OUTSIDE_SELF_RANGE)==0){
+				pressed = !isOutRange;
+				onTouched(event);
+				pressed = oriPressed;
+			}
+			else if ((flag & TOUCH_MOVE_CAN_WITHOUT_TOUCH_DOWN)!=0 && (flag & TOUCH_MOVE_CAN_OUTSIDE_SELF_RANGE)!=0){
+				pressed = !isOutRange;
+				onTouched(event);
+				pressed = oriPressed;
+			}*/
+			else{
+				onTouched(event);
+			}
+			
 			break;
 		default:
 			break;
@@ -1695,8 +1879,8 @@ public abstract class ALayer implements ILayer{
 		if(dst!=null)
 			layer.dst = new RectF(dst);
 		
-//		layer.layers = new ArrayList<ILayer>(layers.size());
-		layer.layers = new ConcurrentLinkedQueue<ILayer>();
+		layer.layers = new ArrayList<ILayer>(layers.size());
+//		layer.layers = new ConcurrentLinkedDeque<ILayer>();
 		
 		for(ILayer item: layers) layer.layers.add((ALayer) ((ALayer)item).clone());
 //	    for(ILayer item: layers) {
@@ -1712,6 +1896,8 @@ public abstract class ALayer implements ILayer{
 	    
 	    if(locationInScene!=null)
 	    	layer.locationInScene = new PointF(locationInScene.x, locationInScene.y);
+	    
+	    layer.zPosition = this.zPosition;
 	    
 	    if(autoAdd){
 	    	LayerManager.addLayerByLayerLevel(layer, getLayerLevel());
@@ -1750,6 +1936,10 @@ public abstract class ALayer implements ILayer{
 		layer.flag = this.flag;
 				
 		layer.backgroundColor = this.backgroundColor;
+		
+		layer.isUsedzPosition = this.isUsedzPosition;
+		
+		layer.isBitmapChangedFitToAutoSize = this.isBitmapChangedFitToAutoSize;
 		
 //		private OnLayerClickListener onLayerClickListener;
 //		private OnLayerLongClickListener onLayerLongClickListener;

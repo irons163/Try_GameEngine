@@ -191,7 +191,7 @@ public class LayerManager {
 	}
 	
 	public static synchronized void deleteLayerBySearchAll(ILayer layer) {
-		if(!layerLevelList.get(0).remove(layer)){
+		if(!layerLevelList.get(0).remove(layer)){ // maybe change to check and remove in all layerLevelList?
 			if(sceneLayerLevelList.isEmpty()){
 				boolean isFind = false;
 				synchronized (layerLevelList) {

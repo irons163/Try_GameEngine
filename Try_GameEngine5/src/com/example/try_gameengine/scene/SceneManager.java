@@ -56,8 +56,6 @@ public class SceneManager {
 	public void addScene(Scene scene){
 		scenes.add(scene);
 		if(scene.sceneLayerLevel<0){
-//			LayerManager.setLayerBySenceIndex(scenes.size()-1);
-//			scene.setLayerLevel(scenes.size()-1);
 			LayerManager.setLayerBySenceIndex(nextSceneIndexForAdd);
 			scene.setLayerLevel(nextSceneIndexForAdd);
 			nextSceneIndexForAdd = nextSceneIndexForAdd+1;
@@ -83,6 +81,7 @@ public class SceneManager {
 		sceneClassInfo.setSceneLayerLevel(sceneLayerLevel);
 		sceneClassInfo.setMode(mode);
 		sceneClassMap.put(sceneClassInfo, sceneClass);
+		nextSceneIndexForAdd = sceneLayerLevel+1;
 	}
 	
 	public List<Scene> getScenes(){
@@ -160,7 +159,6 @@ public class SceneManager {
 
 				if(scene==null)
 					throw new RuntimeException();
-//				scenes.add(index, scene);
 				scenes.add(scene);
 				sceneClassForStart = sceneClass;
 			}
@@ -194,17 +192,16 @@ public class SceneManager {
 		}
 	}
 	
-	public void startScene(int index){
-		startScene(index, null);
+	public boolean startScene(int index){
+		return startScene(index, null);
 	}
 	
-	public void startScene(int index, Object objForSendToScene){
+	public boolean startScene(int index, Object objForSendToScene){
 		boolean isNeedStopCurrentActiveScene = true;
-
 		Scene scene = createScene(index);
 		
 		if(scene == null)
-			return;
+			return false;
 		
 		if(scene instanceof DialogScene){
 			isNeedStopCurrentActiveScene = ((DialogScene) scene).getIsNeedToStopTheActiveScene();
@@ -217,12 +214,12 @@ public class SceneManager {
 			}
 		}
 
-			LayerManager.setLayerBySenceIndex(index);
-
-			scene.startWithObj(objForSendToScene);
-//			scene.start();
-			currentActiveScene = scene;
-			currentSceneIndex = index;
+		LayerManager.setLayerBySenceIndex(index);
+		scene.startWithObj(objForSendToScene);
+		currentActiveScene = scene;
+		currentSceneIndex = index;
+		
+		return true;
 	}
 	
 	public void startLastScene(){
@@ -253,16 +250,12 @@ public class SceneManager {
 		}
 		
 		currentActiveSceneOrderInScenes++;
-//		if(currentActiveScene!=null)
-//			currentActiveScene.stop(); 
 		if(currentActiveSceneOrderInScenes == scenes.size()){
 			currentActiveSceneOrderInScenes = 0;
 		}
 		
-//		startScene(currentActiveSceneOrderInScenes, objForSendToScene);
 		Scene scene = scenes.get(currentActiveSceneOrderInScenes);
 		scene.startWithObj(objForSendToScene);
-////		scene.start();
 		currentActiveScene = scene;
 		currentSceneIndex = scene.getLayerLevel();
 	}
@@ -281,12 +274,6 @@ public class SceneManager {
 	}
 	
 	public boolean startSceneWithNextSceneIndexWithCycle(boolean isCycle, Object objForSendToScene){
-//		if(currentActiveScene!=null){
-//			currentActiveScene.stop();
-//			if(currentActiveScene instanceof DialogScene)
-//				currentActiveScene.finish();
-//		}
-		
 		Scene scene = null;
 		for(int i = 0; i < nextSceneIndexForAdd; i++){
 			currentSceneIndex++;
@@ -297,11 +284,6 @@ public class SceneManager {
 				}
 				currentSceneIndex = 0;
 			}
-	//		Scene scene = scenes.get(currentSceneIndex);
-	//		startScene(currentSceneIndex);
-	//		if(!(scene instanceof DialogScene)){
-	//			LayerManager.setLayerBySenceIndex(currentSceneIndex);
-	//		}
 			
 			scene = createScene(currentSceneIndex);
 			
@@ -319,9 +301,7 @@ public class SceneManager {
 		}
 		
 		LayerManager.setLayerBySenceIndex(currentSceneIndex);
-		
 		scene.startWithObj(objForSendToScene);
-		
 		currentActiveScene = scene;
 		
 		return true;
@@ -406,8 +386,6 @@ public class SceneManager {
 	}
 	
 	public boolean startSceneWithPreviousSceneIndexWithCycle(boolean isCycle){
-//		boolean success = false;
-		
 		if(currentActiveScene!=null){
 			currentActiveScene.stop();
 			if(currentActiveScene instanceof DialogScene)
@@ -424,11 +402,6 @@ public class SceneManager {
 				}
 				currentSceneIndex = nextSceneIndexForAdd-1;
 			}
-	//		Scene scene = scenes.get(currentSceneIndex);
-	//		startScene(currentSceneIndex);
-	//		if(!(scene instanceof DialogScene)){
-	//			LayerManager.setLayerBySenceIndex(currentSceneIndex);
-	//		}
 			
 			scene = createScene(currentSceneIndex);
 			
