@@ -5,14 +5,13 @@ import java.util.Iterator;
 import com.example.try_gameengine.scene.Scene;
 
 import android.app.Activity;
-import android.content.Context;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
-import android.view.View.OnCreateContextMenuListener;
 
+/**
+ * @author irons
+ *
+ */
 public abstract class GameController implements IGameController{
 	protected IGameModel gameModel;
 	protected Activity activity;
@@ -20,20 +19,29 @@ public abstract class GameController implements IGameController{
 	protected int sceneMode = Scene.RESTART;
 	private boolean isGameViewCreated = false;
 	private boolean isBlocRunStart = false;
-//	public GameController() {
-//		// TODO Auto-generated constructor stub
-//	}
 	
+	/**
+	 * Constructor.
+	 * @param activity
+	 * 			activity about the android activity or {@code Stage}.
+	 * @param gameModel
+	 * 			gamemodel about the the game loop and the game detail in.
+	 */
 	public GameController(Activity activity, IGameModel gameModel) {
-		// TODO Auto-generated constructor stub
 		this.gameModel = gameModel;
 		this.activity = activity;
-//		GameView gameView = new GameView(activity, this, gameModel);
-//		activity.setContentView(gameView);
 	}
 	
+	/**
+	 * Constructor.
+	 * @param activity
+	 * 			activity about the android activity or {@code Stage}.  
+	 * @param gameModel
+	 * 			gamemodel about the the game loop and the game detail in.
+	 * @param sceneMode
+	 * 			the scene mode.
+	 */
 	public GameController(Activity activity, IGameModel gameModel, int sceneMode) {
-		// TODO Auto-generated constructor stub
 		this.gameModel = gameModel;
 		this.activity = activity;
 		this.sceneMode = sceneMode;
@@ -41,7 +49,6 @@ public abstract class GameController implements IGameController{
 	
 	@Override
 	public void setFlag(int sceneMode) {
-		// TODO Auto-generated method stub
 		if((sceneMode&Scene.BLOCK)!=0){
 			isBlocRunStart = true;
 		}else{
@@ -49,10 +56,18 @@ public abstract class GameController implements IGameController{
 		}
 	}
 	
+	/**
+	 * init start.
+	 */
 	protected void initStart(){
 		initStart(sceneMode);
 	}
 	
+	/**
+	 * init start with sceneMode.
+	 * @param sceneMode
+	 * 			the scene mode.
+	 */
 	protected void initStart(int sceneMode){
 		if((sceneMode&Scene.BLOCK)!=0){
 			isBlocRunStart = true;
@@ -103,16 +118,6 @@ public abstract class GameController implements IGameController{
 		// TODO Auto-generated method stub
 //		gameModel.start();
 		gameModel.restart();
-		
-//		if(gameView==null){
-//			gameView = new GameView(activity, this, gameModel);
-//			activity.setContentView(gameView);
-//		}else{
-//			activity.setContentView(gameView);
-//			gameModel.restart();
-////			gameView = new GameView(activity, this, gameModel);
-////			activity.setContentView(gameView);
-//		}
 	}
 
 	@Override
@@ -137,18 +142,19 @@ public abstract class GameController implements IGameController{
 
 	@Override
 	public void onTouchEvent(MotionEvent event) {
-		// TODO Auto-generated method stub
 		gameModel.onTouchEvent(event);
 	}
 
 	@Override
 	public void setSurfaceHolder(SurfaceHolder surfaceHolder) {
-		// TODO Auto-generated method stub
 		gameModel.setSurfaceHolder(surfaceHolder);
 	}
 	
-//	protected add
-	
+	/**
+	 * {@code BlockRunData} is a Data to tell the game loop block running. 
+	 * @author irons
+	 *
+	 */
 	class BlockRunData extends Data{
 		private boolean isBlock = false;
 		

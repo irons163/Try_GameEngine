@@ -1,16 +1,11 @@
 package com.example.try_gameengine.framework;
 
-
-import java.util.Iterator;
-
 import com.example.try_gameengine.Camera.Camera;
 import com.example.try_gameengine.action.MovementAction;
 import com.example.try_gameengine.framework.GameController.BlockRunData;
 import com.example.try_gameengine.scene.Scene;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -18,6 +13,11 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 
+/**
+ * {@code GameModel} is a class to control the game loop and camera.
+ * @author irons
+ *
+ */
 public class GameModel implements IGameModel{
 	protected Context context;
 	protected IChessBoard chessBoard;
@@ -25,7 +25,6 @@ public class GameModel implements IGameModel{
 	protected IChessPointManager chessPointManager;
 	protected Data data;
 	protected int[][] allExistPoints;
-//	protected Iterator<MyEnemy> allExistPointsIterator;
 	private SurfaceHolder surfaceHolder;
 	protected boolean isGameStop = false;
 	private boolean isGameReallyStop = false;
@@ -38,76 +37,66 @@ public class GameModel implements IGameModel{
 	float fps;
 	Paint paint = new Paint();
 	private int backgroundColor = Color.BLACK;
-//	private Bitmap lastCanvas;
 	private boolean canUseLockHardwareCanvas = false;
+	Camera camera;
+	Canvas canvas;
 	
+	/**
+	 * Contructor.
+	 * @param context
+	 * 			the context of Activity or Scene.
+	 * @param data
+	 * 			the data for use in game model.
+	 */
 	public GameModel(Context context, Data data) {
-		// TODO Auto-generated constructor stub
 		this.context = context;
 		this.data = data;
 		paint.setTextSize(50);
 		paint.setColor(Config.debugMessageColor);
-//		initChessBoard();
-//		initChessPointManager();
-//		initPlayerManager();
-//		
-//		setPlayersBySquential();
 		if(android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M)
 			canUseLockHardwareCanvas = true;
 	}
 	
+	/**
+	 * get the start time for each loop start.  
+	 * @return long.
+	 */
 	public long getStartTime(){
 		return startTime;
 	}
 	
+	/**
+	 * get the end time for each loop end.
+	 * @return
+	 */
 	public long getEndTime(){
 		return endTime;
 	}
 	
+	/**
+	 * get interval time for each interval by each loop.
+	 * @return
+	 */
 	public long getInterval(){
 		return interval;
 	}
-	
-//	protected void initChessBoard(){
-//		chessBoard = new ChessBoard(CommonUtil.screenWidth, CommonUtil.screenHeight, 8, 8);
-//		chessBoard.createLines();
-//		chessBoard.createPoints();
-//		allExistPoints = chessBoard.getAllExistPoints();
-////		allExistPointsIterator = chessBoard.get
-//		data.setAllExistPoints(allExistPoints);
-//	}
-//	
-//	protected void initChessPointManager(){
-//		chessPointManager = new ChessPointManager(context, chessBoard.getLineDistance(), chessBoard.getLineDistance());
-//	}
-//	
-//	protected void initPlayerManager(){
-//		playerManager = new PlayerManager(chessBoard, chessPointManager);
-//		Logic logic = new Logic(allExistPoints);
-//		playerManager.setLogic(logic);
-////		playerManager.setPlayersBySquential(players);
-////		playerManager.setBoard(jumpChessBoard);
-//	}
-//	
-//	protected void setPlayersBySquential(){
-//		chessBoard.setPlayersBySquential(playerManager.getPlayersBySquential());
-//	}
 	
 	@Override
 	public int getBackgroundColor() {
 		return backgroundColor;
 	}
 
-
 	@Override
 	public void setBackgroundColor(int backgroundColor) {
 		this.backgroundColor = backgroundColor;
 	}
 
+	@Override
 	public Camera getCamera(){
 		return camera;
 	}
 	
+	@Override
 	public void setCamera(Camera camera){
 		this.camera = camera;
 	}
@@ -150,22 +139,28 @@ public class GameModel implements IGameModel{
 		this.surfaceHolder = surfaceHolder;
 	}
 	
+	/**
+	 * process part is a part of game loop.
+	 */
 	protected void process(){
 		
 	}
 	
+	/**
+	 * after process is a part of game loop.
+	 */
 	protected void afterProcess(){
 		if(getCamera()!=null)
 			getCamera().bindLayerX();
 	}
 	
-	Camera camera;
+
 	
-	Canvas canvas;
-	
+	/**
+	 * draw is a part of game loop.
+	 */
 	private void draw(){
 		try {
-//			canvas = surfaceHolder.lockCanvas();
 			if(canUseLockHardwareCanvas)
 				canvas = surfaceHolder.getSurface().lockHardwareCanvas();
 			else
@@ -177,19 +172,9 @@ public class GameModel implements IGameModel{
 			camera.applyViewPort(canvas);
 			canvas.concat(camera.getMatrix());
 			
-//			if(camera.getViewPortRectF()!=null)
-//				canvas.clipRect(camera.getViewPortRectF());
-			
 			canvas.drawColor(backgroundColor);
 
 			doDraw(canvas);
-			
-//			if(camera.getViewPort()!=null){
-//				canvas.save(Canvas.MATRIX_SAVE_FLAG | Canvas.HAS_ALPHA_LAYER_SAVE_FLAG | Canvas.HAS_ALPHA_LAYER_SAVE_FLAG | Canvas.FULL_COLOR_LAYER_SAVE_FLAG | Canvas.CLIP_TO_LAYER_SAVE_FLAG);
-//				canvas.setMatrix(camera.getViewPort().getMatrix());
-//				LayerManager.drawHUDLayers(canvas, paint);
-//				canvas.restore();
-//			}
 			
 			if(Config.showFPS){
 				
@@ -229,34 +214,30 @@ public class GameModel implements IGameModel{
 		catch (Exception e) {      
 	            if(!isGameStop){
 	            	Log.e("GameModel", "draw Error");
-//	            	Log.e("GameModel Error Msg", e.printStackTrace());
 	            	e.printStackTrace();
 	            	throw new RuntimeException();
-//	            	e.printStackTrace();
 	            }
 	    } 
 		finally {
 	            if (canvas != null)
-//	            	surfaceHolder.unlockCanvasAndPost(canvas);
 	            	if(canUseLockHardwareCanvas)
 	            		surfaceHolder.getSurface().unlockCanvasAndPost(canvas);
 	            	else
 	            		surfaceHolder.unlockCanvasAndPost(canvas);
 		}
-//			if (canvas != null)
-//            	surfaceHolder.unlockCanvasAndPost(canvas);
 	}
 	
 	protected void doDraw(Canvas canvas){
 
 	}
-
 	
+	/**
+	 * This game thread is a thread of game loop. This is an important part of whole engine.
+	 */
 	Thread gameThread = new Thread(new Runnable() {
 		
 		@Override
 		public void run() {
-			// TODO Auto-generated method stub
 			while(isGameRun){
 				if(surfaceHolder==null) //when game scene start, the surfaceHolder may not stand by.
 					continue;
@@ -293,10 +274,6 @@ public class GameModel implements IGameModel{
 	});
 	
 	protected boolean isGameRun = true;
-	
-//	protected void gameThreadStart(){
-//		
-//	}
 
 	@Override
 	public void start() {
@@ -304,6 +281,7 @@ public class GameModel implements IGameModel{
 		gameThread.start();
 	}
 	
+	@Override
 	public void stop(){
 		isGameStop = true;
 		for(int i =0; i< 20; i++){
@@ -316,20 +294,12 @@ public class GameModel implements IGameModel{
 				e.printStackTrace();
 			}
 		}
-//		if(lastCanvas!=null){
-//			lastCanvas.recycle();
-//			System.gc();
-//		}
-		
-//		lastCanvas = Bitmap.createBitmap(surfaceHolder.getSurfaceFrame().width(), surfaceHolder.getSurfaceFrame().height(), Bitmap.Config.);
-//		Canvas c = new Canvas(lastCanvas);
-//		doDraw(c);
 	}
 	
+	@Override
 	public void restart(){
 		if(data!=null && data instanceof BlockRunData && ((BlockRunData)data).getIsBlock()){
 			Canvas canvas = surfaceHolder.lockCanvas();
-//			canvas.drawBitmap(lastCanvas, 0, 0, null);
 			doDraw(canvas);
 			surfaceHolder.unlockCanvasAndPost(canvas);
 			((BlockRunData)data).setIsBlock(false);
@@ -339,33 +309,25 @@ public class GameModel implements IGameModel{
 		if(!gameThread.isAlive())
 			gameThread.start();
 		isSurfaceCreated = true;
-//		if(isGameReallyStop=true){
 		if(isGameReallyStop){
 			isGameReallyStop = false;
-			r();
+			gameLoopResume();
 		}
-		
-//		for(int i =0; i< 100; i++){
-//			if(isSurfaceCreated)
-//				break;
-//			try {
-//				Thread.sleep(200);
-//			} catch (InterruptedException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//		}	
 	}
 	
-	private void r(){
+	/**
+	 * resume the game loop after it wait.
+	 */
+	private void gameLoopResume(){
 		synchronized (GameModel.this) {
 			GameModel.this.notify();
 		}	
 	}
 
+	/**
+	 * Destroy the game model.
+	 */
 	private void destory(){
-//		if(lastCanvas!=null)
-//			lastCanvas.recycle();
 		if(gameThread.isAlive())
 			gameThread.interrupt();
 		System.gc();

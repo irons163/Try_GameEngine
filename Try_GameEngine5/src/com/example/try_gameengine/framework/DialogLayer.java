@@ -4,8 +4,12 @@ import com.example.try_gameengine.framework.ButtonLayer.OnClickListener;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;
-import android.view.MotionEvent;
 
+/**
+ * {@code DialogLayer} is a layer to show dialog.
+ * @author irons
+ *
+ */
 public class DialogLayer extends HUDLayer{
 	private OnClickListener onClickListener = new OnClickListener() {
 		
