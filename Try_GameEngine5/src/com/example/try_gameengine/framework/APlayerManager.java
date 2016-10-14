@@ -4,12 +4,14 @@ import android.graphics.Point;
 import android.os.Handler;
 import android.view.MotionEvent;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 
+/**
+ * APlayerManager
+ * @author irons
+ *
+ */
 public abstract class APlayerManager implements IPlayerManager {
 	private Point clickPoint;
 	Handler handler = new Handler() {
@@ -17,28 +19,36 @@ public abstract class APlayerManager implements IPlayerManager {
 			detectSomeOneWinAndToNextPlayerTurn();
 		};
 	};
-	private boolean isPlaying = false;
-	private boolean isSomeOneSuccessArrival = false;
+	
 	private boolean isSomeOneWin = false;
 	private IChessBoard jumpChessBoard;
-	 private Logic logic;
-	 protected List<IPlayer> playersBySquential;
-	 protected IPlayer whoPlay;
+	private Logic logic;
+	protected List<IPlayer> playersBySquential;
+	protected IPlayer whoPlay;
 	protected int whoRun = 1;
-
 	private IChessPointManager chessPointManager;
 	protected IPlayerFactory playerFactory;
 
+	/**
+	 * 
+	 */
 	public APlayerManager() {
 		playersBySquential = new ArrayList<IPlayer>();
 		initPlayerFactory();
 		
 	}
 	
+	/**
+	 * 
+	 */
 	protected void initPlayerFactory() {
 		playerFactory = new PlayerFactory(chessPointManager);
 	}
 
+	/**
+	 * @param player
+	 * @param paramList
+	 */
 	private void AiPlayerProcess(final IPlayer player, List<Point> paramList) {
 		new Thread(new Runnable() {
 
@@ -49,6 +59,9 @@ public abstract class APlayerManager implements IPlayerManager {
 		}).start();
 	}
 
+	/**
+	 * 
+	 */
 	private void decideNextPlayer() {
 		this.whoRun = (1 + this.whoRun);
 		if (this.whoRun != this.playersBySquential.size())
@@ -56,11 +69,18 @@ public abstract class APlayerManager implements IPlayerManager {
 		this.whoRun = 0;
 	}
 
+	/**
+	 * 
+	 */
 	private void detectSomeOneWinAndToNextPlayerTurn() {
 		decideNextPlayer();
 		
 	}
 
+	/**
+	 * @param paramIPlayer
+	 * @return
+	 */
 	private boolean isAiPlayerRun(IPlayer paramIPlayer) {
 		if (paramIPlayer instanceof AiPlayer)
 			return true;
@@ -68,6 +88,12 @@ public abstract class APlayerManager implements IPlayerManager {
 			return false;
 	}
 
+	/**
+	 * 
+	 * @param paramMotionEvent
+	 * @param player
+	 * @return
+	 */
 	private boolean isClickonPointGroup(MotionEvent paramMotionEvent,
 			IPlayer player) {
 		boolean a = false;
@@ -89,11 +115,8 @@ public abstract class APlayerManager implements IPlayerManager {
 				}else{
 					logic.startToDetectedDownToTop(newPoint.x, newPoint.y, playerIndex);
 				}
-				
 			}
-				
 		}
-
 		return a;
 	}
 
@@ -156,7 +179,6 @@ public abstract class APlayerManager implements IPlayerManager {
 		if (paramMotionEvent.getAction() == MotionEvent.ACTION_DOWN) {
 			touchPerform(paramMotionEvent);
 		}
-
 	}
 	
 	protected void touchPerform(MotionEvent paramMotionEvent){

@@ -1,12 +1,18 @@
 package com.example.try_gameengine.framework;
 
-import android.graphics.Bitmap;
-
+/**
+ * {@code HUDLayer} is a layer that display on the front of screen.
+ * @author irons
+ *
+ */
 public class HUDLayer extends Layer{
 
+	/**
+	 * Constructor. 
+	 */
 	public HUDLayer(){
 		super();
-		LayerManager.addHUDLayer(this);
+		LayerManager.addHUDLayer(this); //Add Layer in the LayerManager HUD.
 	}
 	
 	@Override

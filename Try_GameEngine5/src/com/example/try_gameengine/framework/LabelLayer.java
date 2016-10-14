@@ -3,18 +3,19 @@ package com.example.try_gameengine.framework;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
-import android.graphics.Rect;
-import android.graphics.RectF;
-import android.graphics.Region;
 import android.graphics.Typeface;
 import android.graphics.Paint.FontMetricsInt;
 
+/**
+ * {@code LabeLayer} is a layer. This can make a label to display. 
+ * @author irons
+ *
+ */
 public class LabelLayer extends Layer{
 	private String text;
 	private boolean isAutoHWByText = false;
 	private LabelBaseLine labelBaseLine = LabelBaseLine.DEFAULT_ANDROID_BASELINE;
 	private float baseline;
-//	private Paint paint = getPaint();
 	
 	public enum LabelBaseLine{
 		DEFAULT_ANDROID_BASELINE, //default
@@ -22,10 +23,21 @@ public class LabelLayer extends Layer{
 		BASELINE_FOR_TEXT_BOTTOM
 	}
 	
+	/**
+	 * Constructors.
+	 * @param bitmap
+	 * 			bitmap to the layer.
+	 * @param w
+	 * 			width.
+	 * @param h
+	 * 			height.
+	 * @param autoAdd
+	 * 			add to the LayerManager to control.
+	 * @param level
+	 * 			?
+	 */
 	public LabelLayer(Bitmap bitmap, int w, int h, boolean autoAdd, int level) {
 		super(bitmap, w, h, autoAdd, level);
-		// TODO Auto-generated constructor stub
-//		paint = new Paint();
 		initPaint();
 	}
 

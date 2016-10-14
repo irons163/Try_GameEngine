@@ -1,26 +1,16 @@
 package com.example.try_gameengine.framework;
 
-import java.util.ArrayList;
 import java.util.Hashtable;
-import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
-
 import org.loon.framework.android.game.physics.LWorld;
-
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.PointF;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.RectF;
-import android.graphics.Region;
 import android.graphics.Paint.Style;
-import android.graphics.Region.Op;
-import android.util.Log;
-
 import com.example.try_gameengine.action.MAction;
 import com.example.try_gameengine.action.MovementAction;
 import com.example.try_gameengine.action.MovementAtionController;
@@ -28,6 +18,14 @@ import com.example.try_gameengine.framework.Config.DestanceType;
 import com.example.try_gameengine.physics.PhysicsBody;
 import com.example.try_gameengine.utils.SpriteDetectAreaHandler;
 
+/**
+ * @author irons
+ *
+ */
+/**
+ * @author irons
+ *
+ */
 public class Sprite extends Layer {
 	public int frameIdx;// 當前幀下標
 	public int currentFrame = 0;// 當前幀
@@ -165,20 +163,14 @@ public class Sprite extends Layer {
 	//It has bug for centerX == x, if use this, need setWH and setPosition again! 
 	public Sprite(float x, float y, boolean autoAdd) {
 		super(0, 0, autoAdd);
-//		this.scale = scale;
-//		Matrix matrix = new Matrix();
-//	     matrix.postScale(scale, scale);
-//	      
-//	     Bitmap resizedBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
-//		setWidth(resizedBitmap.getWidth());
-//		setHeight(resizedBitmap.getHeight());
-	     actions = new Hashtable<String, Sprite.SpriteAction>();
-
-	     setPosition(x, y);
-	     
-	     initCollisionRectF();
+		actions = new Hashtable<String, Sprite.SpriteAction>();
+		setPosition(x, y);
+		initCollisionRectF();
 	}
 	
+	/**
+	 * @param autoAdd
+	 */
 	public Sprite(boolean autoAdd) {
 		super(autoAdd);
 
@@ -186,6 +178,9 @@ public class Sprite extends Layer {
 	     initCollisionRectF();
 	}
 	
+	/**
+	 * 
+	 */
 	public Sprite() {
 		super(false);
 
@@ -193,25 +188,43 @@ public class Sprite extends Layer {
 	     initCollisionRectF();
 	}
 	
+	/**
+	 * 
+	 */
 	private void initCollisionRectF(){
 		collisionRectFWidth = w;
 		collisionRectFHeight = h;
 		collisionRectF = new RectF(getX()+collisionOffsetX, getY()+collisionOffsetY, getX()+collisionOffsetX+collisionRectFWidth, getY()+collisionOffsetY+collisionRectFHeight);
 	}
 	
+	/**
+	 * @param collisionOffsetX
+	 */
 	public void setCollisionOffsetX(float collisionOffsetX){
 		this.collisionOffsetX = collisionOffsetX;
 	}
 	
+	/**
+	 * @param collisionOffsetY
+	 */
 	public void setCollisionOffsetY(float collisionOffsetY){
 		this.collisionOffsetY = collisionOffsetY;
 	}
 	
+	/**
+	 * @param collisionOffsetX
+	 * @param collisionOffsetY
+	 */
 	public void setCollisionOffsetXY(float collisionOffsetX, float collisionOffsetY){
 		this.collisionOffsetX = collisionOffsetX;
 		this.collisionOffsetY = collisionOffsetY;
 	}
 	
+	/**
+	 * @param bitmap
+	 * @param frameWidth
+	 * @param frameHeight
+	 */
 	public void setBitmapAndFrameWH(Bitmap bitmap,int frameWidth ,int frameHeight ){
 		this.bitmap = bitmap;
 		this.bitmapOrginalFrameWidth = frameWidth;
@@ -225,6 +238,11 @@ public class Sprite extends Layer {
 		setHeight(frameHeight);
 	}
 	
+	/**
+	 * @param bitmap
+	 * @param frameColNum
+	 * @param frameRowNum
+	 */
 	public void setBitmapAndFrameColAndRowNumAndAutoWH(Bitmap bitmap, int frameColNum , int frameRowNum){
 		this.bitmap = bitmap;
 		int frameWidth = bitmap.getWidth()/frameColNum;
@@ -240,6 +258,13 @@ public class Sprite extends Layer {
 		setHeight(frameHeight);
 	}
 	
+	/**
+	 * @param bitmap
+	 * @param frameWidth
+	 * @param frameHeight
+	 * @param frameColNum
+	 * @param frameRowNum
+	 */
 	public void setBitmapAndFrameWHAndColAndRowNum(Bitmap bitmap,int frameWidth ,int frameHeight,int frameColNum ,int frameRowNum){
 		this.bitmap = bitmap;
 		this.bitmapOrginalFrameWidth = frameWidth;
@@ -253,6 +278,9 @@ public class Sprite extends Layer {
 		setHeight(frameHeight);
 	}
 	
+	/**
+	 * @param sequence
+	 */
 	public void setFrameSequence(int[] sequence)
 	{			
 		this.frameSequence = sequence;
@@ -260,6 +288,9 @@ public class Sprite extends Layer {
 		currentFrame = sequence[0];
 	}
 	
+	/**
+	 * @param lightImage
+	 */
 	public void setLightImage(LightImage lightImage){
 		if(lightImage.getBitmap()!=null){
 			bitmap = lightImage.getBitmap();
@@ -275,21 +306,33 @@ public class Sprite extends Layer {
 //		return null;
 //	}
 	
+	/**
+	 * @param movementAction
+	 */
 	public void setMovementAction(MovementAction movementAction){
 		this.action = movementAction;
 		movementActions.clear();
 		movementActions.add(this.action);
 	}
 	
+	/**
+	 * @return
+	 */
 	public MovementAction getMovementAction(){
 		return action;
 	}
 	
+	/**
+	 * @param movementAction
+	 */
 	private void addMovementAction(MovementAction movementAction){
 		this.action = movementAction;
 		movementActions.add(this.action);
 	}
 	
+	/**
+	 * 
+	 */
 	public void removeAllMovementActions(){
 		for(MovementAction action : movementActions){
 			if(action.controller!=null)
@@ -298,6 +341,9 @@ public class Sprite extends Layer {
 		movementActions.clear();
 	}
 	
+	/**
+	 * @param actionName
+	 */
 	public void setAction(String actionName) {
 		if(actionName==null)
 			return;
@@ -311,102 +357,56 @@ public class Sprite extends Layer {
 		isStop = false;			
 	}
 	
+	/**
+	 * set move to .
+	 * @param x
+	 * @param y
+	 * @param height
+	 * @param width
+	 */
 	public void setMoveRage(float x, float y, float height, float width){
 		moveRage = new RectF(x, y, x+width, y+height);
 	}
 	
+	/**
+	 * set move range to sprite .
+	 * @param moveRage 
+	 * 			the range of move.
+	 */
 	public void setMoveRage(RectF moveRage){
 		this.moveRage = moveRage;
 	}
 	
+	/**
+	 * get move range from sprite.
+	 * @return RectF.
+	 */
 	public RectF getMoveRage() {
 		return moveRage;
 	}
 
+	/**
+	 * @param moveRageType
+	 */
 	public void setMoveRageType(MoveRageType moveRageType){
 		this.moveRageType = moveRageType;
 	}
 	
+	/**
+	 * @return
+	 */
 	public MoveRageType getMoveRageType(){
 		return moveRageType;
 	}
-	
-//	private boolean doClip(Canvas canvas){
-//		if(isAncestorClipOutSide()){
-//			RectF rectF = null;
-//			if((rectF = getClipRange())!=null){
-////				canvas.save();
-//				Rect rect = new Rect();
-//				rectF.round(rect);
-////				canvas.clipRegion(new Region(rect));
-//				canvas.clipRect(rect);
-////					paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_IN));
-////					int c = paint.getColor();
-////					paint.setColor(Color.GREEN);
-////					paint.setStyle(Style.FILL);
-////					canvas.drawRect(getClipRange(), paint);
-////					paint.setXfermode(null);
-////					paint.setColor(c);
-//				return true;
-//			}else{
-//				return false;
-//			}
-//		}
-//		return true;
-//	}
-	
 
-	
-//	private boolean doClip2(Canvas canvas){
-//		if(isAncestorClipOutSide()){
-//			RectF rectF = null;
-//			if((rectF = getClipRange2())!=null){
-////				canvas.save();
-//				Rect rect = new Rect();
-//				rectF.round(rect);
-////				canvas.clipRegion(new Region(rect));
-//				canvas.clipRect(rect);
-////					paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_IN));
-////					int c = paint.getColor();
-////					paint.setColor(Color.GREEN);
-////					paint.setStyle(Style.FILL);
-////					canvas.drawRect(getClipRange(), paint);
-////					paint.setXfermode(null);
-////					paint.setColor(c);
-//				return true;
-//			}else{
-//				return false;
-//			}
-//		}
-//		return true;
-//	}
-	
-//	protected RectF getClipRange2(){
-//		Sprite layer = this;
-////		RectF clipRange = new RectF(this.getFrameInScene());
-//////		RectF clipRange = new RectF(this.getFrame());
-////		while((layer = layer.getParent()) != null){
-////			if(!layer.isClipOutside())
-////				continue;
-////			if(!clipRange.intersect(layer.getFrameInScene()))
-////			if(!clipRange.intersect(layer.getFrame()))
-////				clipRange = null;
-////		}
-//		Canvas canvas; 
-//		layer = this.getParent().clipRange;
-//		return clipRange;
-//	}
-	
 	@Override
 	protected void doDrawself(Canvas canvas, Paint paint) {
 		canvas.save();
 		
 		do {
-			
-		canvas = getC(canvas, paint);
-		
-		Paint originalPaint = paint;		
 
+		canvas = getC(canvas, paint);
+		Paint originalPaint = paint;		
 		
 //		if(bitmap!=null){		
 			if(length>0){
@@ -437,57 +437,25 @@ public class Sprite extends Layer {
 							dst.top = locationLeftTopInScene.y + getAnchorPoint().y*h -getAnchorPoint().y*h/yScaleForBitmapHeight;
 							dst.right = (float) (dst.left + w/xScaleForBitmapWidth * scale);
 							dst.bottom = (float) (dst.top + h/yScaleForBitmapHeight * scale);
-							
-//							if(getBackgroundColor()!=NONE_COLOR){
-//								canvas.drawRect(new RectF(locationLeftTopInScene.x, locationLeftTopInScene.y, locationLeftTopInScene.x + getWidth(), locationLeftTopInScene.y + getHeight()), paint);
-//								getPaint().setColor(oldColor);
-//								getPaint().setStyle(oldStyle);
-//							}
 						}else{
-//							if(getBackgroundColor()!=NONE_COLOR){
-//								canvas.drawRect(dst, paint);
-//								getPaint().setColor(oldColor);
-//								getPaint().setStyle(oldStyle);
-//							}
 						}
 						
 					}else{
-//						dst.left = (float) (getAnchorPointXY().x);//try mix anchor point
-//						dst.top = (float) (getAnchorPointXY().y);
 						dst.left = (float) (getAnchorPointXY().x-getAnchorPoint().x*w/xScaleForBitmapWidth);//try mix anchor point
 						dst.top = (float) (getAnchorPointXY().y-getAnchorPoint().y*h/yScaleForBitmapHeight);
 						dst.right = (float) (dst.left + w/xScaleForBitmapWidth * scale);
 						dst.bottom = (float) (dst.top + h/yScaleForBitmapHeight * scale);
-						
-//						if(getBackgroundColor()!=NONE_COLOR){
-//							canvas.drawRect(dst, paint);
-//							getPaint().setColor(oldColor);
-//							getPaint().setStyle(oldStyle);
-//						}
 					}
 					
-//					canvas.save();
 					if(spriteMatrix!=null){
-//						canvas.setMatrix(spriteMatrix);
 						canvas.concat(spriteMatrix);
 					}
-//					if(!doClip(canvas))
-//						break;
 					
 					drawRectF = dst;
-					
 					drawBackgroundColor(canvas, paint, drawRectF);
-					
 					if(bitmap!=null)
 						canvas.drawBitmap(bitmap, dst.left, dst.top, paint);
-//					canvas.restore();
 			}
-//		}
-		
-//		if(isAncestorClipOutSide()){
-//			paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_IN));
-//			canvas.drawRect(getClipRange(), paint);
-//			paint.setXfermode(null);
 //		}
 		
 		//use input paint first
@@ -507,10 +475,17 @@ public class Sprite extends Layer {
 		}
 	}
 	
+	/**
+	 * @param src
+	 * @param dst
+	 */
 	public void customBitampSRCandDST(Rect src, RectF dst){
 		
 	}
 	
+	/**
+	 * @param xScale
+	 */
 	public void setXscale(float xScale){
 		float factor = xScale/this.xScale;
 		this.xScale = xScale;
@@ -525,10 +500,16 @@ public class Sprite extends Layer {
 		}
 	}
 	
+	/**
+	 * @return
+	 */
 	public float getXscale(){
 		return xScale;
 	}
 	
+	/**
+	 * @param yScale
+	 */
 	public void setYscale(float yScale){
 		float factor = yScale/this.yScale;
 		this.yScale = yScale;
@@ -544,10 +525,16 @@ public class Sprite extends Layer {
 		}
 	}
 	
+	/**
+	 * @return
+	 */
 	public float getYscale(){
 		return yScale;
 	}
 	
+	/**
+	 * @param rotation
+	 */
 	public void setRotation(float rotation){
 		float offsetRotation = rotation - this.rotation;
 		this.rotation = rotation;
@@ -572,19 +559,33 @@ public class Sprite extends Layer {
 		}
 	}
 	
+	/**
+	 * @return
+	 */
 	public float getRotation(){
 		return rotation;
 	}
 	
+	/**
+	 * @param rotationType
+	 */
 	public void setRotationType(RotationType rotationType){
 		this.rotationType = rotationType;
 		setRotation(getRotation()); //reset rotation to reset the child layers' position.
 	}
 	
+	/**
+	 * @return
+	 */
 	public RotationType getRotationType(){
 		return rotationType;
 	}
 	
+	/**
+	 * @param canvas
+	 * @param paint
+	 * @param drawRectF
+	 */
 	private void drawBackgroundColor(Canvas canvas, Paint paint, RectF drawRectF){
 		//use input paint first
 		int oldColor = 0;
@@ -691,6 +692,15 @@ public class Sprite extends Layer {
 		dst.bottom = (float) (dst.top + h * scale);
 	}
 
+	/**
+	 * Add sprite action detail.
+	 * @param name
+	 * 			Name of sprite action.
+	 * @param frames
+	 * 			frames of sprite action.
+	 * @param frameTime
+	 * 			frameTime of sprite action.
+	 */
 	public void addAction(String name, int[] frames, int[] frameTime) {
 		SpriteAction sp = new SpriteAction();
 		sp.frames = frames;//幀的數量
@@ -699,18 +709,61 @@ public class Sprite extends Layer {
 		actions.put(name, sp);
 	}
 	
+	/**
+	 * Add sprite action detail.
+	 * @param name
+	 * 			Name of sprite action.
+	 * @param bitmapFrames
+	 * 			frames of sprite action.
+	 * @param frameTime
+	 * 			frameTime of sprite action.
+	 */
 	public void addAction(String name, Bitmap[] bitmapFrames, int[] frameTime) {
 		addAction(name, bitmapFrames, frameTime, 1.0f, true, new DefaultActionListener());
 	}
 	
+	/**
+	 * Add sprite action detail.
+	 * @param name
+	 * 			Name of sprite action.
+	 * @param bitmapFrames
+	 * 			frames of sprite action.
+	 * @param frameTime
+	 * 			frameTime of sprite action.
+	 * @param isLoop
+	 * 			
+	 */
 	public void addAction(String name, Bitmap[] bitmapFrames, int[] frameTime, boolean isLoop) {
 		addAction(name, bitmapFrames, frameTime, 1.0f, isLoop, new DefaultActionListener());
 	}
 	
+	/**
+	 * Add sprite action detail.
+	 * @param name
+	 * 			Name of sprite action.
+	 * @param bitmapFrames
+	 * 			frames of sprite action.
+	 * @param frameTime
+	 * 			frameTime of sprite action.
+	 * @param isLoop
+	 * 			
+	 * @param actionListener
+	 * 			
+	 */
 	public void addAction(String name, Bitmap[] bitmapFrames, int[] frameTime, boolean isLoop, IActionListener actionListener) {
 		addAction(name, bitmapFrames, frameTime, 1.0f, isLoop, actionListener);
 	}
 	
+	/**
+	 * Add sprite action detail.
+	 * @param name
+	 * @param bitmapFrames
+	 * @param frameTime
+	 * 			frames of sprite action.
+	 * @param scale
+	 * @param isLoop
+	 * @param actionListener
+	 */
 	public void addAction(String name, Bitmap[] bitmapFrames, int[] frameTime, float scale, boolean isLoop, IActionListener actionListener) {
 		SpriteAction sp = new SpriteAction();
 		sp.bitmapFrames = bitmapFrames;// 幀圖片集合
@@ -722,18 +775,49 @@ public class Sprite extends Layer {
 		actions.put(name, sp);
 	}
 	
+	/**
+	 * Add sprite action detail.
+	 * @param name
+	 * @param bitmapFrames
+	 * @param frameTriggerTimes
+	 * 			frames of sprite action.
+	 */
 	public void addActionFPS(String name, Bitmap[] bitmapFrames, int[] frameTriggerTimes) {
 		addActionFPS(name, bitmapFrames, frameTriggerTimes, 1.0f, true, new DefaultActionListener());
 	}
 	
+	/**
+	 * Add sprite action detail.
+	 * @param name
+	 * @param bitmapFrames
+	 * @param frameTriggerTimes
+	 * @param isLoop
+	 */
 	public void addActionFPS(String name, Bitmap[] bitmapFrames, int[] frameTriggerTimes, boolean isLoop) {
 		addActionFPS(name, bitmapFrames, frameTriggerTimes, 1.0f, isLoop, new DefaultActionListener());
 	}
 	
+	/**
+	 * Add sprite action detail.
+	 * @param name
+	 * @param bitmapFrames
+	 * @param frameTriggerTimes
+	 * @param isLoop
+	 * @param actionListener
+	 */
 	public void addActionFPS(String name, Bitmap[] bitmapFrames, int[] frameTriggerTimes, boolean isLoop, IActionListener actionListener) {
 		addActionFPS(name, bitmapFrames, frameTriggerTimes, 1.0f, isLoop, actionListener);
 	}
 	
+	/**
+	 * Add sprite action detail.
+	 * @param name
+	 * @param bitmapFrames
+	 * @param frameTriggerTimes
+	 * @param scale
+	 * @param isLoop
+	 * @param actionListener
+	 */
 	public void addActionFPS(String name, Bitmap[] bitmapFrames, int[] frameTriggerTimes, float scale, boolean isLoop, IActionListener actionListener) {
 		SpriteAction sp = new SpriteActionBaseFPS();
 		sp.bitmapFrames = bitmapFrames;// 幀圖片集合
@@ -745,18 +829,45 @@ public class Sprite extends Layer {
 		actions.put(name, sp);
 	}
 	
+	/**
+	 * run sprite action with detail.
+	 * @param name
+	 * @param sequence
+	 * @param frameTriggerTimes
+	 */
 	public void runActionFPSFrame(String name, int[] sequence, int[] frameTriggerTimes) {
 		runActionFPSFrame(name, sequence, frameTriggerTimes, 1.0f, true, new DefaultActionListener());
 	}
 	
+	/**
+	 * @param name
+	 * @param sequence
+	 * @param frameTriggerTimes
+	 * @param isLoop
+	 */
 	public void runActionFPSFrame(String name, int[] sequence, int[] frameTriggerTimes, boolean isLoop) {
 		runActionFPSFrame(name, sequence, frameTriggerTimes, 1.0f, isLoop, new DefaultActionListener());
 	}
 	
+	/**
+	 * @param name
+	 * @param sequence
+	 * @param frameTriggerTimes
+	 * @param isLoop
+	 * @param actionListener
+	 */
 	public void runActionFPSFrame(String name, int[] sequence, int[] frameTriggerTimes, boolean isLoop, IActionListener actionListener) {
 		runActionFPSFrame(name, sequence, frameTriggerTimes, 1.0f, isLoop, actionListener);
 	}
 	
+	/**
+	 * @param name
+	 * @param sequence
+	 * @param frameTriggerTimes
+	 * @param scale
+	 * @param isLoop
+	 * @param actionListener
+	 */
 	public void runActionFPSFrame(String name, int[] sequence, int[] frameTriggerTimes, float scale, boolean isLoop, IActionListener actionListener) {
 		SpriteAction sp = new SpriteActionBaseFPS();
 		sp.frames = sequence;// 幀圖片集合
@@ -772,18 +883,44 @@ public class Sprite extends Layer {
 		setAction(sp.name);
 	}
 	
+	/**
+	 * @param name
+	 * @param sequence
+	 * @param frameTriggerTimes
+	 */
 	public void addActionFPSFrame(String name, int[] sequence, int[] frameTriggerTimes) {
 		addActionFPSFrame(name, sequence, frameTriggerTimes, 1.0f, true, new DefaultActionListener());
 	}
 	
+	/**
+	 * @param name
+	 * @param sequence
+	 * @param frameTriggerTimes
+	 * @param isLoop
+	 */
 	public void addActionFPSFrame(String name, int[] sequence, int[] frameTriggerTimes, boolean isLoop) {
 		addActionFPSFrame(name, sequence, frameTriggerTimes, 1.0f, isLoop, new DefaultActionListener());
 	}
 	
+	/**
+	 * @param name
+	 * @param sequence
+	 * @param frameTriggerTimes
+	 * @param isLoop
+	 * @param actionListener
+	 */
 	public void addActionFPSFrame(String name, int[] sequence, int[] frameTriggerTimes, boolean isLoop, IActionListener actionListener) {
 		addActionFPSFrame(name, sequence, frameTriggerTimes, 1.0f, isLoop, actionListener);
 	}
 	
+	/**
+	 * @param name
+	 * @param sequence
+	 * @param frameTriggerTimes
+	 * @param scale
+	 * @param isLoop
+	 * @param actionListener
+	 */
 	public void addActionFPSFrame(String name, int[] sequence, int[] frameTriggerTimes, float scale, boolean isLoop, IActionListener actionListener) {
 		SpriteAction sp = new SpriteActionBaseFPS();
 		sp.frames = sequence;// 幀圖片集合
@@ -795,6 +932,9 @@ public class Sprite extends Layer {
 		actions.put(name, sp);
 	}
 
+	/**
+	 * 
+	 */
 	private void process(){
 		if (currentAction != null) {
 			if(currentAction.frames!=null){
@@ -805,6 +945,10 @@ public class Sprite extends Layer {
 		}	
 	}
 	
+	/**
+	 * @param dx
+	 * @param dy
+	 */
 	public void move(float dx, float dy) {
 		if(Config.destanceType == DestanceType.DpToPx){
 			dx = CommonUtil.convertDpToPixel(dx);
@@ -820,10 +964,18 @@ public class Sprite extends Layer {
 		moveXY(dx, dy);
 	} 
 	
+	/**
+	 * @param dx
+	 * @param dy
+	 */
 	public void moveWithPx(float dx, float dy){
 		moveXY(dx, dy);
 	}
 	
+	/**
+	 * @param dx
+	 * @param dy
+	 */
 	private void moveXY(float dx, float dy) {	
 		if(moveRage==null){
 //			setX(getCenterX() + dx - w/2);
@@ -908,22 +1060,38 @@ public class Sprite extends Layer {
 		super.frameTrig();
 	}
 	
+	/**
+	 * @return
+	 */
 	public String getActionName(){
 		return currentAction.name;
 	}
 	
+	/**
+	 * 
+	 */
 	public void forceToNextFrameBitmap(){
 		currentAction.forceToNextBitmap();
 	}
 	
+	/**
+	 * @return
+	 */
 	public boolean isNeedCreateNewInstance(){
 		return false;
 	}
 	
+	/**
+	 * @return
+	 */
 	public boolean isNeedRemoveInstance(){
 		return getX()<0 || getX() > CommonUtil.screenWidth || getY() < 0 || getY() > CommonUtil.screenHeight;
 	}
+	
 	//Be care for the isCompostie();
+	/**
+	 * @param collisionRectF
+	 */
 	public void setCollisionRectF(RectF collisionRectF){
 		this.collisionRectF = collisionRectF;
 		collisionOffsetX = collisionRectF.left - getLeft();
@@ -932,6 +1100,17 @@ public class Sprite extends Layer {
 		collisionRectFHeight = collisionRectF.height();
 	}
 	
+	/**
+	 * set collision RectF.
+	 * @param left
+	 * 			Left of Collision RectF.
+	 * @param top
+	 * 			Top of Collision RectF.
+	 * @param right
+	 * 			Right of Collision RectF.
+	 * @param bottom
+	 * 			Bottom of Collision RectF.
+	 */
 	public void setCollisionRectF(float left, float top, float right, float bottom){
 //		if(!isCollisionRectFEnable)
 //			return;
@@ -945,70 +1124,140 @@ public class Sprite extends Layer {
 		collisionRectFHeight = collisionRectF.height();
 	}
 	
+	/**
+	 * get CollisionRectF.
+	 * @return RectF.
+	 */
 	public RectF getCollisionRectF(){
 		return collisionRectF;
 	}
 	
+	/**
+	 * is Collision RectF enable.
+	 * @param isCollisionRectFEnable
+	 */
 	public void setCollisionRectFEnable(boolean isCollisionRectFEnable){
 		this.isCollisionRectFEnable = isCollisionRectFEnable;
 	}
 	
+	/**
+	 * check is Collision RectF enable.
+	 * @return enable.
+	 */
 	public boolean isCollisionRectFEnable(){
 		return isCollisionRectFEnable;
 	}
 	
+	/**
+	 * set collision width. 
+	 * @param collisionRectFWidth
+	 * 			the width of collision RectF.
+	 */
 	public void setCollisionRectFWidth(float collisionRectFWidth){
 		this.collisionRectFWidth = collisionRectFWidth;
 	}
 	
+	/**
+	 * set collision height. 
+	 * @param collisionRectFHeight
+	 * 			the height of collision RectF.
+	 */
 	public void setCollisionRectFHeight(float collisionRectFHeight){
 		this.collisionRectFHeight = collisionRectFHeight;
 	}
 	
+	/**
+	 * set collision width and height. 
+	 * @param collisionRectFWidth
+	 * 			the width of collision RectF.
+	 * @param collisionRectFHeight
+	 * 			the height of collision RectF.
+	 */
 	public void setCollisionRectFWH(float collisionRectFWidth, float collisionRectFHeight){
 		this.collisionRectFWidth = collisionRectFWidth;
 		this.collisionRectFHeight = collisionRectFHeight;
 	}
 	
+	/**
+	 * get frame width.
+	 * @return frame width.
+	 */
 	public float getFrameWidth(){
 		return frameWidth;
 	}
 	
+	/**
+	 * set frame width.
+	 * @param frameWidth
+	 */
 	public void setFrameWidth(float frameWidth){
 		this.frameWidth = frameWidth;
 	}
 	
+	/**
+	 * get frame height.
+	 * @return frameHeight.
+	 */
 	public float getFrameHeight(){
 		return frameHeight;
 	}
 	
+	/**
+	 * set frame height.
+	 * @param frameHeight
+	 */
 	public void setFrameHeight(float frameHeight){
 		this.frameHeight = frameHeight;
 	}
 	
+	/**
+	 * reset frame width and height.
+	 */
 	public void resetFrameWH(){
 		this.frameWidth = bitmapOrginalFrameWidth;
 		this.frameHeight = bitmapOrginalFrameHeight;
 	}
 	
+	/**
+	 * get bitmap original frame width without scale or other thing.
+	 * @return int width.
+	 */
 	public int getBitmapOrginalFrameWidth(){
 		return bitmapOrginalFrameWidth;
 	}
 	
+	/**
+	 * get bitmap original frame width without scale or other thing.
+	 * @return int height.
+	 */
 	public int getBitmapOrginalFrameHright(){
 		return bitmapOrginalFrameHeight;
 	}
 	
+	/**
+	 * run MovementAction in self.
+	 * @param movementAction
+	 * 			{@code MovementAction} is  d
+	 */
 	public void runMovementAction(MovementAction movementAction){
 		initRunMovementAction(movementAction);
 		setMovementAction(movementAction);
 	}
 	
+	/**
+	 * run MovementAction and append.
+	 * @param movementAction
+	 * 			run movementAction.
+	 */
 	public void runMovementActionAndAppend(MovementAction movementAction){
 		initRunMovementAction(movementAction);
 		addMovementAction(movementAction);
 	}
 	
+	/**
+	 * init MovementAction.
+	 * @param movementAction
+	 */
 	private void initRunMovementAction(MovementAction movementAction){
 		MAction.attachToTargetSprite(movementAction, this);
 		MAction.setDefaultTimeToTickListenerIfNotSetYetToTargetSprite(movementAction, this);
@@ -1033,6 +1282,10 @@ public class Sprite extends Layer {
 		checkChildrenForCancelCurrentMovementAction(this);
 	}
 	
+	/**
+	 * 
+	 * @param checkLayer
+	 */
 	protected void checkChildrenForCancelCurrentMovementAction(ILayer checkLayer){
 		for(ILayer layer : checkLayer.getLayers()){
 			if(layer.isComposite() && layer instanceof Sprite){
@@ -1043,25 +1296,50 @@ public class Sprite extends Layer {
 		}
 	}
 	
+	/**
+	 * set physicsBody.
+	 * @param physicsBody
+	 * 			physicsBody for execute physic.
+	 * @param world
+	 * 			the physics world.
+	 */
 	public void setPhysicsBody(PhysicsBody physicsBody, LWorld world){
 		this.physicsBody = physicsBody;
 		this.physicsBody.setUserData(this);
 		physicsBody.addToWorld(world);
 	}
 	
+	/**
+	 * physicsBody set dynamic.
+	 * @param dynamic
+	 */
 	public void setDynamic(boolean dynamic){
 		this.physicsBody.setDynamic(dynamic);
 	}
 	
+	/**
+	 * set SpriteDetectAreaHandler.
+	 * @param spriteDetectAreaHandler
+	 * 			to set the SpriteDetectAreaHandler to deal with.
+	 */
 	public void setSpriteDetectAreaHandler(SpriteDetectAreaHandler spriteDetectAreaHandler){
 		this.spriteDetectAreaHandler = spriteDetectAreaHandler;
 		this.spriteDetectAreaHandler.setObjectTag(this);
 	}
 	
+	/**
+	 * Get SpriteDetectAreaHandler
+	 * @return SpriteDetectAreaHandler
+	 */
 	public SpriteDetectAreaHandler getSpriteDetectAreaHandler(){
 		return spriteDetectAreaHandler;
 	}
 	
+	/**
+	 * update center of SpriteDetectArea.
+	 * @param center
+	 * 			in SpriteDetectArea.
+	 */
 	protected void updateSpriteDetectAreaCenter(PointF center){
 		if(spriteDetectAreaHandler!=null)
 			spriteDetectAreaHandler.updateSpriteDetectAreaCenter(center);
@@ -1069,7 +1347,6 @@ public class Sprite extends Layer {
 	
 	@Override
 	public void setX(float x) {
-		// TODO Auto-generated method stub
 		super.setX(x);
 		if(isComposite())
 			locationLeftTopInScene = parent.locationInSceneByCompositeLocation((float) (centerX - w / 2), (float) (centerY - h / 2));
@@ -1123,24 +1400,26 @@ public class Sprite extends Layer {
 	
 	@Override
 	public void setInitWidth(int w) {
-		// TODO Auto-generated method stub
 		this.setWidth(w);
 	}
 	
 	@Override
 	public void setInitHeight(int h) {
-		// TODO Auto-generated method stub
 		this.setHeight(h);
 	}
 	
 	@Override
 	public void setWidth(int w) {
-		// TODO Auto-generated method stub
 		widthWithoutxScale = w;
 		w = (int)(w*Math.abs(xScale));
 		setSuperWidth(w);
 	}
 	
+	/**
+	 * set the width.
+	 * @param w
+	 * 			width.
+	 */
 	private void setSuperWidth(int w){
 		super.setWidth(w);
 		if(isComposite())
@@ -1177,6 +1456,11 @@ public class Sprite extends Layer {
 		setSuperHeight(h);
 	}
 	
+	/**
+	 * set the height.
+	 * @param h
+	 * 			height.
+	 */
 	private void setSuperHeight(int h){
 		super.setHeight(h);
 		if(isComposite())
@@ -1205,6 +1489,9 @@ public class Sprite extends Layer {
 		}
 	}
 	
+	/**
+	 * calculate the scale.
+	 */
 	private void colculationScale(){
 		if(spriteMatrix==null)
 			spriteMatrix = new Matrix();
@@ -1220,7 +1507,6 @@ public class Sprite extends Layer {
 				else
 					spriteMatrix.postScale(xScaleForBitmapWidth, yScaleForBitmapHeight, locationLeftTopInScene.x +getAnchorPoint().x*w, locationLeftTopInScene.y  + getAnchorPoint().y*h);	
 			}else{
-//				spriteMatrix.postScale(xScale*xScaleForBitmapWidth, yScale*yScaleForBitmapHeight, getAnchorPointXY().x, getAnchorPointXY().y );
 				if(xScale<0 && yScale<0)
 					spriteMatrix.postScale(-1*xScaleForBitmapWidth, -1*yScaleForBitmapHeight, getLeft() + getAnchorPoint().x*w,  getTop() + getAnchorPoint().y*h);
 				else if(xScale<0)
@@ -1231,39 +1517,7 @@ public class Sprite extends Layer {
 					spriteMatrix.postScale(xScaleForBitmapWidth, yScaleForBitmapHeight, getLeft() + getAnchorPoint().x*w,  getTop() + getAnchorPoint().y*h);
 			}
 			
-//			if(this.length>0){
-//				if(xScale*xScaleForBitmapWidth<0 && yScale*yScaleForBitmapHeight<0){
-//					spriteMatrix.postTranslate(-2*w*scale*(getAnchorPoint().x-0.5f),-2*h*scale*(getAnchorPoint().y-0.5f));
-//				}else if(xScale*xScaleForBitmapWidth<0){
-//					spriteMatrix.postTranslate(-2*w*scale*(getAnchorPoint().x-0.5f),-h*scale*getAnchorPoint().y);
-//				}else if(yScale*yScaleForBitmapHeight<0){
-//					spriteMatrix.postTranslate(-w*scale*getAnchorPoint().x,-2*h*scale*(getAnchorPoint().y-0.5f));
-//				}else{
-//					spriteMatrix.postTranslate(-w*scale*getAnchorPoint().x,-h*scale*getAnchorPoint().y);
-//				}
-//			}else{
-//				if(xScale*xScaleForBitmapWidth<0 && yScale*yScaleForBitmapHeight<0){
-//					spriteMatrix.postTranslate(-1*w*scale*(getAnchorPoint().x-1.0f),-h*scale*(getAnchorPoint().y-1.0f));
-//				}else if(xScale*xScaleForBitmapWidth<0){
-//					spriteMatrix.postTranslate(-1*w*scale*(getAnchorPoint().x-1.0f),-h*scale*getAnchorPoint().y);
-//				}else if(yScale*yScaleForBitmapHeight<0){
-//					spriteMatrix.postTranslate(-1*w*scale*(getAnchorPoint().x),-h*scale*(getAnchorPoint().y-1.0f));
-//				}else{
-//					spriteMatrix.postTranslate(-w*scale*getAnchorPoint().x,-h*scale*getAnchorPoint().y);
-//				}
-//			}
-
 			if(this.length>0){
-//				if(xScale*xScaleForBitmapWidth<0 && yScale*yScaleForBitmapHeight<0){
-//					spriteMatrix.postTranslate(-2*w*(getAnchorPoint().x-0.5f),-2*h*(getAnchorPoint().y-0.5f));
-//				}else if(xScale*xScaleForBitmapWidth<0){
-//					spriteMatrix.postTranslate(-2*w*(getAnchorPoint().x-0.5f),-h*getAnchorPoint().y);
-//				}else if(yScale*yScaleForBitmapHeight<0){
-//					spriteMatrix.postTranslate(-w*getAnchorPoint().x,-2*h*(getAnchorPoint().y-0.5f));
-//				}else{
-//					spriteMatrix.postTranslate(-w*getAnchorPoint().x,-h*getAnchorPoint().y);
-//				}
-				
 				if(xScale*xScaleForBitmapWidth<0 && yScale*yScaleForBitmapHeight<0){
 					spriteMatrix.postTranslate(-2*w*(getAnchorPoint().x-0.5f),-2*h*(getAnchorPoint().y-0.5f));
 				}else if(xScale*xScaleForBitmapWidth<0){
@@ -1272,16 +1526,6 @@ public class Sprite extends Layer {
 					spriteMatrix.postTranslate(0,-2*h*(getAnchorPoint().y-0.5f));
 				}
 			}else{
-//				if(xScale*xScaleForBitmapWidth<0 && yScale*yScaleForBitmapHeight<0){
-//					spriteMatrix.postTranslate(-1*w*(getAnchorPoint().x-1.0f),-h*(getAnchorPoint().y-1.0f));
-//				}else if(xScale*xScaleForBitmapWidth<0){
-//					spriteMatrix.postTranslate(-1*w*(getAnchorPoint().x-1.0f),-h*getAnchorPoint().y);
-//				}else if(yScale*yScaleForBitmapHeight<0){
-//					spriteMatrix.postTranslate(-1*w*(getAnchorPoint().x),-h*(getAnchorPoint().y-1.0f));
-//				}else{
-//					spriteMatrix.postTranslate(-w*getAnchorPoint().x,-h*getAnchorPoint().y);
-//				}
-				
 				if(xScale*xScaleForBitmapWidth<0 && yScale*yScaleForBitmapHeight<0){
 					spriteMatrix.postTranslate(-w*(getAnchorPoint().x-0.5f)*2,-h*(getAnchorPoint().y-0.5f)*2);
 				}else if(xScale*xScaleForBitmapWidth<0){
@@ -1294,14 +1538,11 @@ public class Sprite extends Layer {
 		}
 	}
 	
+	/**
+	 * calculate the matrix.
+	 */
 	private void colculationMatrix(){
 		colculationScale();
-		
-//		if(isComposite()){
-//			spriteMatrix.postRotate(rotation, locationLeftTopInScene.x + w/2, locationLeftTopInScene.y + h/2);
-//		}else{
-//			spriteMatrix.postRotate(rotation, getLeft() + w/2,  getTop() + h/2);
-//		}
 		
 		if(isComposite()){
 			switch (rotationType) {
@@ -1330,22 +1571,6 @@ public class Sprite extends Layer {
 		}
 		
 		RectF newFrameInScene = new RectF();
-//		if(getBitmap()!=null){
-//			if(isComposite()){
-//				if(this.length>0)//not test yet //test in 2016/08/01
-//					spriteMatrix.mapRect(newFrameInScene, new RectF(locationLeftTopInScene.x + getAnchorPoint().x*w, locationLeftTopInScene.y + getAnchorPoint().y*h, locationLeftTopInScene.x + getAnchorPoint().x*w + ((float)getBitmap().getWidth())/frameColNum, locationLeftTopInScene.y + getAnchorPoint().y*h + ((float)getBitmap().getHeight())/frameRowNum));
-//				else //not test yet //test in 2016/08/01
-//					spriteMatrix.mapRect(newFrameInScene, new RectF(locationLeftTopInScene.x + getAnchorPoint().x*w, locationLeftTopInScene.y + getAnchorPoint().y*h, locationLeftTopInScene.x + getAnchorPoint().x*w + getBitmap().getWidth(), locationLeftTopInScene.y + getAnchorPoint().y*h + getBitmap().getHeight()));
-//			}else{
-//				if(this.length>0)
-//					spriteMatrix.mapRect(newFrameInScene, new RectF(getAnchorPointXY().x, getAnchorPointXY().y, getAnchorPointXY().x+((float)getBitmap().getWidth())/frameColNum, getAnchorPointXY().y+((float)getBitmap().getHeight())/frameRowNum));
-//				else //not test yet
-//					spriteMatrix.mapRect(newFrameInScene, new RectF(getAnchorPointXY().x, getAnchorPointXY().y, getAnchorPointXY().x+getBitmap().getWidth(), getAnchorPointXY().y+getBitmap().getHeight()));
-//			}
-//			
-//		}else // not test yet //test in 2016/08/15
-//			spriteMatrix.mapRect(newFrameInScene, new RectF(getAnchorPointXY().x, getAnchorPointXY().y, getAnchorPointXY().x+getWidth(), getAnchorPointXY().y+getHeight()));
-		
 		float left, top, right, bottom;
 		
 		if(getBitmap()!=null){
@@ -1415,22 +1640,24 @@ public class Sprite extends Layer {
 		super.willDoSometiongBeforeOneOfAncestorLayerWillRemoved();
 	}
 	
+	/**
+	 * {@code SpriteAction} is a class.
+	 * @author irons
+	 *
+	 */
 	public class SpriteAction {
 		public int[] frames;
 		public int[] frameTime;
-
 		public Bitmap[] bitmapFrames;
-		
 		public boolean isLoop;
-		
 		public String name;
-		
 		protected long updateTime;
-
 		public float scale;
-		
 		public IActionListener actionListener = new DefaultActionListener();
 		
+		/**
+		 * 
+		 */
 		public void nextFrame() {
 			if (System.currentTimeMillis() > updateTime) {
 				nextFrameBySequence();
@@ -1438,6 +1665,9 @@ public class Sprite extends Layer {
 			}
 		}
 		
+		/**
+		 * 
+		 */
 		public void nextBitmap(){			
 			if (System.currentTimeMillis() > updateTime && !isStop) {
 				actionListener.beforeChangeFrame(frameIdx);
@@ -1464,6 +1694,9 @@ public class Sprite extends Layer {
 			}
 		}
 		
+		/**
+		 * force to change to next bitmao.
+		 */
 		public void forceToNextBitmap(){
 			bitmap = bitmapFrames[frameIdx];
 			frameIdx++;
@@ -1473,6 +1706,9 @@ public class Sprite extends Layer {
 			}
 		}
 		
+		/**
+		 * force to change to finish.
+		 */
 		public void forceToFinish(){
 			if(!isStop){
 				isStop = true;
@@ -1480,14 +1716,23 @@ public class Sprite extends Layer {
 			}
 		}
 		
+		/**
+		 * trigger the sprite action.
+		 */
 		public void trigger(){
 			process();
 		}
 		
+		/**
+		 * init the update time.
+		 */
 		public void initUpdateTime(){
 			updateTime = System.currentTimeMillis() + frameTime[frameIdx];
 		}
 		
+		/**
+		 * change to next frame.
+		 */
 		public void nextFrameBySequence()
 		{
 			if(frames == null)
@@ -1505,6 +1750,11 @@ public class Sprite extends Layer {
 		}
 	}
 	
+	/**
+	 * {@code SpriteActionBaseFPS}
+	 * @author irons
+	 *
+	 */
 	public class SpriteActionBaseFPS extends SpriteAction{
 		private int triggerCount;
 		

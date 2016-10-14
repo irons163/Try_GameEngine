@@ -9,6 +9,11 @@ import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.view.MotionEvent;
 
+/**
+ * {@code ButtonLayer} is a layer.
+ * @author irons
+ *
+ */
 public class ButtonLayer extends Layer{
 	private final int NORMAL_INDEX = 0;
 	private final int DOWN_INDEX = 1;
@@ -30,44 +35,82 @@ public class ButtonLayer extends Layer{
 		}
 	};
 	
+	/**
+	 * Constructor.
+	 */
 	public ButtonLayer() {
 		super();
 		initButtonColors();
 	}
 	
+	/**
+	 * Constructor.
+	 * @param autoAdd
+	 * 			
+	 */
 	public ButtonLayer(boolean autoAdd) {
 		super(autoAdd);
 		initButtonColors();
 	}
 	
+	/**
+	 * @param bitmap
+	 * @param w
+	 * @param h
+	 * @param autoAdd
+	 * @param level
+	 */
 	public ButtonLayer(Bitmap bitmap, int w, int h, boolean autoAdd, int level) {
 		super(bitmap, w, h, autoAdd, level);
 		initButtonColors();
 		buttonBitmaps[NORMAL_INDEX] = bitmap;
 	}
 
+	/**
+	 * @param bitmap
+	 * @param w
+	 * @param h
+	 * @param autoAdd
+	 */
 	public ButtonLayer(Bitmap bitmap, int w, int h, boolean autoAdd) {
 		super(bitmap, w, h, autoAdd);
 		initButtonColors();
 		buttonBitmaps[NORMAL_INDEX] = bitmap;
 	}
 
+	/**
+	 * @param w
+	 * @param h
+	 * @param autoAdd
+	 */
 	public ButtonLayer(int w, int h, boolean autoAdd) {
 		super(w, h, autoAdd);
 		initButtonColors();
 		buttonBitmaps[NORMAL_INDEX] = bitmap;
 	}
 
+	/**
+	 * @param text
+	 * @param w
+	 * @param h
+	 * @param autoAdd
+	 */
 	public ButtonLayer(String text, int w, int h, boolean autoAdd){
 		super(w, h, autoAdd);
 		initButtonColors();
 		initLabelLayer(text);
 	}
 	
+	/**
+	 * 
+	 */
 	private void initButtonColors(){
 		setButtonColors(Color.GRAY, Color.DKGRAY, Color.GRAY);
 	}
 	
+	/**
+	 * @param text
+	 */
 	private void initLabelLayer(String text){
 		labelLayer = new LabelLayer(text, 0, 0, false);
 		labelLayer.setAutoHWByText();
@@ -114,32 +157,39 @@ public class ButtonLayer extends Layer{
 		super.drawSelf(canvas, paint);
 	}
 	
-//	@Override
-//	public void setBitmap(Bitmap normal){
-//		this.bitmap = normal;
-//		buttonBitmaps[NORMAL_INDEX] = normal;
-//	}
-	
-//	@Override
-//	public void setBitmapAndAutoChangeWH(Bitmap bitmap){
-//		this.bitmap = bitmap;
-//		buttonBitmaps[NORMAL_INDEX] = bitmap;
-//		setInitWidth(bitmap.getWidth());
-//		setInitHeight(bitmap.getHeight());
-//	}
-	
-	
-	
+	/**
+	 * set button bitmaps to the button for difference status.
+	 * @param normal
+	 * 			color for normal status.
+	 * @param down
+	 * 			color for down status.
+	 * @param up
+	 * 			color for up status.
+	 */
 	public void setButtonBitmap(Bitmap normal, Bitmap down , Bitmap up){
 		buttonBitmaps[NORMAL_INDEX] = normal;
 		buttonBitmaps[DOWN_INDEX] = down;
 		buttonBitmaps[UP_INDEX] = up;
 	}
 	
+	/**
+	 * set button bitmaps to the button for difference status.
+	 * @param buttonBitmaps
+	 * 			the bitmaps for difference status.
+	 */
 	public void setButtonBitmaps(Bitmap[] buttonBitmaps){
 		this.buttonBitmaps = buttonBitmaps;
 	}
 	
+	/**
+	 * set the colors to the button for difference status.
+	 * @param normal
+	 * 			color for normal status.
+	 * @param down
+	 * 			color for down status.
+	 * @param up
+	 * 			color for up status.
+	 */
 	public void setButtonColors(int normal, int down , int up){
 		setBackgroundColor(normal);
 		buttonColors[NORMAL_INDEX] = normal;
@@ -148,6 +198,9 @@ public class ButtonLayer extends Layer{
 		hasButtonColors = true;
 	}
 	
+	/**
+	 * set the button colors to None.
+	 */
 	public void setButtonColorsNone(){
 		setBackgroundColorNone();
 		buttonColors[NORMAL_INDEX] = NONE_COLOR;
@@ -156,6 +209,11 @@ public class ButtonLayer extends Layer{
 		hasButtonColors = false;
 	}
 	
+	/**
+	 * set text to the button layer.
+	 * @param text
+	 * 			the text of button layer to show.
+	 */
 	public void setText(String text){
 		if(labelLayer==null){
 			initLabelLayer(text);
@@ -163,7 +221,7 @@ public class ButtonLayer extends Layer{
 			labelLayer.setText(text);
 		}
 	}
-	
+
 	public String getText(){
 		if(labelLayer!=null){
 			return labelLayer.getText();
@@ -171,78 +229,39 @@ public class ButtonLayer extends Layer{
 		
 		return null;
 	}
-	
+
+	/**
+	 * set text size to this button layer.
+	 * @param textSize
+	 * 			text size.
+	 */
 	public void setTextSize(float textSize){
 		if(labelLayer!=null && labelLayer.getPaint()!=null)
 			labelLayer.getPaint().setTextSize(textSize);
 	}
 	
+	/**
+	 * set the type face to this button layer.
+	 * @param typeface
+	 * 			the type face to the button layer.
+	 */
 	public void setTextStyle(Typeface typeface){
 		if(labelLayer!=null && labelLayer.getPaint()!=null)
 			labelLayer.getPaint().setTypeface(typeface);
 	}
 	
+	/**
+	 * set the text color to this button layer.
+	 * @param color
+	 * 			the text color is 
+	 */
 	public void setTextColor(int color){
 		if(labelLayer!=null && labelLayer.getPaint()!=null)
 			labelLayer.getPaint().setColor(color);
 	}
 	
-	public boolean onTouch(MotionEvent event){
-		float x = event.getX();
-		float y = event.getY();
-		if(event.getAction()==MotionEvent.ACTION_DOWN && this.dst.contains(x, y)){
-			setBackgroundColor(buttonColors[DOWN_INDEX]);
-			if(buttonBitmaps[DOWN_INDEX]!=null){
-				this.bitmap = buttonBitmaps[DOWN_INDEX];
-			}
-			isClickCancled = false;
-			return true;
-		}else if(event.getAction()==MotionEvent.ACTION_MOVE && this.dst.contains(x, y)){
-			return true;
-		}else if(event.getAction()==MotionEvent.ACTION_MOVE && !this.dst.contains(x, y)){
-			isClickCancled = true;
-			return false;			
-		}else if(event.getAction()==MotionEvent.ACTION_UP && isClickCancled){
-			setBackgroundColor(buttonColors[UP_INDEX]);
-			if(buttonBitmaps[UP_INDEX]!=null){
-				this.bitmap = buttonBitmaps[UP_INDEX];
-			}
-			return true;
-		}else if(event.getAction()==MotionEvent.ACTION_UP && this.dst.contains(x, y) && !isClickCancled){
-			setBackgroundColor(buttonColors[UP_INDEX]);
-			if(buttonBitmaps[UP_INDEX]!=null){
-				this.bitmap = buttonBitmaps[UP_INDEX];
-			}
-			onClickListener.onClick(this);
-			return true;
-		}
-		return false;
-	}
-	
 	@Override
 	protected void onTouched(MotionEvent event) {
-		// TODO Auto-generated method stub
-//		if(event.getAction()==MotionEvent.ACTION_DOWN && isPressed()){
-//			setBackgroundColor(buttonColors[DOWN_INDEX]);
-//			if(buttonBitmaps[DOWN_INDEX]!=null){
-//				this.bitmap = buttonBitmaps[DOWN_INDEX];
-//			}
-//			isClickCancled = false;
-//		}else if(event.getAction()==MotionEvent.ACTION_MOVE && isPressed()){
-//		}else if(event.getAction()==MotionEvent.ACTION_MOVE && !isPressed()){
-//			isClickCancled = true;
-//		}else if(event.getAction()==MotionEvent.ACTION_UP && isClickCancled && !isPressed()){
-//			setBackgroundColor(buttonColors[UP_INDEX]);
-//			if(buttonBitmaps[UP_INDEX]!=null){
-//				this.bitmap = buttonBitmaps[UP_INDEX];
-//			}
-//		}else if(event.getAction()==MotionEvent.ACTION_UP && isPressed() && !isClickCancled){
-//			setBackgroundColor(buttonColors[UP_INDEX]);
-//			if(buttonBitmaps[UP_INDEX]!=null){
-//				this.bitmap = buttonBitmaps[UP_INDEX];
-//			}
-//		}
-		
 		if((event.getAction()==MotionEvent.ACTION_DOWN || (event.getAction() & MotionEvent.ACTION_MASK)==MotionEvent.ACTION_POINTER_DOWN) && isPressed()){
 			if(hasButtonColors)
 				setBackgroundColor(buttonColors[DOWN_INDEX]);
@@ -280,6 +299,10 @@ public class ButtonLayer extends Layer{
 		}
 	}
 	
+	/**
+	 * set on click listener to the button layer to listen the event.
+	 * @param onClickListener
+	 */
 	public void setOnClickListener(OnClickListener onClickListener){
 		this.onClickListener = onClickListener;
 		setOnLayerClickListener(new OnLayerClickListener() {
@@ -302,6 +325,11 @@ public class ButtonLayer extends Layer{
 		});
 	}
 	
+	/**
+	 * the on click listener use for the button layer.
+	 * @author irons
+	 *
+	 */
 	public interface OnClickListener{
 		public void onClick(ButtonLayer buttonLayer);
 	}
