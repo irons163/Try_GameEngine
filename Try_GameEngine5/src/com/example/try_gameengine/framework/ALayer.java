@@ -1249,13 +1249,13 @@ public abstract class ALayer implements ILayer{
 		this.isHidden = isHidden;
 		setEnable(!isHidden);
 		
-		if(getLayers().size()!=0){
-			for(ILayer child : getLayers()){
-				if(child.isComposite()){
-					child.setHidden(isHidden);
-				}
-			}		
-		}
+//		if(getLayers().size()!=0){
+//			for(ILayer child : getLayers()){
+//				if(child.isComposite()){
+//					child.setHidden(isHidden);
+//				}
+//			}		
+//		}
 	}
 	
 	public boolean isVisible() {
@@ -1281,6 +1281,32 @@ public abstract class ALayer implements ILayer{
 			}		
 		}
 	}
+	
+	boolean checkSelfToAncestorIsEnableOrNot(){
+		ILayer ancestorLayer = this;
+		boolean isEnable = ancestorLayer.isEnable();
+		while(isEnable && ancestorLayer.getParent()!=null && ancestorLayer.isComposite()){
+			ancestorLayer = ancestorLayer.getParent();
+			isEnable = ancestorLayer.isEnable();
+			if(!isEnable) //if one of ancestor is not enable, break and return false.
+				break;
+		}
+		return isEnable;
+	}
+	
+	boolean checkSelfToAncestorIsHiddenOrNot(){
+		ILayer ancestorLayer = this;
+		boolean isHidden = ancestorLayer.isHidden();
+		while(!isHidden && ancestorLayer.getParent()!=null && ancestorLayer.isComposite()){
+			ancestorLayer = ancestorLayer.getParent();
+			isHidden = ancestorLayer.isHidden();
+			if(isHidden) //if one of ancestor is hidden, break and return true.
+				break;
+		}
+		return isHidden;
+	}
+	
+	//maybe add checkRootLayerIsVisible in future.
 	
 	public boolean isBitmapChangedFitToAutoSize() {
 		return isBitmapChangedFitToAutoSize;
@@ -1501,7 +1527,8 @@ public abstract class ALayer implements ILayer{
 	
 	public boolean onTouchEvent(MotionEvent event) {
 		// TODO Auto-generated method stub
-		if(!isEnable())
+//		if(!isEnable())
+		if(!checkSelfToAncestorIsEnableOrNot())
 			return false;
 		
 		float x;

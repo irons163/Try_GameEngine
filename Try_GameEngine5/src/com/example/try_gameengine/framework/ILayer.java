@@ -149,8 +149,6 @@ public interface ILayer extends Cloneable{
 
 	public LayerParam getLayerParam();
 
-	public void setHidden(boolean isHidden);
-	
 	public RectF getFrame();
 	
 	public RectF getFrameInScene();
@@ -172,6 +170,14 @@ public interface ILayer extends Cloneable{
 	public boolean isUsedzPosition();
 	
 	public void setAutoAdd(boolean autoAdd);
+	
+	public boolean isEnable();
+	
+	public void setEnable(boolean isEnable);
+	
+	public boolean isHidden();
+	
+	public void setHidden(boolean isHidden);
 	
 	public boolean isVisible();
 	

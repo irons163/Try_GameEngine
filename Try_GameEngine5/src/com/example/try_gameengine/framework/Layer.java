@@ -54,7 +54,8 @@ public class Layer extends ALayer{
 	@Override
 	public void drawSelf(Canvas canvas, Paint paint) {
 		// TODO Auto-generated method stub
-		if(isHidden())
+//		if(isHidden())
+		if(super.checkSelfToAncestorIsHiddenOrNot())
 			return;
 		
 		doDrawself(canvas, paint);
