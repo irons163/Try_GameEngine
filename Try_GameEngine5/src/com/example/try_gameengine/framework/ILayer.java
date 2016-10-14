@@ -172,4 +172,8 @@ public interface ILayer extends Cloneable{
 	public boolean isUsedzPosition();
 	
 	public void setAutoAdd(boolean autoAdd);
+	
+	public boolean isVisible();
+	
+	public void setVisible(boolean isVisible);
 }

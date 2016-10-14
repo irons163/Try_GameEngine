@@ -76,6 +76,8 @@ public abstract class ALayer implements ILayer{
 	
 	private boolean isHidden = false;
 	
+	private boolean isVisible = true;
+	
 	private boolean isBitmapChangedFitToAutoSize = false;
 	
 	private static final int INVALID_POINTER_ID = -1;
@@ -112,6 +114,21 @@ public abstract class ALayer implements ILayer{
 		private float percentageH;
 		private float bindPositionX;
 		private float bindPositionY;
+		
+		public LayerParam() {}
+		
+		public LayerParam(LayerParam p) {
+			this.setBindPositionXY(p.getBindPositionX(), p.getBindPositionY());
+			this.setEnabledBindPositionXY(p.isEnabledBindPositionXY());
+			this.setEnabledPercentagePositionX(p.isEnabledPercentagePositionX());
+			this.setEnabledPercentagePositionY(p.isEnabledPercentagePositionY());
+			this.setEnabledPercentageSizeH(p.isEnabledPercentageSizeH());
+			this.setEnabledPercentageSizeW(p.isEnabledPercentageSizeW());
+			this.setPercentageH(p.getPercentageH());
+			this.setPercentageW(p.getPercentageW());
+			this.setPercentageX(p.getPercentageX());
+			this.setPercentageY(p.getPercentageY());
+		}
 		
 		public boolean isEnabledPercentagePositionX() {
 			return isEnabledPercentagePositionX;
@@ -469,6 +486,10 @@ public abstract class ALayer implements ILayer{
 			if(layer.isAutoAdd())
 				((ALayer)layer).autoAdd = false;
 		}
+	}
+	
+	public void removeAt(int index){
+		remove(getLayers().get(index));
 	}
 	
 	public void removeAllChildren(){
@@ -1223,10 +1244,28 @@ public abstract class ALayer implements ILayer{
 		return isHidden;
 	}
 
+	//not visible(not draw) and not touchable.
 	public void setHidden(boolean isHidden) {
 		this.isHidden = isHidden;
 		setEnable(!isHidden);
-		if(isHidden){
+		
+		if(getLayers().size()!=0){
+			for(ILayer child : getLayers()){
+				if(child.isComposite()){
+					child.setHidden(isHidden);
+				}
+			}		
+		}
+	}
+	
+	public boolean isVisible() {
+		return isVisible;
+	}
+	
+	//not visible(alpha == 0, still call draw).
+	public void setVisible(boolean isVisible){
+		this.isVisible = isVisible;
+		if(!isVisible){
 			if(getPaint()!=null)
 				this.alpha = getPaint().getAlpha();
 			setAlpha(0);
@@ -1237,7 +1276,7 @@ public abstract class ALayer implements ILayer{
 		if(getLayers().size()!=0){
 			for(ILayer child : getLayers()){
 				if(child.isComposite()){
-					child.setHidden(isHidden);
+					child.setVisible(isVisible);
 				}
 			}		
 		}
@@ -1405,9 +1444,16 @@ public abstract class ALayer implements ILayer{
 //				canvas.saveLayer(0, 0, canvas.getWidth(), canvas.getHeight(), null, Canvas.MATRIX_SAVE_FLAG | Canvas.HAS_ALPHA_LAYER_SAVE_FLAG | Canvas.HAS_ALPHA_LAYER_SAVE_FLAG | Canvas.FULL_COLOR_LAYER_SAVE_FLAG | Canvas.CLIP_TO_LAYER_SAVE_FLAG);
 				canvas.save(Canvas.MATRIX_SAVE_FLAG | Canvas.HAS_ALPHA_LAYER_SAVE_FLAG | Canvas.HAS_ALPHA_LAYER_SAVE_FLAG | Canvas.FULL_COLOR_LAYER_SAVE_FLAG | Canvas.CLIP_TO_LAYER_SAVE_FLAG);
 				if(getParent() instanceof Sprite){
+//					canvas.concat(((Sprite)getParent()).getLayerMatrix());
+					Matrix matrix = new Matrix(((ALayer)getParent()).getLayerMatrix());
+					matrix.invert(matrix);
+					canvas.concat(matrix);
 					canvas.concat(((Sprite)getParent()).spriteMatrix);
 					canvas.clipRect(((Sprite)getParent()).drawRectF);
 				}else{
+					Matrix matrix = new Matrix(((ALayer)getParent()).getLayerMatrix());
+					matrix.invert(matrix);
+					canvas.concat(matrix);
 					canvas.clipRect(getParent().getFrameInScene());
 				}
 				canvas.restore();

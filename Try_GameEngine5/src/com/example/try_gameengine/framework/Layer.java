@@ -54,6 +54,8 @@ public class Layer extends ALayer{
 	@Override
 	public void drawSelf(Canvas canvas, Paint paint) {
 		// TODO Auto-generated method stub
+		if(isHidden())
+			return;
 		
 		doDrawself(canvas, paint);
 		
@@ -81,16 +83,19 @@ public class Layer extends ALayer{
 				
 				Paint originalPaint = paint;
 				
-				//use self paint first
+				//use input paint first
 				int oldColor = 0;
 				Style oldStyle = null;
+				int oldAlpha = 255;
 				if(originalPaint==null && getPaint()!=null){
 					paint = getPaint();
 	//				paint.setAntiAlias(true);
-					if(getBackgroundColor()!=NONE_COLOR && getPaint()!=null){
+					if(getBackgroundColor()!=NONE_COLOR){
 						oldColor = getPaint().getColor();
 						oldStyle = getPaint().getStyle();
+						oldAlpha = getPaint().getAlpha();
 						getPaint().setColor(getBackgroundColor());
+						getPaint().setAlpha((int) (getAlpha()*oldAlpha/255.0f));
 						getPaint().setStyle(Style.FILL);
 						canvas.drawRect(getFrameInScene(), paint);
 					}
@@ -123,6 +128,7 @@ public class Layer extends ALayer{
 	//					canvas.drawRect(dst, paint);
 						getPaint().setColor(oldColor);
 						getPaint().setStyle(oldStyle);
+						getPaint().setAlpha(oldAlpha);
 					}
 					if(bitmap!=null)
 						canvas.drawBitmap(bitmap, src, dst, paint);
@@ -152,6 +158,7 @@ public class Layer extends ALayer{
 	//					canvas.drawRect(getFrame(), paint);
 						getPaint().setColor(oldColor);
 						getPaint().setStyle(oldStyle);
+						getPaint().setAlpha(oldAlpha);
 					}
 					if(bitmap!=null)
 						canvas.drawBitmap(bitmap, src, dst, paint);
@@ -170,7 +177,7 @@ public class Layer extends ALayer{
 				
 	
 				
-				//use self paint first
+				//use input paint first
 				paint = originalPaint;
 			} while (false);
 			

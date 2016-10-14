@@ -396,32 +396,12 @@ public class Sprite extends Layer {
 //		layer = this.getParent().clipRange;
 //		return clipRange;
 //	}
-
+	
 	@Override
-	public void drawSelf(Canvas canvas, Paint paint) {
-		
+	protected void doDrawself(Canvas canvas, Paint paint) {
 		canvas.save();
 		
 		do {
-//		if(isAncestorClipOutSide()){
-//			RectF rectF = null;
-//			if((rectF = getClipRange())!=null){
-////				canvas.save();
-//				Rect rect = new Rect();
-//				rectF.round(rect);
-////				canvas.clipRegion(new Region(rect));
-//				canvas.clipRect(rect);
-////					paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_IN));
-////					int c = paint.getColor();
-////					paint.setColor(Color.GREEN);
-////					paint.setStyle(Style.FILL);
-////					canvas.drawRect(getClipRange(), paint);
-////					paint.setXfermode(null);
-////					paint.setColor(c);
-//			}else{
-//				break;
-//			}
-//		}
 			
 		canvas = getC(canvas, paint);
 		
@@ -516,13 +496,15 @@ public class Sprite extends Layer {
 		} while (false);
 		
 		canvas.restore();
-		
+	}
+	
+	@Override
+	protected void doDrawChildren(Canvas canvas, Paint paint) {
 		for(ILayer layer : layers){
 			if(layer.isComposite() && !layer.isAutoAdd()){ //if the layer is auto add, not draw.
 				layer.drawSelf(canvas, paint);
 			}
 		}
-		
 	}
 	
 	public void customBitampSRCandDST(Rect src, RectF dst){
@@ -609,16 +591,21 @@ public class Sprite extends Layer {
 		Style oldStyle = null;
 		if(paint==null && getPaint()!=null){
 			paint = getPaint();
-			if(getBackgroundColor()!=NONE_COLOR && getPaint()!=null){
+			if(getBackgroundColor()!=NONE_COLOR){
 				oldColor = getPaint().getColor();
 				oldStyle = getPaint().getStyle();
 				getPaint().setColor(getBackgroundColor());
 				getPaint().setStyle(Style.FILL);
+				int oldAlpha = getPaint().getAlpha();
+				getPaint().setAlpha((int) (getAlpha()*oldAlpha/255.0f));
 //				canvas.drawRect(x, y, x + w, y + h,paint);
 				canvas.drawRect(drawRectF, paint);
 				getPaint().setColor(oldColor);
 				getPaint().setStyle(oldStyle);
+				getPaint().setAlpha(oldAlpha);
 			}
+		}else if(paint!=null){
+			canvas.drawRect(drawRectF, paint);
 		}
 	}
 	

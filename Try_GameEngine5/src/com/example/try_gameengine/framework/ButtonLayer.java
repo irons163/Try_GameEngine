@@ -164,6 +164,14 @@ public class ButtonLayer extends Layer{
 		}
 	}
 	
+	public String getText(){
+		if(labelLayer!=null){
+			return labelLayer.getText();
+		}
+		
+		return null;
+	}
+	
 	public void setTextSize(float textSize){
 		if(labelLayer!=null && labelLayer.getPaint()!=null)
 			labelLayer.getPaint().setTextSize(textSize);
