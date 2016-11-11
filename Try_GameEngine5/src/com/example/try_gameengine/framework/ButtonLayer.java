@@ -1,6 +1,6 @@
 package com.example.try_gameengine.framework;
 
-import com.example.try_gameengine.framework.LabelLayer.LabelBaseLine;
+import com.example.try_gameengine.framework.LabelLayer.AlignmentVertical;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -116,7 +116,7 @@ public class ButtonLayer extends Layer{
 		labelLayer.setAutoHWByText();
 		labelLayer.setPosition(getWidth()/2, getHeight()/2);
 		labelLayer.setAnchorPoint(0.5f, 0.5f);
-		labelLayer.setLabelBaseLine(LabelBaseLine.BASELINE_FOR_TEXT_TOP);
+		labelLayer.setAlignmentVertical(AlignmentVertical.ALIGNMENT_CENTER);
 		labelLayer.setEnable(false);
 		addChild(labelLayer);
 	}

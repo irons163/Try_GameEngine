@@ -14,13 +14,16 @@ import android.graphics.Paint.FontMetricsInt;
 public class LabelLayer extends Layer{
 	private String text;
 	private boolean isAutoHWByText = false;
-	private LabelBaseLine labelBaseLine = LabelBaseLine.BASELINE_FOR_TEXT_TOP;
+	private AlignmentVertical alignmentVertical = AlignmentVertical.ALIGNMENT_TOP;
 	private float baseline;
 	
-	public enum LabelBaseLine{
-		DEFAULT_ANDROID_BASELINE, //the draw text baseline is equal to self positionY.
-		BASELINE_FOR_TEXT_TOP, //the draw text topY is equal to self positionY.
-		BASELINE_FOR_TEXT_BOTTOM
+	public enum AlignmentVertical{
+		ALIGNMENT_TOP, //the draw text topY is equal to self positionY.
+		ALIGNMENT_BOTTOM,
+		ALIGNMENT_CENTER,
+		ALIGNMENT_LABEL_TOP_AS_TEXT_BOTTOM,
+		ALIGNMENT_LABEL_BOTTOM_AS_TEXT_TOP,
+		ALIGNMENT_ANDROID_TEXT_BASELINE //the draw text baseline is equal to self positionY.
 	}
 	
 	/**
@@ -102,12 +105,15 @@ public class LabelLayer extends Layer{
 			calculateY(paint);
 		
 		float y = 0;
-		switch (labelBaseLine) {
-		case DEFAULT_ANDROID_BASELINE:
-			break;
-		case BASELINE_FOR_TEXT_TOP:
-		case BASELINE_FOR_TEXT_BOTTOM:
+		switch (alignmentVertical) {
+		case ALIGNMENT_TOP:
+		case ALIGNMENT_BOTTOM:
+		case ALIGNMENT_CENTER:
+		case ALIGNMENT_LABEL_TOP_AS_TEXT_BOTTOM:
+		case ALIGNMENT_LABEL_BOTTOM_AS_TEXT_TOP:
 			y = baseline;
+			break;
+		case ALIGNMENT_ANDROID_TEXT_BASELINE:
 			break;
 		}
 		if(text!=null){
@@ -167,13 +173,13 @@ public class LabelLayer extends Layer{
 		this.isAutoHWByText = isAutoHWByText;
 	}
 	
-	public void setLabelBaseLine(LabelBaseLine labelBaseLine){
-		this.labelBaseLine = labelBaseLine;
+	public void setAlignmentVertical(AlignmentVertical alignmentVertical){
+		this.alignmentVertical = alignmentVertical;
 		calculateY();
 	}
 	
-	public LabelBaseLine getLabelBaseLine(){
-		return labelBaseLine;
+	public AlignmentVertical getAlignmentVertical(){
+		return alignmentVertical;
 	}
 	
 	public String getText() {
@@ -270,12 +276,20 @@ public class LabelLayer extends Layer{
 	}
 	
 	private void calculateY(Paint paint){
-		if(paint!=null && labelBaseLine!=LabelBaseLine.DEFAULT_ANDROID_BASELINE){
+		if(paint!=null && alignmentVertical!=AlignmentVertical.ALIGNMENT_ANDROID_TEXT_BASELINE){
 			FontMetricsInt fontMetricsInt = paint.getFontMetricsInt();
 			baseline = (fontMetricsInt.descent - fontMetricsInt.ascent)/2 - fontMetricsInt.descent;
-			if(labelBaseLine==LabelBaseLine.BASELINE_FOR_TEXT_TOP)
+			if(alignmentVertical==AlignmentVertical.ALIGNMENT_TOP)
 //				baseline -= getHeight();
 				baseline -= (fontMetricsInt.bottom - fontMetricsInt.top);
+			else if(alignmentVertical==AlignmentVertical.ALIGNMENT_BOTTOM)
+				baseline -= getHeight();
+			else if(alignmentVertical==AlignmentVertical.ALIGNMENT_CENTER)
+				baseline -= (getHeight()+(fontMetricsInt.bottom - fontMetricsInt.top))/2.0f;
+			else if(alignmentVertical==AlignmentVertical.ALIGNMENT_LABEL_TOP_AS_TEXT_BOTTOM)
+				; //do nothing
+			else if(alignmentVertical==AlignmentVertical.ALIGNMENT_LABEL_BOTTOM_AS_TEXT_TOP)
+				baseline -= (getHeight()+(fontMetricsInt.bottom - fontMetricsInt.top));
 		}
 	}
 }
