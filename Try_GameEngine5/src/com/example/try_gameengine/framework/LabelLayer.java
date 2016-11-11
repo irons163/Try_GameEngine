@@ -14,12 +14,12 @@ import android.graphics.Paint.FontMetricsInt;
 public class LabelLayer extends Layer{
 	private String text;
 	private boolean isAutoHWByText = false;
-	private LabelBaseLine labelBaseLine = LabelBaseLine.DEFAULT_ANDROID_BASELINE;
+	private LabelBaseLine labelBaseLine = LabelBaseLine.BASELINE_FOR_TEXT_TOP;
 	private float baseline;
 	
 	public enum LabelBaseLine{
-		DEFAULT_ANDROID_BASELINE, //default
-		BASELINE_FOR_TEXT_TOP,
+		DEFAULT_ANDROID_BASELINE, //the draw text baseline is equal to self positionY.
+		BASELINE_FOR_TEXT_TOP, //the draw text topY is equal to self positionY.
 		BASELINE_FOR_TEXT_BOTTOM
 	}
 	
@@ -160,6 +160,7 @@ public class LabelLayer extends Layer{
 	public void setAutoHWByText(){
 		isAutoHWByText = true;
 		autoHWByText();
+		calculateY();
 	}
 	
 	public void enableAutoHWByText(boolean isAutoHWByText){
@@ -181,8 +182,10 @@ public class LabelLayer extends Layer{
 
 	public void setText(String text) {
 		this.text = text;
-		if(isAutoHWByText && getPaint()!=null)
+		if(isAutoHWByText && getPaint()!=null){
 			calculateWHByText();
+			calculateY();
+		}
 	}
 
 	public void setBitmap(Bitmap bitmap){
@@ -207,6 +210,7 @@ public class LabelLayer extends Layer{
 		// TODO Auto-generated method stub
 		super.setHeight(h);
 		isAutoHWByText = false;
+		calculateY();
 	}
 	
 	@Override
@@ -270,7 +274,8 @@ public class LabelLayer extends Layer{
 			FontMetricsInt fontMetricsInt = paint.getFontMetricsInt();
 			baseline = (fontMetricsInt.descent - fontMetricsInt.ascent)/2 - fontMetricsInt.descent;
 			if(labelBaseLine==LabelBaseLine.BASELINE_FOR_TEXT_TOP)
-				baseline -= getHeight();
+//				baseline -= getHeight();
+				baseline -= (fontMetricsInt.bottom - fontMetricsInt.top);
 		}
 	}
 }
