@@ -9,6 +9,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import com.example.try_gameengine.scene.Scene;
 import com.example.try_gameengine.stage.StageManager;
 
+import android.R.bool;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
@@ -32,7 +33,7 @@ import android.view.MotionEvent;
  * @author irons
  *
  */
-public abstract class ALayer implements ILayer{
+public abstract class ALayer implements ILayer, ITouchable{
 	private float x;// 层的x坐标
 	private float y;// 层的y坐标
 	public float centerX;
@@ -224,8 +225,10 @@ public abstract class ALayer implements ILayer{
 	public static final int TOUCH_MOVE_CAN_WITHOUT_TOUCH_DOWN = 8;
 	public static final int TOUCH_MOVE_CAN_OUTSIDE_SELF_RANGE = 16;
 	public static final int TOUCH_EVENT_ONLY_ACTIVE_ON_SELF = 64;
-	public static final int TOUCH_EVENT_ONLY_ACTIVE_ON_CHILDREN = 128;
+	public static final int TOUCH_EVENT_ONLY_ACTIVE_ON_CHILDREN = 128; //1<<7
 	public static final int TOUCH_EVENT_ONLY_ACTIVE_ON_NOTHING = 192; // 64 & 128
+	public static final int TOUCH_EVENT_ONLY_ACTIVE_ON_NOT_INERT_LAYERS = 1<<8;//256
+	public static final int TOUCH_EVENT_ONLY_ACTIVE_ON_LINEAL_LAYERS = 1<<9;//512
 	
 	protected int flag = NO_FLAG;
 	
@@ -1621,6 +1624,12 @@ public abstract class ALayer implements ILayer{
 	
 	public boolean onTouchEvent(MotionEvent event) {
 		// TODO Auto-generated method stub
+		return onTouchEvent(event, NO_FLAG);
+	}
+	
+	public boolean onTouchEvent(MotionEvent event, int touchEventFlag){
+		int commandTouchEventFlag = touchEventFlag;
+		touchEventFlag |= flag;
 //		if(!isEnable())
 		if(!checkSelfToAncestorIsEnableOrNot())
 			return false;
@@ -1723,26 +1732,34 @@ public abstract class ALayer implements ILayer{
 			}
 		}
 		
-		if((flag & TOUCH_EVENT_ONLY_ACTIVE_ON_SELF)==0){
+		if((touchEventFlag & TOUCH_EVENT_ONLY_ACTIVE_ON_SELF)==0){
 			ListIterator<ILayer> iterator = layers.listIterator(layers.size());
 			while(iterator.hasPrevious()){
 				ILayer child = iterator.previous();
-				if(!child.isAutoAdd() && child.onTouchEvent(event)){
-					/*
-					if((flag & TOUCH_EVENT_ONLY_ACTIVE_ON_CHILDREN)!=0)
-						return true;
-					else
-						return false;
-					*/
-					return true; //if child accept the touch event, not do self touch event and return true.
-				}	
+				if(!child.isAutoAdd()){
+					boolean consumedByChilde = ((ALayer)child).onTouchEvent(event, commandTouchEventFlag);
+					if(consumedByChilde){
+						/*
+						if((touchEventFlag & TOUCH_EVENT_ONLY_ACTIVE_ON_CHILDREN)!=0)
+							return true;
+						else
+							return false;
+						*/					
+						return true; //if child accept the touch event, not do self touch event and return true.
+					}
+//					else{
+//						if(((touchEventFlag & TOUCH_EVENT_ONLY_ACTIVE_ON_LINEAL_LAYERS)!=0))
+//							break;
+//					}
+				}
 			}
 		}
 		
-		if((flag & TOUCH_EVENT_ONLY_ACTIVE_ON_CHILDREN)!=0){
+		if((touchEventFlag & TOUCH_EVENT_ONLY_ACTIVE_ON_CHILDREN)!=0){ //self not catch this touch event.
 			return false;
 		}
 
+		
 
         if((event.getAction() & MotionEvent.ACTION_MASK) == MotionEvent.ACTION_DOWN){
         	if (isTouching || pressed) {
@@ -1758,7 +1775,7 @@ public abstract class ALayer implements ILayer{
 			}
                     mActivePointerId = event.getPointerId(downPointerIndex);
         }else if(event.getPointerId(downPointerIndex)!=mActivePointerId){
-        	if((flag & TOUCH_MOVE_CAN_WITHOUT_TOUCH_DOWN)!=0){
+        	if((touchEventFlag & TOUCH_MOVE_CAN_WITHOUT_TOUCH_DOWN)!=0){
         		if((event.getAction() & MotionEvent.ACTION_MASK) != MotionEvent.ACTION_MOVE){
         			mActivePointerId = INVALID_POINTER_ID;
         			canMoving = true;
@@ -1779,6 +1796,15 @@ public abstract class ALayer implements ILayer{
 				}
 			}else if (!f.contains(x, y)) {
 				return false;
+			}
+			
+			if(!checkCatchTheTouchEvent(touchEventFlag)){
+				if(isComposite()){
+					return ((ALayer)getParent()).onTouchEvent(event, touchEventFlag|TOUCH_EVENT_ONLY_ACTIVE_ON_SELF);
+				}
+				return false;
+//				break;
+//				return false;
 			}
 			
 			mHasPerformedLongPress = false;
@@ -1808,8 +1834,8 @@ public abstract class ALayer implements ILayer{
 			mActivePointerId = INVALID_POINTER_ID;
 			canMoving = true;
 			
-			if((flag & TOUCH_UP_DISABLE_WHEN_CLICK_LISTENER_ENABLE)==0 || onLayerClickListener == null){
-				if((flag & TOUCH_UP_CAN_WITHOUT_TOUCH_DOWN)!=0 && (flag & TOUCH_UP_CAN_OUTSIDE_SELF_RANGE)!=0){
+			if((touchEventFlag & TOUCH_UP_DISABLE_WHEN_CLICK_LISTENER_ENABLE)==0 || onLayerClickListener == null){
+				if((touchEventFlag & TOUCH_UP_CAN_WITHOUT_TOUCH_DOWN)!=0 && (touchEventFlag & TOUCH_UP_CAN_OUTSIDE_SELF_RANGE)!=0){
 					onTouched(event); 
 					
 					if(!pressed){
@@ -1818,7 +1844,7 @@ public abstract class ALayer implements ILayer{
 	
 					pressed = false;
 					
-				}else if((flag & TOUCH_UP_CAN_WITHOUT_TOUCH_DOWN)!=0 && (flag & TOUCH_UP_CAN_OUTSIDE_SELF_RANGE)==0){
+				}else if((touchEventFlag & TOUCH_UP_CAN_WITHOUT_TOUCH_DOWN)!=0 && (touchEventFlag & TOUCH_UP_CAN_OUTSIDE_SELF_RANGE)==0){
 					if(!isIndentify){
 						if (f.contains(a[0], a[1])) {
 							onTouched(event);
@@ -1833,7 +1859,7 @@ public abstract class ALayer implements ILayer{
 	
 					pressed = false;
 					
-				}else if((flag & TOUCH_UP_CAN_WITHOUT_TOUCH_DOWN)==0 && (flag & TOUCH_UP_CAN_OUTSIDE_SELF_RANGE)!=0){
+				}else if((touchEventFlag & TOUCH_UP_CAN_WITHOUT_TOUCH_DOWN)==0 && (touchEventFlag & TOUCH_UP_CAN_OUTSIDE_SELF_RANGE)!=0){
 					if (!isTouching) {
 						return false;
 					}
@@ -1847,7 +1873,7 @@ public abstract class ALayer implements ILayer{
 	
 					pressed = false;
 					
-				}else if((flag & TOUCH_UP_CAN_WITHOUT_TOUCH_DOWN)==0 && (flag & TOUCH_UP_CAN_OUTSIDE_SELF_RANGE)==0){
+				}else if((touchEventFlag & TOUCH_UP_CAN_WITHOUT_TOUCH_DOWN)==0 && (touchEventFlag & TOUCH_UP_CAN_OUTSIDE_SELF_RANGE)==0){
 					if (!isTouching) {
 						return false;
 					}
@@ -1896,7 +1922,7 @@ public abstract class ALayer implements ILayer{
 			removeLongPressCallback();
 			break;
 		case MotionEvent.ACTION_MOVE:
-			if (((flag & TOUCH_MOVE_CAN_WITHOUT_TOUCH_DOWN)==0 && !pressed) || !canMoving) {
+			if (((touchEventFlag & TOUCH_MOVE_CAN_WITHOUT_TOUCH_DOWN)==0 && !pressed) || !canMoving) {
 				return false;
 			}
 
@@ -1904,7 +1930,7 @@ public abstract class ALayer implements ILayer{
 			
 			boolean isOutRange = false;
 			
-			if ((flag & TOUCH_MOVE_CAN_OUTSIDE_SELF_RANGE)!=0){
+			if ((touchEventFlag & TOUCH_MOVE_CAN_OUTSIDE_SELF_RANGE)!=0){
 				if(!isIndentify){
 					if (!f.contains(a[0], a[1])) {
 						removeLongPressCallback();
@@ -1917,7 +1943,7 @@ public abstract class ALayer implements ILayer{
 					if (!f.contains(a[0], a[1])) {
 						removeLongPressCallback();
 						
-						if ((flag & TOUCH_MOVE_CAN_WITHOUT_TOUCH_DOWN)!=0){
+						if ((touchEventFlag & TOUCH_MOVE_CAN_WITHOUT_TOUCH_DOWN)!=0){
 							if(pressed){
 								pressed = false;
 								onTouched(event);
@@ -1931,13 +1957,13 @@ public abstract class ALayer implements ILayer{
 						pressed = false;
 						isOutRange = true;
 					}
-//					else if((flag & TOUCH_MOVE_CAN_WITHOUT_TOUCH_DOWN)!=0){
+//					else if((touchEventFlag & TOUCH_MOVE_CAN_WITHOUT_TOUCH_DOWN)!=0){
 //						pressed = true;
 //					}
 				}else if (!f.contains(x, y)) {
 					removeLongPressCallback();
 					
-					if ((flag & TOUCH_MOVE_CAN_WITHOUT_TOUCH_DOWN)!=0){
+					if ((touchEventFlag & TOUCH_MOVE_CAN_WITHOUT_TOUCH_DOWN)!=0){
 						if(pressed){
 							pressed = false;
 							onTouched(event);
@@ -1951,25 +1977,25 @@ public abstract class ALayer implements ILayer{
 					pressed = false;
 					isOutRange = true;
 				}
-//				else if((flag & TOUCH_MOVE_CAN_WITHOUT_TOUCH_DOWN)!=0){
+//				else if((touchEventFlag & TOUCH_MOVE_CAN_WITHOUT_TOUCH_DOWN)!=0){
 //					pressed = true;
 //				}
 			}
 
 			boolean oriPressed = pressed;
 			
-			if ((flag & TOUCH_MOVE_CAN_WITHOUT_TOUCH_DOWN)!=0){
+			if ((touchEventFlag & TOUCH_MOVE_CAN_WITHOUT_TOUCH_DOWN)!=0){
 				pressed = !isOutRange;
 				onTouched(event);
 				pressed = oriPressed;
 			}
 			/*
-			if ((flag & TOUCH_MOVE_CAN_WITHOUT_TOUCH_DOWN)!=0 && (flag & TOUCH_MOVE_CAN_OUTSIDE_SELF_RANGE)==0){
+			if ((touchEventFlag & TOUCH_MOVE_CAN_WITHOUT_TOUCH_DOWN)!=0 && (touchEventFlag & TOUCH_MOVE_CAN_OUTSIDE_SELF_RANGE)==0){
 				pressed = !isOutRange;
 				onTouched(event);
 				pressed = oriPressed;
 			}
-			else if ((flag & TOUCH_MOVE_CAN_WITHOUT_TOUCH_DOWN)!=0 && (flag & TOUCH_MOVE_CAN_OUTSIDE_SELF_RANGE)!=0){
+			else if ((touchEventFlag & TOUCH_MOVE_CAN_WITHOUT_TOUCH_DOWN)!=0 && (touchEventFlag & TOUCH_MOVE_CAN_OUTSIDE_SELF_RANGE)!=0){
 				pressed = !isOutRange;
 				onTouched(event);
 				pressed = oriPressed;
@@ -1986,7 +2012,40 @@ public abstract class ALayer implements ILayer{
 		return true;
 	}
 	
+	@Override
+	public boolean onTouchBegan(MotionEvent event){
+		return false;
+	}
+	
+	@Override
+	public void onTouchMoved(MotionEvent event){
+		
+	}
+	
+	@Override
+	public void onTouchEnded(MotionEvent event){
+		
+	}
+	
+	@Override
+	public void onTouchCancelled(MotionEvent event){
+		
+	}
+	
 	protected abstract void onTouched(MotionEvent event);
+	
+	protected boolean checkCatchTheTouchEvent(int touchEventFlag){
+		if((touchEventFlag & TOUCH_EVENT_ONLY_ACTIVE_ON_NOT_INERT_LAYERS)!=0){
+			if(this.isInert() && this.onLayerClickListener == null && this.onLayerLongClickListener == null)
+				return false;
+		}
+		
+		return true;
+	}
+	
+	protected boolean isInert(){
+		return true;
+	}
 
 	private void removeLongPressCallback() {
 		if (mPendingCheckForLongPress != null) {

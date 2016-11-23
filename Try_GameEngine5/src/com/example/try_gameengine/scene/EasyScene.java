@@ -37,6 +37,7 @@ import com.example.try_gameengine.framework.IGameController;
 import com.example.try_gameengine.framework.IGameModel;
 import com.example.try_gameengine.framework.IMoveObserver;
 import com.example.try_gameengine.framework.LayerManager;
+import com.example.try_gameengine.framework.TouchDispatcher;
 import com.example.try_gameengine.remotecontroller.RemoteController;
 import com.example.try_gameengine.scene.Scene;
 
@@ -317,8 +318,10 @@ public abstract class EasyScene extends Scene implements ContactListener{
 	public boolean onSceneTouchEvent(MotionEvent event) {
 		// TODO Auto-generated method stub
 		boolean isTouched =  
+				TouchDispatcher.getInstance().onTouchEvent(event) ||
 				LayerManager.onTouchLayersForOppositeZOrder(event) ||
 				LayerManager.onTouchLayersForNegativeZOrder(event);
+//		boolean isTouched = TouchDispatcher.getInstance().onTouchEvent(event);
 		return isTouched;
 	}
 	

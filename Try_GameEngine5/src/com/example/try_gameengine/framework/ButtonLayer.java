@@ -334,4 +334,8 @@ public class ButtonLayer extends Layer{
 		public void onClick(ButtonLayer buttonLayer);
 	}
 	
+	@Override
+	protected boolean isInert(){
+		return false;
+	}
 }
