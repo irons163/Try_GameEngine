@@ -48,6 +48,14 @@ public class TouchDispatcher implements ISystemTouchDelegate{
 		}
 	}
 	
+	public boolean containTouchDelegate(ITouchable delegate){
+		for(TouchHandler handler : touchHandlers){
+			if(handler.getDelegate() == delegate)
+				return true;
+		}
+		return false;
+	}
+	
 	public boolean isDispatchEvent() {
 		return dispatchEvent;
 	}

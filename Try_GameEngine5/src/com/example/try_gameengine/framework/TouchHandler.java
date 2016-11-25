@@ -2,7 +2,7 @@ package com.example.try_gameengine.framework;
 
 import android.view.MotionEvent;
 
-public class TouchHandler implements ITouchable{
+public class TouchHandler {
 	protected ITouchable delegate;
 	protected int priority;
 	protected boolean claimed;
@@ -54,25 +54,21 @@ public class TouchHandler implements ITouchable{
 		return delegate.onTouchEvent(event);
 	}
 
-	@Override
 	public boolean onTouchBegan(MotionEvent event) {
 		// TODO Auto-generated method stub
 		return delegate.onTouchBegan(event);
 	}
 
-	@Override
 	public void onTouchEnded(MotionEvent event) {
 		// TODO Auto-generated method stub
 		delegate.onTouchEnded(event);
 	}
 
-	@Override
 	public void onTouchMoved(MotionEvent event) {
 		// TODO Auto-generated method stub
 		delegate.onTouchMoved(event);
 	}
 
-	@Override
 	public void onTouchCancelled(MotionEvent event) {
 		// TODO Auto-generated method stub
 		delegate.onTouchCancelled(event);

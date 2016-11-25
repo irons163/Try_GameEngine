@@ -1631,7 +1631,7 @@ public abstract class ALayer implements ILayer, ITouchable{
 		int commandTouchEventFlag = touchEventFlag;
 		touchEventFlag |= flag;
 //		if(!isEnable())
-		if(!checkSelfToAncestorIsEnableOrNot())
+		if(!checkSelfToAncestorIsEnableOrNot() || TouchDispatcher.getInstance().containTouchDelegate(this))
 			return false;
 		
 		float x;
