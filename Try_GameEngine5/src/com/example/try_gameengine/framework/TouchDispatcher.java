@@ -9,24 +9,82 @@ import android.view.MotionEvent;
 import android.view.View.OnTouchListener;
 
 public class TouchDispatcher implements ISystemTouchDelegate{
-	List<TouchHandler> touchHandlers = new ArrayList<TouchHandler>();
-	boolean dispatchEvent = true;
+	List<TargetTouchHandler> touchHandlers = new ArrayList<TargetTouchHandler>();
+	List<StandardTouchHandler> standardTouchHandlers = new ArrayList<StandardTouchHandler>();
+	int touchDispatcherEnableFlag;
+	int touchDispatcherConsumeFlag;
+	boolean hasTouchableObjectConsumed;
+	
+/////////////////////
+////	SystemTouchDisPatcher(Android View)
+////		V	
+////	Check TouchDisPatcher enabled
+////		V
+////	Check TargetTouchDisPatcher enabled 
+////		V
+////	Loop TargetTouch(if one of TargetTouchObject claimed and consumed event, break the loop.)	
+////		V
+////	Check TargetTouchDisPatcher consumed touch event
+////		V
+////	Check StandardTouchDisPatcher enabled 
+////		V
+////	Loop StandardTouch(if one of StandardTouchObject claimed and consumed event, break the loop.)	
+////		V
+////	Check StandardTouchDisPatcher consumed touch event
+////		V	
+////	Check DefaultDrawOrderTouchDisPatcher enabled 
+////		V
+////	Loop default touch(if one of default touch object(Layers) claimed and consumed event, break the loop.)	
+////		V
+////	Check DefaultDrawOrderTouchDisPatcher consumed touch event
+////		V
+////	back to SystemTouchDisPatcher(Android View)
+/////////////////////
+	enum TouchDispatcherFlagType{
+		ENABLE_FALG, CONSUME_FALG
+	}
+	
+    static class TouchDispatcherFlag{
+		public final static int ENABLE_NONE = 0;
+		public final static int ENABLE_TOUCH_DISPATCHER = 1<<0;
+		public final static int ENABLE_TARGET_TOUCH_DISPATCHER = 1<<1;
+		public final static int ENABLE_STANDARD_TOUCH_DISPATCHER = 1<<2;
+		public final static int ENABLE_STANDARD_DRAW_ORDER_TOUCH_DISPATCHER = 1<<3;
+	/////////////////////
+		public final static int CONSUME_NONE = 0;
+		public final static int CONSUME_TOUCH_EVENT_BY_TOUCH_DISPATCHER = 1<<0;
+		public final static int CONSUME_TOUCH_EVENT_BY_TARGET_TOUCH_DISPATCHER = 1<<1;
+		public final static int CONSUME_TOUCH_EVENT_BY_STANDARD_TOUCH_DISPATCHER = 1<<2;
+		public final static int CONSUME_TOUCH_EVENT_BY_STANDARD_ORDER_TOUCH_DISPATCHER = 1<<3;
+    }
+/////////////////////	
 	
 	private static class TouchDispatcherHolder{
 		public static TouchDispatcher touchDispatcher = new TouchDispatcher();
 	}
 	
-	private TouchDispatcher(){};
+	private TouchDispatcher(){
+		addFlag(TouchDispatcherFlag.ENABLE_TOUCH_DISPATCHER
+				|TouchDispatcherFlag.ENABLE_TARGET_TOUCH_DISPATCHER
+				|TouchDispatcherFlag.ENABLE_STANDARD_TOUCH_DISPATCHER
+				|TouchDispatcherFlag.ENABLE_STANDARD_DRAW_ORDER_TOUCH_DISPATCHER
+				, TouchDispatcherFlagType.ENABLE_FALG);
+		addFlag(TouchDispatcherFlag.CONSUME_TOUCH_EVENT_BY_TOUCH_DISPATCHER
+				|TouchDispatcherFlag.CONSUME_TOUCH_EVENT_BY_TARGET_TOUCH_DISPATCHER
+				|TouchDispatcherFlag.CONSUME_TOUCH_EVENT_BY_STANDARD_TOUCH_DISPATCHER
+				|TouchDispatcherFlag.CONSUME_TOUCH_EVENT_BY_STANDARD_ORDER_TOUCH_DISPATCHER
+				, TouchDispatcherFlagType.CONSUME_FALG);
+	}
 	
 	public static TouchDispatcher getInstance(){
 		return TouchDispatcherHolder.touchDispatcher;
 	}
 	
-	public void addTouchDelegate(ITouchable delegate, int priority){
-		forceAddTouchHandler(new TouchHandler(delegate, priority));
+	public void addTargetTouchDelegate(ITouchable delegate, int priority){
+		forceAddTouchHandler(new TargetTouchHandler(delegate, priority));
 	}
 	
-	private void forceAddTouchHandler(TouchHandler touchHandler){
+	private void forceAddTouchHandler(TargetTouchHandler touchHandler){
 		int i = 0;
 		for(TouchHandler handler : touchHandlers){
 			if(handler.getPriority() <= touchHandler.getPriority())
@@ -39,7 +97,7 @@ public class TouchDispatcher implements ISystemTouchDelegate{
 		touchHandlers.add(i, touchHandler);
 	}
 	
-	public void removeTouchDelegate(ITouchable delegate){
+	public void removeTargetTouchDelegate(ITouchable delegate){
 		for(TouchHandler handler : touchHandlers){
 			if(handler.getDelegate() == delegate){
 				touchHandlers.remove(handler);
@@ -48,7 +106,7 @@ public class TouchDispatcher implements ISystemTouchDelegate{
 		}
 	}
 	
-	public boolean containTouchDelegate(ITouchable delegate){
+	public boolean containTargetTouchDelegate(ITouchable delegate){
 		for(TouchHandler handler : touchHandlers){
 			if(handler.getDelegate() == delegate)
 				return true;
@@ -56,74 +114,193 @@ public class TouchDispatcher implements ISystemTouchDelegate{
 		return false;
 	}
 	
-	public boolean isDispatchEvent() {
-		return dispatchEvent;
+	public void addStandardTouchDelegate(ITouchable delegate, int priority){
+		forceAddStandardTouchHandler(new StandardTouchHandler(delegate, priority));
 	}
-
-	public void setDispatchEvent(boolean dispatchEvent) {
-		this.dispatchEvent = dispatchEvent;
+	
+	private void forceAddStandardTouchHandler(StandardTouchHandler touchHandler){
+		int i = 0;
+		for(StandardTouchHandler handler : standardTouchHandlers){
+			if(handler.getPriority() <= touchHandler.getPriority())
+				i++;
+			
+			if(handler.getDelegate() == touchHandler.getDelegate())
+				throw new RuntimeException("Delegate already added to touch dispatcher.");
+		}
+		
+		standardTouchHandlers.add(i, touchHandler);
+	}
+	
+	public void removeStandardTouchDelegate(ITouchable delegate){
+		for(StandardTouchHandler handler : standardTouchHandlers){
+			if(handler.getDelegate() == delegate){
+				touchHandlers.remove(handler);
+				break;
+			}
+		}
+	}
+	
+	public boolean containStandardTouchDelegate(ITouchable delegate){
+		for(TouchHandler handler : standardTouchHandlers){
+			if(handler.getDelegate() == delegate)
+				return true;
+		}
+		return false;
+	}
+	
+	public void removeTouchDelegates(ITouchable delegate){
+		removeTargetTouchDelegate(delegate);
+		removeStandardTouchDelegate(delegate);
 	}
 
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
 		// TODO Auto-generated method stub
-		ListIterator<TouchHandler> iterator = touchHandlers.listIterator(touchHandlers.size());
+		hasTouchableObjectConsumed = false;
 		
-		boolean isTouched = false;
-//		if(dispatchEvent){
-//			while(iterator.hasPrevious()){
-//				TouchHandler handler = iterator.previous();
-//				if(handler.onTouchEvent(event)){
-//					isTouched =  true;
-//					break;
-//				}
-//			}
-//		}	
+		if(checkIsFlagEnabled(TouchDispatcherFlag.ENABLE_TOUCH_DISPATCHER, TouchDispatcherFlagType.ENABLE_FALG))
+			return false;
 		
-//		for(TouchHandler handler : touchHandlers){
-		while(iterator.hasPrevious()){
-			TouchHandler handler = iterator.previous();
-			boolean claimed = false;
-			
-			if(dispatchEvent){
-				if(handler.onTouchEvent(event)){
-					isTouched =  true;
+		dispatchTouchEvent(event);
+
+		return hasTouchableObjectConsumed && checkIsFlagEnabled(TouchDispatcherFlag.CONSUME_TOUCH_EVENT_BY_TOUCH_DISPATCHER, TouchDispatcherFlagType.CONSUME_FALG);
+	}
+	
+	private boolean dispatchTouchEvent(MotionEvent event){
+		return dispatchTouchEventByTargetTouchDispatcher(event) ||
+				dispatchTouchEventByStandardTouchDispatcher(event) ||
+				dispatchTouchEventByStandardDrawOrderTouchDispatcher(event);
+	}
+	
+	private boolean dispatchTouchEventByTargetTouchDispatcher(MotionEvent event){
+		boolean isConsumed = false;
+		if(checkIsFlagEnabled(TouchDispatcherFlag.ENABLE_STANDARD_TOUCH_DISPATCHER, TouchDispatcherFlagType.ENABLE_FALG)){		
+			ListIterator<TargetTouchHandler> iterator = touchHandlers.listIterator(touchHandlers.size());
+			while(iterator.hasPrevious()){
+				TargetTouchHandler handler = iterator.previous();
+				boolean claimed = false;
+				
+				switch (event.getAction() & MotionEvent.ACTION_MASK) {
+				case MotionEvent.ACTION_POINTER_DOWN:
+				case MotionEvent.ACTION_DOWN:
+					claimed = handler.onTouchBegan(event);
+					if(claimed)
+						handler.claimed = claimed;
+					break;
+				case MotionEvent.ACTION_MOVE:
+					if(handler.claimed)
+						handler.onTouchMoved(event);
+					break;
+				case MotionEvent.ACTION_POINTER_UP:
+				case MotionEvent.ACTION_UP:
+					if(handler.claimed){
+						handler.onTouchEnded(event);
+						handler.claimed = false;
+					}
+					break;
+				case MotionEvent.ACTION_CANCEL:
+					if(handler.claimed){
+						handler.onTouchCancelled(event);
+						handler.claimed = false;
+					}
+					break;
+				default:
+					break;
+				}
+				
+				if(claimed && handler.isConsumeTouch()){
+					isConsumed = true;
 					break;
 				}
 			}
 			
-			switch (event.getAction() & MotionEvent.ACTION_MASK) {
-			case MotionEvent.ACTION_POINTER_DOWN:
-			case MotionEvent.ACTION_DOWN:
-				claimed = handler.onTouchBegan(event);
-				if(claimed)
-					handler.claimed = claimed;
-				break;
-			case MotionEvent.ACTION_MOVE:
-				if(handler.claimed)
-					handler.onTouchMoved(event);
-				break;
-			case MotionEvent.ACTION_POINTER_UP:
-			case MotionEvent.ACTION_UP:
-				if(handler.claimed){
-					handler.onTouchEnded(event);
-					handler.claimed = false;
+			if(checkIsFlagEnabled(TouchDispatcherFlag.CONSUME_TOUCH_EVENT_BY_TARGET_TOUCH_DISPATCHER, TouchDispatcherFlagType.CONSUME_FALG))
+				if(isConsumed)
+					return isConsumed;
+		}
+		return isConsumed;
+	}
+	
+	private boolean dispatchTouchEventByStandardTouchDispatcher(MotionEvent event){
+		boolean isConsumed = false;
+		if(checkIsFlagEnabled(TouchDispatcherFlag.ENABLE_STANDARD_TOUCH_DISPATCHER, TouchDispatcherFlagType.ENABLE_FALG)){
+			isConsumed = false;
+			ListIterator<StandardTouchHandler> StandardIterator = standardTouchHandlers.listIterator(standardTouchHandlers.size());
+			while(StandardIterator.hasPrevious()){
+				StandardTouchHandler handler = StandardIterator.previous();
+				if(handler.onTouchEvent(event) && handler.isConsumeTouch()){
+					isConsumed =  true;
+					break;
 				}
-				break;
-			case MotionEvent.ACTION_CANCEL:
-				if(handler.claimed){
-					handler.onTouchCancelled(event);
-					handler.claimed = false;
-				}
-				break;
-			default:
-				break;
 			}
 			
-			if(claimed && handler.isConsumeTouch())
+			if(checkIsFlagEnabled(TouchDispatcherFlag.CONSUME_TOUCH_EVENT_BY_STANDARD_TOUCH_DISPATCHER, TouchDispatcherFlagType.CONSUME_FALG))
+				if(isConsumed)
+					return isConsumed;
+		}
+		return isConsumed;
+	}
+	
+	private boolean dispatchTouchEventByStandardDrawOrderTouchDispatcher(MotionEvent event){
+		boolean isConsumed = false;
+		if(checkIsFlagEnabled(TouchDispatcherFlag.ENABLE_STANDARD_DRAW_ORDER_TOUCH_DISPATCHER, TouchDispatcherFlagType.ENABLE_FALG)){
+			isConsumed = LayerManager.onTouchLayersForOppositeZOrder(event) || LayerManager.onTouchLayersForNegativeZOrder(event);
+			if(checkIsFlagEnabled(TouchDispatcherFlag.CONSUME_TOUCH_EVENT_BY_STANDARD_TOUCH_DISPATCHER, TouchDispatcherFlagType.CONSUME_FALG))
+				if(isConsumed)
+					return isConsumed;
+		}
+		return isConsumed;
+	}
+	
+	public void setFlag(int touchDispatcherFlag, TouchDispatcherFlagType touchDispatcherFlagType){
+		switch (touchDispatcherFlagType) {
+			case ENABLE_FALG:
+				this.touchDispatcherEnableFlag = touchDispatcherFlag;
+				break;
+			case CONSUME_FALG:
+				this.touchDispatcherConsumeFlag = touchDispatcherFlag;
 				break;
 		}
-
-		return !dispatchEvent||isTouched;
+	}
+	
+	public int getFlag(TouchDispatcherFlagType touchDispatcherFlagType){
+		switch (touchDispatcherFlagType) {
+			case ENABLE_FALG:
+				return this.touchDispatcherEnableFlag;
+			case CONSUME_FALG:
+				return this.touchDispatcherConsumeFlag;
+		}
+		
+		return 0;
+	}
+	
+	public void addFlag(int touchDispatcherFlag, TouchDispatcherFlagType touchDispatcherFlagType){
+		switch (touchDispatcherFlagType) {
+		case ENABLE_FALG:
+			this.touchDispatcherEnableFlag = this.touchDispatcherEnableFlag|touchDispatcherFlag;
+			break;
+		case CONSUME_FALG:
+			this.touchDispatcherConsumeFlag = this.touchDispatcherConsumeFlag|touchDispatcherFlag;
+			break;
+		}
+	}
+	
+	public void removeFlag(int touchDispatcherFlag, TouchDispatcherFlagType touchDispatcherFlagType){
+		switch (touchDispatcherFlagType) {
+		case ENABLE_FALG:
+			this.touchDispatcherEnableFlag &= ~touchDispatcherFlag;
+			break;
+		case CONSUME_FALG:
+			this.touchDispatcherConsumeFlag &= ~touchDispatcherFlag;
+			break;
+		}
+	}
+	
+	public boolean checkIsFlagEnabled(int flagForCheck, TouchDispatcherFlagType touchDispatcherFlagType){
+		return ((getFlag(touchDispatcherFlagType) & flagForCheck) == flagForCheck);
+	}
+	
+	public boolean isEnabled(){
+		return checkIsFlagEnabled(TouchDispatcherFlag.ENABLE_TOUCH_DISPATCHER, TouchDispatcherFlagType.ENABLE_FALG);
 	}
 }

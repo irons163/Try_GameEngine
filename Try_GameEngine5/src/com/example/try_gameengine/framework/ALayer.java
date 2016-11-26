@@ -266,11 +266,7 @@ public abstract class ALayer implements ILayer, ITouchable{
 		setHeightPrivate(h);
 		src = new Rect();
 		dst = new RectF();
-		
-		if (autoAdd) {
-			this.autoAdd = autoAdd;
-			LayerManager.addLayer(this); // add this in the Layer Manager.
-		}
+		setAutoAdd(autoAdd);
 		initALayer();
 	}
 	
@@ -286,15 +282,8 @@ public abstract class ALayer implements ILayer, ITouchable{
 	protected ALayer(int w, int h, boolean autoAdd) {
 		setWidthPrivate(w);
 		setHeightPrivate(h);
-//		this.bitmap = bitmap;
-//		this.w = w;
-//		this.h = h;
-//		this.centerX = w / 2;
-//		this.centerY = h / 2;
 		src = new Rect();
 		dst = new RectF();
-//		getFrame().set(x, y, x+w, y+h);
-//		setFrameInScene(frameInSceneByCompositeLocation());
 		
 		if (autoAdd) {
 			this.autoAdd = autoAdd;
@@ -310,10 +299,7 @@ public abstract class ALayer implements ILayer, ITouchable{
 	protected ALayer(boolean autoAdd) {
 		src = new Rect();
 		dst = new RectF();
-		if (autoAdd) {
-			this.autoAdd = autoAdd;
-			LayerManager.addLayer(this);// 在LayerManager类中添加本组件
-		}
+		setAutoAdd(autoAdd);
 		initALayer();
 	}
 	
@@ -363,10 +349,7 @@ public abstract class ALayer implements ILayer, ITouchable{
 		getFrame().set(x, y, x+w, y+h);
 		setFrameInScene(frameInSceneByCompositeLocation());
 		
-		if (autoAdd) {
-			this.autoAdd = autoAdd;
-			LayerManager.addLayer(this);// 在LayerManager类中添加本组件
-		}
+		setAutoAdd(autoAdd);
 		initALayer();
 	}
 	
@@ -383,10 +366,7 @@ public abstract class ALayer implements ILayer, ITouchable{
 		getFrame().set(x, y, x+w, y+h);
 		setFrameInScene(frameInSceneByCompositeLocation());
 		
-		if (autoAdd) {
-			this.autoAdd = autoAdd;
-			LayerManager.addLayer(this);// 在LayerManager类中添加本组件
-		}
+		setAutoAdd(autoAdd);
 		initALayer();
 	}
 	
@@ -542,6 +522,7 @@ public abstract class ALayer implements ILayer, ITouchable{
 	 * 
 	 */
 	protected void willDoSometiongBeforeOneOfAncestorLayerWillRemoved(){
+		TouchDispatcher.getInstance().removeTouchDelegates(this);
 		for(ILayer layer : layers){
 			if(layer.isComposite()){
 				((ALayer)layer).willDoSometiongBeforeOneOfAncestorLayerWillRemoved();
@@ -1631,7 +1612,7 @@ public abstract class ALayer implements ILayer, ITouchable{
 		int commandTouchEventFlag = touchEventFlag;
 		touchEventFlag |= flag;
 //		if(!isEnable())
-		if(!checkSelfToAncestorIsEnableOrNot() || TouchDispatcher.getInstance().containTouchDelegate(this))
+		if(!checkSelfToAncestorIsEnableOrNot() || TouchDispatcher.getInstance().containStandardTouchDelegate(this))
 			return false;
 		
 		float x;

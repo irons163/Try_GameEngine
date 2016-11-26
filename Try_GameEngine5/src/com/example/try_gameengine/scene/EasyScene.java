@@ -48,22 +48,22 @@ public abstract class EasyScene extends Scene implements ContactListener{
 	
 	private int screenW,screenH;
 	
-	/**BirdÃþ¡A¥Î¥HÃ¸µe¥X¤p³¾*/
+	/**Birdï¿½ï¿½ï¿½Aï¿½Î¥HÃ¸ï¿½eï¿½Xï¿½pï¿½ï¿½*/
 	protected Bird bird;
 	
-	/**touchEventªºÀu¤Æ¡AÁ×§K¯u¾÷½Õ¸Õ®ÉÀWÁc¦^À³*/
+	/**touchEventï¿½ï¿½ï¿½uï¿½Æ¡Aï¿½×§Kï¿½uï¿½ï¿½ï¿½Õ¸Õ®ï¿½ï¿½Wï¿½cï¿½^ï¿½ï¿½*/
 	byte[] lock = new byte[0];
 	private final int timePause=50;
 	
-	/**ª«²z¥@¬ÉÁn©ú*/
+	/**ï¿½ï¿½ï¿½zï¿½@ï¿½ï¿½ï¿½nï¿½ï¿½*/
 //	World world;
 	public LWorld world;
-//	AABB aabb;  //·sª©ªºJBox2D¤w¸g¤£»Ý­nAABB°Ï°ì¤F
+//	AABB aabb;  //ï¿½sï¿½ï¿½ï¿½ï¿½JBox2Dï¿½wï¿½gï¿½ï¿½ï¿½Ý­nAABBï¿½Ï°ï¿½F
 	Vector2 gravity;
-	public static final float RATE=40.0f; //ª«²z¥@¬É»P¿Ã¹õÀô¹ÒÁY©ñ¤ñ¦C
+	public static final float RATE=40.0f; //ï¿½ï¿½ï¿½zï¿½@ï¿½É»Pï¿½Ã¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Yï¿½ï¿½ï¿½C
 	protected float timeStep=1f/60f;	
 	
-	/**·sªºJBox2D¼W¥[¨ì¨â­Ó±±¨î¤ÏÂÐ¹Bºâ¡A°Ñ¼Æ§¡«ö·Ó©x¤èmanual¤Wªº°Ñ¼Æ³]¸mªº */
+	/**ï¿½sï¿½ï¿½JBox2Dï¿½Wï¿½[ï¿½ï¿½ï¿½Ó±ï¿½ï¿½ï¿½ï¿½ï¿½Ð¹Bï¿½ï¿½Aï¿½Ñ¼Æ§ï¿½ï¿½ï¿½ï¿½Ó©xï¿½ï¿½manualï¿½Wï¿½ï¿½ï¿½Ñ¼Æ³]ï¿½mï¿½ï¿½ */
 	protected int velocityIterations = 10;	
 	protected int positionIterations = 8;
 	
@@ -105,14 +105,14 @@ public abstract class EasyScene extends Scene implements ContactListener{
 		paint.setStyle(Style.STROKE);
 		paint.setAntiAlias(true);
 		
-		/**­«¤Oªì©l¤Æ*/
+		/**ï¿½ï¿½ï¿½Oï¿½ï¿½lï¿½ï¿½*/
 		gravity=new Vector2(0,-10f);
 		
-		/**³Ð«Øª«²z¥@¬É*/
+		/**ï¿½Ð«Øªï¿½ï¿½zï¿½@ï¿½ï¿½*/
 //		world=new World(gravity, true);
 		world=new LWorld(0, 20, 1800, 1800, true, 1.0f);
 		
-		/**¼W¥[ª«²z¥@¬É¤¤ªº¸I¼²ºÊÅ¥*/
+		/**ï¿½Wï¿½[ï¿½ï¿½ï¿½zï¿½@ï¿½É¤ï¿½ï¿½ï¿½ï¿½Iï¿½ï¿½ï¿½ï¿½Å¥*/
 		world.setContactListener(this);
 		
 		DisplayMetrics dm = new DisplayMetrics();
@@ -123,14 +123,14 @@ public abstract class EasyScene extends Scene implements ContactListener{
 //		CommonUtil.statusBarHeight = CommonUtil.getStatusBarHeight(this);
 //		CommonUtil.screenHeight -= CommonUtil.statusBarHeight;
 		
-		/**±o¨ì¿Ã¹õ¤j¤p*/
+		/**ï¿½oï¿½ï¿½Ã¹ï¿½ï¿½jï¿½p*/
 		this.screenW=CommonUtil.screenWidth;
 		this.screenH=CommonUtil.screenHeight;
 		
-		/**ªì©l¤Æ¤p³¾¦ì¸m*/
+		/**ï¿½ï¿½lï¿½Æ¤pï¿½ï¿½ï¿½ï¿½m*/
 		AngryBirdActivity.startX=100;
 		AngryBirdActivity.startY=screenH-500;
-		/**ªì©l¤Æ¾ó¥Öµ¬ªø«×*/
+		/**ï¿½ï¿½lï¿½Æ¾ï¿½Öµï¿½ï¿½ï¿½ï¿½ï¿½*/
 		AngryBirdActivity.touchDistance=0.2f*screenH;
 		
 		
@@ -138,72 +138,72 @@ public abstract class EasyScene extends Scene implements ContactListener{
 		
 		bird=new Bird(AngryBirdActivity.startX,AngryBirdActivity.startY,bmpBird.getHeight()/2f,bmpBird,Type.redBird);		
 
-		/** ³Ð«Ø¥|©PªºÃä®Ø¡A³]¸m isStatic¬°true¡A§Y¦bª«²z¥@¬É¤¤¬OÀR¤îªº¡A
-		 * Type³]¸m¬°ground¡AÁ×§K³QÀ»·´
+		/** ï¿½Ð«Ø¥|ï¿½Pï¿½ï¿½ï¿½ï¿½Ø¡Aï¿½]ï¿½m isStaticï¿½ï¿½trueï¿½Aï¿½Yï¿½bï¿½ï¿½ï¿½zï¿½@ï¿½É¤ï¿½ï¿½Oï¿½Rï¿½îªºï¿½A
+		 * Typeï¿½]ï¿½mï¿½ï¿½groundï¿½Aï¿½×§Kï¿½Qï¿½ï¿½ï¿½ï¿½
 		 * */
 		createPolygon(5, 5, CommonUtil.screenWidth - 10, 2, true,Type.ground);
 		createPolygon(5, CommonUtil.screenHeight - 10, CommonUtil.screenWidth - 10, 2, true,Type.ground);
 		createPolygon(5, 5, 2, CommonUtil.screenHeight - 10, true,Type.ground);
 		createPolygon(CommonUtil.screenWidth - 10, 5, 2, CommonUtil.screenHeight - 10, true,Type.ground);
 		
-		/**³Ð«Ø6­Ó¤è§Î¡AisStatic³]¸m¬°false¡A§Y¦bª«²z¥@¬É¤¤¬O°ÊºA¡A¦¬¥~¤O§@¥Î¼vÅT */
+		/**ï¿½Ð«ï¿½6ï¿½Ó¤ï¿½Î¡AisStaticï¿½]ï¿½mï¿½ï¿½falseï¿½Aï¿½Yï¿½bï¿½ï¿½ï¿½zï¿½@ï¿½É¤ï¿½ï¿½Oï¿½ÊºAï¿½Aï¿½ï¿½ï¿½~ï¿½Oï¿½@ï¿½Î¼vï¿½T */
 		for(int i=0;i<6;i++)
 		{
 			createPolygon(screenW-250,screenH-200-20*i,20,20, false,Type.wood);
 		}
-		/**³Ð«Ø¤@­Óªø±ø«¬¡A¤]¬O°ÊºAªº */
+		/**ï¿½Ð«Ø¤@ï¿½Óªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Aï¿½]ï¿½Oï¿½ÊºAï¿½ï¿½ */
 		createPolygon(screenW-380,screenH-250-20*6-10,80,10, false,Type.wood);
 	}
 	
-	/**³Ð«Ø¶ê§Îªºbody*/
+	/**ï¿½Ð«Ø¶ï¿½Îªï¿½body*/
 	public Body createCircle(float x,float y,float r,boolean isStatic)
 	{
-		/**³]¸mbody§Îª¬*/
+		/**ï¿½]ï¿½mbodyï¿½Îªï¿½*/
 	    CircleShape circle = new CircleShape();
-	    /**¥b®|¡A­n±N¿Ã¹õªº°Ñ¼ÆÂà¤Æ¨ìª«²z¥@¬É¤¤ */
+	    /**ï¿½bï¿½|ï¿½Aï¿½nï¿½Nï¿½Ã¹ï¿½ï¿½ï¿½ï¿½Ñ¼ï¿½ï¿½ï¿½Æ¨ìª«ï¿½zï¿½@ï¿½É¤ï¿½ */
 	    circle.setRadius(r/RATE);
 		
-	    /**³]¸mFixtureDef */
+	    /**ï¿½]ï¿½mFixtureDef */
 		FixtureDef fDef=new FixtureDef();
 		if(isStatic)
 		{
-			/**±K«×¬°0®É¡A¦bª«²z¥@¬É¤¤¤£¨ü¥~¤O¼vÅT¡A¬°ÀR¤îªº */
+			/**ï¿½Kï¿½×¬ï¿½0ï¿½É¡Aï¿½bï¿½ï¿½ï¿½zï¿½@ï¿½É¤ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½~ï¿½Oï¿½vï¿½Tï¿½Aï¿½ï¿½ï¿½Rï¿½îªº */
 			fDef.density=0;
 		}
 		else
 		{
-			/**±K«×¤£¬°0®É¡A¦bª«²z¥@¬É¤¤·|¨ü¥~¤O¼vÅT */
+			/**ï¿½Kï¿½×¤ï¿½ï¿½ï¿½0ï¿½É¡Aï¿½bï¿½ï¿½ï¿½zï¿½@ï¿½É¤ï¿½ï¿½|ï¿½ï¿½ï¿½~ï¿½Oï¿½vï¿½T */
 			fDef.density=1;
 		}
-		/**³]¸m¼¯À¿¤O¡A½d³ò¬° 0¡ã1 */
+		/**ï¿½]ï¿½mï¿½ï¿½ï¿½ï¿½ï¿½Oï¿½Aï¿½dï¿½ï¿½ 0ï¿½ï¿½1 */
 		fDef.friction=1.0f;
-		/**³]¸mª«Åé¸I¼²ªº¦^´_¤O¡A?»CÂæëgû®Áì¶j±µ±ñýn?*/
+		/**ï¿½]ï¿½mï¿½ï¿½ï¿½ï¿½Iï¿½ï¿½ï¿½ï¿½ï¿½^ï¿½_ï¿½Oï¿½A?ï¿½Cï¿½ï¿½ï¿½gï¿½ï¿½ï¿½ï¿½jï¿½ï¿½ï¿½ï¿½ï¿½n?*/
 		fDef.restitution=0.3f;
-		/**²K¥[§Îª¬*/
+		/**ï¿½Kï¿½[ï¿½Îªï¿½*/
 		fDef.shape=circle;
 
-	    /**³]¸mBodyDef */
+	    /**ï¿½]ï¿½mBodyDef */
 		BodyDef bodyDef=new BodyDef();
 		
-		/**¦¹³B¤@©w­n³]¸m¡A§Y¨Ïdensity¤£¬°0¡A
-		 * ­Y¦¹³B¤£±Nbody.type³]¸m¬°BodyType.DYNAMIC,ª«Åé¥ç·|ÀR¤î
+		/**ï¿½ï¿½ï¿½Bï¿½@ï¿½wï¿½nï¿½]ï¿½mï¿½Aï¿½Yï¿½ï¿½densityï¿½ï¿½ï¿½ï¿½0ï¿½A
+		 * ï¿½Yï¿½ï¿½ï¿½Bï¿½ï¿½ï¿½Nbody.typeï¿½]ï¿½mï¿½ï¿½BodyType.DYNAMIC,ï¿½ï¿½ï¿½ï¿½ï¿½|ï¿½Rï¿½ï¿½
 		 * */
 		bodyDef.type=isStatic?BodyType.StaticBody:BodyType.DynamicBody;
-		/**³]¸mbody¦ì¸m¡A­n±N¿Ã¹õªº°Ñ¼ÆÂà¤Æ¨ìª«²z¥@¬É¤¤ */
+		/**ï¿½]ï¿½mbodyï¿½ï¿½mï¿½Aï¿½nï¿½Nï¿½Ã¹ï¿½ï¿½ï¿½ï¿½Ñ¼ï¿½ï¿½ï¿½Æ¨ìª«ï¿½zï¿½@ï¿½É¤ï¿½ */
 		bodyDef.position.set((x)/RATE, (y)/RATE);
 		
-		/**³Ð«Øbody*/
+		/**ï¿½Ð«ï¿½body*/
 		Body body=world.createBody(bodyDef);
 		
-		/**²K¥[ m_userData */
+		/**ï¿½Kï¿½[ m_userData */
 		body.setUserData(bird);
 		
-	//	body.createShape(fDef); //ÂÂª©JBox2Dªº³Ð«Ø¤èªk
+	//	body.createShape(fDef); //ï¿½Âªï¿½JBox2Dï¿½ï¿½ï¿½Ð«Ø¤ï¿½k
 		
-		/**¬°body³Ð«ØFixture*/
+		/**ï¿½ï¿½bodyï¿½Ð«ï¿½Fixture*/
 		body.createFixture(fDef); 
 		
-	//	body.setMassFromShapes();	//ÂÂª©JBox2Dªº³Ð«Ø¤èªk
+	//	body.setMassFromShapes();	//ï¿½Âªï¿½JBox2Dï¿½ï¿½ï¿½Ð«Ø¤ï¿½k
 		
 		return body;
 	}
@@ -317,11 +317,11 @@ public abstract class EasyScene extends Scene implements ContactListener{
 	// If override, need super.onSceneTouchEvent(MotionEvent event).
 	public boolean onSceneTouchEvent(MotionEvent event) {
 		// TODO Auto-generated method stub
-		boolean isTouched =  
-				TouchDispatcher.getInstance().onTouchEvent(event) ||
-				LayerManager.onTouchLayersForOppositeZOrder(event) ||
-				LayerManager.onTouchLayersForNegativeZOrder(event);
-//		boolean isTouched = TouchDispatcher.getInstance().onTouchEvent(event);
+//		boolean isTouched =  
+//				TouchDispatcher.getInstance().onTouchEvent(event) ||
+//				LayerManager.onTouchLayersForOppositeZOrder(event) ||
+//				LayerManager.onTouchLayersForNegativeZOrder(event);
+		boolean isTouched = TouchDispatcher.getInstance().onTouchEvent(event);
 		return isTouched;
 	}
 	
@@ -461,16 +461,16 @@ public abstract class EasyScene extends Scene implements ContactListener{
 			if(isEnableRemoteController && remoteController!=null)
 				remoteController.drawRemoteController(canvas, null);
 			if(isEnablePhysical){
-				/**µe¥X¤p³¾*/
+				/**ï¿½eï¿½Xï¿½pï¿½ï¿½*/
 				bird.draw(canvas, paint);
 	
-				/**¦pªG¤p³¾ÁÙ¨S³Qµo®g¡Aµe¥X©ì°Êªº¾ó¥Öµ¬­y¸ñ*/
+				/**ï¿½pï¿½Gï¿½pï¿½ï¿½ï¿½Ù¨Sï¿½Qï¿½oï¿½gï¿½Aï¿½eï¿½Xï¿½ï¿½Êªï¿½ï¿½ï¿½Öµï¿½ï¿½yï¿½ï¿½*/
 				if(!bird.getIsReleased())
 				{
 					canvas.drawLine(AngryBirdActivity.startX, AngryBirdActivity.startY, bird.getX(), bird.getY(), paint);
 				}
 	
-				/**¹M¾úª«²z¥@¬É¡Aµe¥XRect */
+				/**ï¿½Mï¿½ï¿½ï¿½ï¿½ï¿½zï¿½@ï¿½É¡Aï¿½eï¿½XRect */
 	//			Body body = world.getBodyList();
 				for (int i = 1; i < world.getBodyCount(); i++) {
 					LBody body = world.getBodyList().get(i);
@@ -540,7 +540,7 @@ public abstract class EasyScene extends Scene implements ContactListener{
 	public void postSolve(Contact arg0, ContactImpulse arg1) {
 		// TODO Auto-generated method stub
 
-		/**¸I¼²¨Æ¥óªºÀË´ú¡A°Ñ¼Æ¬O½Õ¸Õ¥X¨Óªº */
+		/**ï¿½Iï¿½ï¿½ï¿½Æ¥ï¿½ï¿½Ë´ï¿½ï¿½Aï¿½Ñ¼Æ¬Oï¿½Õ¸Õ¥Xï¿½Óªï¿½ */
 		if(arg1.getNormalImpulses()[0]>5)
 		{
 			if ( (arg0.getFixtureA().getBody().getUserData())instanceof MyRect)
@@ -548,7 +548,7 @@ public abstract class EasyScene extends Scene implements ContactListener{
 
 				MyRect rect=(MyRect)(arg0.getFixtureA().getBody().getUserData());
 
-				/**¥u¦³³o´XºØÃþ«¬·|³QÀ»·´ */
+				/**ï¿½uï¿½ï¿½ï¿½oï¿½Xï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½|ï¿½Qï¿½ï¿½ï¿½ï¿½ */
 				if(rect.getType()==Type.stone
 				||rect.getType()==Type.wood
 				||rect.getType()==Type.pig
