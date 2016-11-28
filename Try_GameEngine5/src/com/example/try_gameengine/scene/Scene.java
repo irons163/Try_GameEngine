@@ -162,7 +162,7 @@ public abstract class Scene extends Sprite{
 //		((Activity)context).finish();
 		setMode(FINISHED);
 		gameModel.setData(new DestoryData());
-		LayerManager.deleteSceneLayersByLayerLevel(sceneLayerLevel);
+		LayerManager.deleteSceneLayersBySceneLayerLevel(sceneLayerLevel);
 	}
 	
 	public class DestoryData extends Data{

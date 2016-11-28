@@ -639,18 +639,6 @@ public abstract class ALayer implements ILayer, ITouchable{
 	public Iterator createIterator(){
 		return new CompositeIterator(layers.iterator());
 	}
-
-	@Override
-	public void moveAllChild(int offsetLayerLevel){
-		for(ILayer layer : layers){
-//			layer.moveAllChild(offsetLayerLevel);
-			if(layer.isComposite())
-				continue;
-			int oldLayerLevel = layer.getLayerLevel();
-			int newoldLayerLevel = layer.getLayerLevel() + offsetLayerLevel;
-			LayerManager.changeLayerToNewLayerLevel(layer, oldLayerLevel, newoldLayerLevel);
-		}
-	}
 	
 	@Override
 	public void setParent(ILayer parent){
@@ -1129,17 +1117,17 @@ public abstract class ALayer implements ILayer, ITouchable{
 	}
 	
 	public void removeFromParent(){
-		willRemoveFromParent();
 		if(parent!=null){
-			parent.remove(this);
-			removeFromLayerManager();
+//			willRemoveFromParent();
+			parent.remove(this); //remove from and remove from auto too.
 		}else{
-			removeFromLayerManager();
-		}
+			removeFromAuto(); //remove from auto.
+		}	
 	}
 	
 	private void removeFromLayerManager(){
 		if(autoAdd){
+			willRemoveFromAuto();
 			LayerManager.deleteLayerBySearchAll(this);
 			autoAdd = false;
 		}
@@ -1154,7 +1142,7 @@ public abstract class ALayer implements ILayer, ITouchable{
 	}
 	
 	public void removeFromAuto(){
-		willRemoveFromAuto();
+//		willRemoveFromAuto();
 		removeFromLayerManager();
 	}
 	
@@ -1169,7 +1157,7 @@ public abstract class ALayer implements ILayer, ITouchable{
 			autoAdd = true;
 			LayerManager.addLayer(this);
 		}
-		LayerManager.updateLayersDrawOrderByZposition(this);
+		LayerManager.updateLayerOrder(this);
 	}
 	
 	/**
@@ -1304,7 +1292,7 @@ public abstract class ALayer implements ILayer, ITouchable{
 		
 		if (autoAdd) {
 			this.autoAdd = autoAdd;
-			LayerManager.addSceneLayerByLayerLevel(this, sceneLayerLevel);
+			LayerManager.addSceneLayerBySceneLayerLevel(this, sceneLayerLevel);
 		}else{
 			removeFromAuto();
 //			this.autoAdd = autoAdd; //removeFromAuto() do this, so here is not need do again. 

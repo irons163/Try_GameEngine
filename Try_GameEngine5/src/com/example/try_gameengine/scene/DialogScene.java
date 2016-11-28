@@ -228,7 +228,7 @@ public class DialogScene extends EasyScene{
 		s.getSceneManager().removeSceneButNotDestroy(this); //if use removeScene, it made call finish() loop.
 		removeContentView(((Activity)context).getWindow().getDecorView());
 		gameModel.setData(new DestoryData());
-		LayerManager.deleteSceneLayersByLayerLevel(sceneLayerLevel);
+		LayerManager.deleteSceneLayersBySceneLayerLevel(sceneLayerLevel);
 //		((Activity)context).getWindow().getDecorView().findViewById(android.R.id.content).invalidate();
 //		((Activity)context).getWindow().getDecorView().invalidate();
 	}

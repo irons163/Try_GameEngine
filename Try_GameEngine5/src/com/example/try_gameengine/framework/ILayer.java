@@ -49,8 +49,6 @@ public interface ILayer extends Cloneable{
 
 	public Iterator createIterator();
 
-	public void moveAllChild(int offsetLayerLevel);
-	
 	public void setParent(ILayer parent);
 	
 	public ILayer getParent();

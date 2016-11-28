@@ -2,6 +2,7 @@ package com.example.try_gameengine.framework;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Currency;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -13,6 +14,7 @@ import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentSkipListMap;
 
 import android.R.bool;
+import android.content.res.Resources.NotFoundException;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
@@ -20,13 +22,21 @@ import android.graphics.RectF;
 import android.view.MotionEvent;
 
 public class LayerManager {
+	enum DrawMode{
+		DRAW_BY_LAYER_LEVEL,
+		DRAW_BY_Z_POSITION
+	}
+	
+	/**
+	 * 
+	 */
+	public static DrawMode drawMode = DrawMode.DRAW_BY_LAYER_LEVEL;
+	
 	private static List<List<ILayer>> layerLevelList = new ArrayList<List<ILayer>>();
-	
 	private static Map<String, List<List<ILayer>>> sceneLayerLevelList = new HashMap<String, List<List<ILayer>>>();
-
 	private static int sceneLayerLevelByRecentlySet;
-	
 	private static List<ILayer> hudLayerslList = new ArrayList<ILayer>();
+	private static Map<String, ConcurrentSkipListMap<Integer, List<ILayer>>> scencesLayersByZposition = new HashMap<String, ConcurrentSkipListMap<Integer, List<ILayer>>>();
 	
 	private static void initLayerManager() {
 		layerLevelList.add(new ArrayList<ILayer>());
@@ -51,10 +61,40 @@ public class LayerManager {
 	public static synchronized List<ILayer> getLayerByLayerLevel(int layerLevel) {
 		return layerLevelList.get(layerLevel);
 	}
+	
+	static synchronized void updateLayerOrder(ILayer layer){
+		updateLayerOrder(layer, layerLevelList);
+	}
+	
+	private static synchronized void updateLayerOrder(ILayer layer, List<List<ILayer>> layerLevelList){
+		switch (drawMode) {
+		case DRAW_BY_LAYER_LEVEL:
+			updateLevelLayersByZposition(layer, layerLevelList);
+			break;
+		case DRAW_BY_Z_POSITION:
+			updateLayersDrawOrderByZposition(layerLevelList, sceneLayerLevelByRecentlySet);			
+			break;
+		}
+	}
+	
+	private static synchronized void updateLayerOrderByZposition(){
+		updateLayerOrderByZposition(layerLevelList);
+	}
+	
+	private static synchronized void updateLayerOrderByZposition(List<List<ILayer>> layerLevelList){
+		switch (drawMode) {
+		case DRAW_BY_LAYER_LEVEL:
+			break;
+		case DRAW_BY_Z_POSITION:
+			updateLayersDrawOrderByZposition(layerLevelList, sceneLayerLevelByRecentlySet);			
+			break;
+		}
+	}
 
 	public static synchronized void addLayer(ILayer layer) {
 		layerLevelList.get(0).add(layer);
-		updateLayersDrawOrderByZposition(layerLevelList, sceneLayerLevelByRecentlySet);
+		
+		updateLayerOrder(layer);
 	}
 
 	public static synchronized void addLayerByLayerLevel(ILayer layer,
@@ -65,7 +105,7 @@ public class LayerManager {
 		List<ILayer> layersByTheSameLevel = layerLevelList.get(layerLevel);
 		layersByTheSameLevel.add(layer);
 		
-		updateLayersDrawOrderByZposition(layerLevelList, sceneLayerLevelByRecentlySet);
+		updateLayerOrder(layer);
 	}
 	
 	///////////////////////////////////
@@ -115,35 +155,38 @@ public class LayerManager {
 		}
 	}
 
-	public static void insertLayer(ILayer layer, ILayer before) {
-		List<ILayer> layersByTheSameLevel = layerLevelList.get(0);
+	///////////////////////////////////
+	//// Layers Level control
+	///////////////////////////////////
+	private static boolean insertLayer(ILayer layerWaitInsert, ILayer targetLayer, boolean inFrontOf) {
+		List<ILayer> layersByTheSameLevel = layerLevelList.get(targetLayer.getLayerLevel());
 		for (int i = 0; i < layersByTheSameLevel.size(); i++) {
 			
-			if (before == layersByTheSameLevel.get(i)) {
-				layersByTheSameLevel.add(i, layer);
+			if (targetLayer == layersByTheSameLevel.get(i)) {
+				layersByTheSameLevel.add(inFrontOf?i:i+1, layerWaitInsert);
 				
-				updateLayersDrawOrderByZposition(layerLevelList, sceneLayerLevelByRecentlySet);
-				return;
+				updateLayerOrder(targetLayer);
+				return true;
 			}
 		}
+		return false;
+	}
+	
+	public static boolean insertLayerInFrontOfTargetLayer(ILayer layerWaitInsert, ILayer targetLayer) {
+		if(layerWaitInsert.isAutoAdd())
+			layerWaitInsert.removeFromAuto();
+		return insertLayer(layerWaitInsert, targetLayer, true);
+	}
+	
+	public static boolean insertLayerInBackOfTargetLayer(ILayer layerWaitInsert, ILayer targetLayer) {
+		if(layerWaitInsert.isAutoAdd())
+			layerWaitInsert.removeFromAuto();
+		return insertLayer(layerWaitInsert, targetLayer, true);
 	}
 
-	public static void insertLayerByLayerLevel(ILayer layer, ILayer before,
-			int layerLevel) {
-		List<ILayer> layersByTheSameLevel = layerLevelList.get(layerLevel);
-		for (int i = 0; i < layersByTheSameLevel.size(); i++) {
-			
-			if (before == layersByTheSameLevel.get(i)) {
-				layersByTheSameLevel.add(i, layer);
-				
-				updateLayersDrawOrderByZposition(layerLevelList, sceneLayerLevelByRecentlySet);
-				return;
-			}
-		}
-	}
-
-	public static synchronized void changeLayerToNewLayerLevel(ILayer layer,
+	public static synchronized boolean changeLayerToNewLayerLevel(ILayer layer,
 			int newLevel) {
+		boolean isSwapped = false;
 		int offsetLayerLevel = newLevel - layer.getLayerLevel();
 		for (List<ILayer> layersByTheSameLevel : layerLevelList) {
 			int layerIndex = layersByTheSameLevel.indexOf(layer);
@@ -151,43 +194,38 @@ public class LayerManager {
 				layersByTheSameLevel.remove(layerIndex);
 				layerLevelList.get(newLevel).add(layer);
 				layer.setLayerLevel(newLevel);
-				layer.moveAllChild(offsetLayerLevel);
-				
-				updateLayersDrawOrderByZposition(layerLevelList, sceneLayerLevelByRecentlySet);
+				moveAllChild(layer, offsetLayerLevel);
+				isSwapped = true;
 				break;
 			}
 		}
-	}
-
-	public static synchronized void changeLayerToNewLayerLevel(ILayer layer,
-			int oldLevel, int newLevel) {
-		int offsetLayerLevel = newLevel - oldLevel;
-		for (List<ILayer> layersByTheSameLevel : layerLevelList) {
-			int layerIndex = layersByTheSameLevel.indexOf(layer);
-			if (layerIndex >= 0) {
-				layersByTheSameLevel.remove(layerIndex);
-				layerLevelList.get(newLevel).add(layer);
-				layer.setLayerLevel(newLevel);
-				layer.moveAllChild(offsetLayerLevel);
-				
-				updateLayersDrawOrderByZposition(layerLevelList, sceneLayerLevelByRecentlySet);
-				break;
-			}
+		
+		if(isSwapped){
+			updateLayerOrder(layer);
 		}
+		
+		return isSwapped;
 	}
 
 	public static synchronized void exchangeLayerLevel(int layerLevel1,
 			int layerLevel2) {
-		List<ILayer> temp = layerLevelList.get(layerLevel1);
-		layerLevelList.set(layerLevel1, layerLevelList.get(layerLevel2));
-		layerLevelList.set(layerLevel2, temp);
+		Collections.swap(layerLevelList, layerLevel1, layerLevel2);
 		
-		updateLayersDrawOrderByZposition(layerLevelList, sceneLayerLevelByRecentlySet);
+		updateLayerOrderByZposition();
+	}
+	
+	public static synchronized void moveAllChild(ILayer targetLayer,int offsetLayerLevel){
+		for(ILayer layer : targetLayer.getLayers()){
+			if(layer.isComposite() && !layer.isAutoAdd()) //maybe just check layer.isAutoAdd?
+				continue;
+			int newoldLayerLevel = layer.getLayerLevel() + offsetLayerLevel;
+			LayerManager.changeLayerToNewLayerLevel(layer, newoldLayerLevel);
+		}
 	}
 
 	public static synchronized void deleteLayer(ILayer layer) {
 		layerLevelList.get(0).remove(layer);
-		updateLayersDrawOrderByZposition(layerLevelList, sceneLayerLevelByRecentlySet);
+		updateLayerOrderByZposition();
 	}
 	
 	public static synchronized void deleteLayerBySearchAll(ILayer layer) {
@@ -203,7 +241,7 @@ public class LayerManager {
 					}
 				}		
 				if(isFind){
-					updateLayersDrawOrderByZposition(layerLevelList, sceneLayerLevelByRecentlySet);
+					updateLayerOrderByZposition();
 				}
 			}else{
 				int sceneLayerLevel = 0;
@@ -221,24 +259,27 @@ public class LayerManager {
 							}
 						}		
 						if(isFind){
-							updateLayersDrawOrderByZposition(layerLevelList, sceneLayerLevel);
+							updateLayerOrderByZposition(layerLevelList);
 							break;
 						}
 					}
 				}
 			}
 		}else{
-			updateLayersDrawOrderByZposition(layerLevelList, sceneLayerLevelByRecentlySet);	
+			updateLayerOrderByZposition();
 		}		
 	}
 
 	public static synchronized void deleteLayerByLayerLevel(ILayer layer,
 			int layerLevel) {
 		layerLevelList.get(layerLevel).remove(layer);
-		updateLayersDrawOrderByZposition(layerLevelList, sceneLayerLevelByRecentlySet);
+		updateLayerOrderByZposition();
 	}
 	
-	public static synchronized void addSceneLayerByLayerLevel(ILayer layer,
+/////////////////////////////////	
+////	addSceneLayerByLayerLevel
+/////////////////////////////////
+	public static synchronized void addSceneLayerBySceneLayerLevel(ILayer layer,
 			int sceneLayerLevel) {
 		if(sceneLayerLevelList.containsKey(sceneLayerLevel+"")){
 			synchronized (sceneLayerLevelList) {
@@ -247,15 +288,31 @@ public class LayerManager {
 				synchronized (layerLevelList) {
 					List<ILayer> layersByTheSameLevel = layerLevelList.get(0);
 					layersByTheSameLevel.add(layer);
+					updateLayerOrder(layer, layerLevelList);
 				}
-				updateLayersDrawOrderByZposition(layerLevelList, sceneLayerLevel);
 			}
 		}
 	}
 	
-	private static Map<String, ConcurrentSkipListMap<Integer, List<ILayer>>> scencesLayersByZposition = new HashMap<String, ConcurrentSkipListMap<Integer, List<ILayer>>>();
-	
-	public static void updateLayersDrawOrderByZposition(int sceneLayerLevel){
+	public static synchronized void deleteSceneLayersBySceneLayerLevel(int sceneLayerLevel){
+		if(sceneLayerLevelList.containsKey(sceneLayerLevel+"")){
+			synchronized (sceneLayerLevelList) {
+				List<List<ILayer>> layerLevelList = sceneLayerLevelList.get(sceneLayerLevel+"");
+				synchronized (layerLevelList) {
+					for(List<ILayer> layersByTheSameLevel : layerLevelList){
+						layersByTheSameLevel.clear();
+					}
+				}
+				
+				updateLayerOrderByZposition(layerLevelList);
+			}
+		}
+	}
+
+/////////////////////////////////	
+////	updateLayersDrawOrderByZposition
+/////////////////////////////////
+	private static void updateLayersDrawOrderByZposition(int sceneLayerLevel){
 		if(sceneLayerLevelList.containsKey(sceneLayerLevel+"")){
 			synchronized (sceneLayerLevelList) {
 				List<List<ILayer>> layerLevelList = sceneLayerLevelList.get(sceneLayerLevel+"");
@@ -264,7 +321,7 @@ public class LayerManager {
 		}	
 	}
 	
-	public static void updateLayersDrawOrderByZposition(ILayer layer){
+	private static void updateLayersDrawOrderByZposition(ILayer layer){
 		if(sceneLayerLevelList.isEmpty()){
 			boolean isFind = false;
 			synchronized (layerLevelList) {
@@ -333,17 +390,71 @@ public class LayerManager {
 			scencesLayersByZposition.remove(sceneLayerLevel+"");
 	}
 	
-	public static synchronized void deleteSceneLayersByLayerLevel(int sceneLayerLevel){
-		if(sceneLayerLevelList.containsKey(sceneLayerLevel+"")){
-			synchronized (sceneLayerLevelList) {
-				List<List<ILayer>> layerLevelList = sceneLayerLevelList.get(sceneLayerLevel+"");
-				synchronized (layerLevelList) {
-					for(List<ILayer> layersByTheSameLevel : layerLevelList){
-						layersByTheSameLevel.clear();
+/////////////////////////////////	
+////	updateLevelLayersByZposition
+/////////////////////////////////
+	private static void updateLevelLayersByZposition(ILayer layer){
+		if(sceneLayerLevelList.isEmpty()){
+			boolean isFind = false;
+			synchronized (layerLevelList) {
+				for(List<ILayer> layersByTheSameLevel : layerLevelList){
+					if(layersByTheSameLevel.contains(layer)){
+						isFind = true;
+						break;
 					}
 				}
-				updateLayersDrawOrderByZposition(layerLevelList, sceneLayerLevel);
+			}		
+			if(isFind){
+				updateLevelLayersByZposition(layer, layerLevelList);
 			}
+		}else{
+			int sceneLayerLevel = 0;
+			synchronized (sceneLayerLevelList) {
+				for(Map.Entry<String, List<List<ILayer>>> sceneLayers : sceneLayerLevelList.entrySet()){
+					sceneLayerLevel = Integer.parseInt(sceneLayers.getKey());
+					List<List<ILayer>> layerLevelList = sceneLayers.getValue();
+					boolean isFind = false;
+					synchronized (layerLevelList) {
+						for(List<ILayer> layersByTheSameLevel : layerLevelList){
+							if(layersByTheSameLevel.contains(layer)){
+								isFind = true;
+								break;
+							}
+						}
+					}		
+					if(isFind){
+						updateLevelLayersByZposition(layer, layerLevelList);
+						break;
+					}
+				}
+			}
+		}
+	}
+	
+	private static void updateLevelLayersByZposition(ILayer layerNeedUpdateByZPosition, List<List<ILayer>> layerLevelList){
+		for(int i = 0; i < layerLevelList.size(); i++){
+			List<ILayer> layersByTheSameLevel = layerLevelList.get(i);
+			
+			int indexOfLayerNeedUpdateByZPosition = layersByTheSameLevel.indexOf(layerNeedUpdateByZPosition);
+			if(indexOfLayerNeedUpdateByZPosition == -1)
+				continue;
+				
+			int newIndex = 0;
+			for(ILayer layer : layersByTheSameLevel){
+				int layerZposition = layer.getzPosition();
+				if(layerNeedUpdateByZPosition.getzPosition() >= layerZposition){
+					newIndex++;
+				}else{
+					layersByTheSameLevel.add(newIndex, layerNeedUpdateByZPosition);
+					break;
+				}
+			}
+			
+			if(newIndex == layersByTheSameLevel.size())
+				layersByTheSameLevel.add(layerNeedUpdateByZPosition);
+				
+			layersByTheSameLevel.remove(indexOfLayerNeedUpdateByZPosition);
+			break;
 		}
 	}
 	
