@@ -312,53 +312,6 @@ public class LayerManager {
 /////////////////////////////////	
 ////	updateLayersDrawOrderByZposition
 /////////////////////////////////
-	private static void updateLayersDrawOrderByZposition(int sceneLayerLevel){
-		if(sceneLayerLevelList.containsKey(sceneLayerLevel+"")){
-			synchronized (sceneLayerLevelList) {
-				List<List<ILayer>> layerLevelList = sceneLayerLevelList.get(sceneLayerLevel+"");
-				updateLayersDrawOrderByZposition(layerLevelList, sceneLayerLevel);
-			}
-		}	
-	}
-	
-	private static void updateLayersDrawOrderByZposition(ILayer layer){
-		if(sceneLayerLevelList.isEmpty()){
-			boolean isFind = false;
-			synchronized (layerLevelList) {
-				for(List<ILayer> layersByTheSameLevel : layerLevelList){
-					if(layersByTheSameLevel.contains(layer)){
-						isFind = true;
-						break;
-					}
-				}
-			}		
-			if(isFind){
-				updateLayersDrawOrderByZposition(layerLevelList, sceneLayerLevelByRecentlySet);
-			}
-		}else{
-			int sceneLayerLevel = 0;
-			synchronized (sceneLayerLevelList) {
-				for(Map.Entry<String, List<List<ILayer>>> sceneLayers : sceneLayerLevelList.entrySet()){
-					sceneLayerLevel = Integer.parseInt(sceneLayers.getKey());
-					List<List<ILayer>> layerLevelList = sceneLayers.getValue();
-					boolean isFind = false;
-					synchronized (layerLevelList) {
-						for(List<ILayer> layersByTheSameLevel : layerLevelList){
-							if(layersByTheSameLevel.contains(layer)){
-								isFind = true;
-								break;
-							}
-						}
-					}		
-					if(isFind){
-						updateLayersDrawOrderByZposition(layerLevelList, sceneLayerLevel);
-						break;
-					}
-				}
-			}
-		}
-	}
-	
 	private static void updateLayersDrawOrderByZposition(List<List<ILayer>> layerLevelList, int sceneLayerLevel ){
 		ConcurrentSkipListMap<Integer, List<ILayer>> layerLevelListByZposition;
 		if(scencesLayersByZposition.containsKey(sceneLayerLevel+"")){
@@ -393,44 +346,6 @@ public class LayerManager {
 /////////////////////////////////	
 ////	updateLevelLayersByZposition
 /////////////////////////////////
-	private static void updateLevelLayersByZposition(ILayer layer){
-		if(sceneLayerLevelList.isEmpty()){
-			boolean isFind = false;
-			synchronized (layerLevelList) {
-				for(List<ILayer> layersByTheSameLevel : layerLevelList){
-					if(layersByTheSameLevel.contains(layer)){
-						isFind = true;
-						break;
-					}
-				}
-			}		
-			if(isFind){
-				updateLevelLayersByZposition(layer, layerLevelList);
-			}
-		}else{
-			int sceneLayerLevel = 0;
-			synchronized (sceneLayerLevelList) {
-				for(Map.Entry<String, List<List<ILayer>>> sceneLayers : sceneLayerLevelList.entrySet()){
-					sceneLayerLevel = Integer.parseInt(sceneLayers.getKey());
-					List<List<ILayer>> layerLevelList = sceneLayers.getValue();
-					boolean isFind = false;
-					synchronized (layerLevelList) {
-						for(List<ILayer> layersByTheSameLevel : layerLevelList){
-							if(layersByTheSameLevel.contains(layer)){
-								isFind = true;
-								break;
-							}
-						}
-					}		
-					if(isFind){
-						updateLevelLayersByZposition(layer, layerLevelList);
-						break;
-					}
-				}
-			}
-		}
-	}
-	
 	private static void updateLevelLayersByZposition(ILayer layerNeedUpdateByZPosition, List<List<ILayer>> layerLevelList){
 		for(int i = 0; i < layerLevelList.size(); i++){
 			List<ILayer> layersByTheSameLevel = layerLevelList.get(i);
