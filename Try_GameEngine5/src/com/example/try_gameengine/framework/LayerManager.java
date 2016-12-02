@@ -90,6 +90,32 @@ public class LayerManager {
 			break;
 		}
 	}
+	
+	public static boolean iterateRootLayers(IterateLayersListener iterateLayersListener){
+		boolean dealWith = false;
+		switch (drawMode) {
+		case DRAW_BY_LAYER_LEVEL:
+			dealWith = iterateLayerLevelsRootLayers(iterateLayersListener);
+			break;
+		case DRAW_BY_Z_POSITION:
+			dealWith = iterateRootLayersForZposition(iterateLayersListener);
+			break;
+		}
+		return dealWith;
+	}
+	
+	public static boolean iterateAllLayers(IterateLayersListener iterateLayersListener){
+		boolean dealWith = false;
+		switch (drawMode) {
+		case DRAW_BY_LAYER_LEVEL:
+			dealWith = iterateLayerLevelsAllLayers(iterateLayersListener);
+			break;
+		case DRAW_BY_Z_POSITION:
+			dealWith = iterateAllLayersForZposition(iterateLayersListener);
+			break;
+		}
+		return dealWith;
+	}
 
 	public static synchronized void addLayer(ILayer layer) {
 		layerLevelList.get(0).add(layer);
@@ -376,7 +402,7 @@ public class LayerManager {
 	///////////////////////////////////
 	//// draw
 	///////////////////////////////////
-	public static synchronized void drawSceneLayers(Canvas canvas, Paint paint, int sceneLayerLevel) {
+	private static synchronized void drawSceneLayers(Canvas canvas, Paint paint, int sceneLayerLevel) {
 		if(sceneLayerLevelList.containsKey(sceneLayerLevel+"")){
 			synchronized (sceneLayerLevelList) {
 				drawLayersByZposition(canvas, paint, sceneLayerLevel, false);
@@ -384,11 +410,11 @@ public class LayerManager {
 		}
 	}
 
-	public static synchronized void drawLayers(Canvas canvas, Paint paint) {
+	private static synchronized void drawLayers(Canvas canvas, Paint paint) {
 		drawLayersByZposition(canvas, paint, false);
 	}
 	
-	public static synchronized void drawSceneLayersForNegativeZOrder(Canvas canvas, Paint paint, int sceneLayerLevel) {
+	private static synchronized void drawSceneLayersForNegativeZOrder(Canvas canvas, Paint paint, int sceneLayerLevel) {
 		if(sceneLayerLevelList.containsKey(sceneLayerLevel+"")){
 			synchronized (sceneLayerLevelList) {
 				drawLayersByZposition(canvas, paint, sceneLayerLevel, true);
@@ -396,14 +422,17 @@ public class LayerManager {
 		}
 	}
 	
-	public static synchronized void drawSceneLayersForOppositeZOrder(Canvas canvas, Paint paint, int sceneLayerLevel) {
+	private static synchronized void drawSceneLayersForOppositeZOrder(Canvas canvas, Paint paint, int sceneLayerLevel) {
 		if(sceneLayerLevelList.containsKey(sceneLayerLevel+"")){
 			synchronized (sceneLayerLevelList) {
 				drawLayersByZposition(canvas, paint, sceneLayerLevel, false);
 			}
 		}
 	}
-
+	
+	///////////////////////////////////
+	//// draw
+	///////////////////////////////////
 	public static synchronized void drawLayersForNegativeZOrder(Canvas canvas, Paint paint) {
 		drawLayersByZposition(canvas, paint, true);
 	}
@@ -437,11 +466,25 @@ public class LayerManager {
 			  }
 		}
 	}
-
-	//this method draw not support zposition
+	
+	///////////////////////////////////
+	//// draw
+	///////////////////////////////////	
+	public static void drawLayersByLayerLevel(Canvas canvas, Paint paint, ConcurrentSkipListMap<Integer, List<ILayer>> layerLevelListByZposition){
+		for (List<ILayer> layersByTheSameLevel : layerLevelList) {
+			drawLayersBySpecificLevelLayers(canvas, paint, layersByTheSameLevel);
+		}
+	}
+	
 	public static void drawLayersBySpecificLevel(Canvas canvas, Paint paint,
 			int level) {
 		List<ILayer> layersByTheSameLevel = layerLevelList.get(level);
+		for (ILayer layer : layersByTheSameLevel) {
+			layer.drawSelf(canvas, paint);
+		}
+	}
+	
+	private static void drawLayersBySpecificLevelLayers(Canvas canvas, Paint paint, List<ILayer> layersByTheSameLevel) {
 		for (ILayer layer : layersByTheSameLevel) {
 			layer.drawSelf(canvas, paint);
 		}
@@ -474,21 +517,6 @@ public class LayerManager {
 		return onTouchLayersByZposition(event, false);
 	}
 	
-	//this method touch not support zposition
-	public static boolean onTouchLayersBySpecificLevel(MotionEvent event,
-			int level) {
-		boolean isTouched = false;
-		List<ILayer> layersByTheSameLevel = layerLevelList.get(level);
-		for (int j = layersByTheSameLevel.size()-1; j >= 0 ; j--) {
-			ILayer layer = layersByTheSameLevel.get(j);
-			if(!layer.isComposite() && layer.onTouchEvent(event)){
-				isTouched = true;
-				break;
-			}		
-		}
-		return isTouched;
-	}
-	
 	private static boolean onTouchLayersByZposition(MotionEvent event, int sceneLayerLevel, boolean doNegativeZOrder){
 		if(!scencesLayersByZposition.containsKey(sceneLayerLevel+""))
 			return false;
@@ -519,10 +547,43 @@ public class LayerManager {
 		return false;
 	}
 	
+	///////////////////////////////////
+	//// touch
+	///////////////////////////////////
+	public static synchronized boolean onTouchLayersForLayerLevel(MotionEvent event) {
+		boolean isTouched = false;
+		for (int i = layerLevelList.size()-1; i >= 0 ; i--) {	
+			List<ILayer> layersByTheSameLevel = layerLevelList.get(i);
+			isTouched = onTouchLayersBySpecificLevelLayers(event, layersByTheSameLevel);
+			if(isTouched)
+				break;
+		}
+		return isTouched;
+	}
+	
+	public static boolean onTouchLayersBySpecificLevel(MotionEvent event,
+			int level) {
+		List<ILayer> layersByTheSameLevel = layerLevelList.get(level);
+		return onTouchLayersBySpecificLevelLayers(event, layersByTheSameLevel);
+	}
+	
+	private static boolean onTouchLayersBySpecificLevelLayers(MotionEvent event,
+			List<ILayer> layersByTheSameLevel) {
+		boolean isTouched = false;
+		for (int i = layersByTheSameLevel.size()-1; i >= 0 ; i--) {
+			ILayer layer = layersByTheSameLevel.get(i);
+			if(layer.onTouchEvent(event)){
+				isTouched = true;
+				break;
+			}		
+		}
+		return isTouched;
+	}
+	
 	////////////////////////////
 	//// process
 	////////////////////////////
-	public static synchronized void processSceneLayers(int sceneLayerLevel) {
+	private static synchronized void processSceneLayers(int sceneLayerLevel) {
 		if(sceneLayerLevelList.containsKey(sceneLayerLevel+"")){
 			synchronized (sceneLayerLevelList) {
 				processLayersByZposition(sceneLayerLevel, false);
@@ -530,11 +591,11 @@ public class LayerManager {
 		}
 	}
 	
-	public static synchronized void processLayers() {
+	private static synchronized void processLayers() {
 		processLayersByZposition(false);
 	}
 	
-	public static synchronized void processSceneLayersForNegativeZOrder(int sceneLayerLevel) {
+	private static synchronized void processSceneLayersForNegativeZOrder(int sceneLayerLevel) {
 		if(sceneLayerLevelList.containsKey(sceneLayerLevel+"")){
 			synchronized (sceneLayerLevelList) {
 				processLayersByZposition(sceneLayerLevel, true);
@@ -542,7 +603,7 @@ public class LayerManager {
 		}
 	}
 	
-	public static synchronized void processSceneLayersForOppositeZOrder(int sceneLayerLevel) {
+	private static synchronized void processSceneLayersForOppositeZOrder(int sceneLayerLevel) {
 		if(sceneLayerLevelList.containsKey(sceneLayerLevel+"")){
 			synchronized (sceneLayerLevelList) {
 				processLayersByZposition(sceneLayerLevel, false);
@@ -556,15 +617,6 @@ public class LayerManager {
 
 	public static synchronized void processLayersForOppositeZOrder() {
 		processLayersByZposition(false);
-	}
-	
-	//this method process not support zposition
-	public static void processLayersBySpecificLevel(int level) {
-		List<ILayer> layersByTheSameLevel = layerLevelList.get(level);
-		for (ILayer layer : layersByTheSameLevel) {
-			if(!layer.isComposite() && layer instanceof ALayer)
-				((ALayer)layer).frameTrig();
-		}
 	}
 	
 	private static void processLayersByZposition(int sceneLayerLevel, boolean doNegativeZOrder){
@@ -593,6 +645,30 @@ public class LayerManager {
 			  }
 		}
 	}
+
+	////////////////////////////
+	//// process
+	////////////////////////////
+	public static void processLayersForLayerLevel() {
+		for (List<ILayer> layersByTheSameLevel : layerLevelList){
+			processLayersBySpecificLevelLayers(layersByTheSameLevel);
+		}
+	}
+	
+	public static void processLayersBySpecificLevel(int level) {
+		List<ILayer> layersByTheSameLevel = layerLevelList.get(level);
+		for (ILayer layer : layersByTheSameLevel) {
+			if(!layer.isComposite() && layer instanceof ALayer)
+				((ALayer)layer).frameTrig();
+		}
+	}
+	
+	private static void processLayersBySpecificLevelLayers(List<ILayer> layersByTheSameLevel) {
+		for (ILayer layer : layersByTheSameLevel) {
+			if(!layer.isComposite() && layer instanceof ALayer)
+				((ALayer)layer).frameTrig();
+		}
+	}
 	
 ////////////////////////////
 //// iterate layers
@@ -601,7 +677,7 @@ public class LayerManager {
 		public boolean dealWithLayer(ILayer layer);
 	}
 	
-	public static boolean iterateRootLayers(IterateLayersListener iterateLayersListener){
+	public static boolean iterateRootLayersForZposition(IterateLayersListener iterateLayersListener){
 		ConcurrentSkipListMap<Integer, List<ILayer>> layerLevelListByZposition = scencesLayersByZposition.get(sceneLayerLevelByRecentlySet+"");;
 		for(Map.Entry<Integer, List<ILayer>> entry : layerLevelListByZposition.entrySet()) {
 			  int layerZposition = entry.getKey();
@@ -614,20 +690,51 @@ public class LayerManager {
 		return false;
 	}
 
-	public static boolean iterateAllLayers(IterateLayersListener iterateLayersListener){
+	public static boolean iterateAllLayersForZposition(IterateLayersListener iterateLayersListener){
 		ConcurrentSkipListMap<Integer, List<ILayer>> layerLevelListByZposition = scencesLayersByZposition.get(sceneLayerLevelByRecentlySet+"");;
 		for(Map.Entry<Integer, List<ILayer>> entry : layerLevelListByZposition.entrySet()) {
 			  int layerZposition = entry.getKey();
 			  List<ILayer> layersByTheSameZposition = entry.getValue();
 			  for(ILayer layerByZposition : layersByTheSameZposition){
-				  if(!layerByZposition.isComposite() && iterateChildren(layerByZposition, iterateLayersListener))
+				  if(!layerByZposition.isComposite() && iterateChildrenForZposition(layerByZposition, iterateLayersListener))
 					  return true;
 			  }
 		}
 		return false;
 	}
 	
-	private static boolean iterateChildren(ILayer parentLayer, IterateLayersListener iterateLayersListener){
+	private static boolean iterateChildrenForZposition(ILayer parentLayer, IterateLayersListener iterateLayersListener){
+		for(ILayer childLayer : parentLayer.getLayers()){
+			  if(!childLayer.isComposite() && iterateLayersListener.dealWithLayer(childLayer))
+				  return true;
+		  }
+		return false;
+	}
+
+////////////////////////////
+////iterate layers
+////////////////////////////	
+	public static boolean iterateLayerLevelsRootLayers(IterateLayersListener iterateLayersListener){
+		for (List<ILayer> layersByTheSameLevel : layerLevelList){
+			for(ILayer layerOrderByZposition : layersByTheSameLevel){
+				  if(!layerOrderByZposition.isComposite() && iterateLayersListener.dealWithLayer(layerOrderByZposition))
+					  return true;
+			}
+		}
+		return false;
+	}
+
+	public static boolean iterateLayerLevelsAllLayers(IterateLayersListener iterateLayersListener){
+		for (List<ILayer> layersByTheSameLevel : layerLevelList){
+			for(ILayer layerOrderByZposition : layersByTheSameLevel){
+				  if(!layerOrderByZposition.isComposite() && iterateLayerLevelsChildren(layerOrderByZposition, iterateLayersListener))
+					  return true;
+			  }
+		}
+		return false;
+	}
+	
+	private static boolean iterateLayerLevelsChildren(ILayer parentLayer, IterateLayersListener iterateLayersListener){
 		for(ILayer childLayer : parentLayer.getLayers()){
 			  if(!childLayer.isComposite() && iterateLayersListener.dealWithLayer(childLayer))
 				  return true;
@@ -635,6 +742,8 @@ public class LayerManager {
 		return false;
 	}
 	
+	//////////////////
+	//////////////////
 	public static synchronized void increaseNewLayer() {
 		layerLevelList.add(new ArrayList<ILayer>());
 	}
@@ -643,60 +752,6 @@ public class LayerManager {
 		return layerLevelList.get(level);
 	}
 
-	//This is very old, need modify.
-	public static synchronized RectF checkClickSmallView(MotionEvent event){
-		boolean isFirstRectF=true;
-		RectF maxRangeRectF = new RectF();
-		Exit:
-		for(List<ILayer> layersByTheSameLevel : layerLevelList){
-			for(ILayer layer : layersByTheSameLevel){
-				if(layer.getDst().contains((int)event.getX(), (int)event.getY())){
-					ILayer rootLayer = getRootParent(layer);
-					
-					if(rootLayer!=layer){
-						if(isFirstRectF){
-							maxRangeRectF = new RectF(rootLayer.getDst());
-							isFirstRectF=false;
-						}
-						Iterator iterator = rootLayer.createIterator();
-						while(iterator.hasNext()){
-							ILayer childLayer = (ILayer) iterator.next();
-								setMaxRangeRectF(maxRangeRectF, childLayer.getDst());
-						}
-					}else{
-						if(isFirstRectF){
-							maxRangeRectF.set(layer.getDst().left, layer.getDst().top, layer.getDst().right, layer.getDst().bottom);
-							isFirstRectF=false;
-						}
-						Iterator iterator = rootLayer.createIterator();
-						while(iterator.hasNext()){
-							ILayer childLayer = (ILayer) iterator.next();
-								setMaxRangeRectF(maxRangeRectF, childLayer.getDst());
-						}
-					}
-					break Exit;
-				}
-			}
-		}
-		return maxRangeRectF;
-	}
-	
-	private static void setMaxRangeRectF(RectF maxRangeRectF, RectF childRfct){
-		if(childRfct.top < maxRangeRectF.top){
-			maxRangeRectF.top = childRfct.top;
-		}else if(childRfct.bottom > maxRangeRectF.bottom){
-			maxRangeRectF.bottom = childRfct.bottom;
-		}else if(childRfct.left < maxRangeRectF.left){
-			maxRangeRectF.left = childRfct.left;
-		}else if(childRfct.right > maxRangeRectF.right){
-			maxRangeRectF.right = childRfct.right;
-		}
-	}
-	
-	public static synchronized void drawGroupRange(Canvas canvas, Paint paint, RectF groupRangeRectF) {
-		canvas.drawRect(groupRangeRectF, paint);
-	}
-	
 	public static List<List<ILayer>> getLayerLevelList(){
 		return layerLevelList;
 	}
@@ -709,21 +764,5 @@ public class LayerManager {
 			rootLayer = layer;
 		}
 		return rootLayer;
-	}
-
-	public static boolean inRect(float x, float y, float w, float h, float px,
-			float py) {
-		if (px > x && px < x + w && py > y && py < y + h) {
-			return true;
-		}
-		return false;
-	}
-
-	public static boolean colliseWidth(float x, float y, float w, float h,
-			float x2, float y2, float w2, float h2) {
-		if (x > x2 + w2 || x2 > x + w || y > y2 + h2 || y2 > y + h) {
-			return false;
-		}
-		return true;
 	}
 }
