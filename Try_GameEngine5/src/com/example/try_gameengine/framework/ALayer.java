@@ -287,7 +287,7 @@ public abstract class ALayer implements ILayer, ITouchable{
 		
 		if (autoAdd) {
 			this.autoAdd = autoAdd;
-			LayerManager.addLayer(this);// 在LayerManager类中添加本组件
+			LayerManager.getInstance().addLayer(this);// 在LayerManager.getInstance()类中添加本组件
 		}
 		initALayer();
 	}
@@ -328,7 +328,7 @@ public abstract class ALayer implements ILayer, ITouchable{
 		if (autoAdd) {
 			this.autoAdd = autoAdd;
 			setLayerLevel(level);
-			LayerManager.addLayerByLayerLevel(this, level);// 在LayerManager类中添加本组件
+			LayerManager.getInstance().addLayerByLayerLevel(this, level);// 在LayerManager.getInstance()类中添加本组件
 		}
 		initALayer();
 	}
@@ -492,7 +492,7 @@ public abstract class ALayer implements ILayer, ITouchable{
 				layer.setX(layer.getX()); //want to do colculationMatrix();
 			}
 			layer.setParent(null);
-			LayerManager.deleteLayerByLayerLevel(layer, layer.getLayerLevel());
+			LayerManager.getInstance().deleteLayerByLayerLevel(layer, layer.getLayerLevel());
 			if(layer.isAutoAdd())
 				((ALayer)layer).autoAdd = false;
 		}
@@ -537,7 +537,7 @@ public abstract class ALayer implements ILayer, ITouchable{
 		layers.add(layer);
 		layer.setParent(this);
 		((ALayer)layer).autoAdd = true;
-		LayerManager.addLayerByLayerLevel(layer, layer.getLayerLevel());
+		LayerManager.getInstance().addLayerByLayerLevel(layer, layer.getLayerLevel());
 	}
 	
 	@Override
@@ -546,12 +546,12 @@ public abstract class ALayer implements ILayer, ITouchable{
 
 		layer.setLayerLevel(layerLevel + increaseNum);
 		for(int i =0; i<increaseNum;i++){
-			LayerManager.increaseNewLayer();
+			LayerManager.getInstance().increaseNewLayer();
 		}
 		layers.add(layer);
 		layer.setParent(this);
 		((ALayer)layer).autoAdd = true;
-		LayerManager.addLayerByLayerLevel(layer, layer.getLayerLevel());
+		LayerManager.getInstance().addLayerByLayerLevel(layer, layer.getLayerLevel());
 	}
 
 	@Override
@@ -560,20 +560,20 @@ public abstract class ALayer implements ILayer, ITouchable{
 		layers.add(layer);
 		layer.setParent(this);
 		((ALayer)layer).autoAdd = true;
-		LayerManager.addLayerByLayerLevel(layer, layer.getLayerLevel());
+		LayerManager.getInstance().addLayerByLayerLevel(layer, layer.getLayerLevel());
 	}
 	
 	@Override
 	public void addWithLayerLevel(ILayer layer, int layerLevel) {
 		// TODO Auto-generated method stub
-//		int a = LayerManager.get;
+//		int a = LayerManager.getInstance().get;
 //		for(int i = ; i<layerLevel;i++){
-//			LayerManager.increaseNewLayer();
+//			LayerManager.getInstance().increaseNewLayer();
 //		}
 		layers.add(layer);
 		layer.setParent(this);
 		((ALayer)layer).autoAdd = true;
-		LayerManager.addLayerByLayerLevel(layer, layerLevel);
+		LayerManager.getInstance().addLayerByLayerLevel(layer, layerLevel);
 	}
 	
 	//composite
@@ -1128,7 +1128,7 @@ public abstract class ALayer implements ILayer, ITouchable{
 	private void removeFromLayerManager(){
 		if(autoAdd){
 			willRemoveFromAuto();
-			LayerManager.deleteLayerBySearchAll(this);
+			LayerManager.getInstance().deleteLayerBySearchAll(this);
 			autoAdd = false;
 		}
 	}
@@ -1149,15 +1149,15 @@ public abstract class ALayer implements ILayer, ITouchable{
 	public int getzPosition() {
 		return zPosition;
 	}
-	//Need add LayerManager.(AutoDraw)
+	//Need add LayerManager.getInstance().(AutoDraw)
 	public void setzPosition(int zPosition) {
 		this.zPosition = zPosition;
 		this.isUsedzPosition = true;
 		if(!autoAdd){
 			autoAdd = true;
-			LayerManager.addLayer(this);
+			LayerManager.getInstance().addLayer(this);
 		}
-		LayerManager.updateLayerOrder(this);
+		LayerManager.getInstance().updateLayerOrder(this);
 	}
 	
 	/**
@@ -1279,7 +1279,7 @@ public abstract class ALayer implements ILayer, ITouchable{
 		
 		if (autoAdd) {
 			this.autoAdd = autoAdd;
-			LayerManager.addLayer(this);// 在LayerManager类中添加本组件
+			LayerManager.getInstance().addLayer(this);// 在LayerManager.getInstance()类中添加本组件
 		}else{
 			removeFromAuto();
 //			this.autoAdd = autoAdd; //removeFromAuto() do this, so here is not need do again. 
@@ -1292,7 +1292,7 @@ public abstract class ALayer implements ILayer, ITouchable{
 		
 		if (autoAdd) {
 			this.autoAdd = autoAdd;
-			LayerManager.addSceneLayerBySceneLayerLevel(this, sceneLayerLevel);
+			LayerManager.getInstance().addSceneLayerBySceneLayerLevel(this, sceneLayerLevel);
 		}else{
 			removeFromAuto();
 //			this.autoAdd = autoAdd; //removeFromAuto() do this, so here is not need do again. 
@@ -2074,7 +2074,7 @@ public abstract class ALayer implements ILayer, ITouchable{
 	    layer.zPosition = this.zPosition;
 	    
 	    if(autoAdd){
-	    	LayerManager.addLayerByLayerLevel(layer, getLayerLevel());
+	    	LayerManager.getInstance().addLayerByLayerLevel(layer, getLayerLevel());
 	    }
 	    
 	    if(paint!=null)

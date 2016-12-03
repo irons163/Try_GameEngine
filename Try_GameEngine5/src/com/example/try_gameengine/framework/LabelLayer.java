@@ -35,7 +35,7 @@ public class LabelLayer extends Layer{
 	 * @param h
 	 * 			height.
 	 * @param autoAdd
-	 * 			add to the LayerManager to control.
+	 * 			add to the LayerManager.getInstance() to control.
 	 * @param level
 	 * 			?
 	 */

@@ -125,8 +125,8 @@ public class RemoteController implements IRemoteController{
 					
 					break;
 				case RightKeyUpCommand:
-					/*//Demo. press DownKey and move Layers which are in the LayerManager go right.
-					for(List<ILayer> layers : LayerManager.getLayerLevelList()){
+					/*//Demo. press DownKey and move Layers which are in the LayerManager.getInstance() go right.
+					for(List<ILayer> layers : LayerManager.getInstance().getLayerLevelList()){
 						for(ILayer layer : layers){
 							if(layer instanceof Sprite){
 								((Sprite)layer).move(10,0);

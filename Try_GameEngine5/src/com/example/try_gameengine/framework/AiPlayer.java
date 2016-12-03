@@ -86,12 +86,12 @@ public class AiPlayer implements IPlayer , IChessPlayer{
 
 	int count = 0;
 	
-//	public void doAutoPlay(PlayerManager playerManager, Logic logic, List<Point> allFreePoints) {
+//	public void doAutoPlay(PLayerManager.getInstance() pLayerManager.getInstance(), Logic logic, List<Point> allFreePoints) {
 //
 //
 //	}
 //	
-//	public void doAutoPlay2(PlayerManager playerManager, Logic logic, List<Point> allFreePoints) {
+//	public void doAutoPlay2(PLayerManager.getInstance() pLayerManager.getInstance(), Logic logic, List<Point> allFreePoints) {
 //
 //
 //	}

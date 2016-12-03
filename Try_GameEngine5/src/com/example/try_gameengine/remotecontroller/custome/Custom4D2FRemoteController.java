@@ -108,8 +108,8 @@ public class Custom4D2FRemoteController implements IRemoteController {
 				case RightKeyUpCommand:
 					/*
 					 * //Demo. press DownKey and move Layers which are in the
-					 * LayerManager go right. for(List<ILayer> layers :
-					 * LayerManager.getLayerLevelList()){ for(ILayer layer :
+					 * LayerManager.getInstance() go right. for(List<ILayer> layers :
+					 * LayerManager.getInstance().getLayerLevelList()){ for(ILayer layer :
 					 * layers){ if(layer instanceof Sprite){
 					 * ((Sprite)layer).move(10,0); } } }
 					 */

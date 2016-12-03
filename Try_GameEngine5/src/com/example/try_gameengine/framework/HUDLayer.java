@@ -12,7 +12,7 @@ public class HUDLayer extends Layer{
 	 */
 	public HUDLayer(){
 		super();
-		LayerManager.addHUDLayer(this); //Add Layer in the LayerManager HUD.
+		LayerManager.getInstance().getInstance().addHUDLayer(this); //Add Layer in the LayerManager.getInstance() HUD.
 	}
 	
 	@Override

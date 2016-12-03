@@ -304,14 +304,14 @@ public abstract class EasyScene extends Scene implements ContactListener{
 	
 	// If override, need super.process().
 	public void process(){
-		LayerManager.processLayersForNegativeZOrder();
-		LayerManager.processLayersForOppositeZOrder();
+		LayerManager.getInstance().processLayersForNegativeZOrder();
+		LayerManager.getInstance().processLayersForOppositeZOrder();
 	}
 	
 	// If override, need super.doDraw(Canvas canvas).
 	public void doDraw(Canvas canvas){
-		LayerManager.drawLayersForNegativeZOrder(canvas, null);
-		LayerManager.drawLayersForOppositeZOrder(canvas, null);
+		LayerManager.getInstance().drawLayersForNegativeZOrder(canvas, null);
+		LayerManager.getInstance().drawLayersForOppositeZOrder(canvas, null);
 	}
 	
 	// If override, need super.onSceneTouchEvent(MotionEvent event).
@@ -319,8 +319,8 @@ public abstract class EasyScene extends Scene implements ContactListener{
 		// TODO Auto-generated method stub
 //		boolean isTouched =  
 //				TouchDispatcher.getInstance().onTouchEvent(event) ||
-//				LayerManager.onTouchLayersForOppositeZOrder(event) ||
-//				LayerManager.onTouchLayersForNegativeZOrder(event);
+//				LayerManager.getInstance().onTouchLayersForOppositeZOrder(event) ||
+//				LayerManager.getInstance().onTouchLayersForNegativeZOrder(event);
 		boolean isTouched = TouchDispatcher.getInstance().onTouchEvent(event);
 		return isTouched;
 	}
@@ -440,7 +440,7 @@ public abstract class EasyScene extends Scene implements ContactListener{
 			// TODO Auto-generated method stub
 //			super.process();
 			EasyScene.this.process();
-			LayerManager.processHUDLayers();
+			LayerManager.getInstance().processHUDLayers();
 		}
 		
 		@Override
@@ -448,14 +448,14 @@ public abstract class EasyScene extends Scene implements ContactListener{
 			// TODO Auto-generated method stub
 //			super.doDraw(canvas);
 			/*
-			LayerManager.drawLayersForNegativeZOrder(canvas, null);
+			LayerManager.getInstance().drawLayersForNegativeZOrder(canvas, null);
 			EasyScene.this.drawSelf(canvas, null);
-			LayerManager.drawLayersForOppositeZOrder(canvas, null);
+			LayerManager.getInstance().drawLayersForOppositeZOrder(canvas, null);
 			EasyScene.this.doDraw(canvas);
 			*/
 			
-//			LayerManager.drawLayersForNegativeZOrder(canvas, null);
-//			LayerManager.drawLayersForOppositeZOrder(canvas, null);
+//			LayerManager.getInstance().drawLayersForNegativeZOrder(canvas, null);
+//			LayerManager.getInstance().drawLayersForOppositeZOrder(canvas, null);
 			EasyScene.this.doDraw(canvas);
 			
 			if(isEnableRemoteController && remoteController!=null)
@@ -485,10 +485,10 @@ public abstract class EasyScene extends Scene implements ContactListener{
 			if(getCamera().getViewPort()!=null){
 				canvas.save(Canvas.MATRIX_SAVE_FLAG | Canvas.HAS_ALPHA_LAYER_SAVE_FLAG | Canvas.HAS_ALPHA_LAYER_SAVE_FLAG | Canvas.FULL_COLOR_LAYER_SAVE_FLAG | Canvas.CLIP_TO_LAYER_SAVE_FLAG);
 				canvas.setMatrix(getCamera().getViewPort().getMatrix());
-				LayerManager.drawHUDLayers(canvas, null);
+				LayerManager.getInstance().drawHUDLayers(canvas, null);
 				canvas.restore();
 			}else{
-				LayerManager.drawHUDLayers(canvas, null);
+				LayerManager.getInstance().drawHUDLayers(canvas, null);
 			}
 		}
 		
@@ -497,15 +497,15 @@ public abstract class EasyScene extends Scene implements ContactListener{
 			// TODO Auto-generated method stub
 			/*
 			boolean isTouched =  
-					LayerManager.onTouchLayersForOppositeZOrder(event) ||
+					LayerManager.getInstance().onTouchLayersForOppositeZOrder(event) ||
 					EasyScene.this.onTouchEvent(event) ||
-					LayerManager.onTouchLayersForNegativeZOrder(event);
+					LayerManager.getInstance().onTouchLayersForNegativeZOrder(event);
 			*/
 //			boolean isTouched =  
-//					LayerManager.onTouchLayersForOppositeZOrder(event) ||
-//					LayerManager.onTouchLayersForNegativeZOrder(event);
+//					LayerManager.getInstance().onTouchLayersForOppositeZOrder(event) ||
+//					LayerManager.getInstance().onTouchLayersForNegativeZOrder(event);
 //			super.onTouchEvent(event);
-			if(!LayerManager.onTouchHUDLayers(event)){
+			if(!LayerManager.getInstance().onTouchHUDLayers(event)){
 				boolean isRemoteControllerCatchTouchEvent = false;
 				if(isEnableRemoteController && remoteController!=null)
 					isRemoteControllerCatchTouchEvent = remoteController.onTouchEvent(event);

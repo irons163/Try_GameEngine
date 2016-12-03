@@ -42,7 +42,7 @@ public abstract class BaseStage extends Stage{
 	@Override
 	public SceneManager initSceneManager() {
 		// TODO Auto-generated method stub
-		LayerManager.setNoSceneLayer();
+//		LayerManager.getInstance().setNoSceneLayer();
 		return new SceneManager();
 	}
 

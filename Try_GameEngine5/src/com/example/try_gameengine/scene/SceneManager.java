@@ -56,7 +56,7 @@ public class SceneManager {
 	public void addScene(Scene scene){
 		scenes.add(scene);
 		if(scene.sceneLayerLevel<0){
-			LayerManager.setLayerBySenceIndex(nextSceneIndexForAdd);
+			LayerManager.getInstance().setLayerBySenceIndex(nextSceneIndexForAdd);
 			scene.setLayerLevel(nextSceneIndexForAdd);
 			nextSceneIndexForAdd = nextSceneIndexForAdd+1;
 		}else{
@@ -124,7 +124,7 @@ public class SceneManager {
 				int sceneLayerLevel = sceneClass.getKey().getSceneLayerLevel();
 				int mode = sceneClass.getKey().getMode();
 				
-				LayerManager.setLayerBySenceIndex(index);
+				LayerManager.getInstance().setLayerBySenceIndex(index);
 				
 				for(int i = 0; i < 3; i++){
 					try {
@@ -214,7 +214,7 @@ public class SceneManager {
 			}
 		}
 
-		LayerManager.setLayerBySenceIndex(index);
+		LayerManager.getInstance().setLayerBySenceIndex(index);
 		scene.startWithObj(objForSendToScene);
 		currentActiveScene = scene;
 		currentSceneIndex = index;
@@ -300,7 +300,7 @@ public class SceneManager {
 				currentActiveScene.finish();
 		}
 		
-		LayerManager.setLayerBySenceIndex(currentSceneIndex);
+		LayerManager.getInstance().setLayerBySenceIndex(currentSceneIndex);
 		scene.startWithObj(objForSendToScene);
 		currentActiveScene = scene;
 		
@@ -350,7 +350,7 @@ public class SceneManager {
 		}
 		Scene scene = scenes.get(currentActiveSceneOrderInScenes);
 //		if(!(scene instanceof DialogScene)){
-			LayerManager.setLayerBySenceIndex(currentActiveSceneOrderInScenes);
+			LayerManager.getInstance().setLayerBySenceIndex(currentActiveSceneOrderInScenes);
 //		}
 		if(currentActiveScene instanceof DialogScene){
 			int savedMode = scene.getMode();
@@ -412,7 +412,7 @@ public class SceneManager {
 		if(scene==null)
 			return false;
 		
-		LayerManager.setLayerBySenceIndex(currentSceneIndex);
+		LayerManager.getInstance().setLayerBySenceIndex(currentSceneIndex);
 			
 		if(currentActiveScene instanceof DialogScene){
 			int savedMode = scene.getMode();

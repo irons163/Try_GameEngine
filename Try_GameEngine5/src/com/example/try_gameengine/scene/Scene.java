@@ -56,7 +56,7 @@ public abstract class Scene extends Sprite{
 		this.mode = mode;
 		
 		if(sceneLayerLevel>=0)
-			LayerManager.setLayerBySenceIndex(sceneLayerLevel);
+			LayerManager.getInstance().setLayerBySenceIndex(sceneLayerLevel);
 		
 		initGameModel();
 		initGameController();
@@ -133,7 +133,7 @@ public abstract class Scene extends Sprite{
 	public void addAutoDraw(ALayer layer){
 		if(!layer.isAutoAdd()){
 			layer.setAutoAdd(true, sceneLayerLevel);
-//			LayerManager.addSceneLayerByLayerLevel(layer, sceneLayerLevel);
+//			LayerManager.getInstance().addSceneLayerByLayerLevel(layer, sceneLayerLevel);
 		}
 		
 //		layer.setAutoAdd(true);
@@ -162,7 +162,7 @@ public abstract class Scene extends Sprite{
 //		((Activity)context).finish();
 		setMode(FINISHED);
 		gameModel.setData(new DestoryData());
-		LayerManager.deleteSceneLayersBySceneLayerLevel(sceneLayerLevel);
+		LayerManager.getInstance().deleteSceneLayersBySceneLayerLevel(sceneLayerLevel);
 	}
 	
 	public class DestoryData extends Data{

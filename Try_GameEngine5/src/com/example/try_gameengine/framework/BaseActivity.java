@@ -23,8 +23,8 @@ public abstract class BaseActivity extends Activity {
 		
 		BitmapUtil.initBitmap(this);
 		
-//		LayerManager.initLayerManager();
-		LayerManager.setNoSceneLayer();
+//		LayerManager.getInstance().initLayerManager.getInstance()();
+//		LayerManager.getInstance().setNoSceneLayer();
 		
 		initGameModel();
 		initGameController();

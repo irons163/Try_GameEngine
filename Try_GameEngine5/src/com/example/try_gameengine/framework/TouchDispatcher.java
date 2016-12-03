@@ -244,7 +244,7 @@ public class TouchDispatcher implements ISystemTouchDelegate{
 	private boolean dispatchTouchEventByStandardDrawOrderTouchDispatcher(MotionEvent event){
 		boolean isConsumed = false;
 		if(checkIsFlagEnabled(TouchDispatcherFlag.ENABLE_STANDARD_DRAW_ORDER_TOUCH_DISPATCHER, TouchDispatcherFlagType.ENABLE_FALG)){
-			isConsumed = LayerManager.onTouchLayersForOppositeZOrder(event) || LayerManager.onTouchLayersForNegativeZOrder(event);
+			isConsumed = LayerManager.getInstance().getInstance().onTouchLayersForOppositeZOrder(event) || LayerManager.getInstance().getInstance().onTouchLayersForNegativeZOrder(event);
 			if(checkIsFlagEnabled(TouchDispatcherFlag.CONSUME_TOUCH_EVENT_BY_STANDARD_TOUCH_DISPATCHER, TouchDispatcherFlagType.CONSUME_FALG))
 				if(isConsumed)
 					return isConsumed;
