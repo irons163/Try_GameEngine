@@ -6,6 +6,7 @@ import java.util.concurrent.ConcurrentSkipListMap;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.view.MotionEvent;
 
 import com.example.try_gameengine.framework.LayerManager.DrawMode;
 import com.example.try_gameengine.framework.LayerManager.IterateLayersListener;
@@ -213,4 +214,66 @@ public class LayerController {
 			layer.drawSelf(canvas, paint);
 		}
 	}
+	
+	///////////////////////////////////
+	//// touch
+	///////////////////////////////////
+	boolean onTouchLayers(MotionEvent event, int sceneLayerLevel, boolean doNegativeZOrder) {
+		if(!getSceneLayerLevelList().containsKey(sceneLayerLevel+""))
+			return false;
+		return onTouchLayersForLayerLevel(event, getSceneLayerLevelList().get(sceneLayerLevel+""), doNegativeZOrder);
+	}
+
+	boolean onTouchLayers(MotionEvent event, boolean doNegativeZOrder){
+		List<List<ILayer>> layerLevelListInScene = getSceneLayerLevelList().get(getSceneLayerLevelByRecentlySet()+"");
+		return onTouchLayersForLayerLevel(event, layerLevelListInScene, doNegativeZOrder);
+	}
+
+	private boolean onTouchLayersForLayerLevel(MotionEvent event, List<List<ILayer>> layerLevelListInScene, boolean doNegativeZOrder) {
+		boolean isTouched = false;
+		for (int i = layerLevelListInScene.size()-1; i >= 0 ; i--) {	
+			List<ILayer> layersByTheSameLevel = layerLevelListInScene.get(i);
+			isTouched = 
+					onTouchLayersBySpecificLevelLayers(event, layersByTheSameLevel, false)
+					|| onTouchLayersBySpecificLevelLayers(event, layersByTheSameLevel, true);
+			if(isTouched)
+				break;
+		}
+		return isTouched;
+	}
+	
+	private boolean onTouchLayersForLayerLevel(MotionEvent event, boolean doNegativeZOrder) {
+		boolean isTouched = false;
+		for (int i = getLayerLevelList().size()-1; i >= 0 ; i--) {	
+			List<ILayer> layersByTheSameLevel = getLayerLevelList().get(i);
+			isTouched = 
+					onTouchLayersBySpecificLevelLayers(event, layersByTheSameLevel, false)
+					|| onTouchLayersBySpecificLevelLayers(event, layersByTheSameLevel, true);
+			if(isTouched)
+				break;
+		}
+		return isTouched;
+	}
+
+	private boolean onTouchLayersBySpecificLevel(MotionEvent event, int level, boolean doNegativeZOrder) {
+		List<ILayer> layersByTheSameLevel = getLayerLevelList().get(level);
+		return onTouchLayersBySpecificLevelLayers(event, layersByTheSameLevel, doNegativeZOrder);
+	}
+
+	private boolean onTouchLayersBySpecificLevelLayers(MotionEvent event, List<ILayer> layersByTheSameLevel, boolean doNegativeZOrder) {
+		boolean isTouched = false;
+		for (int i = layersByTheSameLevel.size()-1; i >= 0 ; i--) {
+			ILayer layer = layersByTheSameLevel.get(i);
+			int layerZposition = layer.getzPosition();
+			if((doNegativeZOrder && layerZposition >= 0) || (!doNegativeZOrder && layerZposition < 0))
+				continue;
+			if(layer.onTouchEvent(event)){
+				isTouched = true;
+				break;
+			}		
+		}
+		return isTouched;
+	}
+
+	
 }

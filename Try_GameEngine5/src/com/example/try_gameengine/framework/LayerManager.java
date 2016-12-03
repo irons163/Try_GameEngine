@@ -341,94 +341,30 @@ public class LayerManager {
 	///////////////////////////////////
 	//// touch
 	///////////////////////////////////
-	public synchronized boolean onTouchSceneLayers(MotionEvent event, int sceneLayerLevel) {
-		return onTouchLayersByZposition(event, sceneLayerLevel, false);
+	public boolean onTouchSceneLayers(MotionEvent event, int sceneLayerLevel) {
+		return onTouchSceneLayersForOppositeZOrder(event, sceneLayerLevel)
+				|| onTouchSceneLayersForNegativeZOrder(event, sceneLayerLevel);
 	}
 	
-	public synchronized boolean onTouchLayers(MotionEvent event) {
-		return onTouchLayersByZposition(event, false);
+	public boolean onTouchLayers(MotionEvent event) {
+		return onTouchLayersForOppositeZOrder(event)
+				|| onTouchLayersForNegativeZOrder(event);
 	}
 	
-	public synchronized boolean onTouchSceneLayersForNegativeZOrder(MotionEvent event, int sceneLayerLevel) {
-		return onTouchLayersByZposition(event, sceneLayerLevel, true);
+	public boolean onTouchSceneLayersForNegativeZOrder(MotionEvent event, int sceneLayerLevel) {
+		return layerController.onTouchLayers(event, sceneLayerLevel, true);
 	}
 	
-	public synchronized boolean onTouchSceneLayersForOppositeZOrder(MotionEvent event, int sceneLayerLevel) {
-		return onTouchLayersByZposition(event, sceneLayerLevel, false);
+	public boolean onTouchSceneLayersForOppositeZOrder(MotionEvent event, int sceneLayerLevel) {
+		return layerController.onTouchLayers(event, sceneLayerLevel, false);
 	}
 	
-	public synchronized boolean onTouchLayersForNegativeZOrder(MotionEvent event) {
-		return onTouchLayersByZposition(event, true);
+	public boolean onTouchLayersForNegativeZOrder(MotionEvent event) {
+		return layerController.onTouchLayers(event, true);
 	}
 	
-	public synchronized boolean onTouchLayersForOppositeZOrder(MotionEvent event) {
-		return onTouchLayersByZposition(event, false);
-	}
-	
-	///////////////////////////////////
-	//// touch
-	///////////////////////////////////
-	private boolean onTouchLayersByZposition(MotionEvent event, int sceneLayerLevel, boolean doNegativeZOrder){
-		if(!layerController.getScencesLayersByZposition().containsKey(sceneLayerLevel+""))
-			return false;
-		ConcurrentSkipListMap<Integer, List<ILayer>> layerLevelListByZposition = layerController.getScencesLayersByZposition().get(sceneLayerLevel+"");
-		return onTouchLayersByZposition(event, layerLevelListByZposition, doNegativeZOrder);
-	}
-	
-	private boolean onTouchLayersByZposition(MotionEvent event, boolean doNegativeZOrder){
-		ConcurrentSkipListMap<Integer, List<ILayer>> layerLevelListByZposition = layerController.getScencesLayersByZposition().get(layerController.getSceneLayerLevelByRecentlySet()+"");
-		return onTouchLayersByZposition(event, layerLevelListByZposition, doNegativeZOrder);
-	}
-	
-	private boolean onTouchLayersByZposition(MotionEvent event, ConcurrentSkipListMap<Integer, List<ILayer>> layerLevelListByZposition, boolean doNegativeZOrder){
-		if(layerLevelListByZposition==null)
-			return false;
-		for(Map.Entry<Integer, List<ILayer>> entry : layerLevelListByZposition.descendingMap().entrySet()) {
-			  int layerZposition = entry.getKey();
-			  if((doNegativeZOrder && layerZposition >= 0) || (!doNegativeZOrder && layerZposition < 0))
-				  continue;
-			  List<ILayer> layersByTheSameZposition = entry.getValue();
-			  for(int i = layersByTheSameZposition.size()-1; i >= 0; i--){
-				  ILayer layerByZposition = layersByTheSameZposition.get(i);
-				  if(layerByZposition.onTouchEvent(event)){
-					  return true; 
-				  }
-			  }
-		}
-		return false;
-	}
-	
-	///////////////////////////////////
-	//// touch
-	///////////////////////////////////
-	public synchronized boolean onTouchLayersForLayerLevel(MotionEvent event) {
-		boolean isTouched = false;
-		for (int i = layerController.getLayerLevelList().size()-1; i >= 0 ; i--) {	
-			List<ILayer> layersByTheSameLevel = layerController.getLayerLevelList().get(i);
-			isTouched = onTouchLayersBySpecificLevelLayers(event, layersByTheSameLevel);
-			if(isTouched)
-				break;
-		}
-		return isTouched;
-	}
-	
-	public boolean onTouchLayersBySpecificLevel(MotionEvent event,
-			int level) {
-		List<ILayer> layersByTheSameLevel = layerController.getLayerLevelList().get(level);
-		return onTouchLayersBySpecificLevelLayers(event, layersByTheSameLevel);
-	}
-	
-	private boolean onTouchLayersBySpecificLevelLayers(MotionEvent event,
-			List<ILayer> layersByTheSameLevel) {
-		boolean isTouched = false;
-		for (int i = layersByTheSameLevel.size()-1; i >= 0 ; i--) {
-			ILayer layer = layersByTheSameLevel.get(i);
-			if(layer.onTouchEvent(event)){
-				isTouched = true;
-				break;
-			}		
-		}
-		return isTouched;
+	public boolean onTouchLayersForOppositeZOrder(MotionEvent event) {
+		return layerController.onTouchLayers(event, false);
 	}
 	
 	////////////////////////////
