@@ -1,6 +1,7 @@
 package com.example.try_gameengine.framework;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentSkipListMap;
@@ -9,19 +10,26 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.view.MotionEvent;
 
-import com.example.try_gameengine.framework.LayerManager.DrawMode;
 import com.example.try_gameengine.framework.LayerManager.IterateLayersListener;
 
 public class LayerZpositionController extends LayerController {
-
+	private Map<String, ConcurrentSkipListMap<Integer, List<ILayer>>> scencesLayersByZposition
+	= new HashMap<String, ConcurrentSkipListMap<Integer, List<ILayer>>>();
+	
 	public LayerZpositionController(
-			DrawMode drawMode,
 			List<List<ILayer>> layerLevelList,
-			Map<String, List<List<ILayer>>> sceneLayerLevelList,
-			Map<String, ConcurrentSkipListMap<Integer, List<ILayer>>> scencesLayersByZposition) {
-		super(drawMode, layerLevelList, sceneLayerLevelList,
-				scencesLayersByZposition);
+			Map<String, List<List<ILayer>>> sceneLayerLevelList) {
+		super(layerLevelList, sceneLayerLevelList);
 		// TODO Auto-generated constructor stub
+	}
+	
+	public Map<String, ConcurrentSkipListMap<Integer, List<ILayer>>> getScencesLayersByZposition() {
+		return scencesLayersByZposition;
+	}
+
+	public void setScencesLayersByZposition(
+			Map<String, ConcurrentSkipListMap<Integer, List<ILayer>>> scencesLayersByZposition) {
+		this.scencesLayersByZposition = scencesLayersByZposition;
 	}
 
 	@Override
@@ -158,6 +166,56 @@ public class LayerZpositionController extends LayerController {
 			List<List<ILayer>> layerLevelList) {
 		updateLayersDrawOrderByZposition(layerLevelList,
 				getSceneLayerLevelByRecentlySet());
+	}
+	
+	////////////////////////////
+	//// process
+	////////////////////////////
+	@Override
+	public void processLayersForNegativeZOrder() {
+		processLayersByZposition(true);
+	}
+
+	@Override
+	public void processLayersForOppositeZOrder() {
+		processLayersByZposition(false);
+	}
+	
+	@Override
+	public void processLayersForNegativeZOrder(int sceneLayerLevel) {
+		processLayersByZposition(sceneLayerLevel, true);
+	}
+
+	@Override
+	public void processLayersForOppositeZOrder(int sceneLayerLevel) {
+		processLayersByZposition(sceneLayerLevel, false);
+	}
+	
+	private void processLayersByZposition(int sceneLayerLevel, boolean doNegativeZOrder){
+		if(!getScencesLayersByZposition().containsKey(sceneLayerLevel+""))
+			return;
+		ConcurrentSkipListMap<Integer, List<ILayer>> layerLevelListByZposition = getScencesLayersByZposition().get(sceneLayerLevel+"");
+		processLayersByZposition(layerLevelListByZposition, doNegativeZOrder);
+	}
+	
+	private void processLayersByZposition(boolean doNegativeZOrder){
+		ConcurrentSkipListMap<Integer, List<ILayer>> layerLevelListByZposition = getScencesLayersByZposition().get(getSceneLayerLevelByRecentlySet()+"");
+		processLayersByZposition(layerLevelListByZposition, doNegativeZOrder);
+	}
+	
+	private void processLayersByZposition(ConcurrentSkipListMap<Integer, List<ILayer>> layerLevelListByZposition, boolean doNegativeZOrder){
+		if(layerLevelListByZposition==null)
+			return;
+		for(Map.Entry<Integer, List<ILayer>> entry : layerLevelListByZposition.entrySet()) {
+			  int layerZposition = entry.getKey();
+			  if((doNegativeZOrder && layerZposition >= 0) || (!doNegativeZOrder && layerZposition < 0))
+				  continue;
+			  List<ILayer> layersByTheSameZposition = entry.getValue();
+			  for(ILayer layerByZposition : layersByTheSameZposition){
+				  if(!layerByZposition.isComposite() && layerByZposition instanceof ALayer)
+					  ((ALayer)layerByZposition).frameTrig();
+			  }
+		}
 	}
 
 	// /////////////////////////////////
