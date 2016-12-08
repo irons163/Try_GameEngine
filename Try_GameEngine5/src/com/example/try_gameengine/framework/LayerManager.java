@@ -15,7 +15,7 @@ public class LayerManager {
 		DRAW_BY_LAYER_LEVEL, DRAW_BY_Z_POSITION
 	}
 
-	public static DrawMode drawMode = DrawMode.DRAW_BY_LAYER_LEVEL;
+	public static DrawMode drawMode = DrawMode.DRAW_BY_Z_POSITION;
 	private List<ILayer> hudLayerslList = new ArrayList<ILayer>();
 	public LayerController layerController;
 

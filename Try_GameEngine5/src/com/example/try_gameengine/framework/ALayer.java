@@ -377,7 +377,7 @@ public abstract class ALayer implements ILayer, ITouchable{
 		if(StageManager.getCurrentStage()!=null)
 		StageManager.getCurrentStage().runOnUiThread(new Runnable() {
 		    public void run() {
-		        Log.d("UI thread", "I am the UI thread");
+		        //UI thread
 		        handler = new Handler();
 		    }
 		});	

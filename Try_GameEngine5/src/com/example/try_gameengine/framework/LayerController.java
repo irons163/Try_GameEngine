@@ -123,22 +123,25 @@ public class LayerController {
 			if (indexOfLayerNeedUpdateByZPosition == -1)
 				continue;
 
+			layersByTheSameLevel.remove(indexOfLayerNeedUpdateByZPosition);
+			
 			int newIndex = 0;
 			for (ILayer layer : layersByTheSameLevel) {
 				int layerZposition = layer.getzPosition();
 				if (layerNeedUpdateByZPosition.getzPosition() >= layerZposition) {
 					newIndex++;
 				} else {
-					layersByTheSameLevel.add(newIndex,
-							layerNeedUpdateByZPosition);
 					break;
 				}
 			}
 
 			if (newIndex == layersByTheSameLevel.size())
 				layersByTheSameLevel.add(layerNeedUpdateByZPosition);
-
-			layersByTheSameLevel.remove(indexOfLayerNeedUpdateByZPosition);
+			else{
+				layersByTheSameLevel.add(newIndex,
+						layerNeedUpdateByZPosition);
+			}
+			
 			break;
 		}
 	}
