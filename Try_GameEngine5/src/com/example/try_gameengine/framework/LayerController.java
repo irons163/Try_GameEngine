@@ -283,35 +283,11 @@ public class LayerController {
 		for (int i = layerLevelListInScene.size() - 1; i >= 0; i--) {
 			List<ILayer> layersByTheSameLevel = layerLevelListInScene.get(i);
 			isTouched = onTouchLayersBySpecificLevelLayers(event,
-					layersByTheSameLevel, false)
-					|| onTouchLayersBySpecificLevelLayers(event,
-							layersByTheSameLevel, true);
+					layersByTheSameLevel, doNegativeZOrder);
 			if (isTouched)
 				break;
 		}
 		return isTouched;
-	}
-
-	private boolean onTouchLayersForLayerLevel(MotionEvent event,
-			boolean doNegativeZOrder) {
-		boolean isTouched = false;
-		for (int i = getLayerLevelList().size() - 1; i >= 0; i--) {
-			List<ILayer> layersByTheSameLevel = getLayerLevelList().get(i);
-			isTouched = onTouchLayersBySpecificLevelLayers(event,
-					layersByTheSameLevel, false)
-					|| onTouchLayersBySpecificLevelLayers(event,
-							layersByTheSameLevel, true);
-			if (isTouched)
-				break;
-		}
-		return isTouched;
-	}
-
-	private boolean onTouchLayersBySpecificLevel(MotionEvent event, int level,
-			boolean doNegativeZOrder) {
-		List<ILayer> layersByTheSameLevel = getLayerLevelList().get(level);
-		return onTouchLayersBySpecificLevelLayers(event, layersByTheSameLevel,
-				doNegativeZOrder);
 	}
 
 	private boolean onTouchLayersBySpecificLevelLayers(MotionEvent event,

@@ -15,7 +15,7 @@ public class LayerManager {
 		DRAW_BY_LAYER_LEVEL, DRAW_BY_Z_POSITION
 	}
 
-	public static DrawMode drawMode = DrawMode.DRAW_BY_Z_POSITION;
+	public static DrawMode drawMode = DrawMode.DRAW_BY_LAYER_LEVEL;
 	private List<ILayer> hudLayerslList = new ArrayList<ILayer>();
 	public LayerController layerController;
 
@@ -299,7 +299,7 @@ public class LayerManager {
 	public void drawSceneLayers(Canvas canvas, Paint paint, int sceneLayerLevel) {
 		if (layerController.getSceneLayerLevelList().containsKey(
 				sceneLayerLevel + "")) {
-			drawLayers(canvas, paint, sceneLayerLevel, false);
+			drawLayers(canvas, paint, sceneLayerLevel);
 		}
 	}
 
@@ -307,7 +307,7 @@ public class LayerManager {
 			int sceneLayerLevel) {
 		if (layerController.getSceneLayerLevelList().containsKey(
 				sceneLayerLevel + "")) {
-			drawLayers(canvas, paint, sceneLayerLevel, true);
+			drawLayersForNegativeZOrder(canvas, paint, sceneLayerLevel);
 		}
 	}
 
@@ -315,7 +315,7 @@ public class LayerManager {
 			int sceneLayerLevel) {
 		if (layerController.getSceneLayerLevelList().containsKey(
 				sceneLayerLevel + "")) {
-			drawLayers(canvas, paint, sceneLayerLevel, false);
+			drawLayersForOppositeZOrder(canvas, paint, sceneLayerLevel);
 		}
 	}
 
@@ -326,12 +326,17 @@ public class LayerManager {
 		drawLayersForNegativeZOrder(canvas, paint);
 		drawLayersForOppositeZOrder(canvas, paint);
 	}
-
-	public void drawLayers(Canvas canvas, Paint paint, int sceneLayerLevel,
-			boolean doNegativeZOrder) {
+	
+	public void drawLayers(Canvas canvas, Paint paint, int sceneLayerLevel) {
 		drawLayersForNegativeZOrder(canvas, paint, sceneLayerLevel);
 		drawLayersForOppositeZOrder(canvas, paint, sceneLayerLevel);
 	}
+
+//	public void drawLayers(Canvas canvas, Paint paint, int sceneLayerLevel,
+//			boolean doNegativeZOrder) {
+//		drawLayersForNegativeZOrder(canvas, paint, sceneLayerLevel);
+//		drawLayersForOppositeZOrder(canvas, paint, sceneLayerLevel);
+//	}
 
 	public void drawLayersForNegativeZOrder(Canvas canvas, Paint paint) {
 		layerController.drawLayers(canvas, paint, true);

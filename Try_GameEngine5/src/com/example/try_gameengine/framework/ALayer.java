@@ -1644,8 +1644,10 @@ public abstract class ALayer implements ILayer, ITouchable{
 				if(((Sprite)this).spriteMatrix!=null){
 					synchronized (((Sprite)this).spriteMatrix) {
 						Matrix matrix2 =  new Matrix(((Sprite)this).spriteMatrix);
-						matrix.postConcat(matrixForAncester);
-						matrix.postConcat(matrix2);
+//						matrix.postConcat(matrixForAncester);
+//						matrix.postConcat(matrix2);
+						matrix.preConcat(matrixForAncester);
+						matrix.preConcat(matrix2);
 					}
 				}
 				matrix.invert(matrix);
@@ -1656,7 +1658,7 @@ public abstract class ALayer implements ILayer, ITouchable{
 					matrix = new Matrix(scene.getCamera().getMatrix());
 //				if(scene!=null) // If user not use scene system, scene is null.
 //					scene.getCamera().getMatrix().invert(matrix);
-				matrix.postConcat(matrixForAncester);
+				matrix.preConcat(matrixForAncester);
 				matrix.invert(matrix);
 			}
 			

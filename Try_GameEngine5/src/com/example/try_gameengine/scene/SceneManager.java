@@ -69,7 +69,8 @@ public class SceneManager {
 	}
 	
 	public void addScene(Class<? extends Scene> sceneClass, Context context, String id, int sceneLayerLevel){
-		addScene(sceneClass, context, id, nextSceneIndexForAdd, Scene.RESTART);
+//		addScene(sceneClass, context, id, nextSceneIndexForAdd, Scene.RESTART);
+		addScene(sceneClass, context, id, sceneLayerLevel, Scene.RESTART);
 	}
 	
 	public void addScene(Class<? extends Scene> sceneClass, Context context, String id, int sceneLayerLevel, int mode){
