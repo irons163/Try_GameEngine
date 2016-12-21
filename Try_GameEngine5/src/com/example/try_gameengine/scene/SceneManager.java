@@ -135,6 +135,8 @@ public class SceneManager {
 							scene = sceneClass.getValue().getConstructor(Context.class, String.class, int.class).newInstance(context, id, sceneLayerLevel);
 						}else{
 							scene = sceneClass.getValue().getConstructor(Context.class, String.class).newInstance(context, id);
+							if(scene!=null)
+								scene.setLayerLevel(sceneLayerLevel);
 						}
 						
 					} catch (InstantiationException e) {

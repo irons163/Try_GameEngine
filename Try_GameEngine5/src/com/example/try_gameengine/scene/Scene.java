@@ -122,10 +122,15 @@ public abstract class Scene extends Sprite{
 		this.remoteController = remoteController;
 	}
 	
+	/*
+	 * be care for setLayerLevel in Scene, because it relative with LayerManager and SceneManager.
+	*/
+	@Override
 	public void setLayerLevel(int sceneLayerLevel){
 		this.sceneLayerLevel = sceneLayerLevel;
 	}
 	
+	@Override
 	public int getLayerLevel(){
 		return this.sceneLayerLevel;
 	}

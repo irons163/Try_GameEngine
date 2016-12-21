@@ -24,7 +24,7 @@ public class Custom4D2FRemoteLoader {
 		leftKey = new Key(BitmapUtil.leftKey, 0, Config.currentScreenHeight-BitmapUtil.leftKey.getHeight()*2, 1, false);
 		leftKey.setEnableMultiTouch(true);
 		Custom4D2FKeyCommandPressDown leftKeyCommandPressDown = new Custom4D2FKeyCommandPressDown(leftKey, Custom4D2FCommandType.LeftKeyDownCommand);
-		Custom4D2FKeyCommandPressDown leftKeyCommandPressUp = new Custom4D2FKeyCommandPressDown(leftKey, Custom4D2FCommandType.LeftKeyUpCommand);
+		Custom4D2FKeyCommandPressUp leftKeyCommandPressUp = new Custom4D2FKeyCommandPressUp(leftKey, Custom4D2FCommandType.LeftKeyUpCommand);
 		rightKey = new Key(BitmapUtil.rightKey, leftKey.getX() + leftKey.getWidth()*2, Config.currentScreenHeight-BitmapUtil.rightKey.getHeight()*2, 1, false);
 		rightKey.setEnableMultiTouch(true);
 		Custom4D2FKeyCommandPressDown rightKeyCommandPressDown = new Custom4D2FKeyCommandPressDown(rightKey, Custom4D2FCommandType.RightKeyDownCommand);
