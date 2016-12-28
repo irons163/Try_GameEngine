@@ -62,11 +62,11 @@ public class SimultaneouslyMultiCircleMovementActionSet extends MovementAction {
 	}
 	
 	public float getCenterSpriteX(){
-		return centerSprite.centerX;
+		return centerSprite.getCenterX();
 	}
 	
 	public float getCenterSpriteY(){
-		return centerSprite.centerY;
+		return centerSprite.getCenterY();
 	}
 
 	@Override

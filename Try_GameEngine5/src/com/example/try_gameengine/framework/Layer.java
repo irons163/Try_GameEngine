@@ -64,34 +64,23 @@ public class Layer extends ALayer{
 	}
 	
 	protected void doDrawself(Canvas canvas, Paint paint) {
-		if(getBackgroundColor()!=NONE_COLOR || bitmap!=null){
+		if(getBackgroundColor()!=NONE_COLOR || getBitmap()!=null){
 			canvas.save();
 			
 			do {
-//				if(isAncestorClipOutSide()){
-//					RectF rectF = null;
-//					if((rectF = getClipRange())!=null){
-//						Rect rect = new Rect();
-//						rectF.round(rect);
-////						canvas.clipRegion(new Region(rect));
-//						canvas.clipRect(rect);
-//					}else{
-//						break;
-//					}
-//				}
-				
-				canvas = getC(canvas, paint);
-				
+				canvas = getClipedCanvas(canvas, paint);
 				Paint originalPaint = paint;
 				
 				//use input paint first
 				int oldColor = 0;
 				Style oldStyle = null;
 				int oldAlpha = 255;
+				boolean isDrawBackgroundColor = false;
 				if(originalPaint==null && getPaint()!=null){
 					paint = getPaint();
 	//				paint.setAntiAlias(true);
 					if(getBackgroundColor()!=NONE_COLOR){
+						isDrawBackgroundColor = true;
 						oldColor = getPaint().getColor();
 						oldStyle = getPaint().getStyle();
 						oldAlpha = getPaint().getAlpha();
@@ -104,86 +93,63 @@ public class Layer extends ALayer{
 					canvas.drawRect(getFrameInScene(), paint);
 				}
 				
-				if(isComposite()){
-					src.left = 0;
-					src.top = 0;
-					src.right = w;
-					src.bottom = h;
-					
-					if(parent!=null){
-						PointF locationInScene = parent.locationInSceneByCompositeLocation((float) (centerX - w / 2), (float) (centerY - h / 2));
-						dst.left = locationInScene.x;
-						dst.top = locationInScene.y;
-						dst.right = (float) (dst.left + w);
-						dst.bottom = (float) (dst.top + h);
-					}else{
-						dst.left = (float) (centerX - w / 2);
-						dst.top = (float) (centerY - h / 2);
-						dst.right = (float) (dst.left + w);
-						dst.bottom = (float) (dst.top + h);
-					}
-					
-					if(getBackgroundColor()!=NONE_COLOR){
-	//					if(isClipOutside)
-	//						dst.intersect(getParent().getDst());
-	//					canvas.drawRect(dst, paint);
-						getPaint().setColor(oldColor);
-						getPaint().setStyle(oldStyle);
-						getPaint().setAlpha(oldAlpha);
-					}
-					if(bitmap!=null)
-						canvas.drawBitmap(bitmap, src, dst, paint);
-					
-					/*//use input paint first 
-					paint = originalPaint;
-					originalPaint = null;
-					if(paint!=null){
-						paint.setAlpha(originalAlpha);
-					}
-					*/
-					
-					//use self paint first
-	//				paint = originalPaint;
-					
-				}else{
-					src.left = 0;
-					src.top = 0;
-					src.right = w;
-					src.bottom = h;
-					dst.left = (float) (centerX - w / 2);
-					dst.top = (float) (centerY - h / 2);
-					dst.right = (float) (dst.left + w);
-					dst.bottom = (float) (dst.top + h);
-					
-					if(originalPaint==null && getBackgroundColor()!=NONE_COLOR){
-	//					canvas.drawRect(getFrame(), paint);
-						getPaint().setColor(oldColor);
-						getPaint().setStyle(oldStyle);
-						getPaint().setAlpha(oldAlpha);
-					}
-					if(bitmap!=null)
-						canvas.drawBitmap(bitmap, src, dst, paint);
-					
-					/*//use input paint first 
-					paint = originalPaint;
-					originalPaint = null;
-					if(paint!=null){
-						paint.setAlpha(originalAlpha);
-					}
-					*/
-					
-					//use self paint first
-	//				paint = originalPaint;
-				}
-				
-	
+				drawBitmap(canvas, paint, oldColor, oldStyle, oldAlpha,
+						isDrawBackgroundColor);
 				
 				//use input paint first
 				paint = originalPaint;
 			} while (false);
 			
 			canvas.restore();
-//			canvas.restoreToCount(sc);
+		}
+	}
+
+	protected void drawBitmap(Canvas canvas, Paint paint, int oldColor,
+			Style oldStyle, int oldAlpha, boolean isDrawBackgroundColor) {
+		calcilation();
+		
+		if(isDrawBackgroundColor){
+			getPaint().setColor(oldColor);
+			getPaint().setStyle(oldStyle);
+			getPaint().setAlpha(oldAlpha);
+		}
+		if(getBitmap()!=null)
+			canvas.drawBitmap(getBitmap(), getSrc(), getDst(), paint);
+	}
+
+	private void calcilation() {
+		if(isComposite()){
+			getSrc().left = 0;
+			getSrc().top = 0;
+			if(getBitmap()!=null && isBitmapSacleToFitSize()){
+				getSrc().right = getBitmap().getWidth();
+				getSrc().bottom = getBitmap().getHeight();
+			}else{
+				getSrc().right = getWidth();
+				getSrc().bottom = getHeight();
+			}
+			
+			if(getParent()!=null){
+				PointF locationInScene = getParent().locationInSceneByCompositeLocation((float) (getCenterX() - getWidth() / 2), (float) (getCenterY() - getHeight() / 2));
+				getDst().left = locationInScene.x;
+				getDst().top = locationInScene.y;
+				getDst().right = (float) (getDst().left + getWidth());
+				getDst().bottom = (float) (getDst().top + getHeight());
+			}else{
+				getDst().left = (float) (getCenterX() - getWidth() / 2);
+				getDst().top = (float) (getCenterY() - getHeight() / 2);
+				getDst().right = (float) (getDst().left + getWidth());
+				getDst().bottom = (float) (getDst().top + getHeight());
+			}
+		}else{
+			getSrc().left = 0;
+			getSrc().top = 0;
+			getSrc().right = getWidth();
+			getSrc().bottom = getHeight();
+			getDst().left = (float) (getCenterX() - getWidth() / 2);
+			getDst().top = (float) (getCenterY() - getHeight() / 2);
+			getDst().right = (float) (getDst().left + getWidth());
+			getDst().bottom = (float) (getDst().top + getHeight());
 		}
 	}
 	

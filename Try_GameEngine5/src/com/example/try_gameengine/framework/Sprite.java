@@ -192,8 +192,8 @@ public class Sprite extends Layer {
 	 * 
 	 */
 	private void initCollisionRectF(){
-		collisionRectFWidth = w;
-		collisionRectFHeight = h;
+		collisionRectFWidth = getWidth();
+		collisionRectFHeight = getHeight();
 		collisionRectF = new RectF(getX()+collisionOffsetX, getY()+collisionOffsetY, getX()+collisionOffsetX+collisionRectFWidth, getY()+collisionOffsetY+collisionRectFHeight);
 	}
 	
@@ -220,13 +220,23 @@ public class Sprite extends Layer {
 		this.collisionOffsetY = collisionOffsetY;
 	}
 	
+	@Override
+	public void setBitmap(Bitmap bitmap) {
+		// TODO Auto-generated method stub
+		super.setBitmap(bitmap);
+		if(isBitmapSacleToFitSize()){
+			setWidth(getWidth());
+			setHeight(getHeight());
+		}
+	}
+	
 	/**
 	 * @param bitmap
 	 * @param frameWidth
 	 * @param frameHeight
 	 */
 	public void setBitmapAndFrameWH(Bitmap bitmap,int frameWidth ,int frameHeight ){
-		this.bitmap = bitmap;
+		this.setBitmap(bitmap);
 		this.bitmapOrginalFrameWidth = frameWidth;
 		this.bitmapOrginalFrameHeight = frameHeight;
 		this.frameWidth = frameWidth;
@@ -244,7 +254,7 @@ public class Sprite extends Layer {
 	 * @param frameRowNum
 	 */
 	public void setBitmapAndFrameColAndRowNumAndAutoWH(Bitmap bitmap, int frameColNum , int frameRowNum){
-		this.bitmap = bitmap;
+		this.setBitmap(bitmap);
 		int frameWidth = bitmap.getWidth()/frameColNum;
 		int frameHeight = bitmap.getHeight()/frameRowNum;
 		this.bitmapOrginalFrameWidth = frameWidth;
@@ -266,7 +276,7 @@ public class Sprite extends Layer {
 	 * @param frameRowNum
 	 */
 	public void setBitmapAndFrameWHAndColAndRowNum(Bitmap bitmap,int frameWidth ,int frameHeight,int frameColNum ,int frameRowNum){
-		this.bitmap = bitmap;
+		this.setBitmap(bitmap);
 		this.bitmapOrginalFrameWidth = frameWidth;
 		this.bitmapOrginalFrameHeight = frameHeight;
 		this.frameWidth = frameWidth;
@@ -293,12 +303,12 @@ public class Sprite extends Layer {
 	 */
 	public void setLightImage(LightImage lightImage){
 		if(lightImage.getBitmap()!=null){
-			bitmap = lightImage.getBitmap();
-		}else if(bitmap==null){
+			setBitmap(lightImage.getBitmap());
+		}else if(getBitmap()==null){
 			return;
 		}
 		
-		setBitmapAndFrameWH(bitmap, lightImage.getClipIfno().getWidth(), lightImage.getClipIfno().getHeight());
+		setBitmapAndFrameWH(getBitmap(), lightImage.getClipIfno().getWidth(), lightImage.getClipIfno().getHeight());
 		currentFrame = (int)(lightImage.getClipIfno().getClipStartX()/(frameWidth*frameColNum)) + (int)(lightImage.getClipIfno().getClipStartY()/(frameHeight*frameRowNum))*frameColNum;
 	}
 	
@@ -405,7 +415,7 @@ public class Sprite extends Layer {
 		
 		do {
 
-		canvas = getC(canvas, paint);
+		canvas = getClipedCanvas(canvas, paint);
 		Paint originalPaint = paint;		
 		
 //		if(bitmap!=null){		
@@ -419,42 +429,42 @@ public class Sprite extends Layer {
 					isUseCanvasScale = true;
 				}
 				
-				src.left = (int) (currentFrame * w * scale);// 左端寬度：當前幀乘上幀的寬度再乘上圖片縮放率
-				src.top = 0;
-				src.right = (int) ((src.left + w * scale)/(xScaleForBitmapWidth));// 右端寬度：左端寬度加上(幀的寬度乘上圖片縮放率)
-				src.bottom = (int) (h/(yScaleForBitmapHeight));
-				dst.left = (float) (centerX - w / 2);//try mix anchor point
-				dst.top = (float) (centerY - h / 2);
-				dst.right = (float) (dst.left + w * scale);
-				dst.bottom = (float) (dst.top + h * scale);
+				getSrc().left = (int) (currentFrame * getWidth() * scale);// 左端寬度：當前幀乘上幀的寬度再乘上圖片縮放率
+				getSrc().top = 0;
+				getSrc().right = (int) ((getSrc().left + getWidth() * scale)/(xScaleForBitmapWidth));// 右端寬度：左端寬度加上(幀的寬度乘上圖片縮放率)
+				getSrc().bottom = (int) (getHeight()/(yScaleForBitmapHeight));
+				getDst().left = (float) (getCenterX() - getWidth() / 2);//try mix anchor point
+				getDst().top = (float) (getCenterY() - getHeight() / 2);
+				getDst().right = (float) (getDst().left + getWidth() * scale);
+				getDst().bottom = (float) (getDst().top + getHeight() * scale);
 				
 				
 					if(isComposite()){
-						if(parent!=null){
+						if(getParent()!=null){
 //							dst.left = locationLeftTopInScene.x + getAnchorPoint().x*w;
 //							dst.top = locationLeftTopInScene.y + getAnchorPoint().y*h;
-							dst.left = locationLeftTopInScene.x + getAnchorPoint().x*w -getAnchorPoint().x*w/xScaleForBitmapWidth;
-							dst.top = locationLeftTopInScene.y + getAnchorPoint().y*h -getAnchorPoint().y*h/yScaleForBitmapHeight;
-							dst.right = (float) (dst.left + w/xScaleForBitmapWidth * scale);
-							dst.bottom = (float) (dst.top + h/yScaleForBitmapHeight * scale);
+							getDst().left = locationLeftTopInScene.x + getAnchorPoint().x*getWidth() -getAnchorPoint().x*getWidth()/xScaleForBitmapWidth;
+							getDst().top = locationLeftTopInScene.y + getAnchorPoint().y*getHeight() -getAnchorPoint().y*getHeight()/yScaleForBitmapHeight;
+							getDst().right = (float) (getDst().left + getWidth()/xScaleForBitmapWidth * scale);
+							getDst().bottom = (float) (getDst().top + getHeight()/yScaleForBitmapHeight * scale);
 						}else{
 						}
 						
 					}else{
-						dst.left = (float) (getAnchorPointXY().x-getAnchorPoint().x*w/xScaleForBitmapWidth);//try mix anchor point
-						dst.top = (float) (getAnchorPointXY().y-getAnchorPoint().y*h/yScaleForBitmapHeight);
-						dst.right = (float) (dst.left + w/xScaleForBitmapWidth * scale);
-						dst.bottom = (float) (dst.top + h/yScaleForBitmapHeight * scale);
+						getDst().left = (float) (getAnchorPointXY().x-getAnchorPoint().x*getWidth()/xScaleForBitmapWidth);//try mix anchor point
+						getDst().top = (float) (getAnchorPointXY().y-getAnchorPoint().y*getHeight()/yScaleForBitmapHeight);
+						getDst().right = (float) (getDst().left + getWidth()/xScaleForBitmapWidth * scale);
+						getDst().bottom = (float) (getDst().top + getHeight()/yScaleForBitmapHeight * scale);
 					}
 					
 					if(spriteMatrix!=null){
 						canvas.concat(spriteMatrix);
 					}
 					
-					drawRectF = dst;
+					drawRectF = getDst();
 					drawBackgroundColor(canvas, paint, drawRectF);
-					if(bitmap!=null)
-						canvas.drawBitmap(bitmap, dst.left, dst.top, paint);
+					if(getBitmap()!=null)
+						canvas.drawBitmap(getBitmap(), getDst().left, getDst().top, paint);
 			}
 //		}
 		
@@ -468,7 +478,7 @@ public class Sprite extends Layer {
 	
 	@Override
 	protected void doDrawChildren(Canvas canvas, Paint paint) {
-		for(ILayer layer : layers){
+		for(ILayer layer : getLayers()){
 			if(layer.isComposite() && !layer.isAutoAdd()){ //if the layer is auto add, not draw.
 				layer.drawSelf(canvas, paint);
 			}
@@ -620,8 +630,8 @@ public class Sprite extends Layer {
 		float y = getY();
 		
 		if(isComposite()){
-			if(parent!=null){
-				PointF locationInScene = parent.locationInSceneByCompositeLocation(x, y);
+			if(getParent()!=null){
+				PointF locationInScene = getParent().locationInSceneByCompositeLocation(x, y);
 				x = locationInScene.x;
 				y = locationInScene.y;
 			}
@@ -636,14 +646,14 @@ public class Sprite extends Layer {
 //			if(!doClip(canvas))
 //				return;
 			
-			drawRectF = new RectF(x - getAnchorPoint().x*w/xScaleForBitmapWidth, y - getAnchorPoint().y*h/yScaleForBitmapHeight, x - getAnchorPoint().x*w/xScaleForBitmapWidth + w/xScaleForBitmapWidth,y - getAnchorPoint().y*h/yScaleForBitmapHeight + h/yScaleForBitmapHeight);
+			drawRectF = new RectF(x - getAnchorPoint().x*getWidth()/xScaleForBitmapWidth, y - getAnchorPoint().y*getHeight()/yScaleForBitmapHeight, x - getAnchorPoint().x*getWidth()/xScaleForBitmapWidth + getWidth()/xScaleForBitmapWidth,y - getAnchorPoint().y*getHeight()/yScaleForBitmapHeight + getHeight()/yScaleForBitmapHeight);
 			canvas.clipRect(drawRectF);
 			
 			drawBackgroundColor(canvas, paint, drawRectF);
 
-			float xx = x - ((float)bitmap.getWidth())/frameColNum*getAnchorPoint().x - (currentFrame%(int)frameColNum)*(((float)bitmap.getWidth())/frameColNum)+drawOffsetX;
-			float yy = y - ((float)bitmap.getHeight())/frameRowNum*getAnchorPoint().y - (currentFrame/(int)frameColNum)*(((float)bitmap.getHeight())/frameRowNum);
-			canvas.drawBitmap(bitmap, xx, yy, paint);
+			float xx = x - ((float)getBitmap().getWidth())/frameColNum*getAnchorPoint().x - (currentFrame%(int)frameColNum)*(((float)getBitmap().getWidth())/frameColNum)+drawOffsetX;
+			float yy = y - ((float)getBitmap().getHeight())/frameRowNum*getAnchorPoint().y - (currentFrame/(int)frameColNum)*(((float)getBitmap().getHeight())/frameRowNum);
+			canvas.drawBitmap(getBitmap(), xx, yy, paint);
 			
 //			if(xScale*xScaleForBitmapWidth<0 && yScale*yScaleForBitmapHeight<0){
 //				canvas.drawBitmap(bitmap, x - ((float)bitmap.getWidth())/frameColNum*getAnchorPoint().x - (currentFrame%(int)frameColNum)*(((float)bitmap.getWidth())/frameColNum)+drawOffsetX, 
@@ -665,8 +675,8 @@ public class Sprite extends Layer {
 			drawRectF = new RectF(x+drawOffsetX, y, x+frameWidth+drawOffsetX, y+frameHeight);
 			canvas.clipRect(drawRectF);
 			drawBackgroundColor(canvas, paint, drawRectF);
-			canvas.drawBitmap(bitmap, x-(currentFrame%(bitmap.getWidth()/(int)frameWidth))*frameWidth+drawOffsetX, 
-					y - (currentFrame/(bitmap.getWidth()/(int)frameWidth))*frameHeight, paint);
+			canvas.drawBitmap(getBitmap(), x-(currentFrame%(getBitmap().getWidth()/(int)frameWidth))*frameWidth+drawOffsetX, 
+					y - (currentFrame/(getBitmap().getWidth()/(int)frameWidth))*frameHeight, paint);
 		}else{
 //			canvas.setMatrix(spriteMatrix);
 			canvas.concat(spriteMatrix);
@@ -678,18 +688,18 @@ public class Sprite extends Layer {
 					, x+frameWidth+drawOffsetX
 					, y+frameHeight);
 			drawBackgroundColor(canvas, paint, drawRectF);
-			canvas.drawBitmap(bitmap, new Rect((int)(currentFrame%(bitmap.getWidth()/bitmapOrginalFrameWidth))*bitmapOrginalFrameWidth+(int)drawOffsetX
-					, (int)(currentFrame/(bitmap.getWidth()/bitmapOrginalFrameWidth))*bitmapOrginalFrameHeight
-					,(int)(currentFrame%(bitmap.getWidth()/bitmapOrginalFrameWidth))*bitmapOrginalFrameWidth+bitmapOrginalFrameWidth+(int)drawOffsetX
-					, (int)(currentFrame/(bitmap.getWidth()/bitmapOrginalFrameWidth))*bitmapOrginalFrameHeight+bitmapOrginalFrameHeight)
+			canvas.drawBitmap(getBitmap(), new Rect((int)(currentFrame%(getBitmap().getWidth()/bitmapOrginalFrameWidth))*bitmapOrginalFrameWidth+(int)drawOffsetX
+					, (int)(currentFrame/(getBitmap().getWidth()/bitmapOrginalFrameWidth))*bitmapOrginalFrameHeight
+					,(int)(currentFrame%(getBitmap().getWidth()/bitmapOrginalFrameWidth))*bitmapOrginalFrameWidth+bitmapOrginalFrameWidth+(int)drawOffsetX
+					, (int)(currentFrame/(getBitmap().getWidth()/bitmapOrginalFrameWidth))*bitmapOrginalFrameHeight+bitmapOrginalFrameHeight)
 			, drawRectF
 			, paint);
 		}
 		
-		dst.left = (float) (centerX - w / 2);
-		dst.top = (float) (centerY - h / 2);
-		dst.right = (float) (dst.left + w * scale);
-		dst.bottom = (float) (dst.top + h * scale);
+		getDst().left = (float) (getCenterX() - getWidth() / 2);
+		getDst().top = (float) (getCenterY() - getHeight() / 2);
+		getDst().right = (float) (getDst().left + getWidth() * scale);
+		getDst().bottom = (float) (getDst().top + getHeight() * scale);
 	}
 
 	/**
@@ -987,18 +997,18 @@ public class Sprite extends Layer {
 			case StopOneSide:
 				if(getX()+dx<=moveRage.left){
 					setX(moveRage.left);
-				}else if(getX()+w+dx>=moveRage.right){
-					setX(moveRage.right-w);
+				}else if(getX()+getWidth()+dx>=moveRage.right){
+					setX(moveRage.right-getWidth());
 				}else{
-					setX(getCenterX() + dx - w/2);
+					setX(getCenterX() + dx - getWidth()/2);
 				}
 				
 				if(getY()+dy<=moveRage.top){
 					setY(moveRage.top);
-				}else if(getY()+h+dy>=moveRage.bottom){
-					setY(moveRage.bottom - h);
+				}else if(getY()+getHeight()+dy>=moveRage.bottom){
+					setY(moveRage.bottom - getHeight());
 				}else{
-					setY(getCenterY() + dy - h/2);
+					setY(getCenterY() + dy - getHeight()/2);
 				}
 				break;
 			case StopInCurrentPosition:
@@ -1015,21 +1025,21 @@ public class Sprite extends Layer {
 				if(getX()+dx<=moveRage.left){
 					moveRageReflectFactorX *= -1;
 					setX(moveRage.left);
-				}else if(getX()+w+dx>=moveRage.right){
+				}else if(getX()+getWidth()+dx>=moveRage.right){
 					moveRageReflectFactorX *= -1;
-					setX(moveRage.right-w);
+					setX(moveRage.right-getWidth());
 				}else{
-					setX(getCenterX() + dx - w/2);
+					setX(getCenterX() + dx - getWidth()/2);
 				}
 				
 				if(getY()+dy<=moveRage.top){
 					moveRageReflectFactorY *= -1;
 					setY(moveRage.top);
-				}else if(getY()+h+dy>=moveRage.bottom){
+				}else if(getY()+getHeight()+dy>=moveRage.bottom){
 					moveRageReflectFactorY *= -1;
-					setY(moveRage.bottom - h);
+					setY(moveRage.bottom - getHeight());
 				}else{
-					setY(getCenterY() + dy - h/2);
+					setY(getCenterY() + dy - getHeight()/2);
 				}
 				break;
 			default:
@@ -1349,13 +1359,13 @@ public class Sprite extends Layer {
 	public void setX(float x) {
 		super.setX(x);
 		if(isComposite())
-			locationLeftTopInScene = parent.locationInSceneByCompositeLocation((float) (centerX - w / 2), (float) (centerY - h / 2));
+			locationLeftTopInScene = getParent().locationInSceneByCompositeLocation((float) (getCenterX() - getWidth() / 2), (float) (getCenterY() - getHeight() / 2));
 		colculationMatrix();
 		
 		if(isComposite()){//this is not test yet after add anchor point. It might be wrong.
 			PointF locationInScene = locationInSceneByCompositeLocation(getX(), getY());
 			setCollisionRectF(locationInScene.x+collisionOffsetX, locationInScene.y+collisionOffsetY, locationInScene.x+collisionOffsetX+collisionRectFWidth, locationInScene.y+collisionOffsetY+collisionRectFHeight);
-			updateSpriteDetectAreaCenter(new PointF(locationInScene.x+w/2, locationInScene.y+h/2));
+			updateSpriteDetectAreaCenter(new PointF(locationInScene.x+getWidth()/2, locationInScene.y+getHeight()/2));
 		}else{
 			setCollisionRectF(getLeft()+collisionOffsetX, getTop()+collisionOffsetY, getLeft()+collisionOffsetX+collisionRectFWidth, getTop()+collisionOffsetY+collisionRectFHeight);
 			updateSpriteDetectAreaCenter(new PointF(getCenterX(), getCenterY()));
@@ -1367,13 +1377,13 @@ public class Sprite extends Layer {
 		// TODO Auto-generated method stub
 		super.setY(y);
 		if(isComposite())
-			locationLeftTopInScene = parent.locationInSceneByCompositeLocation((float) (centerX - w / 2), (float) (centerY - h / 2));
+			locationLeftTopInScene = getParent().locationInSceneByCompositeLocation((float) (getCenterX() - getWidth() / 2), (float) (getCenterY() - getHeight() / 2));
 		colculationMatrix();
 		
 		if(isComposite()){//this is not test yet after add anchor point. It might be wrong.
 			PointF locationInScene = locationInSceneByCompositeLocation(getX(), getY());
 			setCollisionRectF(locationInScene.x+collisionOffsetX, locationInScene.y+collisionOffsetY, locationInScene.x+collisionOffsetX+collisionRectFWidth, locationInScene.y+collisionOffsetY+collisionRectFHeight);
-			updateSpriteDetectAreaCenter(new PointF(locationInScene.x+w/2, locationInScene.y+h/2));
+			updateSpriteDetectAreaCenter(new PointF(locationInScene.x+getWidth()/2, locationInScene.y+getHeight()/2));
 		}else{
 			setCollisionRectF(getLeft()+collisionOffsetX, getTop()+collisionOffsetY, getLeft()+collisionOffsetX+collisionRectFWidth, getTop()+collisionOffsetY+collisionRectFHeight);	
 			updateSpriteDetectAreaCenter(new PointF(getCenterX(), getCenterY()));
@@ -1385,17 +1395,23 @@ public class Sprite extends Layer {
 		// TODO Auto-generated method stub
 		super.setPosition(x, y);	
 		if(isComposite())
-			locationLeftTopInScene = parent.locationInSceneByCompositeLocation((float) (centerX - w / 2), (float) (centerY - h / 2));
+			locationLeftTopInScene = getParent().locationInSceneByCompositeLocation((float) (getCenterX() - getWidth() / 2), (float) (getCenterY() - getHeight() / 2));
 		colculationMatrix();
 		
 		if(isComposite()){//this is not test yet after add anchor point. It might be wrong.
 			PointF locationInScene = locationInSceneByCompositeLocation(getX(), getY());
 			setCollisionRectF(locationInScene.x+collisionOffsetX, locationInScene.y+collisionOffsetY, locationInScene.x+collisionOffsetX+collisionRectFWidth, locationInScene.y+collisionOffsetY+collisionRectFHeight);
-			updateSpriteDetectAreaCenter(new PointF(locationInScene.x+w/2, locationInScene.y+h/2));
+			updateSpriteDetectAreaCenter(new PointF(locationInScene.x+getWidth()/2, locationInScene.y+getHeight()/2));
 		}else{
 			setCollisionRectF(getLeft()+collisionOffsetX, getTop()+collisionOffsetY, getLeft()+collisionOffsetX+collisionRectFWidth, getTop()+collisionOffsetY+collisionRectFHeight);
 			updateSpriteDetectAreaCenter(new PointF(getCenterX(), getCenterY()));
 		}
+	}
+	
+	@Override
+	public void setSize(int w, int h) {
+		setWidth(w);
+		setHeight(h);
 	}
 	
 	@Override
@@ -1423,7 +1439,7 @@ public class Sprite extends Layer {
 	private void setSuperWidth(int w){
 		super.setWidth(w);
 		if(isComposite())
-			locationLeftTopInScene = parent.locationInSceneByCompositeLocation((float) (centerX - w / 2), (float) (centerY - h / 2));
+			locationLeftTopInScene = getParent().locationInSceneByCompositeLocation((float) (getCenterX() - w / 2), (float) (getCenterY() - getHeight() / 2));
 		if(getBitmap()!=null){
 			if(frameColNum!=0){
 				xScaleForBitmapWidth = w/((float)(getBitmap().getWidth()/frameColNum));
@@ -1435,14 +1451,14 @@ public class Sprite extends Layer {
 			colculationMatrix();
 		}
 		
-		collisionOffsetX = (float)w/this.w*collisionOffsetX;
+		collisionOffsetX = (float)w/this.getWidth()*collisionOffsetX;
 		if(collisionRectFWidth==0)
 			collisionRectFWidth = w;
 		else
-			collisionRectFWidth = (float)w/this.w*collisionRectFWidth;
+			collisionRectFWidth = (float)w/this.getWidth()*collisionRectFWidth;
 		setCollisionRectF(getLeft()+collisionOffsetX, getTop()+collisionOffsetY, getLeft()+collisionOffsetX+collisionRectFWidth, getTop()+collisionOffsetY+collisionRectFHeight);
 		if(isComposite()){
-			updateSpriteDetectAreaCenter(new PointF(locationInScene.x+w/2, locationInScene.y+h/2));
+			updateSpriteDetectAreaCenter(new PointF(getLocationInScene().x+w/2, getLocationInScene().y+getHeight()/2));
 		}else{
 			updateSpriteDetectAreaCenter(new PointF(getCenterX(), getCenterY()));
 		}
@@ -1464,7 +1480,7 @@ public class Sprite extends Layer {
 	private void setSuperHeight(int h){
 		super.setHeight(h);
 		if(isComposite())
-			locationLeftTopInScene = parent.locationInSceneByCompositeLocation((float) (centerX - w / 2), (float) (centerY - h / 2));
+			locationLeftTopInScene = getParent().locationInSceneByCompositeLocation((float) (getCenterX() - getWidth() / 2), (float) (getCenterY() - h / 2));
 		if(getBitmap()!=null){
 			if(frameRowNum!=0){
 				yScaleForBitmapHeight = h/((float)(getBitmap().getHeight()/frameRowNum));
@@ -1476,14 +1492,14 @@ public class Sprite extends Layer {
 			colculationMatrix();
 		}
 		
-		collisionOffsetY = (float)h/this.h*collisionOffsetY;
+		collisionOffsetY = (float)h/this.getHeight()*collisionOffsetY;
 		if(collisionRectFHeight==0)
 			collisionRectFHeight = h;
 		else
-			collisionRectFHeight = (float)h/this.h*collisionRectFHeight;
+			collisionRectFHeight = (float)h/this.getHeight()*collisionRectFHeight;
 		setCollisionRectF(getLeft()+collisionOffsetX, getTop()+collisionOffsetY, getLeft()+collisionOffsetX+collisionRectFWidth, getTop()+collisionOffsetY+collisionRectFHeight);
 		if(isComposite()){
-			updateSpriteDetectAreaCenter(new PointF(locationInScene.x+w/2, locationInScene.y+h/2));
+			updateSpriteDetectAreaCenter(new PointF(getLocationInScene().x+getWidth()/2, getLocationInScene().y+h/2));
 		}else{
 			updateSpriteDetectAreaCenter(new PointF(getCenterX(), getCenterY()));
 		}
@@ -1499,39 +1515,39 @@ public class Sprite extends Layer {
 			spriteMatrix.reset();
 			if(isComposite()){
 				if(xScale<0 && yScale<0)
-					spriteMatrix.postScale(-1*xScaleForBitmapWidth, -1*yScaleForBitmapHeight, locationLeftTopInScene.x +getAnchorPoint().x*w, locationLeftTopInScene.y  + getAnchorPoint().y*h);
+					spriteMatrix.postScale(-1*xScaleForBitmapWidth, -1*yScaleForBitmapHeight, locationLeftTopInScene.x +getAnchorPoint().x*getWidth(), locationLeftTopInScene.y  + getAnchorPoint().y*getHeight());
 				else if(xScale<0)
-					spriteMatrix.postScale(-1*xScaleForBitmapWidth, yScaleForBitmapHeight, locationLeftTopInScene.x +getAnchorPoint().x*w, locationLeftTopInScene.y  + getAnchorPoint().y*h);
+					spriteMatrix.postScale(-1*xScaleForBitmapWidth, yScaleForBitmapHeight, locationLeftTopInScene.x +getAnchorPoint().x*getWidth(), locationLeftTopInScene.y  + getAnchorPoint().y*getHeight());
 				else if(yScale<0)
-					spriteMatrix.postScale(xScaleForBitmapWidth, -1*yScaleForBitmapHeight, locationLeftTopInScene.x +getAnchorPoint().x*w, locationLeftTopInScene.y  + getAnchorPoint().y*h);
+					spriteMatrix.postScale(xScaleForBitmapWidth, -1*yScaleForBitmapHeight, locationLeftTopInScene.x +getAnchorPoint().x*getWidth(), locationLeftTopInScene.y  + getAnchorPoint().y*getHeight());
 				else
-					spriteMatrix.postScale(xScaleForBitmapWidth, yScaleForBitmapHeight, locationLeftTopInScene.x +getAnchorPoint().x*w, locationLeftTopInScene.y  + getAnchorPoint().y*h);	
+					spriteMatrix.postScale(xScaleForBitmapWidth, yScaleForBitmapHeight, locationLeftTopInScene.x +getAnchorPoint().x*getWidth(), locationLeftTopInScene.y  + getAnchorPoint().y*getHeight());	
 			}else{
 				if(xScale<0 && yScale<0)
-					spriteMatrix.postScale(-1*xScaleForBitmapWidth, -1*yScaleForBitmapHeight, getLeft() + getAnchorPoint().x*w,  getTop() + getAnchorPoint().y*h);
+					spriteMatrix.postScale(-1*xScaleForBitmapWidth, -1*yScaleForBitmapHeight, getLeft() + getAnchorPoint().x*getWidth(),  getTop() + getAnchorPoint().y*getHeight());
 				else if(xScale<0)
-					spriteMatrix.postScale(-1*xScaleForBitmapWidth, yScaleForBitmapHeight, getLeft() + getAnchorPoint().x*w,  getTop() + getAnchorPoint().y*h);
+					spriteMatrix.postScale(-1*xScaleForBitmapWidth, yScaleForBitmapHeight, getLeft() + getAnchorPoint().x*getWidth(),  getTop() + getAnchorPoint().y*getHeight());
 				else if(yScale<0)
-					spriteMatrix.postScale(xScaleForBitmapWidth, -1*yScaleForBitmapHeight, getLeft() + getAnchorPoint().x*w,  getTop() + getAnchorPoint().y*h);
+					spriteMatrix.postScale(xScaleForBitmapWidth, -1*yScaleForBitmapHeight, getLeft() + getAnchorPoint().x*getWidth(),  getTop() + getAnchorPoint().y*getHeight());
 				else	
-					spriteMatrix.postScale(xScaleForBitmapWidth, yScaleForBitmapHeight, getLeft() + getAnchorPoint().x*w,  getTop() + getAnchorPoint().y*h);
+					spriteMatrix.postScale(xScaleForBitmapWidth, yScaleForBitmapHeight, getLeft() + getAnchorPoint().x*getWidth(),  getTop() + getAnchorPoint().y*getHeight());
 			}
 			
 			if(this.length>0){
 				if(xScale*xScaleForBitmapWidth<0 && yScale*yScaleForBitmapHeight<0){
-					spriteMatrix.postTranslate(-2*w*(getAnchorPoint().x-0.5f),-2*h*(getAnchorPoint().y-0.5f));
+					spriteMatrix.postTranslate(-2*getWidth()*(getAnchorPoint().x-0.5f),-2*getHeight()*(getAnchorPoint().y-0.5f));
 				}else if(xScale*xScaleForBitmapWidth<0){
-					spriteMatrix.postTranslate(-2*w*(getAnchorPoint().x-0.5f),0);
+					spriteMatrix.postTranslate(-2*getWidth()*(getAnchorPoint().x-0.5f),0);
 				}else if(yScale*yScaleForBitmapHeight<0){
-					spriteMatrix.postTranslate(0,-2*h*(getAnchorPoint().y-0.5f));
+					spriteMatrix.postTranslate(0,-2*getHeight()*(getAnchorPoint().y-0.5f));
 				}
 			}else{
 				if(xScale*xScaleForBitmapWidth<0 && yScale*yScaleForBitmapHeight<0){
-					spriteMatrix.postTranslate(-w*(getAnchorPoint().x-0.5f)*2,-h*(getAnchorPoint().y-0.5f)*2);
+					spriteMatrix.postTranslate(-getWidth()*(getAnchorPoint().x-0.5f)*2,-getHeight()*(getAnchorPoint().y-0.5f)*2);
 				}else if(xScale*xScaleForBitmapWidth<0){
-					spriteMatrix.postTranslate(-w*(getAnchorPoint().x-0.5f)*2,0);
+					spriteMatrix.postTranslate(-getWidth()*(getAnchorPoint().x-0.5f)*2,0);
 				}else if(yScale*yScaleForBitmapHeight<0){
-					spriteMatrix.postTranslate(0,-h*(getAnchorPoint().y-0.5f)*2);
+					spriteMatrix.postTranslate(0,-getHeight()*(getAnchorPoint().y-0.5f)*2);
 				}
 			}
 			
@@ -1547,25 +1563,25 @@ public class Sprite extends Layer {
 		if(isComposite()){
 			switch (rotationType) {
 			case AUTO: // child layer rotate the same of ROTATE_WITH_ANCHOR_POINT.
-				spriteMatrix.postRotate(rotation, locationLeftTopInScene.x + getAnchorPoint().x*w, locationLeftTopInScene.y + getAnchorPoint().y*w);
+				spriteMatrix.postRotate(rotation, locationLeftTopInScene.x + getAnchorPoint().x*getWidth(), locationLeftTopInScene.y + getAnchorPoint().y*getWidth());
 				break;
 			case ROTATE_WITH_CENTER:
-				spriteMatrix.postRotate(rotation, locationLeftTopInScene.x + w/2, locationLeftTopInScene.y + h/2);
+				spriteMatrix.postRotate(rotation, locationLeftTopInScene.x + getWidth()/2, locationLeftTopInScene.y + getHeight()/2);
 				break;
 			case ROTATE_WITH_ANCHOR_POINT:
-				spriteMatrix.postRotate(rotation, locationLeftTopInScene.x + getAnchorPoint().x*w, locationLeftTopInScene.y + getAnchorPoint().y*w);
+				spriteMatrix.postRotate(rotation, locationLeftTopInScene.x + getAnchorPoint().x*getWidth(), locationLeftTopInScene.y + getAnchorPoint().y*getWidth());
 				break;
 			}
 		}else{
 			switch (rotationType) {
 			case AUTO: // root layer rotate the same of ROTATE_WITH_CENTER.
-				spriteMatrix.postRotate(rotation, getLeft() + w/2,  getTop() + h/2);
+				spriteMatrix.postRotate(rotation, getLeft() + getWidth()/2,  getTop() + getHeight()/2);
 				break;
 			case ROTATE_WITH_CENTER:
-				spriteMatrix.postRotate(rotation, getLeft() + w/2,  getTop() + h/2);
+				spriteMatrix.postRotate(rotation, getLeft() + getWidth()/2,  getTop() + getHeight()/2);
 				break;
 			case ROTATE_WITH_ANCHOR_POINT:
-				spriteMatrix.postRotate(rotation, getLeft() + getAnchorPoint().x*w,  getTop() + getAnchorPoint().y*h);
+				spriteMatrix.postRotate(rotation, getLeft() + getAnchorPoint().x*getWidth(),  getTop() + getAnchorPoint().y*getHeight());
 				break;
 			}
 		}
@@ -1579,40 +1595,40 @@ public class Sprite extends Layer {
 				 * w/xScaleForBitmapWidth almost equal (float)getBitmap().getWidth() or ((float)getBitmap().getWidth())/frameColNum. 
 				 */
 				if(this.length>0){
-					left = locationLeftTopInScene.x + getAnchorPoint().x*w - getAnchorPoint().x*((float)getBitmap().getWidth())/frameColNum;
-					top = locationLeftTopInScene.y + getAnchorPoint().y*h - getAnchorPoint().y*((float)getBitmap().getHeight())/frameRowNum;
+					left = locationLeftTopInScene.x + getAnchorPoint().x*getWidth() - getAnchorPoint().x*((float)getBitmap().getWidth())/frameColNum;
+					top = locationLeftTopInScene.y + getAnchorPoint().y*getHeight() - getAnchorPoint().y*((float)getBitmap().getHeight())/frameRowNum;
 					right = left + ((float)getBitmap().getWidth())/frameColNum;
 					bottom = top + ((float)getBitmap().getHeight())/frameRowNum;
 					spriteMatrix.mapRect(newFrameInScene, new RectF(left, top, right, bottom));
 				}else {
-					left = locationLeftTopInScene.x + getAnchorPoint().x*w - getAnchorPoint().x*w/xScaleForBitmapWidth;
-					top = locationLeftTopInScene.y + getAnchorPoint().y*h - getAnchorPoint().y*h/yScaleForBitmapHeight;
-					right = left + w/xScaleForBitmapWidth;
-					bottom = top + h/yScaleForBitmapHeight;
+					left = locationLeftTopInScene.x + getAnchorPoint().x*getWidth() - getAnchorPoint().x*getWidth()/xScaleForBitmapWidth;
+					top = locationLeftTopInScene.y + getAnchorPoint().y*getHeight() - getAnchorPoint().y*getHeight()/yScaleForBitmapHeight;
+					right = left + getWidth()/xScaleForBitmapWidth;
+					bottom = top + getHeight()/yScaleForBitmapHeight;
 					spriteMatrix.mapRect(newFrameInScene, 
 							new RectF(left, top, right, bottom));
 				}
 			}else{
 				if(this.length>0){
-					left = getLeft() + getAnchorPoint().x*w - getAnchorPoint().x*((float)getBitmap().getWidth())/frameColNum;
-					top = getTop() + getAnchorPoint().y*h - getAnchorPoint().y*((float)getBitmap().getHeight())/frameRowNum;
+					left = getLeft() + getAnchorPoint().x*getWidth() - getAnchorPoint().x*((float)getBitmap().getWidth())/frameColNum;
+					top = getTop() + getAnchorPoint().y*getHeight() - getAnchorPoint().y*((float)getBitmap().getHeight())/frameRowNum;
 					right = left + ((float)getBitmap().getWidth())/frameColNum;
 					bottom = top + ((float)getBitmap().getHeight())/frameRowNum;
 					spriteMatrix.mapRect(newFrameInScene, 
 							new RectF(left, top, right, bottom));
 				}else{
-					left = getLeft() + getAnchorPoint().x*w - getAnchorPoint().x*w/xScaleForBitmapWidth;
-					top = getTop() + getAnchorPoint().y*h - getAnchorPoint().y*h/yScaleForBitmapHeight;
-					right = left + w/xScaleForBitmapWidth;
-					bottom = top + h/yScaleForBitmapHeight;
+					left = getLeft() + getAnchorPoint().x*getWidth() - getAnchorPoint().x*getWidth()/xScaleForBitmapWidth;
+					top = getTop() + getAnchorPoint().y*getHeight() - getAnchorPoint().y*getHeight()/yScaleForBitmapHeight;
+					right = left + getWidth()/xScaleForBitmapWidth;
+					bottom = top + getHeight()/yScaleForBitmapHeight;
 					spriteMatrix.mapRect(newFrameInScene, new RectF(left, top, right, bottom));
 				}
 			}
 		}else {
 			left = getLeft();
 			top = getTop();
-			right = left + w;
-			bottom = top + h;
+			right = left + getWidth();
+			bottom = top + getHeight();
 			spriteMatrix.mapRect(newFrameInScene, new RectF(getAnchorPointXY().x, getAnchorPointXY().y, getAnchorPointXY().x+getWidth(), getAnchorPointXY().y+getHeight()));
 		}
 		
@@ -1673,22 +1689,22 @@ public class Sprite extends Layer {
 				actionListener.beforeChangeFrame(frameIdx);
 				
 				if(!isLoop && frameIdx==bitmapFrames.length-1){
-					bitmap = bitmapFrames[frameIdx];
+					setBitmap(bitmapFrames[frameIdx]);
 					isStop = true;
 					actionListener.actionFinish();
 				}else{
-					bitmap = bitmapFrames[frameIdx];
+					setBitmap(bitmapFrames[frameIdx]);
 					
 					frameIdx++;
 					frameIdx %= bitmapFrames.length;
 					
 					updateTime = System.currentTimeMillis() + frameTime[frameIdx];
 					
-					int w = bitmap.getWidth();
-					int h = bitmap.getHeight();
+					int w = getBitmap().getWidth();
+					int h = getBitmap().getHeight();
 					
-					setWidth(bitmap.getWidth());
-					setHeight(bitmap.getHeight());
+					setWidth(getBitmap().getWidth());
+					setHeight(getBitmap().getHeight());
 					actionListener.afterChangeFrame(frameIdx);
 				}
 			}
@@ -1698,7 +1714,7 @@ public class Sprite extends Layer {
 		 * force to change to next bitmao.
 		 */
 		public void forceToNextBitmap(){
-			bitmap = bitmapFrames[frameIdx];
+			setBitmap(bitmapFrames[frameIdx]);
 			frameIdx++;
 			frameIdx %= bitmapFrames.length;
 			if(!isLoop && frameIdx==0){
@@ -1786,7 +1802,7 @@ public class Sprite extends Layer {
 				
 				if(!isLoop && frameIdx==bitmapFrames.length-1){
 					if(bitmapFrames[frameIdx]!=null){
-						bitmap = bitmapFrames[frameIdx];
+						setBitmap(bitmapFrames[frameIdx]);
 					}
 					triggerCount=0;
 					isStop = true;
@@ -1794,13 +1810,13 @@ public class Sprite extends Layer {
 				}else{
 					
 					if(bitmapFrames[frameIdx]!=null){
-						bitmap = bitmapFrames[frameIdx];
+						setBitmap(bitmapFrames[frameIdx]);
 								
-						int w = bitmap.getWidth();
-						int h = bitmap.getHeight();
+						int w = getBitmap().getWidth();
+						int h = getBitmap().getHeight();
 						
-						setWidth(bitmap.getWidth());
-						setHeight(bitmap.getHeight());
+						setWidth(getBitmap().getWidth());
+						setHeight(getBitmap().getHeight());
 					}
 					actionListener.afterChangeFrame(frameIdx);
 					

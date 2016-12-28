@@ -83,8 +83,8 @@ public class StatusBar extends Layer{
 		this.valueMin = value;
 		this.widthOfValue = (float) (width * value) / valueMax;
 		this.widthOfValueMin = (float) (width * valueMin) / valueMax;
-		this.w = width;
-		this.h = height;
+		this.setWidth(width);
+		this.setHeight(height);
 		this.visible = true;
 		this.hit = true;
 		this.setPosition(x, y);
@@ -101,8 +101,8 @@ public class StatusBar extends Layer{
 		this.value = v;
 		this.valueMax = v;
 		this.valueMin = v;
-		this.widthOfValue = (w * value) / valueMax;
-		this.widthOfValueMin = (w * valueMin) / valueMax;
+		this.widthOfValue = (getWidth() * value) / valueMax;
+		this.widthOfValueMin = (getWidth() * valueMin) / valueMax;
 	}
 
 	/**
@@ -111,8 +111,8 @@ public class StatusBar extends Layer{
 	public void empty() {
 		this.value = 0;
 		this.valueMin = 0;
-		this.widthOfValue = (w * value) / valueMax;
-		this.widthOfValueMin = (w * valueMin) / valueMax;
+		this.widthOfValue = (getWidth() * value) / valueMax;
+		this.widthOfValueMin = (getWidth() * valueMin) / valueMax;
 	}
 
 	/**
@@ -133,15 +133,15 @@ public class StatusBar extends Layer{
 				getPaint().setColor(Color.YELLOW);
 			}
 			getPaint().setStyle(Style.FILL);
-			g.drawRect(x, y, x + (w * widthOfValue) / width, y + h,getPaint());
+			g.drawRect(x, y, x + (getWidth() * widthOfValue) / width, y + getHeight(),getPaint());
 			getPaint().setColor(color);
-			g.drawRect(x, y, x + (w * widthOfValueMin) / width, y + h,getPaint());
+			g.drawRect(x, y, x + (getWidth() * widthOfValueMin) / width, y + getHeight(),getPaint());
 		} else {
 			getPaint().setStyle(Style.FILL);
 			getPaint().setColor(Color.YELLOW);
-			g.drawRect(x, y, x + (w * widthOfValueMin) / width, y + h,getPaint());
+			g.drawRect(x, y, x + (getWidth() * widthOfValueMin) / width, y + getHeight(),getPaint());
 			getPaint().setColor(color);
-			g.drawRect(x, y, x + (w * widthOfValue) / width, y + h,getPaint());
+			g.drawRect(x, y, x + (getWidth() * widthOfValue) / width, y + getHeight(),getPaint());
 		}
 		getPaint().setColor(Color.WHITE);
 	}
@@ -161,8 +161,8 @@ public class StatusBar extends Layer{
 	 */
 	public void setUpdate(int val) {
 		valueMin = NumberUtils.mid(0, val, valueMax);
-		widthOfValue = (float) (w * value) / valueMax;
-		widthOfValueMin = (float) (w * valueMin) / valueMax;
+		widthOfValue = (float) (getWidth() * value) / valueMax;
+		widthOfValueMin = (float) (getWidth() * valueMin) / valueMax;
 	}
 
 	/**
@@ -185,11 +185,11 @@ public class StatusBar extends Layer{
 			return false;
 		if (widthOfValue > widthOfValueMin) {
 			widthOfValue--;
-			value = NumberUtils.mid(valueMin, ((int) widthOfValue * valueMax) / w,
+			value = NumberUtils.mid(valueMin, ((int) widthOfValue * valueMax) / getWidth(),
 					value);
 		} else {
 			widthOfValue++;
-			value = NumberUtils.mid(value, ((int) widthOfValue * valueMax) / w,
+			value = NumberUtils.mid(value, ((int) widthOfValue * valueMax) / getWidth(),
 					valueMin);
 		}
 		return true;
@@ -212,7 +212,7 @@ public class StatusBar extends Layer{
 				canvas.drawText("" + value, (getXInScene() + w / 2 - w / 2) + 2, (getYInScene()
 						+ h / 2 + h / 2), paint);
 			}
-			drawBar(canvas, (int) widthOfValueMin, (int) widthOfValue, w, (int)getXInScene(), (int)getYInScene());
+			drawBar(canvas, (int) widthOfValueMin, (int) widthOfValue, getWidth(), (int)getXInScene(), (int)getYInScene());
 		}
 	}
 
@@ -296,8 +296,8 @@ public class StatusBar extends Layer{
 	 */
 	public void setMaxValue(int valueMax) {
 		this.valueMax = valueMax;
-		this.widthOfValue = (w * value) / valueMax;
-		this.widthOfValueMin = (w * valueMin) / valueMax;
+		this.widthOfValue = (getWidth() * value) / valueMax;
+		this.widthOfValueMin = (getWidth() * valueMin) / valueMax;
 		this.state();
 	}
 
@@ -316,8 +316,8 @@ public class StatusBar extends Layer{
 	 */
 	public void setMinValue(int valueMin) {
 		this.valueMin = valueMin;
-		this.widthOfValue = (w * value) / valueMax;
-		this.widthOfValueMin = (w * valueMin) / valueMax;
+		this.widthOfValue = (getWidth() * value) / valueMax;
+		this.widthOfValueMin = (getWidth() * valueMin) / valueMax;
 		this.state(); //? maybe a bug.
 	}
 

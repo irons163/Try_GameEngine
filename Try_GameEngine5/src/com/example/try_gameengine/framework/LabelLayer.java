@@ -143,7 +143,7 @@ public class LabelLayer extends Layer{
 //					}
 //				}
 				
-				canvas = getC(canvas, paint);
+				canvas = getClipedCanvas(canvas, paint);
 				
 				if(isComposite() && getParent()!=null)
 					canvas.drawText(text, getLocationInScene().x - getAnchorPoint().x*getWidth(), getLocationInScene().y - getAnchorPoint().y*getHeight() - y, paint!=null?paint:getPaint());
@@ -195,11 +195,12 @@ public class LabelLayer extends Layer{
 	}
 
 	public void setBitmap(Bitmap bitmap){
-		this.bitmap = bitmap;
+//		this.bitmap = bitmap;
+		super.setBitmap(bitmap);
 	}
 	
 	public void setBitmapAndAutoChangeWH(Bitmap bitmap){
-		this.bitmap = bitmap;
+		this.setBitmap(bitmap);
 		setWidth(bitmap.getWidth());
 		setHeight(bitmap.getHeight());
 	}

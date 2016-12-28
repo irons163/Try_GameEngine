@@ -18,8 +18,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback, IMo
 	private IGameModel gameModel;
 	private SurfaceHolder surfaceHolder;
 	
-	public int viewHeight;
-	public int viewWidth;
+	private int viewHeight;
+	private int viewWidth;
 	
 	/**
 	 * Constructor. 
