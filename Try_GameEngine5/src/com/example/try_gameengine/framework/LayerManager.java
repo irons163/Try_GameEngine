@@ -447,12 +447,16 @@ public class LayerManager {
 		return rootLayer;
 	}
 
-	public boolean iterateRootLayers(IterateLayersListener iterateLayersListener) {
-		return layerController.iterateRootLayers(iterateLayersListener);
+	public boolean iterateRootNotCompositeLayers(IterateLayersListener iterateLayersListener) {
+		return layerController.iterateRootNotCompositeLayers(iterateLayersListener);
 	}
 
+	public boolean iterateAllNotCompositeLayers(IterateLayersListener iterateLayersListener) {
+		return layerController.iterateAllLayersInCurrentScene(iterateLayersListener);
+	}
+	
 	public boolean iterateAllLayers(IterateLayersListener iterateLayersListener) {
-		return layerController.iterateAllLayers(iterateLayersListener);
+		return layerController.iterateAllLayersInCurrentScene(iterateLayersListener);
 	}
 
 	public void updateLayerOrder(ILayer layer) {

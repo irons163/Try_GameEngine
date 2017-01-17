@@ -33,23 +33,13 @@ public class LayerZpositionController extends LayerController {
 	}
 
 	@Override
-	public boolean iterateRootLayers(IterateLayersListener iterateLayersListener) {
+	public boolean iterateRootNotCompositeLayers(IterateLayersListener iterateLayersListener) {
 		return iterateRootLayersForZposition(iterateLayersListener);
 	}
 
 	@Override
-	public boolean iterateAllLayers(IterateLayersListener iterateLayersListener) {
+	public boolean iterateAllLayersInCurrentScene(IterateLayersListener iterateLayersListener) {
 		return iterateAllLayersForZposition(iterateLayersListener);
-	}
-
-	private boolean iterateChildrenForZposition(ILayer parentLayer,
-			IterateLayersListener iterateLayersListener) {
-		for (ILayer childLayer : parentLayer.getLayers()) {
-			if (!childLayer.isComposite()
-					&& iterateLayersListener.dealWithLayer(childLayer))
-				return true;
-		}
-		return false;
 	}
 
 	private boolean iterateAllLayersForZposition(
@@ -63,7 +53,7 @@ public class LayerZpositionController extends LayerController {
 			List<ILayer> layersByTheSameZposition = entry.getValue();
 			for (ILayer layerByZposition : layersByTheSameZposition) {
 				if (!layerByZposition.isComposite()
-						&& iterateChildrenForZposition(layerByZposition,
+						&& iterateCompositeChildren(layerByZposition,
 								iterateLayersListener))
 					return true;
 			}
