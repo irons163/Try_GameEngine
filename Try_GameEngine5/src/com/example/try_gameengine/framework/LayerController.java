@@ -279,6 +279,8 @@ public class LayerController {
 
 	private boolean onTouchLayersForLayerLevel(MotionEvent event,
 			List<List<ILayer>> layerLevelListInScene, boolean doNegativeZOrder) {
+		if (layerLevelListInScene == null)
+			return false;
 		boolean isTouched = false;
 		for (int i = layerLevelListInScene.size() - 1; i >= 0; i--) {
 			List<ILayer> layersByTheSameLevel = layerLevelListInScene.get(i);
