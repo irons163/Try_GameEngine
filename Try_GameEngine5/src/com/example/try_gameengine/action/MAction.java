@@ -110,7 +110,7 @@ public class MAction { //MAction use threadPool it would delay during action by 
 	 * @return
 	 */
 	public static MovementAction moveTo(float targetX, float targetY, long durationMs){	
-		MovementActionInfo movementActionInfo = new MovementActionFPSInfo(durationMs, 50, 0, 0, "L", null, false);
+		MovementActionInfo movementActionInfo = new MovementActionFPSInfo(durationMs, 1, 0, 0, "L", null, false);
 		movementActionInfo.setTargetXY(targetX, targetY);
 		return new MovementActionItemBaseReugularFPS(movementActionInfo);
 	}
@@ -124,7 +124,7 @@ public class MAction { //MAction use threadPool it would delay during action by 
 	 * @return
 	 */
 	public static MovementAction moveTo(float targetX, float targetY, long durationFPSFream, int count){	
-		MovementActionInfo movementActionInfo = new MovementActionFPSInfo(count, durationFPSFream, 0, 0, "L", null, false);
+		MovementActionInfo movementActionInfo = new MovementActionInfo(count, durationFPSFream, 0, 0, "L", null, false);
 		movementActionInfo.setTargetXY(targetX, targetY);
 		return new MovementActionItemBaseReugularFPS(movementActionInfo);
 	}

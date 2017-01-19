@@ -21,9 +21,9 @@ public class MovementActionInfo {
 	protected boolean enableGravity;
 	protected Sprite sprite;
 	protected String spriteActionName;
-	private boolean isLoop = false;
-	private boolean isSettingTargetXY = false;
-	private float targetX, targetY;
+	protected boolean isLoop = false;
+	protected boolean isSettingTargetXY = false;
+	protected float targetX, targetY;
 
 	/**
 	 * @param total

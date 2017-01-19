@@ -21,9 +21,9 @@ public class MovementActionFPSInfo extends MovementActionInfo{
 //	private boolean enableGravity;
 //	private Sprite sprite;
 //	private String spriteActionName;
-	private boolean isLoop = false;
-	private boolean isSettingTargetXY = false;
-	private float targetX, targetY;
+//	private boolean isLoop = false;
+//	private boolean isSettingTargetXY = false;
+//	private float targetX, targetY;
 	
 	public MovementActionFPSInfo(long count, long durationFPSFream, float dx, float dy){
 		this(count, durationFPSFream, dx, dy, null);
@@ -49,13 +49,6 @@ public class MovementActionFPSInfo extends MovementActionInfo{
 		super(count, durationFPSFream, dx, dy, description, rotationController, enableGravity, sprite, spriteActionName);
 	}
 
-	@Override
-	public void setTargetXY(float targetX, float targetY){
-		this.targetX = targetX;
-		this.targetY = targetY;
-		isSettingTargetXY = true;
-	}
-	
 	@Override
 	public void modifyInfoWithSpriteXY(float spriteX, float spriteY) {
 		if(isSettingTargetXY){
