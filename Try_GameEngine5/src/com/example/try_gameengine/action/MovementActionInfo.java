@@ -317,14 +317,22 @@ public class MovementActionInfo {
 				&& this.dx == info.getDx() && this.dy == info.getDy());
 	}
 
+//	@Override
+//	public MovementActionItem clone() {
+//		MovementActionInfo info = new MovementActionInfo(total, delay, dx, dy,
+//				description, rotationController, enableGravity, sprite,
+//				spriteActionName);
+//		return new MovementActionItem(info);
+//	}
+
 	@Override
-	public MovementActionItem clone() {
+	public MovementActionInfo clone() {
 		MovementActionInfo info = new MovementActionInfo(total, delay, dx, dy,
 				description, rotationController, enableGravity, sprite,
 				spriteActionName);
-		return new MovementActionItem(info);
+		return info;
 	}
-
+	
 	/**
 	 * interface of MovementActionInfoMemento.
 	 * @author irons

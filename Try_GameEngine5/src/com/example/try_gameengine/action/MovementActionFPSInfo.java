@@ -86,9 +86,11 @@ public class MovementActionFPSInfo extends MovementActionInfo{
         return (this.total == info.getTotal() && this.delay == info.getDelay() && this.dx == info.getDx() && this.dy == info.getDy());  
     }
 	
-	public MovementActionItem clone(){
+	@Override
+	public MovementActionFPSInfo clone(){
 		MovementActionFPSInfo info = new MovementActionFPSInfo(total, delay, dx, dy, description, rotationController, enableGravity, sprite, spriteActionName);
-		return new MovementActionItem(info);
+//		return new MovementActionItem(info);
+		return info;
 	}
 	
 //	private interface IMovementActionInfoMemento{

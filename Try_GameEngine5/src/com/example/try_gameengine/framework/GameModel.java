@@ -2,6 +2,7 @@ package com.example.try_gameengine.framework;
 
 import com.example.try_gameengine.Camera.Camera;
 import com.example.try_gameengine.action.MovementAction;
+import com.example.try_gameengine.action.Time;
 import com.example.try_gameengine.framework.GameController.BlockRunData;
 import com.example.try_gameengine.scene.Scene;
 
@@ -238,18 +239,22 @@ public class GameModel implements IGameModel{
 		
 		@Override
 		public void run() {
+			Time.Time = System.currentTimeMillis();
 			while(isGameRun){
 				if(surfaceHolder==null) //when game scene start, the surfaceHolder may not stand by.
 					continue;
+				startTime = System.currentTimeMillis();
+				Time.DeltaTime = System.currentTimeMillis() - startTime;
 				if(Config.enableFPSInterval){
-					startTime = System.currentTimeMillis();
+//					startTime = System.currentTimeMillis();
 					if(!timeLock){		
 						startTimeForShowFPS = startTime;
 						timeLock = true;
 					}				
 				}else if(Config.showFPS){
 					if(!timeLock){		
-						startTimeForShowFPS = System.currentTimeMillis();
+//						startTimeForShowFPS = System.currentTimeMillis();
+						startTimeForShowFPS = startTime;
 						timeLock = true;
 					}	
 				}
