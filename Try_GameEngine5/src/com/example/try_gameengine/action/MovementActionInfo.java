@@ -293,16 +293,30 @@ public class MovementActionInfo {
 	 * @param spriteY
 	 */
 	public void modifyInfoWithSpriteXY(float spriteX, float spriteY) {
-		if (isSettingTargetXY) {
+		if(isSettingTargetXY){
 			float distanceX = targetX - spriteX;
 			float distanceY = targetY - spriteY;
+			dx = distanceX / delay;
 			float fps = Config.fps;
-			float perFrame = 1000.0f / total / fps;
+			float perFrame = 1000.0f/total/fps;
 			float perMoveX = distanceX * perFrame;
 			float perMoveY = distanceY * perFrame;
-			delay = (long) (perFrame * 1000);
+//			delay = (long)(perFrame*1000);
+			total = (long) (total/1000.0f*fps);
+			delay = 1;
 			dx = perMoveX;
 			dy = perMoveY;
+			
+//			float distanceX = targetX - spriteX;
+//			float distanceY = targetY - spriteY;
+//			float fps = Config.fps;
+//			float perFrame = 1000.0f/total/fps;
+//			float perMoveX = perFrame / distanceX;
+//			float perMoveY = perFrame / distanceY;
+//			total = (long) (total*fps);
+//			delay = 1;
+//			dx = perMoveX;
+//			dy = perMoveY;
 		}
 	}
 

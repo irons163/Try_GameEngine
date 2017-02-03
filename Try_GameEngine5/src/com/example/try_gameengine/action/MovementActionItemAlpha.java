@@ -168,24 +168,12 @@ public class MovementActionItemAlpha extends MovementAction{
 	private void frameTriggerFPSStart(){
 		if (!isStop) {
 			synchronized (MovementActionItemAlpha.this) {
-			if(resumeFrameCount>=info.getDelay()){	
-				if(resumeFrameCount==info.getTotal())
-					isCycleFinish = true;
-			}
-			
-			if(isCycleFinish){
-				resumeFrameCount = 0;
-				lastTriggerFrameNum = 0;
-			}
+			if(isCycleFinish)
+				isCycleFinish = false;
 			
 			resumeFrameCount++;
 			
-			if(!isLoop && isCycleFinish){
-				isStop = true;
-				doReset();	
-				triggerEnable = false;
-
-			}else if(resumeFrameCount==lastTriggerFrameNum+info.getDelay()){
+			if(resumeFrameCount==lastTriggerFrameNum+info.getDelay()){
 //				timerOnTickListener.onTick(dx, dy);		
 				info.getSprite().setAlpha(info.getSprite().getAlpha()+offsetAlphaByOnceTrigger);
 				lastTriggerFrameNum += info.getDelay();
@@ -197,12 +185,27 @@ public class MovementActionItemAlpha extends MovementAction{
 				lastTriggerFrameNum = resumeFrameCount+1-info.getDelay();
 			}
 			
+			if(resumeFrameCount>=info.getDelay()){	
+				if(resumeFrameCount==info.getTotal())
+					isCycleFinish = true;
+			}
+			
+			if(isCycleFinish){
+				resumeFrameCount = 0;
+				lastTriggerFrameNum = 0;
+			}
+			
+			if(!isLoop && isCycleFinish){
+				isStop = true;
+				doReset();
+				triggerEnable = false;
+			}
+			
 			if(isCycleFinish){
 				info.getSprite().setAlpha(alpha);
 				
 				if(actionListener!=null)
 					actionListener.actionCycleFinish();
-				isCycleFinish = false;
 				
 				if(!isLoop){
 					if(actionListener!=null)

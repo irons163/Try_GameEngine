@@ -158,27 +158,12 @@ public class MovementActionItemBaseReugularFPS extends MovementAction{
 	private void frameTriggerFPSStart(){
 		if (!isStop) {
 			synchronized (MovementActionItemBaseReugularFPS.this) {
-			if(resumeFrameCount>=info.getDelay()){	
-				if(resumeFrameCount==info.getTotal())
-					isCycleFinish = true;
-			}
-			
-			if(isCycleFinish){
-				resumeFrameCount = 0;
-				lastTriggerFrameNum = 0;
-			}
+				if(isCycleFinish)
+					isCycleFinish = false;
 			
 			resumeFrameCount++;
 			
-			if(!isLoop && isCycleFinish){
-				isStop = true;
-				doReset();	
-				triggerEnable = false;
-				if(actionListener!=null)
-					actionListener.actionFinish();
-				
-				MovementActionItemBaseReugularFPS.this.notifyAll();
-			}else if(resumeFrameCount==lastTriggerFrameNum+info.getDelay()){
+			if(resumeFrameCount==lastTriggerFrameNum+info.getDelay()){
 				doRotation();
 				doGravity();
 				if(timerOnTickListener!=null)
@@ -192,10 +177,32 @@ public class MovementActionItemBaseReugularFPS extends MovementAction{
 				lastTriggerFrameNum = resumeFrameCount+1-info.getDelay();
 			}
 			
+			if(resumeFrameCount>=info.getDelay()){	
+				if(resumeFrameCount==info.getTotal())
+					isCycleFinish = true;
+			}
+			
+			if(isCycleFinish){
+				resumeFrameCount = 0;
+				lastTriggerFrameNum = 0;
+			}
+			
+			if(!isLoop && isCycleFinish){
+				isStop = true;
+				doReset();	
+				triggerEnable = false;
+			}
+			
 			if(isCycleFinish){
 				if(actionListener!=null)
 					actionListener.actionCycleFinish();
-				isCycleFinish = false;
+			}
+			
+			if(isStop){
+				if(actionListener!=null)
+					actionListener.actionFinish();
+				
+				MovementActionItemBaseReugularFPS.this.notifyAll();
 			}
 			
 			}
@@ -224,10 +231,10 @@ public class MovementActionItemBaseReugularFPS extends MovementAction{
 		switch (frameTimesType) {
 		
 		case FrameTimesIntervalBeforeAction:
-			lastTriggerFrameNum = 0; //wait interval->Action->wait interval->Action->end, if total = 9 interval = 3 then 3->6->9->end(10)
+			lastTriggerFrameNum = 0; //wait interval->Action->wait interval->Action->end, if total = 9 interval = 3 then 3->6->9->end(9)
 			break;
 		case FrameTimesIntervalAfterAction:
-			lastTriggerFrameNum = (-info.getDelay() + 1); //Action->wait interval->Action->wait interval->end, if total = 9 interval = 3 then 1->4->7->end(10)
+			lastTriggerFrameNum = (-info.getDelay() + 1); //Action->wait interval->Action->wait interval->end, if total = 9 interval = 3 then 1->4->7->end(9)
 			break;
 		}
 	}

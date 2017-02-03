@@ -31,7 +31,7 @@ public abstract class MovementAction {
 	
 	protected boolean isCancelFocusAppendPart = false;
 	
-	public boolean isFinish = false;
+	protected boolean isFinish = false;
 	
 	public boolean isLoop = false;
 	

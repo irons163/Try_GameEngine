@@ -53,6 +53,7 @@ public class SceneManager {
 		}	
 	}
 	
+	@Deprecated
 	public void addScene(Scene scene){
 		scenes.add(scene);
 		if(scene.sceneLayerLevel<0){
@@ -62,6 +63,25 @@ public class SceneManager {
 		}else{
 			nextSceneIndexForAdd = scene.getLayerLevel()+1;
 		}
+	}
+	
+	public void addScene(SceneBuilder sceneBuilder){
+		int sceneIndex = sceneBuilder.getSceneIndex();
+		Scene scene;
+		if(sceneIndex < 0){
+			LayerManager.getInstance().setLayerBySenceIndex(nextSceneIndexForAdd);
+//			scene.setLayerLevel(nextSceneIndexForAdd);
+			scene = sceneBuilder.createScene(nextSceneIndexForAdd);
+			scene.setLayerLevel(nextSceneIndexForAdd);
+			nextSceneIndexForAdd = nextSceneIndexForAdd+1;
+		}else{
+			LayerManager.getInstance().setLayerBySenceIndex(sceneIndex);
+			scene = sceneBuilder.createScene(sceneIndex);
+			scene.setLayerLevel(sceneIndex);
+			nextSceneIndexForAdd = sceneIndex+1;
+		}
+		
+		scenes.add(scene);
 	}
 	
 	public void addScene(Class<? extends Scene> sceneClass, Context context, String id){

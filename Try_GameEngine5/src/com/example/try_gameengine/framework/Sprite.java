@@ -978,8 +978,6 @@ public class Sprite extends Layer {
 	 */
 	private void moveXY(float dx, float dy) {	
 		if(moveRage==null){
-//			setX(getCenterX() + dx - w/2);
-//			setY(getCenterY() + dy - h/2);
 			setX(getX() + dx);
 			setY(getY() + dy);
 		}else{
@@ -1037,25 +1035,17 @@ public class Sprite extends Layer {
 			}
 			
 		}
-//		if(parent!=null){
-//			return;
-//		}
-//		
-//		for(ALayer layer : layers){
-//			((Sprite)layer).move(dx, dy);
-//		}
 	}
 	
 	@Override
 	public void frameTrig(){
+		//SpriteAction run before MovementAction because of MovementActionItemAnimate.
+		if(currentAction!=null)
+			currentAction.trigger();
 		
-//		if(action!=null)
-//			action.trigger();
 		for(MovementAction action : movementActions){
 			action.trigger();
 		}
-		if(currentAction!=null)
-			currentAction.trigger();
 		
 		super.frameTrig();
 	}
