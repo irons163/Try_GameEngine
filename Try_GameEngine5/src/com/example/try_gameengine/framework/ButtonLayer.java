@@ -261,7 +261,7 @@ public class ButtonLayer extends Layer{
 	}
 	
 	@Override
-	protected void onTouched(MotionEvent event) {
+	public void onTouched(MotionEvent event) {
 		if((event.getAction()==MotionEvent.ACTION_DOWN || (event.getAction() & MotionEvent.ACTION_MASK)==MotionEvent.ACTION_POINTER_DOWN) && isPressed()){
 			if(hasButtonColors)
 				setBackgroundColor(buttonColors[DOWN_INDEX]);

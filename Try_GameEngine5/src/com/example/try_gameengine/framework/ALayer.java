@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import android.R.bool;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
@@ -32,7 +33,7 @@ import com.example.try_gameengine.stage.StageManager;
  * @author irons
  *
  */
-public abstract class ALayer implements ILayer, ITouchable{
+public abstract class ALayer implements ILayer, ILayerDelegate, ITouchable{
 	private float x;// 层的x坐标
 	private float y;// 层的y坐标
 	private float centerX;
@@ -244,7 +245,7 @@ public abstract class ALayer implements ILayer, ITouchable{
 	 * @param autoAdd
 	 */
 	protected ALayer(Bitmap bitmap, int w, int h, boolean autoAdd) {
-		this.setBitmap(bitmap);
+		this.bitmap = bitmap;
 		setWidthPrivate(w);
 		setHeightPrivate(h);
 		setSrc(new Rect());
@@ -302,7 +303,7 @@ public abstract class ALayer implements ILayer, ITouchable{
 	 * @param level
 	 */
 	protected ALayer(Bitmap bitmap, int w, int h, boolean autoAdd, int level) {
-		this.setBitmap(bitmap);
+		this.bitmap = bitmap;
 		setWidthPrivate(w);
 		setHeightPrivate(h);
 		setSrc(new Rect());
@@ -324,7 +325,7 @@ public abstract class ALayer implements ILayer, ITouchable{
 	 * @param autoAdd
 	 */
 	protected ALayer(Bitmap bitmap, float x, float y, boolean autoAdd) {
-		this.setBitmap(bitmap);
+		this.bitmap = bitmap;
 		setBitmapAndAutoChangeWH(bitmap);
 		setPosition(x, y);
 		setSrc(new Rect());
@@ -627,7 +628,8 @@ public abstract class ALayer implements ILayer, ITouchable{
 	
 	@Override
 	public void setInitWidth(int w){
-		this.setWidth(w);
+//		this.setWidth(w);
+		this.w = w;
 		this.setCenterX(x + w / 2);
 		getFrame().set(x, y, x+w, y+getHeight());
 		setFrameInScene(frameInSceneByCompositeLocation());
@@ -652,7 +654,8 @@ public abstract class ALayer implements ILayer, ITouchable{
 	
 	@Override
 	public void setInitHeight(int h){
-		this.setHeight(h);
+//		this.setHeight(h);
+		this.h = h;
 		this.setCenterY(y + h / 2);
 		getFrame().set(x, y, x+getWidth(), y+h);
 		setFrameInScene(frameInSceneByCompositeLocation());
@@ -677,9 +680,11 @@ public abstract class ALayer implements ILayer, ITouchable{
 	
 	@Override
 	public void setSize(int w, int h){
-		this.setWidth(w);
+//		this.setWidth(w);
+		this.w = w;
 		this.setCenterX(x + w / 2);
-		this.setHeight(h);
+//		this.setHeight(h);
+		this.h = h;
 		this.setCenterY(y + h / 2);
 		getFrame().set(x, y, x+w, y+h);
 		setFrameInScene(frameInSceneByCompositeLocation());
@@ -735,7 +740,8 @@ public abstract class ALayer implements ILayer, ITouchable{
 	 * @param w
 	 */
 	private void setWidthPrivate(int w){
-		this.setWidth(w);
+//		this.setWidth(w);
+		this.w = w;
 		this.setCenterX(x + w / 2);
 		getFrame().set(x, y, x+w, y+getHeight());
 		setFrameInScene(frameInSceneByCompositeLocation());
@@ -767,7 +773,8 @@ public abstract class ALayer implements ILayer, ITouchable{
 	 * @param h
 	 */
 	private void setHeightPrivate(int h){
-		this.setHeight(h);
+//		this.setHeight(h);
+		this.h = h;
 		this.setCenterY(y + h / 2);
 		getFrame().set(x, y, x+getWidth(), y+h);
 		setFrameInScene(frameInSceneByCompositeLocation());
@@ -1052,7 +1059,7 @@ public abstract class ALayer implements ILayer, ITouchable{
 
 	@Override
 	public void setBitmapAndAutoChangeWH(Bitmap bitmap){
-		this.setBitmap(bitmap);
+		this.bitmap = bitmap;
 		setInitWidth(bitmap.getWidth());
 		setInitHeight(bitmap.getHeight());
 	}
@@ -1703,7 +1710,7 @@ public abstract class ALayer implements ILayer, ITouchable{
 		
 		if(isClipOutside()){
 			if(!isIndentify){
-				if (!f.contains(a[0], a[1])) {
+				if (!isTouched(f, a[0], a[1])) {
 //					return false;
 					if((event.getAction() & MotionEvent.ACTION_MASK) != MotionEvent.ACTION_DOWN
 							&& (event.getAction() & MotionEvent.ACTION_MASK) != MotionEvent.ACTION_POINTER_DOWN){
@@ -1715,7 +1722,7 @@ public abstract class ALayer implements ILayer, ITouchable{
 						return false;
 					}
 				}
-			}else if(!f.contains(x, y)){
+			}else if(!isTouched(f, x, y)){
 				if((event.getAction() & MotionEvent.ACTION_MASK) != MotionEvent.ACTION_DOWN
 						&& (event.getAction() & MotionEvent.ACTION_MASK) != MotionEvent.ACTION_POINTER_DOWN){
 					/*// It seems not need.
@@ -1787,10 +1794,10 @@ public abstract class ALayer implements ILayer, ITouchable{
 			
 		case MotionEvent.ACTION_DOWN:
 			if(!isIndentify){
-				if (!f.contains(a[0], a[1])) {
+				if (!isTouched(f, a[0], a[1])) {
 					return false;
 				}
-			}else if (!f.contains(x, y)) {
+			}else if (!isTouched(f, x, y)) {
 				return false;
 			}
 			
@@ -1842,10 +1849,10 @@ public abstract class ALayer implements ILayer, ITouchable{
 					
 				}else if((touchEventFlag & TOUCH_UP_CAN_WITHOUT_TOUCH_DOWN)!=0 && (touchEventFlag & TOUCH_UP_CAN_OUTSIDE_SELF_RANGE)==0){
 					if(!isIndentify){
-						if (f.contains(a[0], a[1])) {
+						if (isTouched(f, a[0], a[1])) {
 							onTouched(event);
 						}
-					}else if (f.contains(x, y)) {
+					}else if (isTouched(f, x, y)) {
 						onTouched(event);
 					}
 					
@@ -1928,15 +1935,15 @@ public abstract class ALayer implements ILayer, ITouchable{
 			
 			if ((touchEventFlag & TOUCH_MOVE_CAN_OUTSIDE_SELF_RANGE)!=0){
 				if(!isIndentify){
-					if (!f.contains(a[0], a[1])) {
+					if (!isTouched(f, a[0], a[1])) {
 						removeLongPressCallback();
 					}
-				}else if (!f.contains(x, y)) {
+				}else if (!isTouched(f, x, y)) {
 					removeLongPressCallback();
 				}
 			}else{
 				if(!isIndentify){
-					if (!f.contains(a[0], a[1])) {
+					if (!isTouched(f, a[0], a[1])) {
 						removeLongPressCallback();
 						
 						if ((touchEventFlag & TOUCH_MOVE_CAN_WITHOUT_TOUCH_DOWN)!=0){
@@ -1956,7 +1963,7 @@ public abstract class ALayer implements ILayer, ITouchable{
 //					else if((touchEventFlag & TOUCH_MOVE_CAN_WITHOUT_TOUCH_DOWN)!=0){
 //						pressed = true;
 //					}
-				}else if (!f.contains(x, y)) {
+				}else if (!isTouched(f, x, y)) {
 					removeLongPressCallback();
 					
 					if ((touchEventFlag & TOUCH_MOVE_CAN_WITHOUT_TOUCH_DOWN)!=0){
@@ -2008,6 +2015,10 @@ public abstract class ALayer implements ILayer, ITouchable{
 		return true;
 	}
 	
+	protected boolean isTouched(RectF f, float touchedPointX, float touchedPointY) {
+		return f.contains(touchedPointX, touchedPointY);
+	}
+	
 	@Override
 	public boolean onTouchBegan(MotionEvent event){
 		return false;
@@ -2028,7 +2039,8 @@ public abstract class ALayer implements ILayer, ITouchable{
 		
 	}
 	
-	protected abstract void onTouched(MotionEvent event);
+	@Override
+	public abstract void onTouched(MotionEvent event);
 	
 	protected boolean checkCatchTheTouchEvent(int touchEventFlag){
 		if((touchEventFlag & TOUCH_EVENT_ONLY_ACTIVE_ON_NOT_INERT_LAYERS)!=0){

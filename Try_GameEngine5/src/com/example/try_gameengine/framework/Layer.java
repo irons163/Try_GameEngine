@@ -64,11 +64,15 @@ public class Layer extends ALayer{
 	}
 	
 	protected void doDrawself(Canvas canvas, Paint paint) {
+		canvas.save();
+		canvas = getClipedCanvas(canvas, paint);
+		doDrawSelfWithClipedCanvas(canvas, paint);
+		canvas.restore();
+	}
+
+	protected void doDrawSelfWithClipedCanvas(Canvas canvas, Paint paint) {
 		if(getBackgroundColor()!=NONE_COLOR || getBitmap()!=null){
-			canvas.save();
-			
-			do {
-				canvas = getClipedCanvas(canvas, paint);
+			do {	
 				Paint originalPaint = paint;
 				
 				//use input paint first
@@ -100,7 +104,7 @@ public class Layer extends ALayer{
 				paint = originalPaint;
 			} while (false);
 			
-			canvas.restore();
+			
 		}
 	}
 
@@ -161,7 +165,7 @@ public class Layer extends ALayer{
 	}
 
 	@Override
-	protected void onTouched(MotionEvent event) {
+	public void onTouched(MotionEvent event) {
 		// TODO Auto-generated method stub
 		
 	}

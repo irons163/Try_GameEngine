@@ -90,6 +90,7 @@ public class Sprite extends Layer {
 	
 	public Sprite(Bitmap bitmap, int w, int h, boolean autoAdd) {
 		super(bitmap, w, h, autoAdd);
+		setBitmap(bitmap);
 		setWidth(w);
 		setHeight(h);
 		
@@ -100,20 +101,22 @@ public class Sprite extends Layer {
 	
 	public Sprite(Bitmap bitmap, int scale, boolean autoAdd) {
 		super(bitmap, 0, 0, autoAdd);
+		setBitmap(bitmap);
 		this.scale = scale;
 		Matrix matrix = new Matrix();
-	     matrix.postScale(scale, scale);
+	    matrix.postScale(scale, scale);
 	      
-	     Bitmap resizedBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+	    Bitmap resizedBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
 		setWidth(resizedBitmap.getWidth());
 		setHeight(resizedBitmap.getHeight());
-	     actions = new Hashtable<String, Sprite.SpriteAction>();
+	    actions = new Hashtable<String, Sprite.SpriteAction>();
 
-	     initCollisionRectF();
+	    initCollisionRectF();
 	}
 	
 	public Sprite(Bitmap bitmap, int resId, int w, int h, float scale, boolean autoAdd) {
 		super(bitmap, w, h, autoAdd);
+		setBitmap(bitmap);
 		this.scale = scale;
 		Matrix matrix = new Matrix();
 	    matrix.postScale(scale, scale);
@@ -129,6 +132,7 @@ public class Sprite extends Layer {
 	
 	public Sprite(Bitmap bitmap, float x, float y, int scale, boolean autoAdd) {
 		super(bitmap, 0, 0, autoAdd);
+		setBitmap(bitmap);
 		this.scale = scale;
 		Matrix matrix = new Matrix();
 	     matrix.postScale(scale, scale);
@@ -145,18 +149,18 @@ public class Sprite extends Layer {
 	
 	public Sprite(Bitmap bitmap, float x, float y, int resId, int w, int h, float scale, boolean autoAdd) {
 		super(bitmap, w, h, autoAdd);
+		setBitmap(bitmap);
 		this.scale = scale;
 		Matrix matrix = new Matrix();
-	     matrix.postScale(scale, scale);
+	    matrix.postScale(scale, scale);
 	      
-	     Bitmap resizedBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+	    Bitmap resizedBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
 		actions = new Hashtable<String, Sprite.SpriteAction>();
 
 		setWidth(w);
 		setHeight(h);
 		
 		setPosition(x, y);
-		
 		initCollisionRectF();
 	}
 	
