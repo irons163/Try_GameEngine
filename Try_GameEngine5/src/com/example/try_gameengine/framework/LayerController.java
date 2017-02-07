@@ -50,11 +50,11 @@ public class LayerController {
 		this.sceneLayerLevelByRecentlySet = sceneLayerLevelByRecentlySet;
 	}
 
-	public boolean iterateRootLayers(IterateLayersListener iterateLayersListener) {
+	public boolean iterateRootNotCompositeLayers(IterateLayersListener iterateLayersListener) {
 		return iterateLayerLevelsRootLayers(iterateLayersListener);
 	}
 
-	public boolean iterateAllLayers(IterateLayersListener iterateLayersListener) {
+	public boolean iterateAllLayersInCurrentScene(IterateLayersListener iterateLayersListener) {
 		return iterateLayerLevelsAllLayers(iterateLayersListener);
 	}
 
@@ -76,7 +76,7 @@ public class LayerController {
 		for (List<ILayer> layersByTheSameLevel : getLayerLevelList()) {
 			for (ILayer layerOrderByZposition : layersByTheSameLevel) {
 				if (!layerOrderByZposition.isComposite()
-						&& iterateLayerLevelsChildren(layerOrderByZposition,
+						&& iterateCompositeChildren(layerOrderByZposition,
 								iterateLayersListener))
 					return true;
 			}
@@ -84,10 +84,10 @@ public class LayerController {
 		return false;
 	}
 
-	private boolean iterateLayerLevelsChildren(ILayer parentLayer,
+	protected boolean iterateCompositeChildren(ILayer parentLayer,
 			IterateLayersListener iterateLayersListener) {
 		for (ILayer childLayer : parentLayer.getLayers()) {
-			if (!childLayer.isComposite()
+			if (childLayer.isComposite()
 					&& iterateLayersListener.dealWithLayer(childLayer))
 				return true;
 		}
@@ -197,9 +197,9 @@ public class LayerController {
 		}
 	}
 
-	// /////////////////////////////////
-	// // draw
-	// /////////////////////////////////
+	///////////////////////////////////
+	//// draw
+	///////////////////////////////////
 	public void drawLayers(Canvas canvas, Paint paint, boolean doNegativeZOrder) {
 		List<List<ILayer>> layerLevelListByZposition = getSceneLayerLevelList()
 				.get(getSceneLayerLevelByRecentlySet() + "");
@@ -279,6 +279,8 @@ public class LayerController {
 
 	private boolean onTouchLayersForLayerLevel(MotionEvent event,
 			List<List<ILayer>> layerLevelListInScene, boolean doNegativeZOrder) {
+		if (layerLevelListInScene == null)
+			return false;
 		boolean isTouched = false;
 		for (int i = layerLevelListInScene.size() - 1; i >= 0; i--) {
 			List<ILayer> layersByTheSameLevel = layerLevelListInScene.get(i);

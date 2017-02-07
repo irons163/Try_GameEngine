@@ -29,6 +29,16 @@ public class MovementActionItem extends MovementAction {
 	boolean isReset = true;
 	private boolean isActionFinish = false;
 	
+	long[] frameTimes;
+	int resumeFrameIndex;
+
+	public String name;
+
+	public int frameIdx;
+
+	public boolean isStop = false;
+
+	boolean isFirstTime = true;
 	/**
 	 * constructor.
 	 * 
@@ -149,17 +159,6 @@ public class MovementActionItem extends MovementAction {
 			info.getSprite().setAction(info.getSpriteActionName());
 
 	}
-
-	long[] frameTimes;
-	int resumeFrameIndex;
-
-	public String name;
-
-	public int frameIdx;
-
-	public boolean isStop = false;
-
-	boolean isFirstTime = true;
 
 	@Override
 	protected MovementAction initTimer() {
