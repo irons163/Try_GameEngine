@@ -322,6 +322,11 @@ public class Sprite extends Layer {
 		return action;
 	}
 	
+	public void setMovementActionNone(){
+		this.action = null;
+		movementActions.clear();
+	}
+	
 	/**
 	 * @param movementAction
 	 */

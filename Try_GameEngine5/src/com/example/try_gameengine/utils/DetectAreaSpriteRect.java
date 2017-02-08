@@ -70,6 +70,7 @@ public class DetectAreaSpriteRect extends DetectAreaRect{
 	public DetectAreaSpriteRect(Sprite sprite){
 		super(new RectF());
 		this.sprite = sprite;
+		setRectF(getRectF());
 	}
 	
 	/**
@@ -80,6 +81,7 @@ public class DetectAreaSpriteRect extends DetectAreaRect{
 	public DetectAreaSpriteRect(RectF rectF, SpriteRectListener spriteRectListener){
 		super(rectF);
 		this.spriteRectListener = spriteRectListener;
+		setRectF(getRectF());
 	}
 	
 	@Override
@@ -108,6 +110,8 @@ public class DetectAreaSpriteRect extends DetectAreaRect{
 //		this.rectF = rectF;
 		if(spriteRectListener!=null)
 			super.setRectF(spriteRectListener.calculateSpriteRect());
+		else
+			super.setRectF(rectF);
 		if(getRectF()!=null && spriteRectListener!=null)
 			this.center = spriteRectListener.calculateSpriteCenter();
 	}

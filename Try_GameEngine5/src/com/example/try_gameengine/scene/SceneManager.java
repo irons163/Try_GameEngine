@@ -278,6 +278,21 @@ public class SceneManager {
 		}
 		
 		Scene scene = scenes.get(currentActiveSceneOrderInScenes);
+		
+		boolean isNeedStopCurrentActiveScene = true;
+		if(scene instanceof DialogScene){
+			isNeedStopCurrentActiveScene = ((DialogScene) scene).getIsNeedToStopTheActiveScene();
+		}
+
+		if(currentActiveScene!=null){
+			if(isNeedStopCurrentActiveScene){
+				currentActiveScene.stop();
+				currentActiveScene.addMode(Scene.BLOCK);
+			}
+		}
+
+		LayerManager.getInstance().setLayerBySenceIndex(scene.getLayerLevel());
+		
 		scene.startWithObj(objForSendToScene);
 		currentActiveScene = scene;
 		currentSceneIndex = scene.getLayerLevel();
