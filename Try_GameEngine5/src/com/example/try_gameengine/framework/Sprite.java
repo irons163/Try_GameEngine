@@ -411,13 +411,17 @@ public class Sprite extends Layer {
 		do {
 
 		canvas = getC(canvas, paint);
-		Paint originalPaint = paint;		
+		Paint originalPaint = paint;	
+		
+		if(originalPaint==null && getPaint()!=null){
+			paint = getPaint();
+		}
 		
 //		if(bitmap!=null){		
 			if(length>0){
 				paint(canvas,paint);		
-				//use input paint first
-				paint = originalPaint;
+//				//use input paint first
+//				paint = originalPaint;
 			}else{
 				boolean isUseCanvasScale = false;
 				if(xScale*xScaleForBitmapWidth<0 || yScale*yScaleForBitmapHeight<0){
@@ -595,23 +599,19 @@ public class Sprite extends Layer {
 		//use input paint first
 		int oldColor = 0;
 		Style oldStyle = null;
-		if(paint==null && getPaint()!=null){
-			paint = getPaint();
+		if(paint!=null){
 			if(getBackgroundColor()!=NONE_COLOR){
-				oldColor = getPaint().getColor();
-				oldStyle = getPaint().getStyle();
-				getPaint().setColor(getBackgroundColor());
-				getPaint().setStyle(Style.FILL);
-				int oldAlpha = getPaint().getAlpha();
-				getPaint().setAlpha((int) (getAlpha()*oldAlpha/255.0f));
-//				canvas.drawRect(x, y, x + w, y + h,paint);
+				oldColor = paint.getColor();
+				oldStyle = paint.getStyle();
+				paint.setColor(getBackgroundColor());
+				paint.setStyle(Style.FILL);
+				int oldAlpha = paint.getAlpha();
+//				paint.setAlpha((int) (getAlpha()*oldAlpha/255.0f));
 				canvas.drawRect(drawRectF, paint);
-				getPaint().setColor(oldColor);
-				getPaint().setStyle(oldStyle);
-				getPaint().setAlpha(oldAlpha);
+				paint.setColor(oldColor);
+				paint.setStyle(oldStyle);
+				paint.setAlpha(oldAlpha);
 			}
-		}else if(paint!=null){
-			canvas.drawRect(drawRectF, paint);
 		}
 	}
 	
