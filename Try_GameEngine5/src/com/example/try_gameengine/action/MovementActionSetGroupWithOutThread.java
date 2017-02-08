@@ -186,11 +186,13 @@ public class MovementActionSetGroupWithOutThread extends MovementAction {
 		boolean isAllFinish = true;
 		for(MovementAction action : actions){
 			action.trigger();
+		}
+		for(MovementAction action : actions){
 			if(!action.isFinish()){
 				isAllFinish = false;
 				break;
 			}
-		}	
+		}
 		if(isAllFinish){
 			isActionFinish = true;
 			actionListener.actionFinish();
