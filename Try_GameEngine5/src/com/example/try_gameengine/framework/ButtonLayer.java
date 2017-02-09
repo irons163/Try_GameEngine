@@ -86,7 +86,7 @@ public class ButtonLayer extends Layer{
 	public ButtonLayer(int w, int h, boolean autoAdd) {
 		super(w, h, autoAdd);
 		initButtonColors();
-		buttonBitmaps[NORMAL_INDEX] = bitmap;
+		buttonBitmaps[NORMAL_INDEX] = getBitmap();
 	}
 
 	/**
@@ -261,12 +261,12 @@ public class ButtonLayer extends Layer{
 	}
 	
 	@Override
-	protected void onTouched(MotionEvent event) {
+	public void onTouched(MotionEvent event) {
 		if((event.getAction()==MotionEvent.ACTION_DOWN || (event.getAction() & MotionEvent.ACTION_MASK)==MotionEvent.ACTION_POINTER_DOWN) && isPressed()){
 			if(hasButtonColors)
 				setBackgroundColor(buttonColors[DOWN_INDEX]);
 			if(buttonBitmaps[DOWN_INDEX]!=null){
-				this.bitmap = buttonBitmaps[DOWN_INDEX];
+				this.setBitmap(buttonBitmaps[DOWN_INDEX]);
 			}
 			isClickCancled = false;
 		}else if((event.getAction()==MotionEvent.ACTION_MOVE || (event.getAction() & MotionEvent.ACTION_MASK)==MotionEvent.ACTION_MOVE) && isPressed()){
@@ -275,26 +275,26 @@ public class ButtonLayer extends Layer{
 			if(hasButtonColors)
 				setBackgroundColor(buttonColors[NORMAL_INDEX]);
 			if(buttonBitmaps[NORMAL_INDEX]!=null){
-				this.bitmap = buttonBitmaps[NORMAL_INDEX];
+				this.setBitmap(buttonBitmaps[NORMAL_INDEX]);
 			}
 			isClickCancled = true;
 		}else if((event.getAction()==MotionEvent.ACTION_UP || (event.getAction() & MotionEvent.ACTION_MASK)==MotionEvent.ACTION_POINTER_UP) && isClickCancled && !isPressed()){
 			if(hasButtonColors)	
 				setBackgroundColor(buttonColors[UP_INDEX]);
 			if(buttonBitmaps[UP_INDEX]!=null){
-				this.bitmap = buttonBitmaps[UP_INDEX];
+				this.setBitmap(buttonBitmaps[UP_INDEX]);
 			}
 		}else if((event.getAction()==MotionEvent.ACTION_UP || (event.getAction() & MotionEvent.ACTION_MASK)==MotionEvent.ACTION_POINTER_UP) && isPressed() && !isClickCancled){
 			if(hasButtonColors)
 				setBackgroundColor(buttonColors[UP_INDEX]);
 			if(buttonBitmaps[UP_INDEX]!=null){
-				this.bitmap = buttonBitmaps[UP_INDEX];
+				this.setBitmap(buttonBitmaps[UP_INDEX]);
 			}
 		}else if((event.getAction() & MotionEvent.ACTION_MASK)==MotionEvent.ACTION_CANCEL){
 			if(hasButtonColors)	
 				setBackgroundColor(buttonColors[NORMAL_INDEX]);
 			if(buttonBitmaps[UP_INDEX]!=null){
-				this.bitmap = buttonBitmaps[NORMAL_INDEX];
+				this.setBitmap(buttonBitmaps[NORMAL_INDEX]);
 			}
 		}
 	}

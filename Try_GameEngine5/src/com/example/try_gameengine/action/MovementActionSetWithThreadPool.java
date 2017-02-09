@@ -229,9 +229,11 @@ public class MovementActionSetWithThreadPool extends MovementAction {
 	@Override
 	public void trigger() {
 		// TODO Auto-generated method stub
-		for (MovementAction action : this.actions) {
-			action.trigger();
-		}
+//		for (MovementAction action : this.actions) {
+//			action.trigger();
+//		}
+		if(cancelAction!=null)
+			cancelAction.trigger();
 	}
 	
 	@Override

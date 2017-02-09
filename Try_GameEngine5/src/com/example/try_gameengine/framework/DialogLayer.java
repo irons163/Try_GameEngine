@@ -27,7 +27,7 @@ public class DialogLayer extends HUDLayer{
 	}
 	
 	public void initWithOneButton(){
-		midButton = new ButtonLayer("OK", w, h, false);
+		midButton = new ButtonLayer("OK", getWidth(), getHeight(), false);
 		midButton.setOnClickListener(new OnClickListener() {
 			
 			@Override

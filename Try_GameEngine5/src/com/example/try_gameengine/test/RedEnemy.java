@@ -17,10 +17,10 @@ public class RedEnemy extends Enemy{
 	@Override
 	public void initBitmap() {
 		// TODO Auto-generated method stub
-		bitmap = EnemyFactory.getRedEnemyBitmap();
-		if(bitmap==null)
-			bitmap = BitmapUtil.redPoint;
-		if(bitmap==null)
+		setBitmap(EnemyFactory.getRedEnemyBitmap());
+		if(getBitmap()==null)
+			setBitmap(BitmapUtil.redPoint);
+		if(getBitmap()==null)
 			throw new NullPointerException();
 	}
 

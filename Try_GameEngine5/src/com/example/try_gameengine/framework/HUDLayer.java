@@ -6,14 +6,14 @@ package com.example.try_gameengine.framework;
  *
  */
 public class HUDLayer extends Layer{
-	private boolean isCreated;
+//	private boolean isCreated;
 	/**
 	 * Constructor. 
 	 */
 	public HUDLayer(){
 		super();
-		LayerManager.getInstance().getInstance().addHUDLayer(this); //Add Layer in the LayerManager.getInstance() HUD.
-		isCreated = true;
+		LayerManager.getInstance().addHUDLayer(this); //Add Layer in the LayerManager.getInstance() HUD.
+//		isCreated = true;
 	}
 	
 	@Override
@@ -29,7 +29,8 @@ public class HUDLayer extends Layer{
 	
 	@Override
 	public void setAutoAdd(boolean autoAdd) {
-		if(isCreated)
+//		if(isCreated)
+		if(autoAdd)
 			throw new RuntimeException("HUD Layer not support the setAutoAdd method");
 	}
 	

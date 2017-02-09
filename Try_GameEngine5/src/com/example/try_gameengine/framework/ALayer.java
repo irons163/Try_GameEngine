@@ -6,20 +6,20 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import com.example.try_gameengine.scene.Scene;
-import com.example.try_gameengine.stage.StageManager;
-
 import android.R.bool;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.graphics.Point;
 import android.graphics.PointF;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.os.Handler;
-import android.util.Log;
 import android.view.MotionEvent;
+
+import com.example.try_gameengine.scene.Scene;
+import com.example.try_gameengine.stage.StageManager;
 
 
 /** * 层类，组件的父类，添加组件，设置组件位置，绘制自己， 是所有人物和背景的基类 * * @author Administrator * */
@@ -33,58 +33,46 @@ import android.view.MotionEvent;
  * @author irons
  *
  */
-public abstract class ALayer implements ILayer, ITouchable{
+public abstract class ALayer implements ILayer, ILayerDelegate, ITouchable{
 	private float x;// 层的x坐标
 	private float y;// 层的y坐标
-	public float centerX;
-	public float centerY;
-	public int w;// 层的宽度
-	public int h;// 层的高度
-	public Rect src;
-	public RectF dst;
-	public Bitmap bitmap;// 引用Bitmap类
-	
-	List<ILayer> layers = new CopyOnWriteArrayList<ILayer>();
-	ILayer parent;
-	RectF smallViewRect;
-	PointF locationInScene;
-	
+	private float centerX;
+	private float centerY;
+	private int w;// 层的宽度
+	private int h;// 层的高度
+	private Rect src;
+	private RectF dst;
+	private Bitmap bitmap;// 引用Bitmap类
+	private List<ILayer> layers = new CopyOnWriteArrayList<ILayer>();
+	private ILayer parent;
+	private RectF smallViewRect;
+	private PointF locationInScene;
 	private int layerLevel;
 	private boolean autoAdd;
 	private boolean isComposite;
 	private int alpha = 255;
 	private Paint paint;
-	
 	private int zPosition = 0; //default 0
-	
 	private boolean isUsedzPosition = false;
-	
 	private Runnable mPendingCheckForLongPress;
 	private Runnable mPerformClick;
 	private boolean pressed = false;
 	private boolean mHasPerformedLongPress = false;
 	private Handler handler;
 	private long longPressTimeout = 2000;
+	private boolean isEnableMultiTouch = false;
+	private boolean isTouching = false;
+	private boolean canMoving = true;
+	private boolean isEnable = true;
+	private boolean isHidden = false;
+	private boolean isVisible = true;
+	private boolean isBitmapChangedFitToAutoSize = false;
+	private boolean isBitmapSacleToFitSize = true;
 	
 	private OnLayerClickListener onLayerClickListener;
 	private OnLayerLongClickListener onLayerLongClickListener;
 	
-	private boolean isEnableMultiTouch = false;
-	
-	private boolean isTouching = false;
-	
-	private boolean canMoving = true;
-	
-	private boolean isEnable = true;
-	
-	private boolean isHidden = false;
-	
-	private boolean isVisible = true;
-	
-	private boolean isBitmapChangedFitToAutoSize = false;
-	
 	private static final int INVALID_POINTER_ID = -1;
-	
 	private int mActivePointerId = INVALID_POINTER_ID;
 	
 	private RectF frame = new RectF();
@@ -92,15 +80,11 @@ public abstract class ALayer implements ILayer, ITouchable{
 	protected static int NONE_COLOR = 0;
 	
 	private int backgroundColor = NONE_COLOR;
-	
-	protected boolean isClipOutside = false;
-	
+	private boolean isClipOutside = false;
 	private boolean isAutoSizeByChildren = false;
 	
-	protected RectF frameInScene = new RectF();
-	
+	private RectF frameInScene = new RectF();
 	private LayerParam layerParam = new LayerParam();
-	
 	private Matrix layerMatrix = new Matrix();
 	
 	//Adjust position and size by parent layer.
@@ -264,8 +248,8 @@ public abstract class ALayer implements ILayer, ITouchable{
 		this.bitmap = bitmap;
 		setWidthPrivate(w);
 		setHeightPrivate(h);
-		src = new Rect();
-		dst = new RectF();
+		setSrc(new Rect());
+		setDst(new RectF());
 		setAutoAdd(autoAdd);
 		initALayer();
 	}
@@ -282,8 +266,8 @@ public abstract class ALayer implements ILayer, ITouchable{
 	protected ALayer(int w, int h, boolean autoAdd) {
 		setWidthPrivate(w);
 		setHeightPrivate(h);
-		src = new Rect();
-		dst = new RectF();
+		setSrc(new Rect());
+		setDst(new RectF());
 		
 		if (autoAdd) {
 			this.autoAdd = autoAdd;
@@ -297,8 +281,8 @@ public abstract class ALayer implements ILayer, ITouchable{
 	 * @param autoAdd
 	 */
 	protected ALayer(boolean autoAdd) {
-		src = new Rect();
-		dst = new RectF();
+		setSrc(new Rect());
+		setDst(new RectF());
 		setAutoAdd(autoAdd);
 		initALayer();
 	}
@@ -322,8 +306,8 @@ public abstract class ALayer implements ILayer, ITouchable{
 		this.bitmap = bitmap;
 		setWidthPrivate(w);
 		setHeightPrivate(h);
-		src = new Rect();
-		dst = new RectF();
+		setSrc(new Rect());
+		setDst(new RectF());
 		
 		if (autoAdd) {
 			this.autoAdd = autoAdd;
@@ -344,9 +328,9 @@ public abstract class ALayer implements ILayer, ITouchable{
 		this.bitmap = bitmap;
 		setBitmapAndAutoChangeWH(bitmap);
 		setPosition(x, y);
-		src = new Rect();
-		dst = new RectF();
-		getFrame().set(x, y, x+w, y+h);
+		setSrc(new Rect());
+		setDst(new RectF());
+		getFrame().set(x, y, x+getWidth(), y+getHeight());
 		setFrameInScene(frameInSceneByCompositeLocation());
 		
 		setAutoAdd(autoAdd);
@@ -361,9 +345,9 @@ public abstract class ALayer implements ILayer, ITouchable{
 	 */
 	protected ALayer(float x, float y, boolean autoAdd) {
 		setPosition(x, y);
-		src = new Rect();
-		dst = new RectF();
-		getFrame().set(x, y, x+w, y+h);
+		setSrc(new Rect());
+		setDst(new RectF());
+		getFrame().set(x, y, x+getWidth(), y+getHeight());
 		setFrameInScene(frameInSceneByCompositeLocation());
 		
 		setAutoAdd(autoAdd);
@@ -386,23 +370,23 @@ public abstract class ALayer implements ILayer, ITouchable{
 	/** * 设置组件位置的方法 * * @param x * @param y */
 	public void setPosition(float x, float y) {
 		anchorPointXY.x = x;
-		x = x - anchorPoint.x * w;
+		x = x - anchorPoint.x * getWidth();
 		
 //		x = x - anchorPointXY.x - anchorPoint.x * w;
 		
 		anchorPointXY.y = y;
-		y = y - anchorPoint.y * h;
+		y = y - anchorPoint.y * getHeight();
 		
 		
 		this.x = x;
 		this.y = y;
-		this.centerX = x + w / 2;
-		this.centerY = y + h / 2;
-		getFrame().set(x, y, x+w, y+h);
+		this.setCenterX(x + getWidth() / 2);
+		this.setCenterY(y + getHeight() / 2);
+		getFrame().set(x, y, x+getWidth(), y+getHeight());
 		setFrameInScene(frameInSceneByCompositeLocation());
 		
 		if(isComposite() && getParent()!=null)
-			locationInScene = parent.locationInSceneByCompositeLocation(getX(), getY());
+			setLocationInScene(getParent().locationInSceneByCompositeLocation(getX(), getY()));
 //			locationInScene = parent.locationInSceneByCompositeLocation((float) (centerX - w / 2), (float) (centerY - h / 2));
 		if(getLayers().size()!=0){
 			for(ILayer child : getLayers()){
@@ -416,11 +400,17 @@ public abstract class ALayer implements ILayer, ITouchable{
 		checkAndDoAutoSize();
 //		checkParentAndDoParentAutoSize();
 	}
+	
+	@Override
+	public PointF getPosition() {
+		// TODO Auto-generated method stub
+		return new PointF(getX(), getY());
+	}
 
 	public void frameTrig(){
-		for(ILayer layer : layers){
+		for(ILayer layer : getLayers()){
 			if(layer instanceof ALayer && layer.isComposite() && !layer.isAutoAdd()) //if the layer is auto add, not trigger.
-				((ALayer)layer).frameTrig();
+				layer.frameTrig();
 		}
 	}
 
@@ -483,7 +473,7 @@ public abstract class ALayer implements ILayer, ITouchable{
 		// TODO Auto-generated method stub
 		if(layer instanceof ALayer)
 			((ALayer)layer).willRemove();
-		if(layers.remove(layer)){	
+		if(getLayers().remove(layer)){	
 			if(layer.isComposite() && layer.getParent()!=null){
 				layer.setLocationInScene(null);
 				layer.setComposite(false);
@@ -492,9 +482,10 @@ public abstract class ALayer implements ILayer, ITouchable{
 				layer.setX(layer.getX()); //want to do colculationMatrix();
 			}
 			layer.setParent(null);
-			LayerManager.getInstance().deleteLayerByLayerLevel(layer, layer.getLayerLevel());
-			if(layer.isAutoAdd())
-				((ALayer)layer).autoAdd = false;
+//			LayerManager.getInstance().deleteLayerByLayerLevel(layer, layer.getLayerLevel());
+//			if(layer.isAutoAdd())
+//				((ALayer)layer).autoAdd = false;
+			layer.setAutoAdd(false);
 		}
 	}
 	
@@ -506,7 +497,7 @@ public abstract class ALayer implements ILayer, ITouchable{
 	 * 
 	 */
 	public void removeAllChildren(){
-		for(ILayer layer : layers){
+		for(ILayer layer : getLayers()){
 			remove(layer);
 		}
 	}
@@ -523,7 +514,7 @@ public abstract class ALayer implements ILayer, ITouchable{
 	 */
 	protected void willDoSometiongBeforeOneOfAncestorLayerWillRemoved(){
 		TouchDispatcher.getInstance().removeTouchDelegates(this);
-		for(ILayer layer : layers){
+		for(ILayer layer : getLayers()){
 			if(layer.isComposite()){
 				((ALayer)layer).willDoSometiongBeforeOneOfAncestorLayerWillRemoved();
 			}
@@ -533,47 +524,43 @@ public abstract class ALayer implements ILayer, ITouchable{
 	@Override
 	public void addWithLayerLevelIncrease(ILayer layer) {
 		// TODO Auto-generated method stub
-		layer.setLayerLevel(layerLevel + 1);
-		layers.add(layer);
-		layer.setParent(this);
-		((ALayer)layer).autoAdd = true;
-		LayerManager.getInstance().addLayerByLayerLevel(layer, layer.getLayerLevel());
+//		layer.setLayerLevel(layerLevel + 1);
+//		getLayers().add(layer);
+//		layer.setParent(this);
+//		((ALayer)layer).autoAdd = true;
+//		LayerManager.getInstance().addLayerByLayerLevel(layer, layer.getLayerLevel());
 	}
 	
 	@Override
 	public void addWithLayerLevelIncrease(ILayer layer, int increaseNum) {
 		// TODO Auto-generated method stub
 
-		layer.setLayerLevel(layerLevel + increaseNum);
-		for(int i =0; i<increaseNum;i++){
-			LayerManager.getInstance().increaseNewLayer();
-		}
-		layers.add(layer);
-		layer.setParent(this);
-		((ALayer)layer).autoAdd = true;
-		LayerManager.getInstance().addLayerByLayerLevel(layer, layer.getLayerLevel());
+//		layer.setLayerLevel(layerLevel + increaseNum);
+//		for(int i =0; i<increaseNum;i++){
+//			LayerManager.getInstance().increaseNewLayer();
+//		}
+//		getLayers().add(layer);
+//		layer.setParent(this);
+//		((ALayer)layer).autoAdd = true;
+//		LayerManager.getInstance().addLayerByLayerLevel(layer, layer.getLayerLevel());
 	}
 
 	@Override
 	public void addWithOutLayerLevelIncrease(ILayer layer){
-		layer.setLayerLevel(layerLevel);
-		layers.add(layer);
-		layer.setParent(this);
-		((ALayer)layer).autoAdd = true;
-		LayerManager.getInstance().addLayerByLayerLevel(layer, layer.getLayerLevel());
+//		layer.setLayerLevel(layerLevel);
+//		getLayers().add(layer);
+//		layer.setParent(this);
+//		((ALayer)layer).autoAdd = true;
+//		LayerManager.getInstance().addLayerByLayerLevel(layer, layer.getLayerLevel());
 	}
 	
 	@Override
 	public void addWithLayerLevel(ILayer layer, int layerLevel) {
 		// TODO Auto-generated method stub
-//		int a = LayerManager.getInstance().get;
-//		for(int i = ; i<layerLevel;i++){
-//			LayerManager.getInstance().increaseNewLayer();
-//		}
-		layers.add(layer);
-		layer.setParent(this);
-		((ALayer)layer).autoAdd = true;
-		LayerManager.getInstance().addLayerByLayerLevel(layer, layerLevel);
+//		getLayers().add(layer);
+//		layer.setParent(this);
+//		((ALayer)layer).autoAdd = true;
+//		LayerManager.getInstance().addLayerByLayerLevel(layer, layerLevel);
 	}
 	
 	//composite
@@ -581,26 +568,26 @@ public abstract class ALayer implements ILayer, ITouchable{
 	public void addChild(ILayer layer){
 		if(layer.getParent()==null){
 			layer.setComposite(true);
-			layers.add(layer);
+			getLayers().add(layer);
 			layer.setParent(this);
 			
 			if(layer.isUsedzPosition())
 				layer.setAutoAdd(true);
 			
 			if(layer.getLayerParam().isEnabledPercentagePositionX()){
-				layer.setX(w * layer.getLayerParam().getPercentageX());	
+				layer.setX(getWidth() * layer.getLayerParam().getPercentageX());	
 			}
 			if(layer.getLayerParam().isEnabledPercentagePositionY()){
-				layer.setY(h * layer.getLayerParam().getPercentageY());
+				layer.setY(getHeight() * layer.getLayerParam().getPercentageY());
 			}
 			
 			layer.setLocationInScene(this.locationInSceneByCompositeLocation(layer.getX(), layer.getY()));
 			
 			if(layer.getLayerParam().isEnabledPercentageSizeW()){
-				layer.setWidth((int)(w * layer.getLayerParam().getPercentageW()));	
+				layer.setWidth((int)(getWidth() * layer.getLayerParam().getPercentageW()));	
 			}
 			if(layer.getLayerParam().isEnabledPercentageSizeH()){
-				layer.setHeight((int)(h * layer.getLayerParam().getPercentageH()));
+				layer.setHeight((int)(getHeight() * layer.getLayerParam().getPercentageH()));
 			}
 			
 //			layer.setFrameInScene(layer.frameInSceneByCompositeLocation());
@@ -611,33 +598,22 @@ public abstract class ALayer implements ILayer, ITouchable{
 	}
 
 	@Override
-	public ILayer getChild(int i) {
-		int index = 0;
-		for(ILayer layer : layers){
-			if(index == i){
-				return layer;
-			}
-			index++;
-		}
-		return null;
-	}
-
-	@Override
 	public List<ILayer> getLayers() {
 		return layers;
 	}
 	
 	public int getChildCount(){
-		return layers.size();
+		return getLayers().size();
 	}
 	
+	@Override
 	public ILayer getChildAt(int index){
-		return layers.get(index);
+		return getLayers().get(index);
 	}
 
 	@Override
 	public Iterator createIterator(){
-		return new CompositeIterator(layers.iterator());
+		return new CompositeIterator(getLayers().iterator());
 	}
 	
 	@Override
@@ -652,9 +628,10 @@ public abstract class ALayer implements ILayer, ITouchable{
 	
 	@Override
 	public void setInitWidth(int w){
+//		this.setWidth(w);
 		this.w = w;
-		this.centerX = x + w / 2;
-		getFrame().set(x, y, x+w, y+h);
+		this.setCenterX(x + w / 2);
+		getFrame().set(x, y, x+w, y+getHeight());
 		setFrameInScene(frameInSceneByCompositeLocation());
 		
 		if(anchorPoint.x != 0)
@@ -677,9 +654,10 @@ public abstract class ALayer implements ILayer, ITouchable{
 	
 	@Override
 	public void setInitHeight(int h){
+//		this.setHeight(h);
 		this.h = h;
-		this.centerY = y + h / 2;
-		getFrame().set(x, y, x+w, y+h);
+		this.setCenterY(y + h / 2);
+		getFrame().set(x, y, x+getWidth(), y+h);
 		setFrameInScene(frameInSceneByCompositeLocation());
 		
 		if(anchorPoint.y != 0)
@@ -701,6 +679,59 @@ public abstract class ALayer implements ILayer, ITouchable{
 	}
 	
 	@Override
+	public void setSize(int w, int h){
+//		this.setWidth(w);
+		this.w = w;
+		this.setCenterX(x + w / 2);
+//		this.setHeight(h);
+		this.h = h;
+		this.setCenterY(y + h / 2);
+		getFrame().set(x, y, x+w, y+h);
+		setFrameInScene(frameInSceneByCompositeLocation());
+		
+		if(anchorPoint.x != 0 && anchorPoint.y != 0)
+			setPosition(anchorPointXY.x, anchorPointXY.y);
+		else if(anchorPoint.x != 0)
+			setX(anchorPointXY.x);
+		else if(anchorPoint.y != 0)
+			setY(anchorPointXY.y);
+		
+		if(getLayers().size()!=0){
+			for(ILayer child : getLayers()){
+				if(!child.isComposite())
+					continue;
+				
+				if(child.getLayerParam().isEnabledPercentagePositionX()
+						&& child.getLayerParam().isEnabledPercentagePositionY()){
+					child.setPosition(w * child.getLayerParam().getPercentageX(), h * child.getLayerParam().getPercentageY());
+				}else if(child.getLayerParam().isEnabledPercentagePositionX()){
+					child.setX(w * child.getLayerParam().getPercentageX());
+				}else if(child.getLayerParam().isEnabledPercentagePositionY()){
+					child.setY(h * child.getLayerParam().getPercentageY());
+				}
+				
+				if(child.getLayerParam().isEnabledPercentageSizeW() && child.getLayerParam().isEnabledPercentageSizeH()){
+					child.setWidth((int)(w * child.getLayerParam().getPercentageW()));
+					child.setHeight((int)(h * child.getLayerParam().getPercentageH()));
+				}else if(child.isComposite() && child.getLayerParam().isEnabledPercentageSizeW()){
+					child.setWidth((int)(w * child.getLayerParam().getPercentageW()));
+				}else if(child.isComposite() && child.getLayerParam().isEnabledPercentageSizeH()){
+					child.setHeight((int)(h * child.getLayerParam().getPercentageH()));
+				}
+			}		
+		}
+		
+		checkAndDoAutoSize();
+//		checkParentAndDoParentAutoSize();
+	}
+	
+	@Override
+	public Point getSize() {
+		// TODO Auto-generated method stub
+		return new Point(getWidth(), getHeight());
+	}
+	
+	@Override
 	public void setWidth(int w){
 		setWidthPrivate(w);
 	}
@@ -709,9 +740,10 @@ public abstract class ALayer implements ILayer, ITouchable{
 	 * @param w
 	 */
 	private void setWidthPrivate(int w){
+//		this.setWidth(w);
 		this.w = w;
-		this.centerX = x + w / 2;
-		getFrame().set(x, y, x+w, y+h);
+		this.setCenterX(x + w / 2);
+		getFrame().set(x, y, x+w, y+getHeight());
 		setFrameInScene(frameInSceneByCompositeLocation());
 		
 		if(anchorPoint.x != 0)
@@ -741,9 +773,10 @@ public abstract class ALayer implements ILayer, ITouchable{
 	 * @param h
 	 */
 	private void setHeightPrivate(int h){
-		this.h= h;
-		this.centerY = y + h / 2;
-		getFrame().set(x, y, x+w, y+h);
+//		this.setHeight(h);
+		this.h = h;
+		this.setCenterY(y + h / 2);
+		getFrame().set(x, y, x+getWidth(), y+h);
 		setFrameInScene(frameInSceneByCompositeLocation());
 		
 		if(anchorPoint.y != 0)
@@ -777,16 +810,15 @@ public abstract class ALayer implements ILayer, ITouchable{
 	/**
 	 * 
 	 */
+	@Override
 	public void calculateWHByChildern(){
 		if(getLayers().size()!=0){
 			PointF pointWHMax = null;
 			for(ILayer child : getLayers()){
 				if(child.isComposite()){
-					((ALayer)child).calculateWHByChildern();
-//					float w = ((ALayer)child).w + child.getX();
-//					float h = ((ALayer)child).h + child.getY();
-					float w = ((ALayer)child).w + child.getLeft();
-					float h = ((ALayer)child).h + child.getTop();
+					child.calculateWHByChildern();
+					float w = child.getWidth() + child.getLeft();
+					float h = child.getHeight() + child.getTop();
 					PointF childPointWH = new PointF(w, h);
 					if(pointWHMax==null)
 						pointWHMax = childPointWH;
@@ -808,6 +840,7 @@ public abstract class ALayer implements ILayer, ITouchable{
 	/**
 	 * @return
 	 */
+	@Override
 	public boolean isAutoSizeByChildren() {
 		return isAutoSizeByChildren;
 	}
@@ -846,13 +879,13 @@ public abstract class ALayer implements ILayer, ITouchable{
 //				layer.setFrame(rectF);
 //		}
 		
-		ALayer theFirstAutoSizeLayer = null;
+		ILayer theFirstAutoSizeLayer = null;
 		ILayer targetLayer = this;
-		if(((ALayer)targetLayer).isAutoSizeByChildren())
-			theFirstAutoSizeLayer = (ALayer) targetLayer;
+		if(targetLayer.isAutoSizeByChildren())
+			theFirstAutoSizeLayer = targetLayer;
 		while(targetLayer.getParent()!=null && targetLayer.isComposite()){
-			if(((ALayer)targetLayer.getParent()).isAutoSizeByChildren())
-				theFirstAutoSizeLayer = (ALayer) targetLayer.getParent();
+			if(targetLayer.getParent().isAutoSizeByChildren())
+				theFirstAutoSizeLayer = targetLayer.getParent();
 			targetLayer = targetLayer.getParent();
 		}
 		
@@ -863,6 +896,7 @@ public abstract class ALayer implements ILayer, ITouchable{
 	/**
 	 * @return
 	 */
+	@Override
 	public RectF autoCalculateSizeByChildern(){
 		RectF pointWHMax;
 		if(isAncestorClipOutSide()){
@@ -877,35 +911,21 @@ public abstract class ALayer implements ILayer, ITouchable{
 			
 			for(ILayer child : getLayers()){
 				if(child.isComposite()){
-					RectF childFrame = ((ALayer)child).autoCalculateSizeByChildern();
-//					float w = ((ALayer)child).w + child.getX();
-//					float h = ((ALayer)child).h + child.getY();
-//					float right = ((ALayer)child).w + child.getLeft();
-//					float top = ((ALayer)child).h + child.getTop();
-//					PointF childPointWH = new PointF(w, h);
-//					if(pointWHMax==null)
-//						pointWHMax = child.getFrameInScene();
-//					else{
-						if(childFrame.left < pointWHMax.left)
-							pointWHMax.left = childFrame.left;
-						if(childFrame.top < pointWHMax.top)
-							pointWHMax.top = childFrame.top;
-						if(childFrame.right > pointWHMax.right)
-							pointWHMax.right = childFrame.right;
-						if(childFrame.bottom > pointWHMax.bottom)
-							pointWHMax.bottom = childFrame.bottom;
-//					}
+					RectF childFrame = child.autoCalculateSizeByChildern();
+					if(childFrame.left < pointWHMax.left)
+						pointWHMax.left = childFrame.left;
+					if(childFrame.top < pointWHMax.top)
+						pointWHMax.top = childFrame.top;
+					if(childFrame.right > pointWHMax.right)
+						pointWHMax.right = childFrame.right;
+					if(childFrame.bottom > pointWHMax.bottom)
+						pointWHMax.bottom = childFrame.bottom;
 				}
 			}
-//			if(pointWHMax!=null){
-//				pointWHMax.union(getFrameInScene());
-//			}
 		}
 		
 		if(isAutoSizeByChildren()){
-//			PointF locationInLayer = locationInLayer(0, 0);
 			RectF resizeFrame = new RectF(pointWHMax);
-//			resizeFrame.offset(locationInLayer.x, locationInLayer.y);
 			aLayer.setFrame(resizeFrame);
 		}
 		
@@ -942,16 +962,16 @@ public abstract class ALayer implements ILayer, ITouchable{
 	@Override
 	public void setX(float x){
 		anchorPointXY.x = x;
-		x = x - anchorPoint.x * w;
+		x = x - anchorPoint.x * getWidth();
 		
 		this.x = x;
-		this.centerX = x + w/2;
-		getFrame().set(x, y, x+w, y+h);
+		this.setCenterX(x + getWidth()/2);
+		getFrame().set(x, y, x+getWidth(), y+getHeight());
 		setFrameInScene(frameInSceneByCompositeLocation());
 		
 		if(isComposite() && getParent()!=null)
 //			locationInScene = parent.locationInSceneByCompositeLocation((float) (centerX - w / 2), (float) (centerY - h / 2));
-			locationInScene = parent.locationInSceneByCompositeLocation(getX(), getY());
+			setLocationInScene(getParent().locationInSceneByCompositeLocation(getX(), getY()));
 		if(getLayers().size()!=0){
 			for(ILayer child : getLayers()){
 				if(child.isComposite()){
@@ -982,16 +1002,16 @@ public abstract class ALayer implements ILayer, ITouchable{
 	@Override
 	public void setY(float y){
 		anchorPointXY.y = y;
-		y = y - anchorPoint.y * h;
+		y = y - anchorPoint.y * getHeight();
 		
 		this.y = y;
-		this.centerY = y + h/2;
-		getFrame().set(x, y, x+w, y+h);
+		this.setCenterY(y + getHeight()/2);
+		getFrame().set(x, y, x+getWidth(), y+getHeight());
 		setFrameInScene(frameInSceneByCompositeLocation());
 		
 		if(isComposite() && getParent()!=null)
 //			locationInScene = parent.locationInSceneByCompositeLocation((float) (centerX - w / 2), (float) (centerY - h / 2));
-			locationInScene = parent.locationInSceneByCompositeLocation(getX(), getY());
+			setLocationInScene(getParent().locationInSceneByCompositeLocation(getX(), getY()));
 		if(getLayers().size()!=0){
 			for(ILayer child : getLayers()){
 				if(child.isComposite()){
@@ -1091,10 +1111,12 @@ public abstract class ALayer implements ILayer, ITouchable{
 		return paint;
 	}
 
+	@Override
 	public void setPaint(Paint paint) {
 		this.paint = paint;
 	}
 	
+	@Override
 	public Matrix getLayerMatrix(){
 		return layerMatrix;
 	}
@@ -1105,21 +1127,20 @@ public abstract class ALayer implements ILayer, ITouchable{
 		Matrix matrix = new Matrix();
 //		List<ILayer> layersFromRootLayerToCurrentLayer = new ArrayList<ILayer>();
 //		layersFromRootLayerToCurrentLayer.add(0, this);
-		ALayer rootLayer = this;
+		ILayer rootLayer = this;
 		while(rootLayer.getParent()!=null){
 			if(!rootLayer.isComposite())
 				break;
-			rootLayer = (ALayer) rootLayer.getParent();
-//			layersFromRootLayerToCurrentLayer.add(0, rootLayer);
+			rootLayer = rootLayer.getParent();
 			matrix.preConcat(rootLayer.getLayerMatrix());
 		}
 		return matrix;
 	}
 	
 	public void removeFromParent(){
-		if(parent!=null){
+		if(getParent()!=null){
 //			willRemoveFromParent();
-			parent.remove(this); //remove from and remove from auto too.
+			getParent().remove(this); //remove from and remove from auto too.
 		}else{
 			removeFromAuto(); //remove from auto.
 		}	
@@ -1178,7 +1199,7 @@ public abstract class ALayer implements ILayer, ITouchable{
 	 * @param isClipOutside
 	 */
 	public void setIsClipOutside(boolean isClipOutside){
-		this.isClipOutside = isClipOutside;
+		this.setClipOutside(isClipOutside);
 		if(isClipOutside && getPaint()==null)
 			setPaint(new Paint());
 	}
@@ -1391,6 +1412,14 @@ public abstract class ALayer implements ILayer, ITouchable{
 		this.isBitmapChangedFitToAutoSize = isBitmapChangedFitToAutoSize;
 	}
 	
+	public boolean isBitmapSacleToFitSize() {
+		return isBitmapSacleToFitSize;
+	}
+	
+	public void setBitmapSacleToFitSize(boolean isBitmapSacleToFitSize) {
+		this.isBitmapSacleToFitSize = isBitmapSacleToFitSize;
+	}
+	
 	public boolean checkIsFlagEnable(int flagForCheck){
 //		return ((getFlag() & flagForCheck) != 0); // not correct if flagForCheck is a mix flag, like: flagForCheck = (Aflag & Bflag);
 		return ((getFlag() & flagForCheck) == flagForCheck);
@@ -1426,7 +1455,7 @@ public abstract class ALayer implements ILayer, ITouchable{
 	
 	public void setLocationInScene(PointF locationInScene) {
 		this.locationInScene = locationInScene;
-		for(ILayer child : layers){
+		for(ILayer child : getLayers()){
 			if(child.isComposite())
 				child.setLocationInScene(locationInSceneByCompositeLocation(child.getX(), child.getY()));	
 		}	
@@ -1524,33 +1553,34 @@ public abstract class ALayer implements ILayer, ITouchable{
 	public Canvas getCC(Canvas canvas, Paint paint) {
 		if(isAncestorClipOutSide()){
 //			matrix = canvas.getMatrix();
-			getC(canvas, paint);
+			getClipedCanvas(canvas, paint);
 		}
 		return canvas;
 	}
 	
 	// This has a better clip out side method, not need to access every parent now.
-	public Canvas getC(Canvas canvas, Paint paint){
+	@Override
+	public Canvas getClipedCanvas(Canvas canvas, Paint paint){
 		if(isAncestorClipOutSide()){
 			if(getParent().isClipOutside()){
 //				canvas.saveLayer(0, 0, canvas.getWidth(), canvas.getHeight(), null, Canvas.MATRIX_SAVE_FLAG | Canvas.HAS_ALPHA_LAYER_SAVE_FLAG | Canvas.HAS_ALPHA_LAYER_SAVE_FLAG | Canvas.FULL_COLOR_LAYER_SAVE_FLAG | Canvas.CLIP_TO_LAYER_SAVE_FLAG);
 				canvas.save(Canvas.MATRIX_SAVE_FLAG | Canvas.HAS_ALPHA_LAYER_SAVE_FLAG | Canvas.HAS_ALPHA_LAYER_SAVE_FLAG | Canvas.FULL_COLOR_LAYER_SAVE_FLAG | Canvas.CLIP_TO_LAYER_SAVE_FLAG);
 				if(getParent() instanceof Sprite){
 //					canvas.concat(((Sprite)getParent()).getLayerMatrix());
-					Matrix matrix = new Matrix(((ALayer)getParent()).getLayerMatrix());
+					Matrix matrix = new Matrix(getParent().getLayerMatrix());
 					matrix.invert(matrix);
 					canvas.concat(matrix);
 					canvas.concat(((Sprite)getParent()).spriteMatrix);
 					canvas.clipRect(((Sprite)getParent()).drawRectF);
 				}else{
-					Matrix matrix = new Matrix(((ALayer)getParent()).getLayerMatrix());
+					Matrix matrix = new Matrix(getParent().getLayerMatrix());
 					matrix.invert(matrix);
 					canvas.concat(matrix);
 					canvas.clipRect(getParent().getFrameInScene());
 				}
 				canvas.restore();
 			}
-			((ALayer)getParent()).getC(canvas, paint);
+			getParent().getClipedCanvas(canvas, paint);
 		}
 		return canvas;
 	}
@@ -1591,11 +1621,13 @@ public abstract class ALayer implements ILayer, ITouchable{
 		this.onLayerLongClickListener = onLayerLongClickListener;
 	}
 	
+	@Override
 	public boolean onTouchEvent(MotionEvent event) {
 		// TODO Auto-generated method stub
 		return onTouchEvent(event, NO_FLAG);
 	}
 	
+	@Override
 	public boolean onTouchEvent(MotionEvent event, int touchEventFlag){
 		int commandTouchEventFlag = touchEventFlag;
 		touchEventFlag |= flag;
@@ -1669,16 +1701,16 @@ public abstract class ALayer implements ILayer, ITouchable{
 			PointF locationInLayer = locationInLayer(x, y);
 			x = locationInLayer.x;
 			y = locationInLayer.y;
-			f = new RectF(0, 0, w, h);
+			f = new RectF(0, 0, getWidth(), getHeight());
 		}else{
             x = event.getX(downPointerIndex);
             y = event.getY(downPointerIndex);
-			f = new RectF(getLeft(), getTop(), getLeft()+w, getTop()+h);
+			f = new RectF(getLeft(), getTop(), getLeft()+getWidth(), getTop()+getHeight());
 		}
 		
 		if(isClipOutside()){
 			if(!isIndentify){
-				if (!f.contains(a[0], a[1])) {
+				if (!isTouched(f, a[0], a[1])) {
 //					return false;
 					if((event.getAction() & MotionEvent.ACTION_MASK) != MotionEvent.ACTION_DOWN
 							&& (event.getAction() & MotionEvent.ACTION_MASK) != MotionEvent.ACTION_POINTER_DOWN){
@@ -1690,7 +1722,7 @@ public abstract class ALayer implements ILayer, ITouchable{
 						return false;
 					}
 				}
-			}else if(!f.contains(x, y)){
+			}else if(!isTouched(f, x, y)){
 				if((event.getAction() & MotionEvent.ACTION_MASK) != MotionEvent.ACTION_DOWN
 						&& (event.getAction() & MotionEvent.ACTION_MASK) != MotionEvent.ACTION_POINTER_DOWN){
 					/*// It seems not need.
@@ -1704,11 +1736,11 @@ public abstract class ALayer implements ILayer, ITouchable{
 		}
 		
 		if((touchEventFlag & TOUCH_EVENT_ONLY_ACTIVE_ON_SELF)==0){
-			ListIterator<ILayer> iterator = layers.listIterator(layers.size());
+			ListIterator<ILayer> iterator = getLayers().listIterator(getLayers().size());
 			while(iterator.hasPrevious()){
 				ILayer child = iterator.previous();
 				if(!child.isAutoAdd()){
-					boolean consumedByChilde = ((ALayer)child).onTouchEvent(event, commandTouchEventFlag);
+					boolean consumedByChilde = child.onTouchEvent(event, commandTouchEventFlag);
 					if(consumedByChilde){
 						/*
 						if((touchEventFlag & TOUCH_EVENT_ONLY_ACTIVE_ON_CHILDREN)!=0)
@@ -1762,16 +1794,16 @@ public abstract class ALayer implements ILayer, ITouchable{
 			
 		case MotionEvent.ACTION_DOWN:
 			if(!isIndentify){
-				if (!f.contains(a[0], a[1])) {
+				if (!isTouched(f, a[0], a[1])) {
 					return false;
 				}
-			}else if (!f.contains(x, y)) {
+			}else if (!isTouched(f, x, y)) {
 				return false;
 			}
 			
 			if(!checkCatchTheTouchEvent(touchEventFlag)){
 				if(isComposite()){
-					return ((ALayer)getParent()).onTouchEvent(event, touchEventFlag|TOUCH_EVENT_ONLY_ACTIVE_ON_SELF);
+					return getParent().onTouchEvent(event, touchEventFlag|TOUCH_EVENT_ONLY_ACTIVE_ON_SELF);
 				}
 				return false;
 //				break;
@@ -1817,10 +1849,10 @@ public abstract class ALayer implements ILayer, ITouchable{
 					
 				}else if((touchEventFlag & TOUCH_UP_CAN_WITHOUT_TOUCH_DOWN)!=0 && (touchEventFlag & TOUCH_UP_CAN_OUTSIDE_SELF_RANGE)==0){
 					if(!isIndentify){
-						if (f.contains(a[0], a[1])) {
+						if (isTouched(f, a[0], a[1])) {
 							onTouched(event);
 						}
-					}else if (f.contains(x, y)) {
+					}else if (isTouched(f, x, y)) {
 						onTouched(event);
 					}
 					
@@ -1903,15 +1935,15 @@ public abstract class ALayer implements ILayer, ITouchable{
 			
 			if ((touchEventFlag & TOUCH_MOVE_CAN_OUTSIDE_SELF_RANGE)!=0){
 				if(!isIndentify){
-					if (!f.contains(a[0], a[1])) {
+					if (!isTouched(f, a[0], a[1])) {
 						removeLongPressCallback();
 					}
-				}else if (!f.contains(x, y)) {
+				}else if (!isTouched(f, x, y)) {
 					removeLongPressCallback();
 				}
 			}else{
 				if(!isIndentify){
-					if (!f.contains(a[0], a[1])) {
+					if (!isTouched(f, a[0], a[1])) {
 						removeLongPressCallback();
 						
 						if ((touchEventFlag & TOUCH_MOVE_CAN_WITHOUT_TOUCH_DOWN)!=0){
@@ -1931,7 +1963,7 @@ public abstract class ALayer implements ILayer, ITouchable{
 //					else if((touchEventFlag & TOUCH_MOVE_CAN_WITHOUT_TOUCH_DOWN)!=0){
 //						pressed = true;
 //					}
-				}else if (!f.contains(x, y)) {
+				}else if (!isTouched(f, x, y)) {
 					removeLongPressCallback();
 					
 					if ((touchEventFlag & TOUCH_MOVE_CAN_WITHOUT_TOUCH_DOWN)!=0){
@@ -1983,6 +2015,10 @@ public abstract class ALayer implements ILayer, ITouchable{
 		return true;
 	}
 	
+	protected boolean isTouched(RectF f, float touchedPointX, float touchedPointY) {
+		return f.contains(touchedPointX, touchedPointY);
+	}
+	
 	@Override
 	public boolean onTouchBegan(MotionEvent event){
 		return false;
@@ -2003,7 +2039,8 @@ public abstract class ALayer implements ILayer, ITouchable{
 		
 	}
 	
-	protected abstract void onTouched(MotionEvent event);
+	@Override
+	public abstract void onTouched(MotionEvent event);
 	
 	protected boolean checkCatchTheTouchEvent(int touchEventFlag){
 		if((touchEventFlag & TOUCH_EVENT_ONLY_ACTIVE_ON_NOT_INERT_LAYERS)!=0){
@@ -2050,15 +2087,15 @@ public abstract class ALayer implements ILayer, ITouchable{
 	public Object clone() throws CloneNotSupportedException {
 		// TODO Auto-generated method stub
 		ALayer layer = (ALayer) super.clone();
-		if(src!=null)
-			layer.src = new Rect(src);
-		if(dst!=null)
-			layer.dst = new RectF(dst);
+		if(getSrc()!=null)
+			layer.setSrc(new Rect(getSrc()));
+		if(getDst()!=null)
+			layer.setDst(new RectF(getDst()));
 		
-		layer.layers = new ArrayList<ILayer>(layers.size());
+		layer.setLayers(new ArrayList<ILayer>(getLayers().size()));
 //		layer.layers = new ConcurrentLinkedDeque<ILayer>();
 		
-		for(ILayer item: layers) layer.layers.add((ALayer) ((ALayer)item).clone());
+		for(ILayer item: getLayers()) layer.getLayers().add((ALayer) ((ALayer)item).clone());
 //	    for(ILayer item: layers) {
 //	    	if(item instanceof ALayer){
 //	    		ALayer layerCanClone = (ALayer) ((ALayer)item).clone();
@@ -2067,11 +2104,11 @@ public abstract class ALayer implements ILayer, ITouchable{
 //	    		throw new CloneNotSupportedException();
 //	    }
 	    
-	    if(smallViewRect!=null)
-	    	layer.smallViewRect = new RectF(smallViewRect);
+	    if(getSmallViewRect()!=null)
+	    	layer.setSmallViewRect(new RectF(getSmallViewRect()));
 	    
-	    if(locationInScene!=null)
-	    	layer.locationInScene = new PointF(locationInScene.x, locationInScene.y);
+	    if(getLocationInScene()!=null)
+	    	layer.setLocationInScene(new PointF(getLocationInScene().x, getLocationInScene().y));
 	    
 	    layer.zPosition = this.zPosition;
 	    
@@ -2126,4 +2163,48 @@ public abstract class ALayer implements ILayer, ITouchable{
 	    
 		return layer;
 	}
+
+	public Rect getSrc() {
+		return src;
+	}
+
+	public void setSrc(Rect src) {
+		this.src = src;
+	}
+
+	public void setDst(RectF dst) {
+		this.dst = dst;
+	}
+
+	protected void setClipOutside(boolean isClipOutside) {
+		this.isClipOutside = isClipOutside;
+	}
+
+	void setLayers(List<ILayer> layers) {
+		this.layers = layers;
+	}
+
+	void setCenterX(float centerX) {
+		this.centerX = centerX;
+	}
+
+	void setCenterY(float centerY) {
+		this.centerY = centerY;
+	}
+//
+//	public int getW() {
+//		return w;
+//	}
+//
+//	public void setW(int w) {
+//		this.w = w;
+//	}
+//
+//	public int getH() {
+//		return h;
+//	}
+//
+//	public void setH(int h) {
+//		this.h = h;
+//	}
 }

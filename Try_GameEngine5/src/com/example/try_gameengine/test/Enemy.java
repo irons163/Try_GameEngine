@@ -47,8 +47,8 @@ public abstract class Enemy extends Sprite implements Subject, Observer{
 	public abstract void initBitmap();
 	
 	private void setWH(){
-		setInitWidth(bitmap.getWidth());
-		setInitHeight(bitmap.getHeight());
+		setInitWidth(getBitmap().getWidth());
+		setInitHeight(getBitmap().getHeight());
 	}
 	
 	public void startMovementActioin(){
@@ -76,8 +76,8 @@ public abstract class Enemy extends Sprite implements Subject, Observer{
 //		x += dx;
 //		y += dy;
 		
-		setX(getCenterX() + dx - w/2);
-		setY(getCenterY() + dy - h/2);
+		setX(getCenterX() + dx - getWidth()/2);
+		setY(getCenterY() + dy - getHeight()/2);
 		
 		notifyObservers();
 	}

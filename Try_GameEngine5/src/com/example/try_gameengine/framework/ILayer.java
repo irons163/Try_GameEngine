@@ -1,19 +1,18 @@
 package com.example.try_gameengine.framework;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.ConcurrentLinkedDeque;
-import java.util.concurrent.ConcurrentLinkedQueue;
-
-import com.example.try_gameengine.framework.ALayer.LayerParam;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.graphics.Point;
 import android.graphics.PointF;
 import android.graphics.RectF;
 import android.view.MotionEvent;
+
+import com.example.try_gameengine.framework.ALayer.LayerParam;
 
 //import com.example.try_gameengine.framework.ILayer.OnLayerClickListener;
 //import com.example.try_gameengine.framework.ILayer.OnLayerLongClickListener;
@@ -21,6 +20,7 @@ import android.view.MotionEvent;
 public interface ILayer extends Cloneable{
 	
 	public void setPosition(float x, float y);
+	public PointF getPosition();
 
 	/** * 绘制自己的抽象接口 * * @param canvas * @param paint */
 	public abstract void drawSelf(Canvas canvas, Paint paint);
@@ -43,7 +43,9 @@ public interface ILayer extends Cloneable{
 	//composite
 	public void addChild(ILayer layer);
 
-	public ILayer getChild(int i);
+	public ILayer getChildAt(int index);
+	
+	public int getChildCount();
 	
 	public List<ILayer> getLayers();
 
@@ -64,6 +66,10 @@ public interface ILayer extends Cloneable{
 	public int getWidth();
 	
 	public int getHeight();
+	
+	public void setSize(int w, int h);
+	
+	public Point getSize();
 	
 	public float getX();
 	
@@ -143,6 +149,14 @@ public interface ILayer extends Cloneable{
 	
 	public boolean onTouchEvent(MotionEvent event);
 	
+	public boolean onTouchEvent(MotionEvent event, int touchEventFlag);
+	
+	public void calculateWHByChildern();
+	
+	public boolean isAutoSizeByChildren();
+	
+	public RectF autoCalculateSizeByChildern();
+	
 	public Object clone() throws CloneNotSupportedException;
 
 	public LayerParam getLayerParam();
@@ -180,4 +194,10 @@ public interface ILayer extends Cloneable{
 	public boolean isVisible();
 	
 	public void setVisible(boolean isVisible);
+	
+	public void frameTrig();
+	
+	public Matrix getLayerMatrix();
+	
+	public Canvas getClipedCanvas(Canvas canvas, Paint paint);
 }
