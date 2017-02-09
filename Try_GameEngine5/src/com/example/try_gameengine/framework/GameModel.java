@@ -1,5 +1,10 @@
 package com.example.try_gameengine.framework;
 
+import java.sql.PreparedStatement;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+
 import com.example.try_gameengine.Camera.Camera;
 import com.example.try_gameengine.action.MovementAction;
 import com.example.try_gameengine.action.Time;
@@ -41,6 +46,7 @@ public class GameModel implements IGameModel{
 	private boolean canUseLockHardwareCanvas = false;
 	Camera camera;
 	Canvas canvas;
+	private List<ProcessBlock> processBlocks = new CopyOnWriteArrayList<ProcessBlock>();
 	
 	/**
 	 * Contructor.
@@ -54,8 +60,8 @@ public class GameModel implements IGameModel{
 		this.data = data;
 		paint.setTextSize(50);
 		paint.setColor(Config.debugMessageColor);
-		if(android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M)
-			canUseLockHardwareCanvas = true;
+//		if(android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M)
+//			canUseLockHardwareCanvas = true;
 	}
 	
 	/**
@@ -80,6 +86,10 @@ public class GameModel implements IGameModel{
 	 */
 	public long getInterval(){
 		return interval;
+	}
+	
+	public void addPreProcessBlock(ProcessBlock processBlock){
+		processBlocks.add(processBlock);
 	}
 	
 	@Override
@@ -140,6 +150,21 @@ public class GameModel implements IGameModel{
 		this.surfaceHolder = surfaceHolder;
 	}
 	
+	protected void willProcess(){
+		
+	}
+	
+	private void doPreProcessBlock(){
+		if(processBlocks.size()!=0){
+			synchronized (processBlocks) {
+				for(ProcessBlock processBlock : processBlocks){
+					processBlock.runBlock();
+				}
+				processBlocks.clear();
+			}
+		}
+	}
+	
 	/**
 	 * process part is a part of game loop.
 	 */
@@ -150,7 +175,7 @@ public class GameModel implements IGameModel{
 	/**
 	 * after process is a part of game loop.
 	 */
-	protected void afterProcess(){
+	protected void didProcess(){
 		if(getCamera()!=null)
 			getCamera().bindLayerX();
 	}
@@ -259,8 +284,10 @@ public class GameModel implements IGameModel{
 					}	
 				}
 				
+				willProcess();
+				doPreProcessBlock();
 				process();
-				afterProcess();
+				didProcess();
 				draw();
 				if(isGameStop){
 					synchronized (GameModel.this) {
