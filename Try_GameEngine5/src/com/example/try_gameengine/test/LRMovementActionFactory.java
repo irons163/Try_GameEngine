@@ -2,7 +2,7 @@ package com.example.try_gameengine.test;
 
 import com.example.try_gameengine.action.MovementAction;
 import com.example.try_gameengine.action.MovementActionFactory;
-import com.example.try_gameengine.action.MovementActionItem;
+import com.example.try_gameengine.action.MovementActionItemCountDownTimer;
 import com.example.try_gameengine.action.MovementActionSet;
 
 public class LRMovementActionFactory extends MovementActionFactory{
@@ -13,8 +13,8 @@ public class LRMovementActionFactory extends MovementActionFactory{
 		if(action==null)
 			action = new MovementActionSet();	
 		
-		action.addMovementAction(new MovementActionItem(5000, 1000, -10, 0));
-		action.addMovementAction(new MovementActionItem(5000, 1000, 10, 0));
+		action.addMovementAction(new MovementActionItemCountDownTimer(5000, 1000, -10, 0));
+		action.addMovementAction(new MovementActionItemCountDownTimer(5000, 1000, 10, 0));
 		return action;
 	}
 

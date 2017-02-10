@@ -36,7 +36,7 @@ public class MAction2 {
 		float perMove = (float) (dx * ((double)millisInterval/millisTotal)); //10*((100/6)/1000) = 10*(1/60) = 10/60 = 1/6;
 		
 //		new MovementActionFPSInfo(count, durationFPSFream, dx, dy)
-		return new MovementActionItem2(new MovementActionInfo(millisTotal, millisInterval, perMove, 0, "L", null, false));
+		return new MovementActionItemUpdateTime(new MovementActionInfo(millisTotal, millisInterval, perMove, 0, "L", null, false));
 	}
 	
 	/**

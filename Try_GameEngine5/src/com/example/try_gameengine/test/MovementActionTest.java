@@ -15,7 +15,7 @@ import com.example.try_gameengine.action.MAction;
 import com.example.try_gameengine.action.MAction2;
 import com.example.try_gameengine.action.MovementAction;
 import com.example.try_gameengine.action.MovementActionInfo;
-import com.example.try_gameengine.action.MovementActionItem;
+import com.example.try_gameengine.action.MovementActionItemCountDownTimer;
 import com.example.try_gameengine.action.MovementActionItemBaseReugularFPS;
 import com.example.try_gameengine.action.MovementActionSet;
 import com.example.try_gameengine.action.MovementActionSetWithThreadPool;
@@ -1055,7 +1055,7 @@ public class MovementActionTest extends AndroidTestCase{
 		correctInfoList.add(new MovementActionInfo(1000, 200, 10f, 0f));
 		correctInfoList.add(new MovementActionInfo(1000, 200, 10f, 0f));
 		
-		MovementAction newaction4 = new CopyMoveDecorator(new MovementActionSet().addMovementAction(new MovementActionItem(MovementInfoFactory.createSingleRMovementInfo())));
+		MovementAction newaction4 = new CopyMoveDecorator(new MovementActionSet().addMovementAction(new MovementActionItemCountDownTimer(MovementInfoFactory.createSingleRMovementInfo())));
 		enemy = enemyFactory.createSpecialEnemy5(RedEnemy.class, new int[]{100, 500}, newaction4);
 		
 		action = enemy.getAction();
@@ -1071,7 +1071,7 @@ public class MovementActionTest extends AndroidTestCase{
 		correctInfoList.add(new MovementActionInfo(1000, 200, 10f, 0f));
 		
 		newaction4 = new MovementActionSet();
-		newaction4.addMovementAction(new MovementActionItem(MovementInfoFactory.createSingleRMovementInfo()));
+		newaction4.addMovementAction(new MovementActionItemCountDownTimer(MovementInfoFactory.createSingleRMovementInfo()));
 		enemy = enemyFactory.createSpecialEnemy5(RedEnemy.class, new int[]{100, 500}, newaction4);
 		
 		action = enemy.getAction();
@@ -1086,7 +1086,7 @@ public class MovementActionTest extends AndroidTestCase{
 		correctInfoList.clear();
 		correctInfoList.add(new MovementActionInfo(1000, 200, 10f, 0f));
 		
-		newaction4 = new MovementActionItem(MovementInfoFactory.createSingleRMovementInfo());
+		newaction4 = new MovementActionItemCountDownTimer(MovementInfoFactory.createSingleRMovementInfo());
 		enemy = enemyFactory.createSpecialEnemy5(RedEnemy.class, new int[]{100, 500}, newaction4);
 		
 		action = enemy.getAction();
@@ -1101,7 +1101,7 @@ public class MovementActionTest extends AndroidTestCase{
 		correctInfoList.clear();
 		correctInfoList.add(new MovementActionInfo(1000, 200, 20f, 0f));
 		
-		newaction4 = new DoubleDecorator(new MovementActionItem(MovementInfoFactory.createSingleRMovementInfo()));
+		newaction4 = new DoubleDecorator(new MovementActionItemCountDownTimer(MovementInfoFactory.createSingleRMovementInfo()));
 		enemy = enemyFactory.createSpecialEnemy5(RedEnemy.class, new int[]{100, 500}, newaction4);
 		
 		action = enemy.getAction();
@@ -1141,7 +1141,7 @@ public class MovementActionTest extends AndroidTestCase{
 		
 		newaction4 = new InverseMovementInfoDecorator(new MovementActionSet());
 		newaction4.addMovementAction(new SpecialMovementActionFactory().createMovementAction(MovementInfoFactory.createSquareMovementInfo()));
-		newaction4.addMovementAction(new MovementActionItem(MovementInfoFactory.createSingleRMovementInfo()));
+		newaction4.addMovementAction(new MovementActionItemCountDownTimer(MovementInfoFactory.createSingleRMovementInfo()));
 		enemy = enemyFactory.createSpecialEnemy5(RedEnemy.class, new int[]{100, 500}, newaction4);
 		
 		action = enemy.getAction();
@@ -1163,7 +1163,7 @@ public class MovementActionTest extends AndroidTestCase{
 		
 		newaction4 = new InverseMoveOrderDecorator(new MovementActionSet());
 		newaction4.addMovementAction(new SpecialMovementActionFactory().createMovementAction(MovementInfoFactory.createSquareMovementInfo()));
-		newaction4.addMovementAction(new MovementActionItem(MovementInfoFactory.createSingleRMovementInfo()));
+		newaction4.addMovementAction(new MovementActionItemCountDownTimer(MovementInfoFactory.createSingleRMovementInfo()));
 		enemy = enemyFactory.createSpecialEnemy5(RedEnemy.class, new int[]{100, 500}, newaction4);
 		
 		action = enemy.getAction();
@@ -1196,7 +1196,7 @@ public class MovementActionTest extends AndroidTestCase{
 		
 		newaction4 = new CopyMoveDecorator(new DoubleDecorator(new PartOfAppendDecorator(new InverseMovementInfoAppendDecorator(new MovementActionSet()))));
 		newaction4.addMovementAction(new SpecialMovementActionFactory().createMovementAction(MovementInfoFactory.createSquareMovementInfo()));
-		newaction4.addMovementAction(new MovementActionItem(MovementInfoFactory.createSingleRMovementInfo()));
+		newaction4.addMovementAction(new MovementActionItemCountDownTimer(MovementInfoFactory.createSingleRMovementInfo()));
 		enemy = enemyFactory.createSpecialEnemy5(RedEnemy.class, new int[]{100, 500}, newaction4);
 		
 		action = enemy.getAction();
@@ -1230,7 +1230,7 @@ public class MovementActionTest extends AndroidTestCase{
 		
 		newaction4 = new DoubleDecorator(new PartOfAppendDecorator(new CopyMoveDecorator(new DoubleDecorator(new PartOfAppendDecorator(new InverseMovementInfoAppendDecorator(new MovementActionSet()))))));
 		newaction4.addMovementAction(new SpecialMovementActionFactory().createMovementAction(MovementInfoFactory.createSquareMovementInfo()));
-		newaction4.addMovementAction(new MovementActionItem(MovementInfoFactory.createSingleRMovementInfo()));
+		newaction4.addMovementAction(new MovementActionItemCountDownTimer(MovementInfoFactory.createSingleRMovementInfo()));
 		newaction4 = new MovementActionSet().addMovementAction(newaction4);
 		enemy = enemyFactory.createSpecialEnemy5(RedEnemy.class, new int[]{100, 500}, newaction4);
 		
@@ -1266,7 +1266,7 @@ public class MovementActionTest extends AndroidTestCase{
 		
 		newaction4 = new DoubleDecorator(new PartOfAppendDecorator(new CopyMoveDecorator(new DoubleDecorator(new PartOfAppendDecorator(new InverseMovementInfoAppendDecorator(new MovementActionSet()))))));
 		newaction4.addMovementAction(new SpecialMovementActionFactory().createMovementAction(MovementInfoFactory.createSquareMovementInfo()));
-		newaction4.addMovementAction(new MovementActionItem(MovementInfoFactory.createSingleRMovementInfo()));
+		newaction4.addMovementAction(new MovementActionItemCountDownTimer(MovementInfoFactory.createSingleRMovementInfo()));
 		newaction4 = new DoubleDecorator(new MovementActionSet().addMovementAction(newaction4));
 		enemy = enemyFactory.createSpecialEnemy5(RedEnemy.class, new int[]{100, 500}, newaction4);
 		
@@ -1302,7 +1302,7 @@ public class MovementActionTest extends AndroidTestCase{
 		
 		newaction4 = new DoubleDecorator(new PartOfOrigizalDecorator(new CopyMoveDecorator(new DoubleDecorator(new PartOfAppendDecorator(new InverseMovementInfoAppendDecorator(new MovementActionSet()))))));
 		newaction4.addMovementAction(new SpecialMovementActionFactory().createMovementAction(MovementInfoFactory.createSquareMovementInfo()));
-		newaction4.addMovementAction(new MovementActionItem(MovementInfoFactory.createSingleRMovementInfo()));
+		newaction4.addMovementAction(new MovementActionItemCountDownTimer(MovementInfoFactory.createSingleRMovementInfo()));
 		newaction4 = new DoubleDecorator(new MovementActionSet().addMovementAction(newaction4));
 		enemy = enemyFactory.createSpecialEnemy5(RedEnemy.class, new int[]{100, 500}, newaction4);
 		
@@ -1356,7 +1356,7 @@ public class MovementActionTest extends AndroidTestCase{
 		
 		newaction4 = new DoubleDecorator(new PartOfOrigizalDecorator(new CopyMoveDecorator(new CopyMoveDecorator(new DoubleDecorator(new PartOfAppendDecorator(new InverseMovementInfoAppendDecorator(new MovementActionSet())))))));
 		newaction4.addMovementAction(new SpecialMovementActionFactory().createMovementAction(MovementInfoFactory.createSquareMovementInfo()));
-		newaction4.addMovementAction(new MovementActionItem(MovementInfoFactory.createSingleRMovementInfo()));
+		newaction4.addMovementAction(new MovementActionItemCountDownTimer(MovementInfoFactory.createSingleRMovementInfo()));
 		newaction4 = new DoubleDecorator(new MovementActionSet().addMovementAction(newaction4));
 		enemy = enemyFactory.createSpecialEnemy5(RedEnemy.class, new int[]{100, 500}, newaction4);
 		
@@ -1398,7 +1398,7 @@ public class MovementActionTest extends AndroidTestCase{
 		
 		newaction4 = new DoubleDecorator(new PartOfOrigizalDecorator(new CopyMoveDecorator(new PartOfOrigizalDecorator(new CopyMoveDecorator(new DoubleDecorator(new PartOfAppendDecorator(new InverseMovementInfoAppendDecorator(new MovementActionSet()))))))));
 		newaction4.addMovementAction(new SpecialMovementActionFactory().createMovementAction(MovementInfoFactory.createSquareMovementInfo()));
-		newaction4.addMovementAction(new MovementActionItem(MovementInfoFactory.createSingleRMovementInfo()));
+		newaction4.addMovementAction(new MovementActionItemCountDownTimer(MovementInfoFactory.createSingleRMovementInfo()));
 		newaction4 = new DoubleDecorator(new MovementActionSet().addMovementAction(newaction4));
 		enemy = enemyFactory.createSpecialEnemy5(RedEnemy.class, new int[]{100, 500}, newaction4);
 		

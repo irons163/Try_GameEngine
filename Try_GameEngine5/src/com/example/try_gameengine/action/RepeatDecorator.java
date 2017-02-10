@@ -16,7 +16,6 @@ import com.example.try_gameengine.action.visitor.MovementActionRestoreMementoVis
  *
  */
 public class RepeatDecorator extends MovementDecorator {
-	private MovementAction action;
 	private long count;
 	private boolean isTheOuterActionForInitMovementAction;
 	
@@ -240,7 +239,7 @@ public class RepeatDecorator extends MovementDecorator {
 	
 	@Override
 	public IMovementActionMemento createMovementActionMemento(){
-		movementActionMemento = new RepeatDecoratorMementoImpl(actions, thread, timerOnTickListener, description, copyMovementActionList, currentInfoList, movementItemList, totalCopyMovementActionList, isCancelFocusAppendPart, isFinish, isLoop, isSigleThread, name, cancelAction, action, count);
+		movementActionMemento = new RepeatDecoratorMementoImpl(actions, thread, timerOnTickListener, description, copyMovementActionList, currentInfoList, movementItemList, totalCopyMovementActionList, isCancelFocusAppendPart, isFinish, isLoop, isSigleThread, name, cancelAction, action, isRepeatSpriteActionIfMovementActionRepeat, count);
 		return movementActionMemento;
 	}
 	
@@ -251,12 +250,10 @@ public class RepeatDecorator extends MovementDecorator {
 //		MovementActionMementoImpl mementoImpl = (MovementActionMementoImpl) movementActionMemento;
 		super.restoreMovementActionMemento(this.movementActionMemento);
 		RepeatDecoratorMementoImpl mementoImpl = (RepeatDecoratorMementoImpl) this.movementActionMemento;
-		this.action = mementoImpl.action;
+		this.count = mementoImpl.count;
 	}
 	
-	protected static class RepeatDecoratorMementoImpl extends MovementActionMementoImpl{
-	
-		private MovementAction action; //Decorator
+	protected static class RepeatDecoratorMementoImpl extends MovementDecoratorMementoImpl{
 		private long count;
 		
 		public RepeatDecoratorMementoImpl(List<MovementAction> actions,
@@ -269,18 +266,9 @@ public class RepeatDecorator extends MovementDecorator {
 				boolean isCancelFocusAppendPart, boolean isFinish,
 				boolean isLoop, boolean isSigleThread, String name,
 				MovementAction cancelAction,
-				MovementAction action, long count) {
-			super(actions, thread, timerOnTickListener, description, copyMovementActionList, currentInfoList, movementItemList, totalCopyMovementActionList, isCancelFocusAppendPart, isFinish, isLoop, isSigleThread, name, cancelAction);
-			this.action = action;
+				MovementAction action, boolean isRepeatSpriteActionIfMovementActionRepeat, long count) {
+			super(actions, thread, timerOnTickListener, description, copyMovementActionList, currentInfoList, movementItemList, totalCopyMovementActionList, isCancelFocusAppendPart, isFinish, isLoop, isSigleThread, name, cancelAction, action, isRepeatSpriteActionIfMovementActionRepeat);
 			this.count = count;
-		}
-
-		public MovementAction getAction() {
-			return action;
-		}
-
-		public void setAction(MovementAction action) {
-			this.action = action;
 		}
 
 		public long getCount() {

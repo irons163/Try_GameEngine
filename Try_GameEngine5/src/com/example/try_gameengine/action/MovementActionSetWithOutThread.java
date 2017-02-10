@@ -206,7 +206,7 @@ public class MovementActionSetWithOutThread extends MovementAction {
 	}
 	
 	public IMovementActionMemento createMovementActionMemento(){
-		movementActionMemento = new MovementActionSetWithOutThreadMementoImpl(actions, thread, timerOnTickListener, description, copyMovementActionList, currentInfoList, movementItemList, totalCopyMovementActionList, isActionFinish, isActionFinish, isActionFinish, isActionFinish, name, cancelAction, isActionFinish, info, isStop, actionIndex);
+		movementActionMemento = new MovementActionSetWithOutThreadMementoImpl(actions, thread, timerOnTickListener, description, copyMovementActionList, currentInfoList, movementItemList, totalCopyMovementActionList, isActionFinish, isActionFinish, isActionFinish, isActionFinish, name, cancelAction, isActionFinish, info, isStop, actionIndex, isRepeatSpriteActionIfMovementActionRepeat);
 		return movementActionMemento;
 	}
 	
@@ -238,11 +238,11 @@ public class MovementActionSetWithOutThread extends MovementAction {
 				boolean isLoop, boolean isSigleThread, String name,
 				MovementAction cancelAction,
 				boolean isActionFinish, MovementActionInfo info,
-				boolean isStop, int actionIndex) {
+				boolean isStop, int actionIndex, boolean isRepeatSpriteActionIfMovementActionRepeat) {
 			super(actions, thread, timerOnTickListener, description,
 					copyMovementActionList, currentInfoList, movementItemList,
 					totalCopyMovementActionList, isCancelFocusAppendPart,
-					isFinish, isLoop, isSigleThread, name, cancelAction);
+					isFinish, isLoop, isSigleThread, name, cancelAction, isRepeatSpriteActionIfMovementActionRepeat);
 			this.isActionFinish = isActionFinish;
 			this.info = info;
 			this.isStop = isStop;

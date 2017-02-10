@@ -19,6 +19,6 @@ public class ProcessBlockManager {
 	}
 	
 	public void setPreProcessBlock(ProcessBlock processBlock, GameModel gameModel){
-		gameModel.set
+//		gameModel.set
 	}
 }

@@ -2,71 +2,51 @@ package com.example.try_gameengine.action;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Future;
 
-import android.util.Log;
-
-import com.example.try_gameengine.action.MovementAction.MovementActionMementoImpl;
-import com.example.try_gameengine.action.MovementAction.TimerOnTickListener;
-import com.example.try_gameengine.action.MovementActionSetWithThreadPool.MovementActionSetWithThreadPoolMementoImpl;
 import com.example.try_gameengine.action.listener.IActionListener;
-import com.example.try_gameengine.action.visitor.IMovementActionVisitor;
 
-public class MovementActionItemBaseReugularFPS extends MovementActionItem{ 
-	long numberOfFramesTotal;
-	long numberOfFramesInterval;
-	float dx;
-	float dy;
-	long resumeTotal;
-	long resetTotal;
+public class MovementActionItemUpdateTime extends MovementActionItemForMilliseconds{ 
 	public int frameIdx;	
-	public boolean isStop = false;
 	public boolean isCycleFinish = false;	
-		
-	long resumeFrameIndex;
-	long resumeFrameCount;
-	long numberOfPauseFrames;
-	long pauseFrameCounter;	
+//	boolean triggerEnable = false;	
+	long pauseMilliseconds;
+	long pauseMillisecondsCounter;	
 	FrameTrigger nextframeTrigger;
-	long numberOfFramesAfterLastTrigger;
+	long resumeMillisCount = 0;
+	long lastMillisCount = 0;
 	private boolean isEnableSetSpriteAction = true;
-	private FrameTimesType frameTimesType = FrameTimesType.FrameTimesIntervalBeforeAction;
 	
-	public enum FrameTimesType{ //Default = FrameTimesIntervalBeforeAction
-		FrameTimesIntervalBeforeAction, //wait interval->Action->wait interval->Action->end
-		FrameTimesIntervalAfterAction //Action->wait interval->Action->wait interval->end
-	};
-	
-	public MovementActionItemBaseReugularFPS(long frameTimesTotal, long frameTimesInterval, final int dx, final int dy){
-		this(frameTimesTotal, frameTimesInterval, dx, dy, "MovementItem");
+	public MovementActionItemUpdateTime(long millisTotal, long millisDelay, final int dx, final int dy){
+		this(millisTotal, millisDelay, dx, dy, "MovementItem");
 	}
 	
-	public MovementActionItemBaseReugularFPS(long frameTimesTotal, long frameTimesInterval, final int dx, final int dy, String description){
-		super(new MovementActionInfo(frameTimesTotal, frameTimesInterval, dx, dy), description);
-		
-		this.numberOfFramesTotal = frameTimesTotal;
-		this.numberOfFramesInterval = frameTimesInterval;
-		this.dx = dx;
-		this.dy = dy;
+	public MovementActionItemUpdateTime(long millisTotal, long millisDelay, final int dx, final int dy, String description){
+		super(millisTotal, millisDelay, dx, dy, description);
 	}
 	
-	public MovementActionItemBaseReugularFPS(MovementActionInfo info){
+	public MovementActionItemUpdateTime(MovementActionInfo info){
 		super(info);
-		numberOfFramesTotal = info.getTotal();
-		numberOfFramesInterval = info.getDelay();
+		millisTotal = info.getTotal();
+		millisDelay = info.getDelay();
 		dx = info.getDx();
 		dy = info.getDy();
 		if(info.getDescription()!=null)
 			this.description = info.getDescription() + ",";
 		this.info = info;
+		movementItemList.add(this);
+	}
+	
+	@Override
+	public void setTimer() {
+		// TODO Auto-generated method stub
+
 	}
 	
 	@Override
 	public void start() {
-		resumeFrameIndex = 0;
-		resumeFrameCount = 0;
-		numberOfPauseFrames = 0;
-		pauseFrameCounter = 0;
+		resumeMillisCount = 0;
+		pauseMilliseconds = 0;
+		pauseMillisecondsCounter = 0;
 		isStop = false;
 		isCycleFinish = false;
 		if(!isEnableSetSpriteAction)
@@ -90,15 +70,16 @@ public class MovementActionItemBaseReugularFPS extends MovementActionItem{
 	
 	@Override
 	public void trigger(){
-		if(triggerEnable && pauseFrameCounter==numberOfPauseFrames){
-			numberOfPauseFrames = 0;
-			pauseFrameCounter = 0;
+		if(triggerEnable && pauseMillisecondsCounter>=pauseMilliseconds){
+			
+			pauseMilliseconds = 0;
+			pauseMillisecondsCounter = 0;
 			myTrigger.trigger();
 		}else if(triggerEnable){
-			pauseFrameCounter++;
+			pauseMillisecondsCounter += Time.DeltaTime;
 		}else{
-			numberOfPauseFrames = 0;
-			pauseFrameCounter = 0;
+			pauseMilliseconds = 0;
+			pauseMillisecondsCounter = 0;
 		}
 	}
 	
@@ -126,40 +107,37 @@ public class MovementActionItemBaseReugularFPS extends MovementActionItem{
 	
 	private void frameTriggerFPSStart(){
 		if (!isStop) {
-			synchronized (MovementActionItemBaseReugularFPS.this) {
+			synchronized (MovementActionItemUpdateTime.this) {
 				if(isCycleFinish)
 					isCycleFinish = false;
-			
-			resumeFrameCount++;
-			
-			if(resumeFrameCount==numberOfFramesAfterLastTrigger+info.getDelay()){
-				doRotation();
-				doGravity();
-				if(timerOnTickListener!=null)
-					timerOnTickListener.onTick(dx, dy);		
-				numberOfFramesAfterLastTrigger += info.getDelay();
 				
-			// add by 150228. if the delay change by main app, the function: else if(resumeFrameCount==lastTriggerFrameNum+info.getDelay() maybe make problem.
-			}else if(resumeFrameCount>numberOfFramesAfterLastTrigger+info.getDelay()){ 
-//				resumeFrameCount--;
-//				lastTriggerFrameNum++;
-				numberOfFramesAfterLastTrigger = resumeFrameCount+1-info.getDelay();
-			}
+				resumeMillisCount += Time.DeltaTime;
+				
+			do{	
+				if(resumeMillisCount >= lastMillisCount + info.getDelay()){
+					doRotation();
+					doGravity();
+					if(timerOnTickListener!=null)
+						timerOnTickListener.onTick(dx, dy);		
+					lastMillisCount += info.getDelay();
+				}
+			}while(resumeMillisCount >= lastMillisCount + info.getDelay());
 			
-			if(resumeFrameCount>=info.getDelay()){	
-				if(resumeFrameCount==info.getTotal())
+			if(resumeMillisCount >=info.getDelay()){
+				if(resumeMillisCount>=info.getTotal())
 					isCycleFinish = true;
-			}
-			
-			if(isCycleFinish){
-				resumeFrameCount = 0;
-				numberOfFramesAfterLastTrigger = 0;
 			}
 			
 			if(!isLoop && isCycleFinish){
 				isStop = true;
 				doReset();	
 				triggerEnable = false;
+			} 
+				
+			if(isCycleFinish){
+//				resumeMillisCount = 0; // during each cycle has a little delay.
+				resumeMillisCount = resumeMillisCount - info.getTotal(); // during each cycle has no delay.
+				lastMillisCount = 0;
 			}
 			
 			if(isCycleFinish){
@@ -171,41 +149,68 @@ public class MovementActionItemBaseReugularFPS extends MovementActionItem{
 				if(actionListener!=null)
 					actionListener.actionFinish();
 				
-				MovementActionItemBaseReugularFPS.this.notifyAll();
+				MovementActionItemUpdateTime.this.notifyAll();
 			}
 			
+			/*
+			if(resumeFrameCount>=info.getDelay()){	
+				if(resumeFrameCount==info.getTotal())
+					isCycleFinish = true;
+			}
+			
+			if(isCycleFinish){
+				resumeFrameCount = 0;
+				lastTriggerFrameNum = 0;
+			}
+			
+			resumeFrameCount++;
+			
+			if(!isLoop && isCycleFinish){
+				isStop = true;
+				doReset();	
+				triggerEnable = false;
+				if(actionListener!=null)
+					actionListener.actionFinish();
+				
+				MovementActionItem2.this.notifyAll();
+			}else if(resumeFrameCount==lastTriggerFrameNum+info.getDelay()){
+				doRotation();
+				doGravity();
+				if(timerOnTickListener!=null)
+					timerOnTickListener.onTick(dx, dy);		
+				lastTriggerFrameNum += info.getDelay();
+				
+			// add by 150228. if the delay change by main app, the function: else if(resumeFrameCount==lastTriggerFrameNum+info.getDelay() maybe make problem.
+			}else if(resumeFrameCount>lastTriggerFrameNum+info.getDelay()){ 
+//				resumeFrameCount--;
+//				lastTriggerFrameNum++;
+				lastTriggerFrameNum = resumeFrameCount+1-info.getDelay();
+			}
+			
+			if(isCycleFinish){
+				if(actionListener!=null)
+					actionListener.actionCycleFinish();
+				isCycleFinish = false;
+			}
+			*/
 			}
 		}else{
-			synchronized (MovementActionItemBaseReugularFPS.this) {
-				MovementActionItemBaseReugularFPS.this.notifyAll();
+			synchronized (MovementActionItemUpdateTime.this) {
+				MovementActionItemUpdateTime.this.notifyAll();
 			}
 		}
 	}
 	
 	@Override
 	protected MovementAction initTimer(){
-		numberOfFramesTotal = info.getTotal();
-		numberOfFramesInterval = info.getDelay();
+		millisTotal = info.getTotal();
+		millisDelay = info.getDelay();
 		dx = info.getDx();
 		dy = info.getDy();
 		rotationController = info.getRotationController();
 		gravityController = info.getGravityController();
 		
-		resumeFrameIndex = 0;
-		initLastTriggerFrameNum();
 		return this;
-	}
-	
-	private void initLastTriggerFrameNum(){
-		switch (frameTimesType) {
-		
-		case FrameTimesIntervalBeforeAction:
-			numberOfFramesAfterLastTrigger = 0; //wait interval->Action->wait interval->Action->end, if total = 9 interval = 3 then 3->6->9->end(9)
-			break;
-		case FrameTimesIntervalAfterAction:
-			numberOfFramesAfterLastTrigger = (-info.getDelay() + 1); //Action->wait interval->Action->wait interval->end, if total = 9 interval = 3 then 1->4->7->end(9)
-			break;
-		}
 	}
 	
 	private void doRotation(){
@@ -232,19 +237,10 @@ public class MovementActionItemBaseReugularFPS extends MovementActionItem{
 			rotationController.reset(info);
 
 
-		numberOfFramesTotal = info.getTotal();
-		numberOfFramesInterval = info.getDelay();
+		millisTotal = info.getTotal();
+		millisDelay = info.getDelay();
 		dx = info.getDx();
 		dy = info.getDy();
-		initLastTriggerFrameNum();
-	}
-	
-	public FrameTimesType getFrameTimesType() {
-		return frameTimesType;
-	}
-
-	public void setFrameTimesType(FrameTimesType frameTimesType) {
-		this.frameTimesType = frameTimesType;
 	}
 
 	@Override
@@ -295,14 +291,14 @@ public class MovementActionItemBaseReugularFPS extends MovementActionItem{
 	@Override
 	public void cancelMove(){
 		isStop = true;
-		synchronized (MovementActionItemBaseReugularFPS.this) {
-			MovementActionItemBaseReugularFPS.this.notifyAll();
+		synchronized (MovementActionItemUpdateTime.this) {
+			MovementActionItemUpdateTime.this.notifyAll();
 		}
 	}
 	
 	@Override
 	void pause(){	
-		numberOfPauseFrames = numberOfFramesInterval;
+		pauseMilliseconds = millisDelay;
 	}
 	
 	@Override
@@ -311,7 +307,7 @@ public class MovementActionItemBaseReugularFPS extends MovementActionItem{
 	}
 	
 //	public IMovementActionMemento createMovementActionMemento(){
-//		movementActionMemento = new MovementActionItemBaseReugularFPSMementoImpl(actions, thread, timerOnTickListener, name, copyMovementActionList, currentInfoList, movementItemList, totalCopyMovementActionList, isCycleFinish, isCycleFinish, isCycleFinish, isCycleFinish, name, cancelAction, numberOfFramesTotal, numberOfFramesInterval, dx, dy, info, resumeTotal, resetTotal, rotationController, gravityController, name, updateTime, frameIdx, isStop, isCycleFinish, triggerEnable, frameTimes, resumeFrameIndex, resumeFrameCount, numberOfPauseFrames, pauseFrameCounter, nextframeTrigger, numberOfFramesAfterLastTrigger);
+//		movementActionMemento = new MovementActionItemBaseReugularFPSMementoImpl(actions, thread, timerOnTickListener, name, copyMovementActionList, currentInfoList, movementItemList, totalCopyMovementActionList, isCycleFinish, isCycleFinish, isCycleFinish, isCycleFinish, name, cancelAction, millisTotal, millisDelay, dx, dy, info, resumeTotal, resetTotal, rotationController, gravityController, name, updateTime, frameIdx, isStop, isCycleFinish, triggerEnable, frameTimes, resumeMillisCount, pauseFrameNum, pauseFrameCounter, nextframeTrigger, lastMillisCount);
 //		if(this.info!=null){
 //			this.info.createIMovementActionInfoMemento();
 //		}
@@ -322,8 +318,8 @@ public class MovementActionItemBaseReugularFPS extends MovementActionItem{
 ////		MovementActionMementoImpl mementoImpl = (MovementActionMementoImpl) movementActionMemento;
 //		super.restoreMovementActionMemento(this.movementActionMemento);
 //		MovementActionItemBaseReugularFPSMementoImpl mementoImpl = (MovementActionItemBaseReugularFPSMementoImpl) this.movementActionMemento;
-//		this.numberOfFramesTotal = mementoImpl.millisTotal;
-//		this.numberOfFramesInterval = mementoImpl.millisDelay;
+//		this.millisTotal = mementoImpl.millisTotal;
+//		this.millisDelay = mementoImpl.millisDelay;
 //		this.dx = mementoImpl.dx;
 //		this.dy = mementoImpl.dy;
 //		this.info = mementoImpl.info;
@@ -338,12 +334,11 @@ public class MovementActionItemBaseReugularFPS extends MovementActionItem{
 //		this.isCycleFinish = mementoImpl.isCycleFinish;
 //		this.triggerEnable = mementoImpl.triggerEnable;
 //		this.frameTimes = mementoImpl.frameTimes;
-//		this.resumeFrameIndex = mementoImpl.resumeFrameIndex;
-//		this.resumeFrameCount = mementoImpl.resumeFrameCount;
-//		this.numberOfPauseFrames = mementoImpl.pauseFrameNum;
+//		this.resumeMillisCount = mementoImpl.resumeMillisCount;
+//		this.pauseFrameNum = mementoImpl.pauseFrameNum;
 //		this.pauseFrameCounter = mementoImpl.pauseFrameCounter;
 //		this.nextframeTrigger = mementoImpl.nextframeTrigger;
-//		this.numberOfFramesAfterLastTrigger = mementoImpl.lastTriggerFrameNum;
+//		this.lastMillisCount = mementoImpl.lastMillisCount;
 ////		this.isEnableSetSpriteAction = mementoImpl.isEnableSetSpriteAction;
 //		
 //		if(this.info!=null){
@@ -368,15 +363,16 @@ public class MovementActionItemBaseReugularFPS extends MovementActionItem{
 //		private long updateTime;	
 //		public int frameIdx;	
 //		public boolean isStop = false;
-//		public boolean isCycleFinish = false;
+//		public boolean isCycleFinish = false;	
 //		boolean triggerEnable = false;	
 //		long[] frameTimes;
-//		int resumeFrameIndex;
-//		int resumeFrameCount;	
+////		int resumeFrameCount;	
 //		long pauseFrameNum;
 //		int pauseFrameCounter;	
 //		FrameTrigger nextframeTrigger;
-//		private long lastTriggerFrameNum;
+////		private long lastTriggerFrameNum;
+//		long resumeMillisCount = 0;
+//		long lastMillisCount = 0;
 ////		private boolean isEnableSetSpriteAction = true;
 //		
 //		public MovementActionItemBaseReugularFPSMementoImpl(
@@ -395,9 +391,9 @@ public class MovementActionItemBaseReugularFPS extends MovementActionItem{
 //				IGravityController gravityController, String name2,
 //				long updateTime, int frameIdx, boolean isStop,
 //				boolean isCycleFinish, boolean triggerEnable,
-//				long[] frameTimes, int resumeFrameIndex, int resumeFrameCount,
+//				long[] frameTimes, long resumeMillisCount,
 //				long pauseFrameNum, int pauseFrameCounter,
-//				FrameTrigger nextframeTrigger, long lastTriggerFrameNum) {
+//				FrameTrigger nextframeTrigger, long lastMillisCount) {
 //			super(actions, thread, timerOnTickListener, description,
 //					copyMovementActionList, currentInfoList, movementItemList,
 //					totalCopyMovementActionList, isCancelFocusAppendPart,
@@ -418,19 +414,13 @@ public class MovementActionItemBaseReugularFPS extends MovementActionItem{
 //			this.isCycleFinish = isCycleFinish;
 //			this.triggerEnable = triggerEnable;
 //			this.frameTimes = frameTimes;
-//			this.resumeFrameIndex = resumeFrameIndex;
-//			this.resumeFrameCount = resumeFrameCount;
+//			this.resumeMillisCount = resumeMillisCount;
 //			this.pauseFrameNum = pauseFrameNum;
 //			this.pauseFrameCounter = pauseFrameCounter;
 //			this.nextframeTrigger = nextframeTrigger;
-//			this.lastTriggerFrameNum = lastTriggerFrameNum;
+//			this.lastMillisCount = lastMillisCount;
 ////			this.isEnableSetSpriteAction = isEnableSetSpriteAction;
 //		}
 //			
 //	}
-	
-	@Override
-	public void accept(IMovementActionVisitor movementActionVisitor){
-		movementActionVisitor.visitLeaf(this);
-	}
 }

@@ -288,7 +288,7 @@ public class MovementActionOwnerGroup {
 	
 	public void reset(){
 		for(MovementAction action : movementActions){
-			action.controller.do;
+//			action.controller.do;
 		}
 		startCount=0;
 		finishCount=0;

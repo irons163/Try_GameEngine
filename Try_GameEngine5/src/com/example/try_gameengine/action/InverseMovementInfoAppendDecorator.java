@@ -18,7 +18,7 @@ public class InverseMovementInfoAppendDecorator extends MovementDecorator {
 				info.getDelay(), info.getDx(), info.getDy(),
 				info.getDescription());
 		if (this.getAction().getActions().size() != 0) {
-			MovementAction action = new MovementActionItem(newInfo);
+			MovementAction action = new MovementActionItemCountDownTimer(newInfo);
 			copyMovementActionList.add(action);
 			this.getAction().totalCopyMovementActionList.add(action);
 		}

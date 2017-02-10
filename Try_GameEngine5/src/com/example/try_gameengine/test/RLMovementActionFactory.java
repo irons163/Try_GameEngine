@@ -5,7 +5,7 @@ import android.util.Log;
 import com.example.try_gameengine.action.DoubleDecorator;
 import com.example.try_gameengine.action.MovementAction;
 import com.example.try_gameengine.action.MovementActionFactory;
-import com.example.try_gameengine.action.MovementActionItem;
+import com.example.try_gameengine.action.MovementActionItemCountDownTimer;
 import com.example.try_gameengine.action.MovementActionSet;
 
 public class RLMovementActionFactory extends MovementActionFactory{
@@ -19,8 +19,8 @@ public class RLMovementActionFactory extends MovementActionFactory{
 			newAction = new DoubleDecorator(new MovementActionSet());
 		}else
 			newAction = new DoubleDecorator(new MovementActionSet());
-			newAction.addMovementAction(new DoubleDecorator(new MovementActionItem(1000, 200, 10, 0, "R")) );
-			newAction.addMovementAction(new DoubleDecorator(new MovementActionItem(1000, 200, -10, 0, "L")) );
+			newAction.addMovementAction(new DoubleDecorator(new MovementActionItemCountDownTimer(1000, 200, 10, 0, "R")) );
+			newAction.addMovementAction(new DoubleDecorator(new MovementActionItemCountDownTimer(1000, 200, -10, 0, "L")) );
 		
 			if(action!=null){
 				action.addMovementAction(newAction);

@@ -9,12 +9,12 @@ public class SpecialMovementActionFactory extends MovementActionFactory{
 	public MovementAction createMovementAction() {
 		// TODO Auto-generated method stub
 		MovementAction action = new MovementActionSet();
-		action.addMovementAction(new MovementActionItem(1000, 200, 10, 0));
-		action.addMovementAction(new MovementActionItem(1000, 200, -10, 0));
-		action.addMovementAction(new MovementActionItem(1000, 200, -10, 0));
-		action.addMovementAction(new MovementActionItem(1000, 200, -10, 0));
-		action.addMovementAction(new MovementActionItem(1000, 200, -10, 0));
-		action.addMovementAction(new MovementActionItem(1000, 200, -10, 0));
+		action.addMovementAction(new MovementActionItemCountDownTimer(1000, 200, 10, 0));
+		action.addMovementAction(new MovementActionItemCountDownTimer(1000, 200, -10, 0));
+		action.addMovementAction(new MovementActionItemCountDownTimer(1000, 200, -10, 0));
+		action.addMovementAction(new MovementActionItemCountDownTimer(1000, 200, -10, 0));
+		action.addMovementAction(new MovementActionItemCountDownTimer(1000, 200, -10, 0));
+		action.addMovementAction(new MovementActionItemCountDownTimer(1000, 200, -10, 0));
 		return action;
 	}
 
@@ -24,7 +24,7 @@ public class SpecialMovementActionFactory extends MovementActionFactory{
 		MovementAction action = new MovementActionSet();
 		for(MovementActionInfo info : infos){
 //			action.addMovementAction(new MovementActionItem(info.getTotal(), info.getDelay(), info.getDx(), info.getDy()));
-			action.addMovementAction(new MovementActionItem(info));	
+			action.addMovementAction(new MovementActionItemCountDownTimer(info));	
 		}
 //		action.initTimer();
 		return action;
@@ -57,7 +57,7 @@ public class SpecialMovementActionFactory extends MovementActionFactory{
 
 		for(MovementActionInfo info : infos){
 //			action.addMovementAction(new MovementActionItem(info.getTotal(), info.getDelay(), info.getDx(), info.getDy()));
-			action.addMovementAction(new MovementActionItem(info));	
+			action.addMovementAction(new MovementActionItemCountDownTimer(info));	
 		}
 //		action.initTimer();
 		return action;

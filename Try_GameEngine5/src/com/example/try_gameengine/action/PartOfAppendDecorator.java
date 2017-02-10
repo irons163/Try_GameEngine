@@ -16,7 +16,7 @@ public class PartOfAppendDecorator extends MovementDecorator {
 		
 		MovementActionInfo newInfo = new MovementActionInfo(info.getTotal(), info.getDelay(), info.getDx(), info.getDy(), info.getDescription());
 		if(this.getAction().getActions().size() != 0){
-			MovementAction action = new MovementActionItem(newInfo);
+			MovementAction action = new MovementActionItemCountDownTimer(newInfo);
 			copyMovementActionList.add(action);
 		}
 		return newInfo;

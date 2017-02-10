@@ -22,7 +22,7 @@ public class CopyMoveDecorator extends MovementDecorator {
 //				info.isEnableGravity());
 		MovementActionInfo newInfo = info.clone();
 		if (this.getAction().getActions().size() != 0) {
-			MovementAction action = new MovementActionItem(newInfo);
+			MovementAction action = new MovementActionItemCountDownTimer(newInfo);
 			copyMovementActionList.add(action);
 			this.getAction().totalCopyMovementActionList.add(action);
 		}

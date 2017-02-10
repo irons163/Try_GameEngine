@@ -22,7 +22,7 @@ public class GravitySlopeWavePathMovementInfoAppendDecorator extends
 				info.getDescription(), info.getRotationController(),
 				info.isEnableGravity());
 		if (this.getAction().getActions().size() != 0) {
-			MovementAction action = new MovementActionItem(newInfo);
+			MovementAction action = new MovementActionItemCountDownTimer(newInfo);
 			copyMovementActionList.add(action);
 			this.getAction().totalCopyMovementActionList.add(action);
 		}

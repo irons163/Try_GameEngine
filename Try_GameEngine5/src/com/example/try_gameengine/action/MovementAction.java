@@ -34,7 +34,7 @@ public abstract class MovementAction {
 	public boolean isSigleThread = false;
 	String name="";
 	protected MovementAction cancelAction;
-	protected boolean isRepeatSpriteActionIfMovementActionRepeat = true;
+	public boolean isRepeatSpriteActionIfMovementActionRepeat = true;
 	
 	public MovementAction addMovementAction(MovementAction action) {
 		throw new UnsupportedOperationException();
