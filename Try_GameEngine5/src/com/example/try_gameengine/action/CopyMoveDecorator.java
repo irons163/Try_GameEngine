@@ -1,11 +1,6 @@
 package com.example.try_gameengine.action;
 
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-
-import com.example.try_gameengine.action.MovementAction.MovementActionMementoImpl;
-import com.example.try_gameengine.action.MovementAction.TimerOnTickListener;
 
 import android.util.Log;
 
@@ -129,7 +124,7 @@ public class CopyMoveDecorator extends MovementDecorator {
 	}
 	
 	public IMovementActionMemento createMovementActionMemento(){
-		movementActionMemento = new CopyMoveDecoratorMementoImpl(actions, thread, timerOnTickListener, description, copyMovementActionList, currentInfoList, movementItemList, totalCopyMovementActionList, isCancelFocusAppendPart, isFinish, isLoop, isSigleThread, name, cancelAction, action);
+		movementActionMemento = new CopyMoveDecoratorMementoImpl(actions, thread, timerOnTickListener, description, copyMovementActionList, currentInfoList, movementItemList, totalCopyMovementActionList, isCancelFocusAppendPart, isFinish, isLoop, isSigleThread, name, cancelAction, action, isRepeatSpriteActionIfMovementActionRepeat);
 		return movementActionMemento;
 	}
 	
@@ -153,8 +148,9 @@ public class CopyMoveDecorator extends MovementDecorator {
 				List<MovementAction> totalCopyMovementActionList,
 				boolean isCancelFocusAppendPart, boolean isFinish,
 				boolean isLoop, boolean isSigleThread, String name,
-				MovementAction cancelAction, MovementAction action) {
-			super(actions, thread, timerOnTickListener, description, copyMovementActionList, currentInfoList, movementItemList, totalCopyMovementActionList, isCancelFocusAppendPart, isFinish, isLoop, isSigleThread, name, cancelAction);
+				MovementAction cancelAction, MovementAction action,
+				boolean isRepeatSpriteActionIfMovementActionRepeat) {
+			super(actions, thread, timerOnTickListener, description, copyMovementActionList, currentInfoList, movementItemList, totalCopyMovementActionList, isCancelFocusAppendPart, isFinish, isLoop, isSigleThread, name, cancelAction, isRepeatSpriteActionIfMovementActionRepeat);
 			this.action = action;
 		}
 

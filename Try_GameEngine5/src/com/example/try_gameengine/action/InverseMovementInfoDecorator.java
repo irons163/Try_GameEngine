@@ -5,7 +5,6 @@ import java.util.List;
 import android.util.Log;
 
 public class InverseMovementInfoDecorator extends MovementDecorator{
-	private MovementAction action;
 
 	public InverseMovementInfoDecorator(MovementAction action) {
 		this.action = action;

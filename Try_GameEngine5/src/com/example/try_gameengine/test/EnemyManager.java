@@ -10,12 +10,8 @@ import android.util.Log;
 import com.example.try_gameengine.action.CopyMoveDecorator;
 import com.example.try_gameengine.action.DoubleDecorator;
 import com.example.try_gameengine.action.MovementAction;
-import com.example.try_gameengine.action.MovementActionItem;
 import com.example.try_gameengine.action.MovementActionSet;
-import com.example.try_gameengine.action.MovementAtionController;
 import com.example.try_gameengine.action.MovementInfoFactory;
-import com.example.try_gameengine.action.RLMovementActionFactory;
-import com.example.try_gameengine.action.SimultaneouslyMultiCircleMovementActionSet;
 import com.example.try_gameengine.action.SpecialMovementActionFactory;
 
 public class EnemyManager {

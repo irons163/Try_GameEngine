@@ -1,14 +1,11 @@
 package com.example.try_gameengine.action;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-
-import android.util.Log;
 
 public class PartOfOrigizalDecorator extends MovementDecorator {
 	private MovementAction action;
-	boolean doing = false;
+	
 	public PartOfOrigizalDecorator(MovementAction action) {
 		this.action = action;
 		this.copyMovementActionList = action.copyMovementActionList;
@@ -37,19 +34,12 @@ public class PartOfOrigizalDecorator extends MovementDecorator {
 
 	@Override
 	public String getDescription() {
-		return "Copy " + action.getDescription();
+		return "PartOfOrigizalDecorator " + action.getDescription();
 	}
 
 	@Override
 	protected MovementAction initTimer() {
-
 		if (this.getAction().getActions().size() == 0) {
-
-//			for (MovementAction action : this.getAction().getActions()) {
-//				this.getAction().setInfo(action.getInfo());
-//				action.getAction().setInfo(getInfo());
-//				action.getAction().initTimer();
-//			}
 			MovementActionInfo info = action.getInfo();
 			action.getAction().setInfo(info);
 			action.getAction().initTimer();
@@ -79,13 +69,11 @@ public class PartOfOrigizalDecorator extends MovementDecorator {
 
 	@Override
 	public List<MovementAction> getCurrentActionList() {
-		// TODO Auto-generated method stub
 		return action.getCurrentActionList();
 	}
 
 	@Override
 	public List<MovementActionInfo> getCurrentInfoList() {
-		// TODO Auto-generated method stub
 		if(this.getAction().isCancelFocusAppendPart || isCancelFocusAppendPart){
 			return action.getCurrentInfoList();
 		}else{
@@ -112,8 +100,6 @@ public class PartOfOrigizalDecorator extends MovementDecorator {
 	@Override
 	public void doIn(){		
 		action.doIn();
-		doing = true;
-//		copyMovementActionList.clear();
 		
 		this.getAction().currentInfoList =  this.getCurrentInfoList();
 		this.isCancelFocusAppendPart = true;

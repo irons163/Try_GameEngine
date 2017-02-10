@@ -18,32 +18,23 @@ import android.util.Log;
  *
  */
 public abstract class MovementAction {
+	protected static ExecutorService executor = Executors.newFixedThreadPool(20);
+	
 	protected List<MovementAction> actions = new ArrayList<MovementAction>();
 	protected Thread thread;
 	protected TimerOnTickListener timerOnTickListener;
 	protected String description = "Unknown Movement";
 	List<MovementAction> copyMovementActionList = new ArrayList<MovementAction>();
 	List<MovementActionInfo> currentInfoList = new ArrayList<MovementActionInfo>();
-	
 	List<MovementAction> movementItemList = new ArrayList<MovementAction>();
-	
 	List<MovementAction> totalCopyMovementActionList = new ArrayList<MovementAction>();
-	
 	protected boolean isCancelFocusAppendPart = false;
-	
 	protected boolean isFinish = false;
-	
 	public boolean isLoop = false;
-	
 	public boolean isSigleThread = false;
-	
-	protected static ExecutorService executor = Executors.newFixedThreadPool(20);
-	
 	String name="";
-	
 	protected MovementAction cancelAction;
-	
-	public boolean isRepeatSpriteActionIfMovementActionRepeat = true;
+	protected boolean isRepeatSpriteActionIfMovementActionRepeat = true;
 	
 	public MovementAction addMovementAction(MovementAction action) {
 		throw new UnsupportedOperationException();
@@ -351,7 +342,7 @@ public abstract class MovementAction {
 	
 	//not use yet
 	public IMovementActionMemento createMovementActionMemento(){
-		movementActionMemento = new MovementActionMementoImpl(actions, thread, timerOnTickListener, description, copyMovementActionList, currentInfoList, movementItemList, totalCopyMovementActionList, isCancelFocusAppendPart, isFinish, isLoop, isSigleThread, name, cancelAction);
+		movementActionMemento = new MovementActionMementoImpl(actions, thread, timerOnTickListener, description, copyMovementActionList, currentInfoList, movementItemList, totalCopyMovementActionList, isCancelFocusAppendPart, isFinish, isLoop, isSigleThread, name, cancelAction, isRepeatSpriteActionIfMovementActionRepeat);
 		return movementActionMemento;
 	}
 	
@@ -387,6 +378,7 @@ public abstract class MovementAction {
 		this.isSigleThread = mementoImpl.isSigleThread;
 		this.name = mementoImpl.name;
 		this.cancelAction = mementoImpl.cancelAction;
+		this.isRepeatSpriteActionIfMovementActionRepeat = mementoImpl.isRepeatSpriteActionIfMovementActionRepeat;
 	}
 	
 	/**
@@ -401,22 +393,15 @@ public abstract class MovementAction {
 		private String description = "Unknown Movement";
 		private List<MovementAction> copyMovementActionList;
 		private List<MovementActionInfo> currentInfoList;
-		
 		private List<MovementAction> movementItemList;
-		
 		private List<MovementAction> totalCopyMovementActionList;
-		
 		private boolean isCancelFocusAppendPart;
-		
 		private boolean isFinish;
-		
 		private boolean isLoop;
-		
 		private boolean isSigleThread;
-		
 		private String name;
-
 		private MovementAction cancelAction;
+		private boolean isRepeatSpriteActionIfMovementActionRepeat;
 		
 		public MovementActionMementoImpl(List<MovementAction> actions,
 				Thread thread, TimerOnTickListener timerOnTickListener,
@@ -427,7 +412,7 @@ public abstract class MovementAction {
 				List<MovementAction> totalCopyMovementActionList,
 				boolean isCancelFocusAppendPart, boolean isFinish,
 				boolean isLoop, boolean isSigleThread, String name,
-				MovementAction cancelAction) {
+				MovementAction cancelAction, boolean isRepeatSpriteActionIfMovementActionRepeat) {
 			super();
 			this.actions = actions;
 			this.thread = thread;
@@ -443,6 +428,7 @@ public abstract class MovementAction {
 			this.isSigleThread = isSigleThread;
 			this.name = name;
 			this.cancelAction = cancelAction;
+			this.isRepeatSpriteActionIfMovementActionRepeat = isRepeatSpriteActionIfMovementActionRepeat; 
 		}
 
 		public List<MovementAction> getActions() {
@@ -559,14 +545,13 @@ public abstract class MovementAction {
 			this.cancelAction = cancelAction;
 		}
 		
-		protected void setThreadPool(int nThreads){
-			executor.shutdown();
-			if(nThreads<=0){
-				executor = Executors.newCachedThreadPool();
-			}else{
-				executor = Executors.newFixedThreadPool(nThreads);
-			}
-			
+		public boolean isRepeatSpriteActionIfMovementActionRepeat() {
+			return isRepeatSpriteActionIfMovementActionRepeat;
+		}
+
+		public void setRepeatSpriteActionIfMovementActionRepeat(
+				boolean isRepeatSpriteActionIfMovementActionRepeat) {
+			this.isRepeatSpriteActionIfMovementActionRepeat = isRepeatSpriteActionIfMovementActionRepeat;
 		}
 	}
 }

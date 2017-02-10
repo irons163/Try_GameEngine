@@ -3,14 +3,9 @@ package com.example.try_gameengine.action;
 import java.util.List;
 
 public class HalfDecorator extends MovementDecorator{
-	private MovementAction action;
 	
 	public HalfDecorator(MovementAction action){
 		this.action = action;
-	}
-	
-	private float coreCalculationDx(float dx){
-		return 2 * dx;
 	}
 	
 	private MovementActionInfo coreCalculationMovementActionInfo(MovementActionInfo info){

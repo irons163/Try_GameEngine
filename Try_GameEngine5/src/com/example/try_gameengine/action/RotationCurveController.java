@@ -15,15 +15,8 @@ public class RotationCurveController implements IRotationController{
 	public void execute(MovementActionInfo info) {
 		// TODO Auto-generated method stub
 		if(firstExecute){
-			long millisTotal = info.getTotal();
-			long millisDelay = info.getDelay();
 			origineDx = info.getDx();
 			origineDy = info.getDy();
-			
-			float x = millisDelay / millisTotal;
-			
-			float tx = origineDx * x;
-			float ty = origineDy * x;
 			
 			initspeedX = (float) Math.sqrt(origineDx*origineDx + origineDy*origineDy);
 
@@ -47,7 +40,6 @@ public class RotationCurveController implements IRotationController{
 
 	@Override
 	public void reset(MovementActionInfo info) {
-		// TODO Auto-generated method stub
 		info.setDx(origineDx);
 		info.setDy(origineDy);
 		firstExecute = true;
@@ -55,19 +47,16 @@ public class RotationCurveController implements IRotationController{
 
 	@Override
 	public void setRotation(float rotation) {
-		// TODO Auto-generated method stub
 		this.rotation = rotation;
 	}
 
 	@Override
 	public float getRotation() {
-		// TODO Auto-generated method stub
 		return rotation;
 	}
 
 	@Override
 	public IRotationController copyNewRotationController() {
-		// TODO Auto-generated method stub
 		return new RotationCurveController(rotation);
 	}
 

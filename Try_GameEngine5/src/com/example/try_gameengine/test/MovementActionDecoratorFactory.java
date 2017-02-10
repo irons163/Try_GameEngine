@@ -1,7 +1,12 @@
-package com.example.try_gameengine.action;
+package com.example.try_gameengine.test;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import com.example.try_gameengine.action.CopyMoveDecorator;
+import com.example.try_gameengine.action.DoubleDecorator;
+import com.example.try_gameengine.action.HalfDecorator;
+import com.example.try_gameengine.action.MovementDecorator;
 
 public class MovementActionDecoratorFactory {
 	

@@ -394,6 +394,9 @@ public class MovementActionInfo {
 		this.isSettingTargetXY = mementoImpl.isSettingTargetXY;
 		this.targetX = mementoImpl.targetX;
 		this.targetY = mementoImpl.targetY;
+		
+		if(this.rotationController!=null)
+			this.rotationController.rMovementActionItem.javaeset(info);
 	}
 
 	/**

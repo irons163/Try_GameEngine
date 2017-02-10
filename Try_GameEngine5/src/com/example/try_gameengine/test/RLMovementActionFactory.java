@@ -1,6 +1,12 @@
-package com.example.try_gameengine.action;
+package com.example.try_gameengine.test;
 
 import android.util.Log;
+
+import com.example.try_gameengine.action.DoubleDecorator;
+import com.example.try_gameengine.action.MovementAction;
+import com.example.try_gameengine.action.MovementActionFactory;
+import com.example.try_gameengine.action.MovementActionItem;
+import com.example.try_gameengine.action.MovementActionSet;
 
 public class RLMovementActionFactory extends MovementActionFactory{
 

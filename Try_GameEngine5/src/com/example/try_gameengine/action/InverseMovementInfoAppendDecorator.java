@@ -1,12 +1,10 @@
 package com.example.try_gameengine.action;
 
-import java.util.Collections;
 import java.util.List;
 
 import android.util.Log;
 
 public class InverseMovementInfoAppendDecorator extends MovementDecorator {
-	private MovementAction action;
 
 	public InverseMovementInfoAppendDecorator(MovementAction action) {
 		this.action = action;
@@ -132,18 +130,5 @@ public class InverseMovementInfoAppendDecorator extends MovementDecorator {
 			movementItem.initTimer();
 		}
 
-	}
-
-	private void inverseOrder(MovementAction targetAction) {
-		Collections.reverse(targetAction.getAction().getActions());
-		for (MovementAction action : targetAction.getAction().getActions()) {
-			inverseOrder(action);
-		}
-	}
-
-	private void append(MovementAction targetAction) {
-		for (MovementAction action : targetAction.getAction().getActions()) {
-			this.addMovementAction(action);
-		}
 	}
 }

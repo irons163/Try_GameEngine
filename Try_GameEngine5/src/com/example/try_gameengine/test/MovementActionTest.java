@@ -14,7 +14,6 @@ import com.example.try_gameengine.action.InverseMovementInfoDecorator;
 import com.example.try_gameengine.action.MAction;
 import com.example.try_gameengine.action.MAction2;
 import com.example.try_gameengine.action.MovementAction;
-import com.example.try_gameengine.action.MovementActionDecoratorFactory;
 import com.example.try_gameengine.action.MovementActionInfo;
 import com.example.try_gameengine.action.MovementActionItem;
 import com.example.try_gameengine.action.MovementActionItemBaseReugularFPS;
@@ -24,10 +23,8 @@ import com.example.try_gameengine.action.MovementAtionController;
 import com.example.try_gameengine.action.MovementInfoFactory;
 import com.example.try_gameengine.action.PartOfAppendDecorator;
 import com.example.try_gameengine.action.PartOfOrigizalDecorator;
-import com.example.try_gameengine.action.RLMovementActionFactory;
 import com.example.try_gameengine.action.SpecialMovementActionFactory;
 import com.example.try_gameengine.framework.Config;
-import com.example.try_gameengine.framework.LayerManager;
 import com.example.try_gameengine.framework.Sprite;
 
 public class MovementActionTest extends AndroidTestCase{

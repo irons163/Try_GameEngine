@@ -11,7 +11,6 @@ import android.util.Log;
  *
  */
 public class LooperDecorator extends MovementDecorator {
-	private MovementAction action;
 
 	public LooperDecorator(MovementAction action) {
 		this.action = action;

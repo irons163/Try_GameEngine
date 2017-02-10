@@ -245,64 +245,19 @@ public abstract class EasyScene extends Scene implements ContactListener{
 		body.createFixture(fDef);
 		
 		return body;
-
-	}
-	
-	private void setGameView(){
-		gameModel = new EasyGameModel(context, null);
-//		gameView = new EasyGameModel(context, null);
-	}
-	
-	private void setGameController(){
-		gameController = new EasyGameController((Activity)context, gameModel);
 	}
 
 	@Override
 	public void initGameModel() {
-		// TODO Auto-generated method stub
 		gameModel = new EasyGameModel(context, null);
 	}
 	
 	@Override
 	public void initGameController() {
-		// TODO Auto-generated method stub
-		
 		gameController = new EasyGameController((Activity)context, gameModel);
 	}
 	
-//	@Override
-//	public void start() {
-//		// TODO Auto-generated method stub
-//		super.start();
-//	}
-//	
-//	@Override
-//	public void stop() {
-//		// TODO Auto-generated method stub
-//		super.stop();
-//	}
-	
-//	@Override
-//	public boolean onTouchEvent(MotionEvent event) {
-//		// TODO Auto-generated method stub
-//		return false;
-//	}
-	
 	public abstract void initGameView(Activity activity, IGameController gameController,IGameModel gameModel);
-
-//	public void setSurfaceHolder(SurfaceHolder surfaceHolder) {
-//		// TODO Auto-generated method stub
-//		gameModel.setSurfaceHolder(surfaceHolder);
-//	}
-//
-//	public void restart() {
-//		// TODO Auto-generated method stub
-//		gameModel.restart();
-//	}
-	
-//	public abstract void process();
-//	
-//	public abstract void doDraw(Canvas canvas);
 	
 	// If override, need super.process().
 	public void process(){

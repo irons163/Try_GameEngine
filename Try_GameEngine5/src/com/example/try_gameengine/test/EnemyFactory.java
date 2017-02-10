@@ -5,12 +5,10 @@ import java.util.List;
 
 import android.graphics.Bitmap;
 
-import com.example.try_gameengine.action.LRMovementActionFactory;
 import com.example.try_gameengine.action.MovementAction;
 import com.example.try_gameengine.action.MovementActionFactory;
 import com.example.try_gameengine.action.MovementActionInfo;
 import com.example.try_gameengine.action.MovementDecorator;
-import com.example.try_gameengine.action.RLMovementActionFactory;
 
 public class EnemyFactory {
 	private static Bitmap redEnemyBitmap;

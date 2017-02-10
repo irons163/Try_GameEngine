@@ -7,6 +7,7 @@ import android.util.Log;
 
 import com.example.try_gameengine.action.MovementAction;
 import com.example.try_gameengine.action.listener.IActionListener;
+import com.example.try_gameengine.framework.Sprite;
 
 interface Block{
 	public void runBlock();
@@ -115,7 +116,7 @@ public class MovementActionOwnerGroup {
 		blocks.add(block);
 	}
 	
-	public void setMovementActionListener2(MovementAction action, final IActionListener actionListener){
+	public void setMovementActionListener2(Sprite sprite, MovementAction action, final IActionListener actionListener){
 		action = MAction2.sequence(new MovementAction[]{action});
 		
 		action.setActionListener(new IActionListener() {
@@ -176,6 +177,8 @@ public class MovementActionOwnerGroup {
 				actionListener.actionCycleFinish();
 			}
 		});
+		
+		sprite.runMovementAction(action);
 	}
 	
 	public void addMovementAction(String id, MovementAction movementAction) {
@@ -186,52 +189,6 @@ public class MovementActionOwnerGroup {
 	
 	public void setOnGroupListener(OnGroupListener onGroupListener){
 		this.onGroupListener = onGroupListener;
-	}
-	
-	public void setMovementActionListener(String id, final IActionListener actionListener){
-		MovementAction action = movementActions.get(0);
-		action.setActionListener(new IActionListener() {
-			
-			@Override
-			public void beforeChangeFrame(int nextFrameId) {
-				// TODO Auto-generated method stub
-				actionListener.beforeChangeFrame(nextFrameId);
-			}
-			
-			@Override
-			public void afterChangeFrame(int periousFrameId) {
-				// TODO Auto-generated method stub
-				actionListener.afterChangeFrame(periousFrameId);
-			}
-			
-			@Override
-			public void actionStart() {
-				// TODO Auto-generated method stub
-				actionListener.actionStart();
-				
-				onGroupListener.onStart(startCount);
-				if(startCount==movementActions.size()-1)
-					onGroupListener.onLastStart();
-				startCount++;
-			}
-			
-			@Override
-			public void actionFinish() {
-				// TODO Auto-generated method stub
-				actionListener.actionFinish();
-				
-				onGroupListener.onFinish(finishCount);
-				if(finishCount==movementActions.size()-1)
-					onGroupListener.onLastFinish();
-				finishCount++;
-			}
-			
-			@Override
-			public void actionCycleFinish() {
-				// TODO Auto-generated method stub
-				actionListener.actionCycleFinish();
-			}
-		});
 	}
 	
 	public void setMovementActionListener(MovementAction action, final IActionListener actionListener){
@@ -323,8 +280,16 @@ public class MovementActionOwnerGroup {
 		}
 	}
 	
-	public void reset(){
+	public void clear(){
 		movementActions.clear();
+		startCount=0;
+		finishCount=0;
+	}
+	
+	public void reset(){
+		for(MovementAction action : movementActions){
+			action.controller.do;
+		}
 		startCount=0;
 		finishCount=0;
 	}

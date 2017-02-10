@@ -301,7 +301,7 @@ public class MovementActionItemAlpha extends MovementAction{
 	}
 	
 	public IMovementActionMemento createMovementActionMemento(){
-		movementActionMemento = new MovementActionItemBaseReugularFPSMementoImpl(actions, thread, timerOnTickListener, name, copyMovementActionList, currentInfoList, movementItemList, totalCopyMovementActionList, isCycleFinish, isCycleFinish, isCycleFinish, isCycleFinish, name, cancelAction, millisTotal, millisDelay, info, resumeTotal, resetTotal, name, updateTime, frameIdx, isStop, isCycleFinish, triggerEnable, frameTimes, resumeFrameIndex, resumeFrameCount, pauseFrameNum, pauseFrameCounter, nextframeTrigger, lastTriggerFrameNum);
+		movementActionMemento = new MovementActionItemAlphaMementoImpl(actions, thread, timerOnTickListener, name, copyMovementActionList, currentInfoList, movementItemList, totalCopyMovementActionList, isCycleFinish, isCycleFinish, isCycleFinish, isCycleFinish, name, cancelAction, millisTotal, millisDelay, info, resumeTotal, resetTotal, name, updateTime, frameIdx, isStop, isCycleFinish, triggerEnable, frameTimes, resumeFrameIndex, resumeFrameCount, pauseFrameNum, pauseFrameCounter, nextframeTrigger, lastTriggerFrameNum);
 		if(this.info!=null){
 			this.info.createIMovementActionInfoMemento();
 		}
@@ -311,7 +311,7 @@ public class MovementActionItemAlpha extends MovementAction{
 	public void restoreMovementActionMemento(IMovementActionMemento movementActionMemento){
 //		MovementActionMementoImpl mementoImpl = (MovementActionMementoImpl) movementActionMemento;
 		super.restoreMovementActionMemento(this.movementActionMemento);
-		MovementActionItemBaseReugularFPSMementoImpl mementoImpl = (MovementActionItemBaseReugularFPSMementoImpl) this.movementActionMemento;
+		MovementActionItemAlphaMementoImpl mementoImpl = (MovementActionItemAlphaMementoImpl) this.movementActionMemento;
 		this.millisTotal = mementoImpl.millisTotal;
 		this.millisDelay = mementoImpl.millisDelay;
 		this.info = mementoImpl.info;
@@ -339,7 +339,7 @@ public class MovementActionItemAlpha extends MovementAction{
 
 	}
 	
-	protected static class MovementActionItemBaseReugularFPSMementoImpl extends MovementActionMementoImpl{
+	protected static class MovementActionItemAlphaMementoImpl extends MovementActionMementoImpl{
 	
 		long millisTotal;
 		long millisDelay;
@@ -361,7 +361,7 @@ public class MovementActionItemAlpha extends MovementAction{
 		private long lastTriggerFrameNum;
 //		private boolean isEnableSetSpriteAction = true;
 		
-		public MovementActionItemBaseReugularFPSMementoImpl(
+		public MovementActionItemAlphaMementoImpl(
 				List<MovementAction> actions, Thread thread,
 				TimerOnTickListener timerOnTickListener, String description,
 				List<MovementAction> copyMovementActionList,
