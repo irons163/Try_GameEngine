@@ -33,14 +33,8 @@ public class MovementActionItemRotation extends MovementAction{
 	FrameTrigger nextframeTrigger;
 	private long lastTriggerFrameNum;
 	private boolean isEnableSetSpriteAction = true;
-//	private int originalAlpha;
-//	private int alpha;
-//	private int offsetAlphaByOnceTrigger;
-//	private float scaleX, scaleY;
 	private float rotation;
-//	private float offsetScaleXByOnceTrigger, offsetScaleYByOnceTrigger;
 	private float offsetRotationByOnceTrigger;
-	
 	private float originalRotation;
 	
 //	public static final float NO_SCALE = Float.MIN_VALUE;
@@ -209,6 +203,22 @@ public class MovementActionItemRotation extends MovementAction{
 	private void frameTriggerFPSStart(){
 		if (!isStop) {
 			synchronized (MovementActionItemRotation.this) {
+				if(isCycleFinish)
+					isCycleFinish = false;
+			
+			resumeFrameCount++;
+			
+			if(resumeFrameCount==lastTriggerFrameNum+info.getDelay()){
+				if(offsetRotationByOnceTrigger!=0)
+					info.getSprite().setRotation(info.getSprite().getRotation()+offsetRotationByOnceTrigger);
+
+				lastTriggerFrameNum += info.getDelay();
+//				Log.e("rotation by rotation action", "rotation:"+info.getSprite().getRotation());
+			// add by 150228. if the delay change by main app, the function: else if(resumeFrameCount==lastTriggerFrameNum+info.getDelay() maybe make problem.
+			}else if(resumeFrameCount>lastTriggerFrameNum+info.getDelay()){ 
+				lastTriggerFrameNum = resumeFrameCount+1-info.getDelay();
+			}
+			
 			if(resumeFrameCount>=info.getDelay()){	
 				if(resumeFrameCount==info.getTotal())
 					isCycleFinish = true;
@@ -218,27 +228,12 @@ public class MovementActionItemRotation extends MovementAction{
 				resumeFrameCount = 0;
 				lastTriggerFrameNum = 0;
 			}
-			
-			resumeFrameCount++;
-			
+
 			if(!isLoop && isCycleFinish){
 				isStop = true;
 				doReset();	
 				triggerEnable = false;
-
-			}else if(resumeFrameCount==lastTriggerFrameNum+info.getDelay()){
-//				timerOnTickListener.onTick(dx, dy);		
-				if(offsetRotationByOnceTrigger!=0)
-					info.getSprite().setRotation(info.getSprite().getRotation()+offsetRotationByOnceTrigger);
-
-				lastTriggerFrameNum += info.getDelay();
-//				Log.e("rotation by rotation action", "rotation:"+info.getSprite().getRotation());
-			// add by 150228. if the delay change by main app, the function: else if(resumeFrameCount==lastTriggerFrameNum+info.getDelay() maybe make problem.
-			}else if(resumeFrameCount>lastTriggerFrameNum+info.getDelay()){ 
-//				resumeFrameCount--;
-//				lastTriggerFrameNum++;
-				lastTriggerFrameNum = resumeFrameCount+1-info.getDelay();
-			}
+			} 
 			
 			if(isCycleFinish){
 				switch (rotationType) {
@@ -255,7 +250,6 @@ public class MovementActionItemRotation extends MovementAction{
 				
 				if(actionListener!=null)
 					actionListener.actionCycleFinish();
-				isCycleFinish = false;
 				
 				if(!isLoop){
 					if(actionListener!=null)

@@ -336,6 +336,11 @@ public class Sprite extends Layer {
 		return action;
 	}
 	
+	public void setMovementActionNone(){
+		this.action = null;
+		movementActions.clear();
+	}
+	
 	/**
 	 * @param movementAction
 	 */
@@ -418,15 +423,18 @@ public class Sprite extends Layer {
 		canvas.save();
 		
 		do {
-
-		canvas = getClipedCanvas(canvas, paint);
-		Paint originalPaint = paint;		
+			canvas = getClipedCanvas(canvas, paint);
+			Paint originalPaint = paint;	
+			
+			if(originalPaint==null && getPaint()!=null){
+				paint = getPaint();
+			}
 		
 //		if(bitmap!=null){		
 			if(length>0){
 				paint(canvas,paint);		
-				//use input paint first
-				paint = originalPaint;
+//				//use input paint first
+//				paint = originalPaint;
 			}else{
 				boolean isUseCanvasScale = false;
 				if(xScale*xScaleForBitmapWidth<0 || yScale*yScaleForBitmapHeight<0){
@@ -604,23 +612,19 @@ public class Sprite extends Layer {
 		//use input paint first
 		int oldColor = 0;
 		Style oldStyle = null;
-		if(paint==null && getPaint()!=null){
-			paint = getPaint();
+		if(paint!=null){
 			if(getBackgroundColor()!=NONE_COLOR){
-				oldColor = getPaint().getColor();
-				oldStyle = getPaint().getStyle();
-				getPaint().setColor(getBackgroundColor());
-				getPaint().setStyle(Style.FILL);
-				int oldAlpha = getPaint().getAlpha();
-				getPaint().setAlpha((int) (getAlpha()*oldAlpha/255.0f));
-//				canvas.drawRect(x, y, x + w, y + h,paint);
+				oldColor = paint.getColor();
+				oldStyle = paint.getStyle();
+				paint.setColor(getBackgroundColor());
+				paint.setStyle(Style.FILL);
+				int oldAlpha = paint.getAlpha();
+//				paint.setAlpha((int) (getAlpha()*oldAlpha/255.0f));
 				canvas.drawRect(drawRectF, paint);
-				getPaint().setColor(oldColor);
-				getPaint().setStyle(oldStyle);
-				getPaint().setAlpha(oldAlpha);
+				paint.setColor(oldColor);
+				paint.setStyle(oldStyle);
+				paint.setAlpha(oldAlpha);
 			}
-		}else if(paint!=null){
-			canvas.drawRect(drawRectF, paint);
 		}
 	}
 	
@@ -992,8 +996,6 @@ public class Sprite extends Layer {
 	 */
 	private void moveXY(float dx, float dy) {	
 		if(moveRage==null){
-//			setX(getCenterX() + dx - w/2);
-//			setY(getCenterY() + dy - h/2);
 			setX(getX() + dx);
 			setY(getY() + dy);
 		}else{
@@ -1051,25 +1053,17 @@ public class Sprite extends Layer {
 			}
 			
 		}
-//		if(parent!=null){
-//			return;
-//		}
-//		
-//		for(ALayer layer : layers){
-//			((Sprite)layer).move(dx, dy);
-//		}
 	}
 	
 	@Override
 	public void frameTrig(){
+		//SpriteAction run before MovementAction because of MovementActionItemAnimate.
+		if(currentAction!=null)
+			currentAction.trigger();
 		
-//		if(action!=null)
-//			action.trigger();
 		for(MovementAction action : movementActions){
 			action.trigger();
 		}
-		if(currentAction!=null)
-			currentAction.trigger();
 		
 		super.frameTrig();
 	}

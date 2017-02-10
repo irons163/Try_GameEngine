@@ -37,6 +37,8 @@ import com.example.try_gameengine.framework.IGameController;
 import com.example.try_gameengine.framework.IGameModel;
 import com.example.try_gameengine.framework.IMoveObserver;
 import com.example.try_gameengine.framework.LayerManager;
+import com.example.try_gameengine.framework.ProcessBlock;
+import com.example.try_gameengine.framework.ProcessBlockManager;
 import com.example.try_gameengine.framework.TouchDispatcher;
 import com.example.try_gameengine.remotecontroller.RemoteController;
 import com.example.try_gameengine.scene.Scene;
@@ -48,22 +50,22 @@ public abstract class EasyScene extends Scene implements ContactListener{
 	
 	private int screenW,screenH;
 	
-	/**Bird���A�ΥHø�e�X�p��*/
+	/**Bird嚙踝蕭嚙璀嚙諄以繪嚙箴嚙碼嚙緘嚙踝蕭*/
 	protected Bird bird;
 	
-	/**touchEvent���u�ơA�קK�u���ոծ��W�c�^��*/
+	/**touchEvent嚙踝蕭嚙線嚙複，嚙論免嚙線嚙踝蕭嚙調試殷蕭嚙磕嚙箱嚙稷嚙踝蕭*/
 	byte[] lock = new byte[0];
 	private final int timePause=50;
 	
-	/**���z�@���n��*/
+	/**嚙踝蕭嚙緲嚙瑾嚙踝蕭嚙緯嚙踝蕭*/
 //	World world;
 	public LWorld world;
-//	AABB aabb;  //�s����JBox2D�w�g���ݭnAABB�ϰ�F
+//	AABB aabb;  //嚙編嚙踝蕭嚙踝蕭JBox2D嚙緩嚙篇嚙踝蕭嚙豎要AABB嚙誕堆蕭F
 	Vector2 gravity;
-	public static final float RATE=40.0f; //���z�@�ɻP�ù������Y���C
+	public static final float RATE=40.0f; //嚙踝蕭嚙緲嚙瑾嚙褕與嚙衛對蕭嚙踝蕭嚙踝蕭嚙磐嚙踝蕭嚙瘠
 	protected float timeStep=1f/60f;	
 	
-	/**�s��JBox2D�W�[���ӱ�����йB��A�ѼƧ����өx��manual�W���ѼƳ]�m�� */
+	/**嚙編嚙踝蕭JBox2D嚙磕嚙稼嚙踝蕭嚙諉梧蕭嚙踝蕭嚙踝蕭邿B嚙踝蕭A嚙諸數改蕭嚙踝蕭嚙諉官嚙踝蕭manual嚙磕嚙踝蕭嚙諸數設嚙練嚙踝蕭 */
 	protected int velocityIterations = 10;	
 	protected int positionIterations = 8;
 	
@@ -105,14 +107,14 @@ public abstract class EasyScene extends Scene implements ContactListener{
 		paint.setStyle(Style.STROKE);
 		paint.setAntiAlias(true);
 		
-		/**���O��l��*/
+		/**嚙踝蕭嚙瞌嚙踝蕭l嚙踝蕭*/
 		gravity=new Vector2(0,-10f);
 		
-		/**�Ыت��z�@��*/
+		/**嚙請建迎蕭嚙緲嚙瑾嚙踝蕭*/
 //		world=new World(gravity, true);
 		world=new LWorld(0, 20, 1800, 1800, true, 1.0f);
 		
-		/**�W�[���z�@�ɤ����I����ť*/
+		/**嚙磕嚙稼嚙踝蕭嚙緲嚙瑾嚙褕歹蕭嚙踝蕭嚙瘢嚙踝蕭嚙踝蕭聽*/
 		world.setContactListener(this);
 		
 		DisplayMetrics dm = new DisplayMetrics();
@@ -123,14 +125,14 @@ public abstract class EasyScene extends Scene implements ContactListener{
 //		CommonUtil.statusBarHeight = CommonUtil.getStatusBarHeight(this);
 //		CommonUtil.screenHeight -= CommonUtil.statusBarHeight;
 		
-		/**�o��ù��j�p*/
+		/**嚙緻嚙踝蕭羅嚙踝蕭j嚙緘*/
 		this.screenW=CommonUtil.screenWidth;
 		this.screenH=CommonUtil.screenHeight;
 		
-		/**��l�Ƥp����m*/
+		/**嚙踝蕭l嚙複小嚙踝蕭嚙踝蕭m*/
 		AngryBirdActivity.startX=100;
 		AngryBirdActivity.startY=screenH-500;
-		/**��l�ƾ�ֵ�����*/
+		/**嚙踝蕭l嚙複橘蕭硉嚙踝蕭嚙踝蕭嚙�/
 		AngryBirdActivity.touchDistance=0.2f*screenH;
 		
 		
@@ -138,72 +140,72 @@ public abstract class EasyScene extends Scene implements ContactListener{
 		
 		bird=new Bird(AngryBirdActivity.startX,AngryBirdActivity.startY,bmpBird.getHeight()/2f,bmpBird,Type.redBird);		
 
-		/** �Ыإ|�P����ءA�]�m isStatic��true�A�Y�b���z�@�ɤ��O�R��A
-		 * Type�]�m��ground�A�קK�Q����
+		/** 嚙請建四嚙瞑嚙踝蕭嚙踝蕭堙A嚙稽嚙練 isStatic嚙踝蕭true嚙璀嚙磐嚙箭嚙踝蕭嚙緲嚙瑾嚙褕歹蕭嚙瞌嚙磋嚙踐的嚙璀
+		 * Type嚙稽嚙練嚙踝蕭ground嚙璀嚙論免嚙瞋嚙踝蕭嚙踝蕭
 		 * */
 		createPolygon(5, 5, CommonUtil.screenWidth - 10, 2, true,Type.ground);
 		createPolygon(5, CommonUtil.screenHeight - 10, CommonUtil.screenWidth - 10, 2, true,Type.ground);
 		createPolygon(5, 5, 2, CommonUtil.screenHeight - 10, true,Type.ground);
 		createPolygon(CommonUtil.screenWidth - 10, 5, 2, CommonUtil.screenHeight - 10, true,Type.ground);
 		
-		/**�Ы�6�Ӥ�ΡAisStatic�]�m��false�A�Y�b���z�@�ɤ��O�ʺA�A���~�O�@�μv�T */
+		/**嚙請恬蕭6嚙諉歹蕭峞AisStatic嚙稽嚙練嚙踝蕭false嚙璀嚙磐嚙箭嚙踝蕭嚙緲嚙瑾嚙褕歹蕭嚙瞌嚙褊態嚙璀嚙踝蕭嚙羯嚙瞌嚙瑾嚙諄影嚙確 */
 		for(int i=0;i<6;i++)
 		{
 			createPolygon(screenW-250,screenH-200-20*i,20,20, false,Type.wood);
 		}
-		/**�Ыؤ@�Ӫ������A�]�O�ʺA�� */
+		/**嚙請建一嚙諉迎蕭嚙踝蕭嚙踝蕭嚙璀嚙稽嚙瞌嚙褊態嚙踝蕭 */
 		createPolygon(screenW-380,screenH-250-20*6-10,80,10, false,Type.wood);
 	}
 	
-	/**�Ыض�Ϊ�body*/
+	/**嚙請建塚蕭峈嚙箭ody*/
 	public Body createCircle(float x,float y,float r,boolean isStatic)
 	{
-		/**�]�mbody�Ϊ�*/
+		/**嚙稽嚙練body嚙諄迎蕭*/
 	    CircleShape circle = new CircleShape();
-	    /**�b�|�A�n�N�ù����Ѽ���ƨ쪫�z�@�ɤ� */
+	    /**嚙箭嚙罵嚙璀嚙緯嚙瞇嚙衛對蕭嚙踝蕭嚙諸潘蕭嚙踝蕭鴘恬蕭z嚙瑾嚙褕歹蕭 */
 	    circle.setRadius(r/RATE);
 		
-	    /**�]�mFixtureDef */
+	    /**嚙稽嚙練FixtureDef */
 		FixtureDef fDef=new FixtureDef();
 		if(isStatic)
 		{
-			/**�K�׬�0�ɡA�b���z�@�ɤ������~�O�v�T�A���R� */
+			/**嚙皺嚙論穿蕭0嚙褕，嚙箭嚙踝蕭嚙緲嚙瑾嚙褕歹蕭嚙踝蕭嚙踝蕭嚙羯嚙瞌嚙緞嚙確嚙璀嚙踝蕭嚙磋嚙踐的 */
 			fDef.density=0;
 		}
 		else
 		{
-			/**�K�פ���0�ɡA�b���z�@�ɤ��|���~�O�v�T */
+			/**嚙皺嚙論歹蕭嚙踝蕭0嚙褕，嚙箭嚙踝蕭嚙緲嚙瑾嚙褕歹蕭嚙罵嚙踝蕭嚙羯嚙瞌嚙緞嚙確 */
 			fDef.density=1;
 		}
-		/**�]�m�����O�A�d�� 0��1 */
+		/**嚙稽嚙練嚙踝蕭嚙踝蕭嚙瞌嚙璀嚙範嚙踝蕭 0嚙踝蕭1 */
 		fDef.friction=1.0f;
-		/**�]�m����I�����^�_�O�A?�C���g����j�����n?*/
+		/**嚙稽嚙練嚙踝蕭嚙踝蕭I嚙踝蕭嚙踝蕭嚙稷嚙稻嚙瞌嚙璀?嚙瘠嚙踝蕭嚙篇嚙踝蕭嚙踝蕭j嚙踝蕭嚙踝蕭嚙緯?*/
 		fDef.restitution=0.3f;
-		/**�K�[�Ϊ�*/
+		/**嚙皺嚙稼嚙諄迎蕭*/
 		fDef.shape=circle;
 
-	    /**�]�mBodyDef */
+	    /**嚙稽嚙練BodyDef */
 		BodyDef bodyDef=new BodyDef();
 		
-		/**���B�@�w�n�]�m�A�Y��density����0�A
-		 * �Y���B���Nbody.type�]�m��BodyType.DYNAMIC,�����|�R��
+		/**嚙踝蕭嚙畿嚙瑾嚙緩嚙緯嚙稽嚙練嚙璀嚙磐嚙踝蕭density嚙踝蕭嚙踝蕭0嚙璀
+		 * 嚙磐嚙踝蕭嚙畿嚙踝蕭嚙瞇body.type嚙稽嚙練嚙踝蕭BodyType.DYNAMIC,嚙踝蕭嚙踝蕭嚙罵嚙磋嚙踝蕭
 		 * */
 		bodyDef.type=isStatic?BodyType.StaticBody:BodyType.DynamicBody;
-		/**�]�mbody��m�A�n�N�ù����Ѽ���ƨ쪫�z�@�ɤ� */
+		/**嚙稽嚙練body嚙踝蕭m嚙璀嚙緯嚙瞇嚙衛對蕭嚙踝蕭嚙諸潘蕭嚙踝蕭鴘恬蕭z嚙瑾嚙褕歹蕭 */
 		bodyDef.position.set((x)/RATE, (y)/RATE);
 		
-		/**�Ы�body*/
+		/**嚙請恬蕭body*/
 		Body body=world.createBody(bodyDef);
 		
-		/**�K�[ m_userData */
+		/**嚙皺嚙稼 m_userData */
 		body.setUserData(bird);
 		
-	//	body.createShape(fDef); //�ª�JBox2D���Ыؤ�k
+	//	body.createShape(fDef); //嚙蝓迎蕭JBox2D嚙踝蕭嚙請建歹蕭k
 		
-		/**��body�Ы�Fixture*/
+		/**嚙踝蕭body嚙請恬蕭Fixture*/
 		body.createFixture(fDef); 
 		
-	//	body.setMassFromShapes();	//�ª�JBox2D���Ыؤ�k
+	//	body.setMassFromShapes();	//嚙蝓迎蕭JBox2D嚙踝蕭嚙請建歹蕭k
 		
 		return body;
 	}
@@ -461,16 +463,16 @@ public abstract class EasyScene extends Scene implements ContactListener{
 			if(isEnableRemoteController && remoteController!=null)
 				remoteController.drawRemoteController(canvas, null);
 			if(isEnablePhysical){
-				/**�e�X�p��*/
+				/**嚙箴嚙碼嚙緘嚙踝蕭*/
 				bird.draw(canvas, paint);
 	
-				/**�p�G�p���٨S�Q�o�g�A�e�X��ʪ���ֵ��y��*/
+				/**嚙緘嚙瘦嚙緘嚙踝蕭嚙誶沒嚙瞋嚙緻嚙篇嚙璀嚙箴嚙碼嚙踝蕭坁嚙踝蕭嚙誰蛛蕭嚙緙嚙踝蕭*/
 				if(!bird.getIsReleased())
 				{
 					canvas.drawLine(AngryBirdActivity.startX, AngryBirdActivity.startY, bird.getX(), bird.getY(), paint);
 				}
 	
-				/**�M�����z�@�ɡA�e�XRect */
+				/**嚙瞎嚙踝蕭嚙踝蕭嚙緲嚙瑾嚙褕，嚙箴嚙碼Rect */
 	//			Body body = world.getBodyList();
 				for (int i = 1; i < world.getBodyCount(); i++) {
 					LBody body = world.getBodyList().get(i);
@@ -514,6 +516,15 @@ public abstract class EasyScene extends Scene implements ContactListener{
 					EasyScene.this.onSceneTouchEvent(event);
 			}
 		}
+		
+		@Override
+		public void addPreProcessBlock(ProcessBlock processBlock) {
+			// TODO Auto-generated method stub
+//			super.addPreProcessBlock(processBlock);
+			ProcessBlockManager.getInstance().setPreProcessBlock(processBlock, getLayerLevel());
+		}
+		
+		
 	}
 	
 	public boolean isEnablePhysical() {
@@ -540,7 +551,7 @@ public abstract class EasyScene extends Scene implements ContactListener{
 	public void postSolve(Contact arg0, ContactImpulse arg1) {
 		// TODO Auto-generated method stub
 
-		/**�I���ƥ��˴��A�ѼƬO�ոեX�Ӫ� */
+		/**嚙瘢嚙踝蕭嚙複伐蕭嚙誼湛蕭嚙璀嚙諸數是嚙調試出嚙諉迎蕭 */
 		if(arg1.getNormalImpulses()[0]>5)
 		{
 			if ( (arg0.getFixtureA().getBody().getUserData())instanceof MyRect)
@@ -548,7 +559,7 @@ public abstract class EasyScene extends Scene implements ContactListener{
 
 				MyRect rect=(MyRect)(arg0.getFixtureA().getBody().getUserData());
 
-				/**�u���o�X�������|�Q���� */
+				/**嚙線嚙踝蕭嚙緻嚙碼嚙踝蕭嚙踝蕭嚙踝蕭嚙罵嚙瞋嚙踝蕭嚙踝蕭 */
 				if(rect.getType()==Type.stone
 				||rect.getType()==Type.wood
 				||rect.getType()==Type.pig

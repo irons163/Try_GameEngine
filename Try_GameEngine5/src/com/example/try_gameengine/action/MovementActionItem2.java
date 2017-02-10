@@ -123,43 +123,50 @@ public class MovementActionItem2 extends MovementActionItem{
 	private void frameTriggerFPSStart(){
 		if (!isStop) {
 			synchronized (MovementActionItem2.this) {
-
-			do{	
-				if(resumeMillisCount >=info.getDelay()){
-					if(resumeMillisCount>=info.getTotal())
-						isCycleFinish = true;
-				}
-				
-				if(isCycleFinish){
-					resumeMillisCount = 0;
-					lastMillisCount = 0;
-				}
+				if(isCycleFinish)
+					isCycleFinish = false;
 				
 				resumeMillisCount += Time.DeltaTime;
 				
-				if(!isLoop && isCycleFinish){
-					isStop = true;
-					doReset();	
-					triggerEnable = false;
-					if(actionListener!=null)
-						actionListener.actionFinish();
-					
-					MovementActionItem2.this.notifyAll();
-				}else if(resumeMillisCount >= lastMillisCount + info.getDelay()){
+			do{	
+				if(resumeMillisCount >= lastMillisCount + info.getDelay()){
 					doRotation();
 					doGravity();
 					if(timerOnTickListener!=null)
 						timerOnTickListener.onTick(dx, dy);		
 					lastMillisCount += info.getDelay();
 				}
-				
-				if(isCycleFinish){
-					if(actionListener!=null)
-						actionListener.actionCycleFinish();
-					isCycleFinish = false;
-					break;
-				}
 			}while(resumeMillisCount >= lastMillisCount + info.getDelay());
+			
+			if(resumeMillisCount >=info.getDelay()){
+				if(resumeMillisCount>=info.getTotal())
+					isCycleFinish = true;
+			}
+			
+			if(!isLoop && isCycleFinish){
+				isStop = true;
+				doReset();	
+				triggerEnable = false;
+			} 
+				
+			if(isCycleFinish){
+				resumeMillisCount = 0; // during each cycle has a little delay.
+//				resumeMillisCount = resumeMillisCount - info.getTotal(); // during each cycle has no delay.
+				lastMillisCount = 0;
+			}
+			
+			if(isCycleFinish){
+				if(actionListener!=null)
+					actionListener.actionCycleFinish();
+			}
+			
+			if(isStop){
+				if(actionListener!=null)
+					actionListener.actionFinish();
+				
+				MovementActionItem2.this.notifyAll();
+			}
+			
 			/*
 			if(resumeFrameCount>=info.getDelay()){	
 				if(resumeFrameCount==info.getTotal())
