@@ -3,6 +3,10 @@ package com.example.try_gameengine.action;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.graphics.YuvImage;
+
+import com.example.try_gameengine.action.MovementActionItemBaseReugularFPS.FrameTrigger;
+import com.example.try_gameengine.action.MovementActionItemTrigger.MovementActionItemUpdateTimeDataDelegate;
 import com.example.try_gameengine.action.listener.IActionListener;
 import com.example.try_gameengine.action.visitor.IMovementActionVisitor;
 import com.example.try_gameengine.framework.Config;
@@ -13,19 +17,27 @@ import com.example.try_gameengine.framework.Config;
  * @author irons
  *
  */
-public class MovementActionItemAlphaUpdateTime extends MovementActionItemUpdateTime{ 
-	private boolean isEnableSetSpriteAction = true;
+public class MovementActionItemAlpha2 extends MovementActionItemUpdate{ 
+	MovementActionItemAlpha2Data data;
+	FrameTrigger myTrigger = new FrameTrigger() {
+		
+		@Override
+		public void trigger() {
+			// TODO Auto-generated method stub
+			frameTriggerFPSStart();
+		}
+	};
+	
+	private static final int NO_ORGINAL_ALPHA = -1;
 	private int originalAlpha;
 	private int alpha;
 	private int offsetAlphaByOnceTrigger;
-	
-	private static final int NO_ORGINAL_ALPHA = -1;
 	
 	/**
 	 * @param millisTotal
 	 * @param alpha
 	 */
-	public MovementActionItemAlphaUpdateTime(long millisTotal, int alpha){
+	public MovementActionItemAlpha2(long millisTotal, int alpha){
 		this((long) (millisTotal/(1000.0f/Config.fps)), 1, NO_ORGINAL_ALPHA, alpha, "MovementActionItemAlpha");
 	}
 	
@@ -34,7 +46,7 @@ public class MovementActionItemAlphaUpdateTime extends MovementActionItemUpdateT
 	 * @param originalAlpha
 	 * @param alpha
 	 */
-	public MovementActionItemAlphaUpdateTime(long millisTotal, int originalAlpha, int alpha){
+	public MovementActionItemAlpha2(long millisTotal, int originalAlpha, int alpha){
 		this((long) (millisTotal/(1000.0f/Config.fps)), 1, originalAlpha, alpha, "MovementActionItemAlpha");
 	}
 	
@@ -43,7 +55,7 @@ public class MovementActionItemAlphaUpdateTime extends MovementActionItemUpdateT
 	 * @param triggerInterval
 	 * @param alpha
 	 */
-	public MovementActionItemAlphaUpdateTime(long triggerTotal, long triggerInterval, int alpha){
+	public MovementActionItemAlpha2(long triggerTotal, long triggerInterval, int alpha){
 		this(triggerTotal, triggerTotal, NO_ORGINAL_ALPHA, alpha, "MovementActionItemAlpha");
 	}
 	
@@ -53,7 +65,7 @@ public class MovementActionItemAlphaUpdateTime extends MovementActionItemUpdateT
 	 * @param originalAlpha
 	 * @param alpha
 	 */
-	public MovementActionItemAlphaUpdateTime(long triggerTotal, long triggerInterval, int originalAlpha, int alpha){
+	public MovementActionItemAlpha2(long triggerTotal, long triggerInterval, int originalAlpha, int alpha){
 		this(triggerTotal, triggerInterval, originalAlpha, alpha, "MovementActionItemAlpha");
 	}
 	
@@ -64,7 +76,7 @@ public class MovementActionItemAlphaUpdateTime extends MovementActionItemUpdateT
 	 * @param alpha
 	 * @param description
 	 */
-	public MovementActionItemAlphaUpdateTime(long millisTotal, long millisDelay, int originalAlpha, int alpha, String description){
+	public MovementActionItemAlpha2(long millisTotal, long millisDelay, int originalAlpha, int alpha, String description){
 		super(new MovementActionInfo(millisTotal, millisDelay, 0, 0));
 		
 		this.description = description + ",";
@@ -72,207 +84,176 @@ public class MovementActionItemAlphaUpdateTime extends MovementActionItemUpdateT
 		this.alpha = alpha;
 	}
 	
-//	@Override
-//	public void setTimer() {
-//		// TODO Auto-generated method stub
-//
-//	}
-//	
-//	@Override
-//	public void start() {
-//		// TODO Auto-generated method stub	
+	@Override
+	public void setTimer() {
+		// TODO Auto-generated method stub
+
+	}
+	
+	@Override
+	public void start() {
+		// TODO Auto-generated method stub	
 //		resumeFrameIndex = 0;
-//		resumeFrameCount = 0;
-//		numberOfPauseFrames = 0;
-//		pauseFrameCounter = 0;
-//		isStop = false;
-//		isCycleFinish = false;
-//		if(originalAlpha==NO_ORGINAL_ALPHA)
-//			originalAlpha = info.getSprite().getAlpha();
-//		else
-//			info.getSprite().setAlpha(originalAlpha);
-//		
-//		int offsetAlpha= alpha - originalAlpha;
-//		offsetAlphaByOnceTrigger = (int) (offsetAlpha/(info.getTotal()/info.getDelay()));
-//		
-//		if(!isEnableSetSpriteAction)
-//			isEnableSetSpriteAction = isRepeatSpriteActionIfMovementActionRepeat;
-//		if(info.getSprite()!=null && isEnableSetSpriteAction)
-//			info.getSprite().setAction(info.getSpriteActionName());
-//		
-//		triggerEnable = true;
-//		isEnableSetSpriteAction = isRepeatSpriteActionIfMovementActionRepeat;
-//	}
-//
-//	@Override
-//	public void trigger(){
-//		if(triggerEnable && pauseFrameCounter==numberOfPauseFrames){
-//			
-//			numberOfPauseFrames = 0;
-//			pauseFrameCounter = 0;
-//			myTrigger.trigger();
-//		}else if(triggerEnable){
-//			pauseFrameCounter++;
-//		}else{
-//			numberOfPauseFrames = 0;
-//			pauseFrameCounter = 0;
-//		}
-//	}
-//	
-//	FrameTrigger myTrigger = new FrameTrigger() {
-//		
-//		@Override
-//		public void trigger() {
-//			// TODO Auto-generated method stub
-//			frameTriggerFPSStart();
-//			
-//		}
-//	};
-//	public FrameTrigger setNextFrameTrigger(FrameTrigger nextframeTrigger){
-//		
-//		this.nextframeTrigger = nextframeTrigger;
-//		
-//		return myTrigger;
-//	}
-//	
-//	public void setActionListener(IActionListener actionListener){
-//		this.actionListener = actionListener;
-//	}
-//
-//	private void frameTriggerFPSStart(){
-//		if (!isStop) {
-//			synchronized (MovementActionItemAlphaUpdateTime.this) {
-//			if(isCycleFinish)
-//				isCycleFinish = false;
-//			
-//			resumeFrameCount++;
-//			
-//			if(resumeFrameCount==numberOfFramesAfterLastTrigger+info.getDelay()){
-////				timerOnTickListener.onTick(dx, dy);		
-//				info.getSprite().setAlpha(info.getSprite().getAlpha()+offsetAlphaByOnceTrigger);
-//				numberOfFramesAfterLastTrigger += info.getDelay();
-//				
-//			// add by 150228. if the delay change by main app, the function: else if(resumeFrameCount==lastTriggerFrameNum+info.getDelay() maybe make problem.
-//			}else if(resumeFrameCount>numberOfFramesAfterLastTrigger+info.getDelay()){ 
-////				resumeFrameCount--;
-////				lastTriggerFrameNum++;
-//				numberOfFramesAfterLastTrigger = resumeFrameCount+1-info.getDelay();
-//			}
-//			
-//			if(resumeFrameCount>=info.getDelay()){	
-//				if(resumeFrameCount==info.getTotal())
-//					isCycleFinish = true;
-//			}
-//			
-//			if(isCycleFinish){
-//				resumeFrameCount = 0;
-//				numberOfFramesAfterLastTrigger = 0;
-//			}
-//			
-//			if(!isLoop && isCycleFinish){
-//				isStop = true;
-//				doReset();
-//				triggerEnable = false;
-//			}
-//			
-//			if(isCycleFinish){
-//				info.getSprite().setAlpha(alpha);
-//				
-//				if(actionListener!=null)
-//					actionListener.actionCycleFinish();
-//				
-//				if(!isLoop){
-//					if(actionListener!=null)
-//						actionListener.actionFinish();
-//					
-//					MovementActionItemAlphaUpdateTime.this.notifyAll();
-//				}
-//			}
-//			
-//			}
-//		}else{
-//			synchronized (MovementActionItemAlphaUpdateTime.this) {
-//				MovementActionItemAlphaUpdateTime.this.notifyAll();
-//			}
-//		}
-//	}
-//
-//	@Override
-//	protected MovementAction initTimer(){
-//		numberOfFramesTotal = info.getTotal();
-//		numberOfFramesInterval = info.getDelay();
-//		
+		data = new MovementActionItemAlpha2Data();
+		data.setMovementActionItemUpdateTimeDataDelegate(new MovementActionItemUpdateTimeDataDelegate() {
+			
+			@Override
+			public void update() {
+				// TODO Auto-generated method stub
+//				timerOnTickListener.onTick(dx, dy);		
+				info.getSprite().setAlpha(info.getSprite().getAlpha()+offsetAlphaByOnceTrigger);
+			}
+		});
+		data.setValueOfActivedCounter(0);
+		data.setShouldPauseValue(0);
+		data.setValueOfPausedCounter(0);
+		isStop = false;
+		data.setCycleFinish(false);
+		if(originalAlpha==NO_ORGINAL_ALPHA)
+			originalAlpha = info.getSprite().getAlpha();
+		else
+			info.getSprite().setAlpha(originalAlpha);
+		
+		int offsetAlpha= alpha - originalAlpha;
+		offsetAlphaByOnceTrigger = (int) (offsetAlpha/(info.getTotal()/info.getDelay()));
+		
+		if(!data.isEnableSetSpriteAction())
+			data.setEnableSetSpriteAction(isRepeatSpriteActionIfMovementActionRepeat);
+		if(info.getSprite()!=null && data.isEnableSetSpriteAction())
+			info.getSprite().setAction(info.getSpriteActionName());
+		
+		triggerEnable = true;
+		data.setEnableSetSpriteAction(isRepeatSpriteActionIfMovementActionRepeat);
+	}
+
+	@Override
+	public void trigger(){
+		if(triggerEnable && data.getValueOfPausedCounter()==data.getShouldPauseValue()){
+			
+			data.setShouldPauseValue(0);
+			data.setValueOfPausedCounter(0);
+			myTrigger.trigger();
+		}else if(triggerEnable){
+			data.setValueOfPausedCounter(data.getValueOfPausedCounter() + 1);
+		}else{
+			data.setShouldPauseValue(0);
+			data.setValueOfPausedCounter(0);
+		}
+	}
+	
+	public void setActionListener(IActionListener actionListener){
+		this.actionListener = actionListener;
+	}
+
+	private void frameTriggerFPSStart(){
+		if (!isStop) {
+			synchronized (MovementActionItemAlpha2.this) {
+			data.dodo();
+			
+			if(!isLoop && data.isCycleFinish()){
+				isStop = true;
+				doReset();
+				triggerEnable = false;
+			}
+			
+			if(data.isCycleFinish()){
+				info.getSprite().setAlpha(alpha);
+				
+				if(actionListener!=null)
+					actionListener.actionCycleFinish();
+				
+				if(!isLoop){
+					if(actionListener!=null)
+						actionListener.actionFinish();
+					
+					MovementActionItemAlpha2.this.notifyAll();
+				}
+			}
+			
+			}
+		}else{
+			synchronized (MovementActionItemAlpha2.this) {
+				MovementActionItemAlpha2.this.notifyAll();
+			}
+		}
+	}
+
+	@Override
+	protected MovementAction initTimer(){
+		data.setShouldActiveTotalValue(info.getTotal());
+		data.setShouldActiveIntervalValue(info.getDelay());
+		
 //		resumeFrameIndex = 0;
-//		return this;
-//	}
-//	
-//	private void doReset(){
-//		numberOfFramesTotal = info.getTotal();
-//		numberOfFramesInterval = info.getDelay();
-//	}
-//	
-//	@Override
-//	public MovementAction getAction(){
-//		return this;
-//	}
-//	
-//	public List<MovementAction> getActions(){
-//		return actions;
-//	}
-//
-//	@Override
-//	public MovementActionInfo getInfo() {
-//		// TODO Auto-generated method stub
-//		return info;
-//	}
-//
-//	@Override
-//	public void setInfo(MovementActionInfo info) {
-//		// TODO Auto-generated method stub
-//		this.info = info;
-//	}
-//	
-//	@Override
-//	public List<MovementAction> getCurrentActionList() {
-//		// TODO Auto-generated method stub
-//		List<MovementAction> actions = new ArrayList<MovementAction>();
-//		actions.add(this);
-//		return actions;
-//	}
-//	
-//	@Override
-//	public List<MovementActionInfo> getCurrentInfoList() {
-//		// TODO Auto-generated method stub
-//		List<MovementActionInfo> infos = new ArrayList<MovementActionInfo>();
-//		infos.add(this.info);
-//		currentInfoList.add(this.info);
-//		return infos;
-//	}
-//	
-//	@Override
-//	public List<MovementActionInfo> getMovementInfoList() {
-//		List<MovementActionInfo> infos = new ArrayList<MovementActionInfo>();
-//		infos.add(this.info);
-//		return infos;
-//	}
-//	
-//	@Override
-//	public void cancelMove(){
-//		isStop = true;
-//		synchronized (MovementActionItemAlphaUpdateTime.this) {
-//			MovementActionItemAlphaUpdateTime.this.notifyAll();
-//		}
-//	}
-//	
-//	@Override
-//	void pause(){	
-//		numberOfPauseFrames = numberOfFramesInterval;
-//	}
-//	
-//	@Override
-//	public boolean isFinish(){
-//		return isStop;
-//	}
+		return this;
+	}
+	
+	private void doReset(){
+		data.setShouldActiveTotalValue(info.getTotal());
+		data.setShouldActiveIntervalValue(info.getDelay());
+	}
+	
+	@Override
+	public MovementAction getAction(){
+		return this;
+	}
+	
+	public List<MovementAction> getActions(){
+		return actions;
+	}
+
+	@Override
+	public MovementActionInfo getInfo() {
+		// TODO Auto-generated method stub
+		return info;
+	}
+
+	@Override
+	public void setInfo(MovementActionInfo info) {
+		// TODO Auto-generated method stub
+		this.info = info;
+	}
+	
+	@Override
+	public List<MovementAction> getCurrentActionList() {
+		// TODO Auto-generated method stub
+		List<MovementAction> actions = new ArrayList<MovementAction>();
+		actions.add(this);
+		return actions;
+	}
+	
+	@Override
+	public List<MovementActionInfo> getCurrentInfoList() {
+		// TODO Auto-generated method stub
+		List<MovementActionInfo> infos = new ArrayList<MovementActionInfo>();
+		infos.add(this.info);
+		currentInfoList.add(this.info);
+		return infos;
+	}
+	
+	@Override
+	public List<MovementActionInfo> getMovementInfoList() {
+		List<MovementActionInfo> infos = new ArrayList<MovementActionInfo>();
+		infos.add(this.info);
+		return infos;
+	}
+	
+	@Override
+	public void cancelMove(){
+		isStop = true;
+		synchronized (MovementActionItemAlpha2.this) {
+			MovementActionItemAlpha2.this.notifyAll();
+		}
+	}
+	
+	@Override
+	void pause(){	
+		data.setShouldPauseValue(data.getShouldActiveIntervalValue());
+	}
+	
+	@Override
+	public boolean isFinish(){
+		return isStop;
+	}
 	
 //	public IMovementActionMemento createMovementActionMemento(){
 //		movementActionMemento = new MovementActionItemAlphaMementoImpl(actions, thread, timerOnTickListener, name, copyMovementActionList, currentInfoList, movementItemList, totalCopyMovementActionList, isCycleFinish, isCycleFinish, isCycleFinish, isCycleFinish, name, cancelAction, millisTotal, millisDelay, info, resumeTotal, resetTotal, name, updateTime, frameIdx, isStop, isCycleFinish, triggerEnable, frameTimes, resumeFrameIndex, resumeFrameCount, numberOfPauseFrames, pauseFrameCounter, nextframeTrigger, numberOfFramesAfterLastTrigger);

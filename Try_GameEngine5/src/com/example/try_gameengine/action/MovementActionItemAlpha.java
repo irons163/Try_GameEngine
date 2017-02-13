@@ -81,7 +81,7 @@ public class MovementActionItemAlpha extends MovementActionItemBaseReugularFPS{
 	@Override
 	public void start() {
 		// TODO Auto-generated method stub	
-		resumeFrameIndex = 0;
+//		resumeFrameIndex = 0;
 		resumeFrameCount = 0;
 		numberOfPauseFrames = 0;
 		pauseFrameCounter = 0;
@@ -202,7 +202,7 @@ public class MovementActionItemAlpha extends MovementActionItemBaseReugularFPS{
 		numberOfFramesTotal = info.getTotal();
 		numberOfFramesInterval = info.getDelay();
 		
-		resumeFrameIndex = 0;
+//		resumeFrameIndex = 0;
 		return this;
 	}
 	

@@ -3,18 +3,19 @@ package com.example.try_gameengine.action;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.example.try_gameengine.action.MovementActionItemTrigger.MovementActionItemUpdateTimeDataDelegate;
 import com.example.try_gameengine.action.listener.IActionListener;
 
 public class MovementActionItemUpdateTime extends MovementActionItemForMilliseconds{ 
-	public int frameIdx;	
-	public boolean isCycleFinish = false;	
-//	boolean triggerEnable = false;	
-	long pauseMilliseconds;
-	long pauseMillisecondsCounter;	
-	FrameTrigger nextframeTrigger;
-	long resumeMillisCount = 0;
-	long lastMillisCount = 0;
-	private boolean isEnableSetSpriteAction = true;
+	MovementActionItemTrigger data;
+	FrameTrigger myTrigger = new FrameTrigger() {
+		
+		@Override
+		public void trigger() {
+			// TODO Auto-generated method stub
+			frameTriggerFPSStart();
+		}
+	};
 	
 	public MovementActionItemUpdateTime(long millisTotal, long millisDelay, final int dx, final int dy){
 		this(millisTotal, millisDelay, dx, dy, "MovementItem");
@@ -44,18 +45,30 @@ public class MovementActionItemUpdateTime extends MovementActionItemForMilliseco
 	
 	@Override
 	public void start() {
-		resumeMillisCount = 0;
-		pauseMilliseconds = 0;
-		pauseMillisecondsCounter = 0;
+		data.setMovementActionItemUpdateTimeDataDelegate(new MovementActionItemUpdateTimeDataDelegate() {
+			
+			@Override
+			public void update() {
+				// TODO Auto-generated method stub
+				doRotation();
+				doGravity();
+				if (timerOnTickListener != null)
+					timerOnTickListener.onTick(dx, dy);
+			}
+		});
+		
+		data.setValueOfActivedCounter(0);
+		data.setShouldPauseValue(0);
+		data.setValueOfPausedCounter(0);
 		isStop = false;
-		isCycleFinish = false;
-		if(!isEnableSetSpriteAction)
-			isEnableSetSpriteAction = isRepeatSpriteActionIfMovementActionRepeat;
-		if(info.getSprite()!=null && isEnableSetSpriteAction)
+		data.setCycleFinish(false);
+		if(!data.isEnableSetSpriteAction())
+			data.setEnableSetSpriteAction(isRepeatSpriteActionIfMovementActionRepeat);
+		if(info.getSprite()!=null && data.isEnableSetSpriteAction())
 			info.getSprite().setAction(info.getSpriteActionName());
 		
 		triggerEnable = true;
-		isEnableSetSpriteAction = isRepeatSpriteActionIfMovementActionRepeat;
+		data.setEnableSetSpriteAction(isRepeatSpriteActionIfMovementActionRepeat);
 		
 		actionListener.actionStart();
 	}
@@ -70,34 +83,20 @@ public class MovementActionItemUpdateTime extends MovementActionItemForMilliseco
 	
 	@Override
 	public void trigger(){
-		if(triggerEnable && pauseMillisecondsCounter>=pauseMilliseconds){
+		if(triggerEnable && data.getValueOfPausedCounter()>=data.getShouldPauseValue()){
 			
-			pauseMilliseconds = 0;
-			pauseMillisecondsCounter = 0;
+			data.setShouldPauseValue(0);
+			data.setValueOfPausedCounter(0);
 			myTrigger.trigger();
 		}else if(triggerEnable){
-			pauseMillisecondsCounter += Time.DeltaTime;
+			data.setValueOfPausedCounter(data.getValueOfPausedCounter()
+					+ Time.DeltaTime);
 		}else{
-			pauseMilliseconds = 0;
-			pauseMillisecondsCounter = 0;
+			data.setShouldPauseValue(0);
+			data.setValueOfPausedCounter(0);
 		}
 	}
 	
-	FrameTrigger myTrigger = new FrameTrigger() {
-		
-		@Override
-		public void trigger() {
-			// TODO Auto-generated method stub
-			frameTriggerFPSStart();
-			
-		}
-	};
-	public FrameTrigger setNextFrameTrigger(FrameTrigger nextframeTrigger){
-		
-		this.nextframeTrigger = nextframeTrigger;
-		
-		return myTrigger;
-	}
 	
 	public void setActionListener(IActionListener actionListener){
 		this.actionListener = actionListener;
@@ -108,42 +107,18 @@ public class MovementActionItemUpdateTime extends MovementActionItemForMilliseco
 	private void frameTriggerFPSStart(){
 		if (!isStop) {
 			synchronized (MovementActionItemUpdateTime.this) {
-				if(isCycleFinish)
-					isCycleFinish = false;
-				
-				resumeMillisCount += Time.DeltaTime;
-				
-			do{	
-				if(resumeMillisCount >= lastMillisCount + info.getDelay()){
-					doRotation();
-					doGravity();
-					if(timerOnTickListener!=null)
-						timerOnTickListener.onTick(dx, dy);		
-					lastMillisCount += info.getDelay();
-				}
-			}while(resumeMillisCount >= lastMillisCount + info.getDelay());
+				data.dodo();
 			
-			if(resumeMillisCount >=info.getDelay()){
-				if(resumeMillisCount>=info.getTotal())
-					isCycleFinish = true;
+			if(data.isCycleFinish()){
+				if(actionListener!=null)
+					actionListener.actionCycleFinish();
 			}
 			
-			if(!isLoop && isCycleFinish){
+			if(!isLoop && data.isCycleFinish()){
 				isStop = true;
 				doReset();	
 				triggerEnable = false;
 			} 
-				
-			if(isCycleFinish){
-//				resumeMillisCount = 0; // during each cycle has a little delay.
-				resumeMillisCount = resumeMillisCount - info.getTotal(); // during each cycle has no delay.
-				lastMillisCount = 0;
-			}
-			
-			if(isCycleFinish){
-				if(actionListener!=null)
-					actionListener.actionCycleFinish();
-			}
 			
 			if(isStop){
 				if(actionListener!=null)
@@ -298,7 +273,7 @@ public class MovementActionItemUpdateTime extends MovementActionItemForMilliseco
 	
 	@Override
 	void pause(){	
-		pauseMilliseconds = millisDelay;
+		data.setShouldPauseValue(millisDelay);
 	}
 	
 	@Override

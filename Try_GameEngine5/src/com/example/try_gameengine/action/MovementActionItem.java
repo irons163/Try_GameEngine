@@ -21,7 +21,7 @@ public abstract class MovementActionItem extends MovementAction {
 	IGravityController gravityController;
 	boolean isReset = true;
 	private boolean isActionFinish = false;
-	public int frameIdx;
+//	public int frameIdx;
 	public boolean isStop = false;
 	boolean isFirstTime = true;
 	boolean triggerEnable = false;

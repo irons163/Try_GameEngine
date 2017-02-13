@@ -24,6 +24,7 @@ public class MovementActionInfo {
 	protected boolean isLoop = false;
 	protected boolean isSettingTargetXY = false;
 	protected float targetX, targetY;
+	MovementActionItemTrigger data;
 
 	/**
 	 * @param total
@@ -85,15 +86,16 @@ public class MovementActionInfo {
 	public MovementActionInfo(long total, long delay, float dx, float dy,
 			String description, IRotationController rotationController,
 			boolean enableGravity) {
-		this.total = total;
-		this.delay = delay;
-		this.dx = dx;
-		this.dy = dy;
-		this.description = description;
-		this.rotationController = rotationController;
-		this.enableGravity = enableGravity;
-		if (enableGravity)
-			this.gravityController = new GravityController();
+		this(total, delay, dx, dy, description, null, enableGravity, null, null);
+//		this.total = total;
+//		this.delay = delay;
+//		this.dx = dx;
+//		this.dy = dy;
+//		this.description = description;
+//		this.rotationController = rotationController;
+//		this.enableGravity = enableGravity;
+//		if (enableGravity)
+//			this.gravityController = new GravityController();
 	}
 
 	/**
@@ -240,6 +242,14 @@ public class MovementActionInfo {
 	 */
 	public void setSpriteActionName(String spriteActionName) {
 		this.spriteActionName = spriteActionName;
+	}
+
+	MovementActionItemTrigger getData() {
+		return data;
+	}
+
+	void setData(MovementActionItemTrigger data) {
+		this.data = data;
 	}
 
 	/**
