@@ -38,7 +38,7 @@ public class MovementActionItemAlpha2 extends MovementActionItemUpdate{
 	 * @param alpha
 	 */
 	public MovementActionItemAlpha2(long millisTotal, int alpha){
-		this((long) (millisTotal/(1000.0f/Config.fps)), 1, NO_ORGINAL_ALPHA, alpha, "MovementActionItemAlpha");
+		this(millisTotal, 0, NO_ORGINAL_ALPHA, alpha, "MovementActionItemAlpha");
 	}
 	
 	/**
@@ -47,7 +47,7 @@ public class MovementActionItemAlpha2 extends MovementActionItemUpdate{
 	 * @param alpha
 	 */
 	public MovementActionItemAlpha2(long millisTotal, int originalAlpha, int alpha){
-		this((long) (millisTotal/(1000.0f/Config.fps)), 1, originalAlpha, alpha, "MovementActionItemAlpha");
+		this(millisTotal, 0, originalAlpha, alpha, "MovementActionItemAlpha");
 	}
 	
 	/**

@@ -176,6 +176,12 @@ public class MovementActionItemUpdateTimeData implements MovementActionItemTrigg
 
 		this.setValueOfActivedCounter(this.getValueOfActivedCounter() + Time.DeltaTime);
 
+		if(true){
+			movementActionItemUpdateTimeDataDelegate.update(this.getValueOfActivedCounter() - this.getActivedValueForLatestUpdated());
+			this.setActivedValueForLatestUpdated(this.getActivedValueForLatestUpdated()
+					+ this.getShouldActiveIntervalValue());
+		}
+		
 		do {
 			if (this.getValueOfActivedCounter() >= this.getActivedValueForLatestUpdated()
 					+ this.getShouldActiveIntervalValue()) {

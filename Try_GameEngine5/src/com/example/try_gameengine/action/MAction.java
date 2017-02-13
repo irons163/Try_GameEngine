@@ -229,6 +229,10 @@ public class MAction { //MAction use threadPool it would delay during action by 
 		return new MovementActionItemAlpha(millisTotal, alpha);	
 	}
 	
+	public static MovementAction alphaAction2(long millisTotal, int alpha){
+		return new MovementActionItemAlpha2(millisTotal, alpha);	
+	}
+	
 	/**
 	 * {@code alphaAction} is a MovementAction to control alpha value from original alpha value to target alpha value during {@code millisTotal} millisecond.
 	 * @param millisTotal

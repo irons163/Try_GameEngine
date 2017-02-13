@@ -4,6 +4,7 @@ public interface MovementActionItemTrigger {
 
 	public interface MovementActionItemUpdateTimeDataDelegate{
 		public void update();
+		public void update(long interval);
 	}
 
 	public abstract boolean isCycleFinish();

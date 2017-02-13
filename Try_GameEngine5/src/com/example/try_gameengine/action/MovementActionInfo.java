@@ -123,6 +123,7 @@ public class MovementActionInfo {
 			this.gravityController = new GravityController();
 		this.sprite = sprite;
 		this.spriteActionName = spriteActionName;
+		this.data = new MovementActionItemUpdateTimeData();
 	}
 
 	/**
