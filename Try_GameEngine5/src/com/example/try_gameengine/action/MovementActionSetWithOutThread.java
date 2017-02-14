@@ -166,6 +166,7 @@ public class MovementActionSetWithOutThread extends MovementAction {
 		
 		if(actions.size()>0 && actionIndex < actions.size()){
 			MovementAction action = actions.get(actionIndex);
+			cancelAction = action;
 			action.trigger();
 			if(action.isFinish()){
 				actionIndex++;
@@ -175,6 +176,17 @@ public class MovementActionSetWithOutThread extends MovementAction {
 		}
 		
 		if(actionIndex >= actions.size()){
+			if(isLoop){
+				actionListener.actionCycleFinish();
+				actionIndex = 0;
+				if(actionIndex < actions.size()){
+					MovementAction action = actions.get(actionIndex);
+					cancelAction = action;
+					action.start();
+				}
+				return;
+			}
+			
 			isActionFinish = true;
 			actionListener.actionFinish();
 			

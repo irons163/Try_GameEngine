@@ -54,7 +54,11 @@ public class RepeatDecorator extends MovementDecorator {
 			movementAction.addMovementAction(createStartActionBlock());
 			movementAction.start(); //add 105/09/01
 		}else{
-			runRepeat();
+//			runRepeat();
+			//Change to this, because the outer action maybe not a Thread set. This RepeatDecorater need run in thread.
+			MovementAction movementAction = new MovementActionSetWithThreadPool();
+			movementAction.addMovementAction(createStartActionBlock());
+			movementAction.start(); //add 105/09/01
 		}
 			
 	}

@@ -2,9 +2,7 @@ package com.example.try_gameengine.action;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import android.util.Log;
-
 import com.example.try_gameengine.action.MovementAction;
 import com.example.try_gameengine.action.listener.IActionListener;
 import com.example.try_gameengine.framework.Sprite;
@@ -175,6 +173,65 @@ public class MovementActionOwnerGroup {
 			public void actionCycleFinish() {
 				// TODO Auto-generated method stub
 				actionListener.actionCycleFinish();
+			}
+		});
+		
+		sprite.runMovementAction(action);
+	}
+	
+	
+	public void addMovementAction3(Sprite sprite, MovementAction action){
+		action = MAction2.sequence(new MovementAction[]{action});
+		
+		action.setActionListener(new IActionListener() {
+			
+			@Override
+			public void beforeChangeFrame(int nextFrameId) {
+				// TODO Auto-generated method stub
+			}
+			
+			@Override
+			public void afterChangeFrame(int periousFrameId) {
+				// TODO Auto-generated method stub
+			}
+			
+			@Override
+			public void actionStart() {
+				// TODO Auto-generated method stub
+				if(startCount==0)
+					onGroupListener.onFirstStart();
+				onGroupListener.onStart(startCount);
+				if(startCount==movementActions.size()-1){
+					onGroupListener.onLastStart();
+					startCount=0;
+				}else{
+					startCount++;
+				}				
+			}
+			
+			@Override
+			public void actionFinish() {
+				// TODO Auto-generated method stub
+				if(finishCount==0)
+					onGroupListener.onFirstFinish();
+				onGroupListener.onFinish(finishCount);
+				Log.e(MovementActionOwnerGroup.class.getName(), "finishCount: "+finishCount+"");
+				Log.e(MovementActionOwnerGroup.class.getName(), "movementActions size: " + movementActions.size()+"");
+				if(finishCount==movementActions.size()-1){
+					onGroupListener.onLastFinish();
+					if(isAutoResetAfterLastFinish){
+						movementActions.clear();
+						finishCount=0;
+					}
+				}else{
+					finishCount++;
+				}
+				
+			}
+			
+			@Override
+			public void actionCycleFinish() {
+				// TODO Auto-generated method stub
 			}
 		});
 		
