@@ -10,6 +10,12 @@ public class MovementActionItemUpdateTimeData implements MovementActionItemTrigg
 	private long lastMillisCount;
 	private boolean isEnableSetSpriteAction;
 	private MovementActionItemUpdateTimeDataDelegate movementActionItemUpdateTimeDataDelegate;
+	private UpdateType updateType = UpdateType.UpdateEverytime;
+	
+	enum UpdateType{
+		UpdateEverytime,
+		UpdateByInterval
+	}
 	
 //	public MovementActionItemUpdateTimeData(
 //			long resumeMillisCount, long lastMillisCount,
@@ -165,6 +171,14 @@ public class MovementActionItemUpdateTimeData implements MovementActionItemTrigg
 			MovementActionItemUpdateTimeDataDelegate movementActionItemUpdateTimeDataDelegate) {
 		this.movementActionItemUpdateTimeDataDelegate = movementActionItemUpdateTimeDataDelegate;
 	}
+	
+	public UpdateType getUpdateType() {
+		return updateType;
+	}
+
+	public void setUpdateType(UpdateType updateType) {
+		this.updateType = updateType;
+	}
 
 	/* (non-Javadoc)
 	 * @see com.example.try_gameengine.action.MovementActionItemTrigger#dodo()
@@ -176,22 +190,21 @@ public class MovementActionItemUpdateTimeData implements MovementActionItemTrigg
 
 		this.setValueOfActivedCounter(this.getValueOfActivedCounter() + Time.DeltaTime);
 
-		if(true){
+		if(updateType == UpdateType.UpdateEverytime){
 			movementActionItemUpdateTimeDataDelegate.update(this.getValueOfActivedCounter() - this.getActivedValueForLatestUpdated());
-			this.setActivedValueForLatestUpdated(this.getActivedValueForLatestUpdated()
+			this.setActivedValueForLatestUpdated(this.getValueOfActivedCounter());
+		}else {
+			do {
+				if (this.getValueOfActivedCounter() >= this.getActivedValueForLatestUpdated()
+						+ this.getShouldActiveIntervalValue()) {
+					movementActionItemUpdateTimeDataDelegate.update();
+					
+					this.setActivedValueForLatestUpdated(this.getActivedValueForLatestUpdated()
+							+ this.getShouldActiveIntervalValue());
+				}
+			} while (this.getValueOfActivedCounter() >= this.getActivedValueForLatestUpdated()
 					+ this.getShouldActiveIntervalValue());
 		}
-		
-		do {
-			if (this.getValueOfActivedCounter() >= this.getActivedValueForLatestUpdated()
-					+ this.getShouldActiveIntervalValue()) {
-				movementActionItemUpdateTimeDataDelegate.update();
-				
-				this.setActivedValueForLatestUpdated(this.getActivedValueForLatestUpdated()
-						+ this.getShouldActiveIntervalValue());
-			}
-		} while (this.getValueOfActivedCounter() >= this.getActivedValueForLatestUpdated()
-				+ this.getShouldActiveIntervalValue());
 
 		if (this.getValueOfActivedCounter() >= this.getShouldActiveIntervalValue()) {
 			if (this.getValueOfActivedCounter() >= this.getShouldActiveTotalValue())

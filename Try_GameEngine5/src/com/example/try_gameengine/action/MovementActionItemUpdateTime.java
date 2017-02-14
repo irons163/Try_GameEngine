@@ -55,6 +55,12 @@ public class MovementActionItemUpdateTime extends MovementActionItemForMilliseco
 				if (timerOnTickListener != null)
 					timerOnTickListener.onTick(dx, dy);
 			}
+
+			@Override
+			public void update(long interval) {
+				// TODO Auto-generated method stub
+				
+			}
 		});
 		
 		data.setValueOfActivedCounter(0);

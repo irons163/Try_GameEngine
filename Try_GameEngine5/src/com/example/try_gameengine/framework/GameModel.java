@@ -35,7 +35,7 @@ public class GameModel implements IGameModel{
 	protected boolean isGameStop = false;
 	private boolean isGameReallyStop = false;
 	private boolean isSurfaceCreated = false;
-	private long startTime, endTime;
+	private long startTime, endTime, previousStartTime;
 	private long interval;
 	private long startTimeForShowFPS;
 	private boolean timeLock = false;
@@ -202,20 +202,6 @@ public class GameModel implements IGameModel{
 
 			doDraw(canvas);
 			
-			if(Config.showFPS){
-				
-				fpsCounter++;
-				endTime = System.currentTimeMillis();
-				if(endTime - startTimeForShowFPS >= 1000){
-					
-					fps = fpsCounter*(1000.0f/(endTime - startTimeForShowFPS));
-					fpsCounter = 0;
-					timeLock = false;
-				}	
-				
-				canvas.drawText(String.format("%.1f", fps), 100, 50, paint);
-			}
-			
 			if(Config.showMovementActionThreadNumber){
 				canvas.drawText(String.format("%d", MovementAction.getThreadPoolNumber()), 100, 85, paint);
 			}
@@ -224,8 +210,22 @@ public class GameModel implements IGameModel{
 				canvas.drawText(String.format("%d", Thread.activeCount()), 100, 120, paint);
 			}
 			
+			endTime = System.currentTimeMillis();
+			
+			if(Config.showFPS){
+				
+				fpsCounter++;
+				
+				if(endTime - startTimeForShowFPS >= 1000){
+					fps = fpsCounter*(1000.0f/(endTime - startTimeForShowFPS));
+					fpsCounter = 0;
+					timeLock = false;
+				}	
+				
+				canvas.drawText(String.format("%.1f", fps), 100, 50, paint);
+			}
+			
 			if(Config.enableFPSInterval){
-				endTime = System.currentTimeMillis();
 				interval = endTime - startTime; 
 				long frameInterval = (long) (1000.0f/Config.fps);
 				if (interval < frameInterval) {  
@@ -268,8 +268,13 @@ public class GameModel implements IGameModel{
 			while(isGameRun){
 				if(surfaceHolder==null) //when game scene start, the surfaceHolder may not stand by.
 					continue;
+				
+				previousStartTime = startTime;
 				startTime = System.currentTimeMillis();
-				Time.DeltaTime = System.currentTimeMillis() - startTime;
+				if(previousStartTime==0)
+					previousStartTime = startTime;
+					
+				Time.DeltaTime = startTime - previousStartTime;
 				if(Config.enableFPSInterval){
 //					startTime = System.currentTimeMillis();
 					if(!timeLock){		

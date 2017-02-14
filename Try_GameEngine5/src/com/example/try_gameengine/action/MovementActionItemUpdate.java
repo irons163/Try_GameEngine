@@ -49,6 +49,12 @@ public class MovementActionItemUpdate extends MovementActionItem{
 				if (timerOnTickListener != null)
 					timerOnTickListener.onTick(info.getDx(), info.getDy());
 			}
+
+			@Override
+			public void update(long interval) {
+				// TODO Auto-generated method stub
+				
+			}
 		});
 		
 		data.setValueOfActivedCounter(0);

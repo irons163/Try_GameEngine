@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.graphics.YuvImage;
+import android.util.Log;
 
 import com.example.try_gameengine.action.MovementActionItemBaseReugularFPS.FrameTrigger;
 import com.example.try_gameengine.action.MovementActionItemTrigger.MovementActionItemUpdateTimeDataDelegate;
@@ -18,7 +19,7 @@ import com.example.try_gameengine.framework.Config;
  *
  */
 public class MovementActionItemAlpha2 extends MovementActionItemUpdate{ 
-	MovementActionItemAlpha2Data data;
+	MovementActionItemTrigger data;
 	FrameTrigger myTrigger = new FrameTrigger() {
 		
 		@Override
@@ -31,14 +32,14 @@ public class MovementActionItemAlpha2 extends MovementActionItemUpdate{
 	private static final int NO_ORGINAL_ALPHA = -1;
 	private int originalAlpha;
 	private int alpha;
-	private int offsetAlphaByOnceTrigger;
+	private float offsetAlphaByOnceTrigger;
 	
 	/**
 	 * @param millisTotal
 	 * @param alpha
 	 */
 	public MovementActionItemAlpha2(long millisTotal, int alpha){
-		this(millisTotal, 0, NO_ORGINAL_ALPHA, alpha, "MovementActionItemAlpha");
+		this(millisTotal, 1, NO_ORGINAL_ALPHA, alpha, "MovementActionItemAlpha");
 	}
 	
 	/**
@@ -47,7 +48,7 @@ public class MovementActionItemAlpha2 extends MovementActionItemUpdate{
 	 * @param alpha
 	 */
 	public MovementActionItemAlpha2(long millisTotal, int originalAlpha, int alpha){
-		this(millisTotal, 0, originalAlpha, alpha, "MovementActionItemAlpha");
+		this(millisTotal, 1, originalAlpha, alpha, "MovementActionItemAlpha");
 	}
 	
 	/**
@@ -94,16 +95,7 @@ public class MovementActionItemAlpha2 extends MovementActionItemUpdate{
 	public void start() {
 		// TODO Auto-generated method stub	
 //		resumeFrameIndex = 0;
-		data = new MovementActionItemAlpha2Data();
-		data.setMovementActionItemUpdateTimeDataDelegate(new MovementActionItemUpdateTimeDataDelegate() {
-			
-			@Override
-			public void update() {
-				// TODO Auto-generated method stub
-//				timerOnTickListener.onTick(dx, dy);		
-				info.getSprite().setAlpha(info.getSprite().getAlpha()+offsetAlphaByOnceTrigger);
-			}
-		});
+
 		data.setValueOfActivedCounter(0);
 		data.setShouldPauseValue(0);
 		data.setValueOfPausedCounter(0);
@@ -180,6 +172,28 @@ public class MovementActionItemAlpha2 extends MovementActionItemUpdate{
 
 	@Override
 	protected MovementAction initTimer(){
+		data = info.getData();
+		data.setMovementActionItemUpdateTimeDataDelegate(new MovementActionItemUpdateTimeDataDelegate() {
+			
+			@Override
+			public void update() {
+				// TODO Auto-generated method stub
+//				timerOnTickListener.onTick(dx, dy);		
+				info.getSprite().setAlpha(originalAlpha + (int)offsetAlphaByOnceTrigger);
+			}
+
+			@Override
+			public void update(long interval) {
+				Log.e("interval", interval+"");
+				Log.e("totle", data.getShouldActiveTotalValue()+"");
+				double percent = ((double)interval)/data.getShouldActiveTotalValue();
+				int offsetAlpha= alpha - originalAlpha;
+				offsetAlphaByOnceTrigger += (float) (offsetAlpha*percent);
+				Log.e("offsetAlpha", offsetAlpha+" "+percent);
+				info.getSprite().setAlpha(originalAlpha + (int)offsetAlphaByOnceTrigger);
+			}
+		});
+		
 		data.setShouldActiveTotalValue(info.getTotal());
 		data.setShouldActiveIntervalValue(info.getDelay());
 		
