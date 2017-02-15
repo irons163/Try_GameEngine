@@ -2,13 +2,7 @@ package com.example.try_gameengine.action;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Future;
 
-import android.util.Log;
-
-import com.example.try_gameengine.action.MovementAction.MovementActionMementoImpl;
-import com.example.try_gameengine.action.MovementAction.TimerOnTickListener;
-import com.example.try_gameengine.action.MovementActionSetWithThreadPool.MovementActionSetWithThreadPoolMementoImpl;
 import com.example.try_gameengine.action.listener.IActionListener;
 import com.example.try_gameengine.action.visitor.IMovementActionVisitor;
 
@@ -19,8 +13,6 @@ public class MovementActionItemBaseReugularFPS extends MovementActionItem{
 	float dy;
 	long resumeTotal;
 	long resetTotal;
-	public int frameIdx;	
-	public boolean isStop = false;
 	public boolean isCycleFinish = false;	
 		
 //	long resumeFrameIndex;
@@ -176,6 +168,9 @@ public class MovementActionItemBaseReugularFPS extends MovementActionItem{
 			
 			}
 		}else{
+			if(actionListener!=null)
+				actionListener.actionFinish();
+			
 			synchronized (MovementActionItemBaseReugularFPS.this) {
 				MovementActionItemBaseReugularFPS.this.notifyAll();
 			}
@@ -295,9 +290,12 @@ public class MovementActionItemBaseReugularFPS extends MovementActionItem{
 	@Override
 	public void cancelMove(){
 		isStop = true;
+		//notifyAll in trigger().
+		/*
 		synchronized (MovementActionItemBaseReugularFPS.this) {
 			MovementActionItemBaseReugularFPS.this.notifyAll();
 		}
+		*/
 	}
 	
 	@Override

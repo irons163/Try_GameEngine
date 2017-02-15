@@ -142,45 +142,45 @@ public class GravitySlopeWavePathMovementInfoAppendDecorator extends
 
 	}
 	
-	@Override
-	public IMovementActionMemento createMovementActionMemento(){
-		movementActionMemento = new GravitySlopeWavePathMovementInfoAppendDecoratorMementoImpl(actions, thread, timerOnTickListener, description, copyMovementActionList, currentInfoList, movementItemList, totalCopyMovementActionList, isCancelFocusAppendPart, isFinish, isLoop, isSigleThread, name, cancelAction, action, isRepeatSpriteActionIfMovementActionRepeat);
-		return movementActionMemento;
-	}
-	
-	@Override
-	public void restoreMovementActionMemento(IMovementActionMemento movementActionMemento){
-//		MovementActionMementoImpl mementoImpl = (MovementActionMementoImpl) movementActionMemento;
-		super.restoreMovementActionMemento(this.movementActionMemento);
-		GravitySlopeWavePathMovementInfoAppendDecoratorMementoImpl mementoImpl = (GravitySlopeWavePathMovementInfoAppendDecoratorMementoImpl) this.movementActionMemento;
-		this.action = mementoImpl.action;
-	}
-	
-	protected static class GravitySlopeWavePathMovementInfoAppendDecoratorMementoImpl extends MovementActionMementoImpl{
-	
-		private MovementAction action; //Decorator
-		
-		public GravitySlopeWavePathMovementInfoAppendDecoratorMementoImpl(List<MovementAction> actions,
-				Thread thread, TimerOnTickListener timerOnTickListener,
-				String description,
-				List<MovementAction> copyMovementActionList,
-				List<MovementActionInfo> currentInfoList,
-				List<MovementAction> movementItemList,
-				List<MovementAction> totalCopyMovementActionList,
-				boolean isCancelFocusAppendPart, boolean isFinish,
-				boolean isLoop, boolean isSigleThread, String name,
-				MovementAction cancelAction, MovementAction action,
-				boolean isRepeatSpriteActionIfMovementActionRepeat) {
-			super(actions, thread, timerOnTickListener, description, copyMovementActionList, currentInfoList, movementItemList, totalCopyMovementActionList, isCancelFocusAppendPart, isFinish, isLoop, isSigleThread, name, cancelAction, isRepeatSpriteActionIfMovementActionRepeat);
-			this.action = action;
-		}
-
-		public MovementAction getAction() {
-			return action;
-		}
-
-		public void setAction(MovementAction action) {
-			this.action = action;
-		}			
-	}
+//	@Override
+//	public IMovementActionMemento createMovementActionMemento(){
+//		movementActionMemento = new GravitySlopeWavePathMovementInfoAppendDecoratorMementoImpl(actions, thread, timerOnTickListener, description, copyMovementActionList, currentInfoList, movementItemList, totalCopyMovementActionList, isCancelFocusAppendPart, isFinish, isLoop, isSigleThread, name, cancelAction, action, isRepeatSpriteActionIfMovementActionRepeat);
+//		return movementActionMemento;
+//	}
+//	
+//	@Override
+//	public void restoreMovementActionMemento(IMovementActionMemento movementActionMemento){
+////		MovementActionMementoImpl mementoImpl = (MovementActionMementoImpl) movementActionMemento;
+//		super.restoreMovementActionMemento(this.movementActionMemento);
+//		GravitySlopeWavePathMovementInfoAppendDecoratorMementoImpl mementoImpl = (GravitySlopeWavePathMovementInfoAppendDecoratorMementoImpl) this.movementActionMemento;
+//		this.action = mementoImpl.action;
+//	}
+//	
+//	protected static class GravitySlopeWavePathMovementInfoAppendDecoratorMementoImpl extends MovementActionMementoImpl{
+//	
+//		private MovementAction action; //Decorator
+//		
+//		public GravitySlopeWavePathMovementInfoAppendDecoratorMementoImpl(List<MovementAction> actions,
+//				Thread thread, TimerOnTickListener timerOnTickListener,
+//				String description,
+//				List<MovementAction> copyMovementActionList,
+//				List<MovementActionInfo> currentInfoList,
+//				List<MovementAction> movementItemList,
+//				List<MovementAction> totalCopyMovementActionList,
+//				boolean isCancelFocusAppendPart, boolean isFinish,
+//				boolean isLoop, boolean isSigleThread, String name,
+//				MovementAction cancelAction, MovementAction action,
+//				boolean isRepeatSpriteActionIfMovementActionRepeat) {
+//			super(actions, thread, timerOnTickListener, description, copyMovementActionList, currentInfoList, movementItemList, totalCopyMovementActionList, isCancelFocusAppendPart, isFinish, isLoop, isSigleThread, name, cancelAction, isRepeatSpriteActionIfMovementActionRepeat);
+//			this.action = action;
+//		}
+//
+//		public MovementAction getAction() {
+//			return action;
+//		}
+//
+//		public void setAction(MovementAction action) {
+//			this.action = action;
+//		}			
+//	}
 }

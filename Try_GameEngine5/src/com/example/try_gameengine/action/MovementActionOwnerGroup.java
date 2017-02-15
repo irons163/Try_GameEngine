@@ -7,59 +7,60 @@ import com.example.try_gameengine.action.MovementAction;
 import com.example.try_gameengine.action.listener.IActionListener;
 import com.example.try_gameengine.framework.Sprite;
 
-interface Block{
-	public void runBlock();
-}
-
 public class MovementActionOwnerGroup {
 	String id;
 	List<MovementAction> movementActions = new ArrayList<MovementAction>();
-	OnGroupListener onGroupListener;
+	List<Sprite> sprites = new ArrayList<Sprite>();
+	List<Block> startBlocks = new ArrayList<Block>();
+	List<Block> finishBlocks = new ArrayList<Block>();
+	OnGroupListener innerOnGroupListener, onGroupListener;
 	int startCount, finishCount;
 	boolean isAutoResetAfterLastFinish = true;
 	
-	List<Block> blocks = new ArrayList<Block>();
+	public interface Block{
+		public void runBlock();
+	}
 	
 	public MovementActionOwnerGroup(String id) {
 		// TODO Auto-generated constructor stub
 		this.id = id;
 
-		onGroupListener = new OnGroupListener() {
+		innerOnGroupListener = new OnGroupListener() {
 			
 			@Override
 			public void onStart(int startIndex) {
 				// TODO Auto-generated method stub
-				
+				onGroupListener.onStart(startIndex);
 			}
 			
 			@Override
 			public void onLastStart() {
 				// TODO Auto-generated method stub
-				
+				onGroupListener.onLastStart();
 			}
 			
 			@Override
 			public void onLastFinish() {
 				// TODO Auto-generated method stub
-				
+				onGroupListener.onLastFinish();
 			}
 			
 			@Override
 			public void onFirstStart() {
 				// TODO Auto-generated method stub
-				
+				onGroupListener.onFirstStart();
 			}
 			
 			@Override
 			public void onFirstFinish() {
 				// TODO Auto-generated method stub
-				
+				onGroupListener.onFirstFinish();
 			}
 			
 			@Override
 			public void onFinish(int finishIndex) {
 				// TODO Auto-generated method stub
-				
+				onGroupListener.onFinish(finishIndex);
 			}
 		};
 	}
@@ -67,51 +68,133 @@ public class MovementActionOwnerGroup {
 	public MovementActionOwnerGroup() {
 		// TODO Auto-generated constructor stub
 
-		onGroupListener = new OnGroupListener() {
+		innerOnGroupListener = new OnGroupListener() {
 			
 			@Override
 			public void onStart(int startIndex) {
 				// TODO Auto-generated method stub
+				Block block = startBlocks.get(startIndex);
+				if(block!=null)
+					block.runBlock();
 				
+				onGroupListener.onStart(startIndex);
 			}
 			
 			@Override
 			public void onLastStart() {
 				// TODO Auto-generated method stub
-				
+				onGroupListener.onLastStart();
 			}
 			
 			@Override
 			public void onLastFinish() {
 				// TODO Auto-generated method stub
-				
+				onGroupListener.onLastFinish();
 			}
 			
 			@Override
 			public void onFirstStart() {
 				// TODO Auto-generated method stub
-				
+				onGroupListener.onFirstStart();
 			}
 			
 			@Override
 			public void onFirstFinish() {
 				// TODO Auto-generated method stub
-				
+				onGroupListener.onFirstFinish();
 			}
 			
 			@Override
 			public void onFinish(int finishIndex) {
 				// TODO Auto-generated method stub
+				Block block = finishBlocks.get(finishIndex);
+				if(block!=null)
+					block.runBlock();
 				
+				onGroupListener.onFinish(finishIndex);
 			}
 		};
 	}
 	
-	public void addMovementAction(MovementAction movementAction, Block block) {
+	public void run(Sprite defaultSprite){
+		MovementAction action = movementActions.get(0);
+		if(action==null)
+			return;
+		Sprite sprite = sprites.get(0);
+		if(sprite!=null)
+			sprite.runMovementAction(action);
+		else if(defaultSprite!=null)
+			defaultSprite.runMovementAction(action);
+		else {
+			action.initTimer();
+			action.start();
+		}
+	}
+	
+	public void run(){
+		run(null);
+	}
+	
+	public void addMovementAction(MovementAction action, Block startBlock, Block finishBlock) {
 		// TODO Auto-generated constructor stub
-		movementActions.add(movementAction);
+		movementActions.add(action);
 		
-		blocks.add(block);
+		action = MAction2.sequence(new MovementAction[]{action});
+		
+		action.setActionListener(new IActionListener() {
+			
+			@Override
+			public void beforeChangeFrame(int nextFrameId) {
+				// TODO Auto-generated method stub
+			}
+			
+			@Override
+			public void afterChangeFrame(int periousFrameId) {
+				// TODO Auto-generated method stub
+			}
+			
+			@Override
+			public void actionStart() {
+				// TODO Auto-generated method stub
+				if(startCount==0)
+					innerOnGroupListener.onFirstStart();
+				innerOnGroupListener.onStart(startCount);
+				if(startCount==movementActions.size()-1){
+					innerOnGroupListener.onLastStart();
+					startCount=0;
+				}else{
+					startCount++;
+				}				
+			}
+			
+			@Override
+			public void actionFinish() {
+				// TODO Auto-generated method stub
+				if(finishCount==0)
+					innerOnGroupListener.onFirstFinish();
+				innerOnGroupListener.onFinish(finishCount);
+				Log.e(MovementActionOwnerGroup.class.getName(), "finishCount: "+finishCount+"");
+				Log.e(MovementActionOwnerGroup.class.getName(), "movementActions size: " + movementActions.size()+"");
+				if(finishCount==movementActions.size()-1){
+					innerOnGroupListener.onLastFinish();
+					if(isAutoResetAfterLastFinish){
+						movementActions.clear();
+						finishCount=0;
+					}
+				}else{
+					finishCount++;
+				}
+				
+			}
+			
+			@Override
+			public void actionCycleFinish() {
+				// TODO Auto-generated method stub
+			}
+		});
+		
+		startBlocks.add(startBlock);
+		finishBlocks.add(finishBlock);
 	}
 	
 	public void setMovementActionListener2(Sprite sprite, MovementAction action, final IActionListener actionListener){

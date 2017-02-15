@@ -165,6 +165,12 @@ public class RepeatDecorator extends MovementDecorator {
 	protected void setActionsTheSameTimerOnTickListener() {
 		action.setTimerOnTickListener(timerOnTickListener);
 	}
+	
+	@Override
+	public void setInfo(MovementActionInfo info) {
+		// TODO Auto-generated method stub
+		action.setInfo(info);
+	}
 
 	@Override
 	public MovementActionInfo getInfo() {
@@ -241,47 +247,47 @@ public class RepeatDecorator extends MovementDecorator {
 		action.getAction().pause();
 	}
 	
-	@Override
-	public IMovementActionMemento createMovementActionMemento(){
-		movementActionMemento = new RepeatDecoratorMementoImpl(actions, thread, timerOnTickListener, description, copyMovementActionList, currentInfoList, movementItemList, totalCopyMovementActionList, isCancelFocusAppendPart, isFinish, isLoop, isSigleThread, name, cancelAction, action, isRepeatSpriteActionIfMovementActionRepeat, count);
-		return movementActionMemento;
-	}
-	
-	/* (non-Javadoc)
-	 * @see com.example.try_gameengine.action.MovementAction#restoreMovementActionMemento(com.example.try_gameengine.action.IMovementActionMemento)
-	 */
-	public void restoreMovementActionMemento(IMovementActionMemento movementActionMemento){
-//		MovementActionMementoImpl mementoImpl = (MovementActionMementoImpl) movementActionMemento;
-		super.restoreMovementActionMemento(this.movementActionMemento);
-		RepeatDecoratorMementoImpl mementoImpl = (RepeatDecoratorMementoImpl) this.movementActionMemento;
-		this.count = mementoImpl.count;
-	}
-	
-	protected static class RepeatDecoratorMementoImpl extends MovementDecoratorMementoImpl{
-		private long count;
-		
-		public RepeatDecoratorMementoImpl(List<MovementAction> actions,
-				Thread thread, TimerOnTickListener timerOnTickListener,
-				String description,
-				List<MovementAction> copyMovementActionList,
-				List<MovementActionInfo> currentInfoList,
-				List<MovementAction> movementItemList,
-				List<MovementAction> totalCopyMovementActionList,
-				boolean isCancelFocusAppendPart, boolean isFinish,
-				boolean isLoop, boolean isSigleThread, String name,
-				MovementAction cancelAction,
-				MovementAction action, boolean isRepeatSpriteActionIfMovementActionRepeat, long count) {
-			super(actions, thread, timerOnTickListener, description, copyMovementActionList, currentInfoList, movementItemList, totalCopyMovementActionList, isCancelFocusAppendPart, isFinish, isLoop, isSigleThread, name, cancelAction, action, isRepeatSpriteActionIfMovementActionRepeat);
-			this.count = count;
-		}
-
-		public long getCount() {
-			return count;
-		}
-
-		public void setCount(long count) {
-			this.count = count;
-		}	
-		
-	}
+//	@Override
+//	public IMovementActionMemento createMovementActionMemento(){
+//		movementActionMemento = new RepeatDecoratorMementoImpl(actions, thread, timerOnTickListener, description, copyMovementActionList, currentInfoList, movementItemList, totalCopyMovementActionList, isCancelFocusAppendPart, isFinish, isLoop, isSigleThread, name, cancelAction, action, isRepeatSpriteActionIfMovementActionRepeat, count);
+//		return movementActionMemento;
+//	}
+//	
+//	/* (non-Javadoc)
+//	 * @see com.example.try_gameengine.action.MovementAction#restoreMovementActionMemento(com.example.try_gameengine.action.IMovementActionMemento)
+//	 */
+//	public void restoreMovementActionMemento(IMovementActionMemento movementActionMemento){
+////		MovementActionMementoImpl mementoImpl = (MovementActionMementoImpl) movementActionMemento;
+//		super.restoreMovementActionMemento(this.movementActionMemento);
+//		RepeatDecoratorMementoImpl mementoImpl = (RepeatDecoratorMementoImpl) this.movementActionMemento;
+//		this.count = mementoImpl.count;
+//	}
+//	
+//	protected static class RepeatDecoratorMementoImpl extends MovementDecoratorMementoImpl{
+//		private long count;
+//		
+//		public RepeatDecoratorMementoImpl(List<MovementAction> actions,
+//				Thread thread, TimerOnTickListener timerOnTickListener,
+//				String description,
+//				List<MovementAction> copyMovementActionList,
+//				List<MovementActionInfo> currentInfoList,
+//				List<MovementAction> movementItemList,
+//				List<MovementAction> totalCopyMovementActionList,
+//				boolean isCancelFocusAppendPart, boolean isFinish,
+//				boolean isLoop, boolean isSigleThread, String name,
+//				MovementAction cancelAction,
+//				MovementAction action, boolean isRepeatSpriteActionIfMovementActionRepeat, long count) {
+//			super(actions, thread, timerOnTickListener, description, copyMovementActionList, currentInfoList, movementItemList, totalCopyMovementActionList, isCancelFocusAppendPart, isFinish, isLoop, isSigleThread, name, cancelAction, action, isRepeatSpriteActionIfMovementActionRepeat);
+//			this.count = count;
+//		}
+//
+//		public long getCount() {
+//			return count;
+//		}
+//
+//		public void setCount(long count) {
+//			this.count = count;
+//		}	
+//		
+//	}
 }

@@ -125,7 +125,7 @@ public class SimultaneouslyMovementActionSet extends MovementAction {
 				this.getAction().movementItemList.add(movementAction);
 			}
 			
-			action.getAction().setCancelFocusAppendPart(true);
+//			action.getAction().setCancelFocusAppendPart(true);
 		}
 		this.getAction().getCurrentInfoList();
 

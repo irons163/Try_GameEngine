@@ -7,7 +7,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.RunnableFuture;
 
-import com.example.try_gameengine.action.CopyMoveDecorator.CopyMoveDecoratorMementoImpl;
 import com.example.try_gameengine.action.MovementAction.MovementActionMementoImpl;
 import com.example.try_gameengine.action.MovementAction.TimerOnTickListener;
 import com.example.try_gameengine.action.visitor.IMovementActionVisitor;
@@ -155,7 +154,7 @@ public class MovementActionSetWithThreadPool extends MovementAction {
 				this.getAction().movementItemList.add(movementAction);
 			}
 			
-			action.getAction().setCancelFocusAppendPart(true);
+//			action.getAction().setCancelFocusAppendPart(true);
 		}
 		this.getAction().getCurrentInfoList();
 
@@ -259,49 +258,49 @@ public class MovementActionSetWithThreadPool extends MovementAction {
 		super.cancelAllMove();
 	}
 	
-	public IMovementActionMemento createMovementActionMemento(){
-		movementActionMemento = new MovementActionSetWithThreadPoolMementoImpl(actions, thread, timerOnTickListener, description, copyMovementActionList, currentInfoList, movementItemList, totalCopyMovementActionList, isActionFinish, isActionFinish, isActionFinish, isActionFinish, name, cancelAction, isActionFinish, info, isStop, future, isRepeatSpriteActionIfMovementActionRepeat);
-		return movementActionMemento;
-	}
-	
-	public void restoreMovementActionMemento(IMovementActionMemento movementActionMemento){
-//		MovementActionMementoImpl mementoImpl = (MovementActionMementoImpl) movementActionMemento;
-		super.restoreMovementActionMemento(this.movementActionMemento);
-		MovementActionSetWithThreadPoolMementoImpl mementoImpl = (MovementActionSetWithThreadPoolMementoImpl) this.movementActionMemento;
-		this.isActionFinish = mementoImpl.isActionFinish;
-	}
-	
-	protected static class MovementActionSetWithThreadPoolMementoImpl extends MovementActionMementoImpl{
-	
-		private boolean isActionFinish;
-		private MovementActionInfo info;
-		private boolean isStop;
-		private Future future;
-		
-		public MovementActionSetWithThreadPoolMementoImpl(List<MovementAction> actions,
-				Thread thread, TimerOnTickListener timerOnTickListener,
-				String description,
-				List<MovementAction> copyMovementActionList,
-				List<MovementActionInfo> currentInfoList,
-				List<MovementAction> movementItemList,
-				List<MovementAction> totalCopyMovementActionList,
-				boolean isCancelFocusAppendPart, boolean isFinish,
-				boolean isLoop, boolean isSigleThread, String name,
-				MovementAction cancelAction,
-				boolean isActionFinish, MovementActionInfo info,
-				boolean isStop, Future future, boolean isRepeatSpriteActionIfMovementActionRepeat) {
-			super(actions, thread, timerOnTickListener, description,
-					copyMovementActionList, currentInfoList, movementItemList,
-					totalCopyMovementActionList, isCancelFocusAppendPart,
-					isFinish, isLoop, isSigleThread, name, cancelAction, isRepeatSpriteActionIfMovementActionRepeat);
-			this.isActionFinish = isActionFinish;
-			this.info = info;
-			this.isStop = isStop;
-			this.future = future;
-		}
-			
-	}
-	
+//	public IMovementActionMemento createMovementActionMemento(){
+//		movementActionMemento = new MovementActionSetWithThreadPoolMementoImpl(actions, thread, timerOnTickListener, description, copyMovementActionList, currentInfoList, movementItemList, totalCopyMovementActionList, isActionFinish, isActionFinish, isActionFinish, isActionFinish, name, cancelAction, isActionFinish, info, isStop, future, isRepeatSpriteActionIfMovementActionRepeat);
+//		return movementActionMemento;
+//	}
+//	
+//	public void restoreMovementActionMemento(IMovementActionMemento movementActionMemento){
+////		MovementActionMementoImpl mementoImpl = (MovementActionMementoImpl) movementActionMemento;
+//		super.restoreMovementActionMemento(this.movementActionMemento);
+//		MovementActionSetWithThreadPoolMementoImpl mementoImpl = (MovementActionSetWithThreadPoolMementoImpl) this.movementActionMemento;
+//		this.isActionFinish = mementoImpl.isActionFinish;
+//	}
+//	
+//	protected static class MovementActionSetWithThreadPoolMementoImpl extends MovementActionMementoImpl{
+//	
+//		private boolean isActionFinish;
+//		private MovementActionInfo info;
+//		private boolean isStop;
+//		private Future future;
+//		
+//		public MovementActionSetWithThreadPoolMementoImpl(List<MovementAction> actions,
+//				Thread thread, TimerOnTickListener timerOnTickListener,
+//				String description,
+//				List<MovementAction> copyMovementActionList,
+//				List<MovementActionInfo> currentInfoList,
+//				List<MovementAction> movementItemList,
+//				List<MovementAction> totalCopyMovementActionList,
+//				boolean isCancelFocusAppendPart, boolean isFinish,
+//				boolean isLoop, boolean isSigleThread, String name,
+//				MovementAction cancelAction,
+//				boolean isActionFinish, MovementActionInfo info,
+//				boolean isStop, Future future, boolean isRepeatSpriteActionIfMovementActionRepeat) {
+//			super(actions, thread, timerOnTickListener, description,
+//					copyMovementActionList, currentInfoList, movementItemList,
+//					totalCopyMovementActionList, isCancelFocusAppendPart,
+//					isFinish, isLoop, isSigleThread, name, cancelAction, isRepeatSpriteActionIfMovementActionRepeat);
+//			this.isActionFinish = isActionFinish;
+//			this.info = info;
+//			this.isStop = isStop;
+//			this.future = future;
+//		}
+//			
+//	}
+//	
 	@Override
 	public void accept(IMovementActionVisitor movementActionVisitor){
 		movementActionVisitor.visitComposite(this);

@@ -7,7 +7,6 @@ import javax.xml.datatype.Duration;
 
 import com.example.try_gameengine.action.MovementAction.MovementActionMementoImpl;
 import com.example.try_gameengine.action.MovementAction.TimerOnTickListener;
-import com.example.try_gameengine.action.MovementActionSetWithThreadPool.MovementActionSetWithThreadPoolMementoImpl;
 import com.example.try_gameengine.framework.Config;
 import com.example.try_gameengine.framework.Sprite;
 

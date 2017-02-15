@@ -28,13 +28,13 @@ public abstract class MovementAction {
 	List<MovementActionInfo> currentInfoList = new ArrayList<MovementActionInfo>();
 	List<MovementAction> movementItemList = new ArrayList<MovementAction>();
 	List<MovementAction> totalCopyMovementActionList = new ArrayList<MovementAction>();
-	protected boolean isCancelFocusAppendPart = false;
 	protected boolean isFinish = false;
 	public boolean isLoop = false;
 	public boolean isSigleThread = false;
 	String name="";
 	protected MovementAction cancelAction;
 	public boolean isRepeatSpriteActionIfMovementActionRepeat = true;
+	IMovementActionMemento movementActionMemento=null;
 	
 	public MovementAction addMovementAction(MovementAction action) {
 		throw new UnsupportedOperationException();
@@ -172,20 +172,6 @@ public abstract class MovementAction {
 	}
 
 	/**
-	 * @return
-	 */
-	public boolean isCancelFocusAppendPart() {
-		return isCancelFocusAppendPart;
-	}
-
-	/**
-	 * @param isCancelFocusAppendPart
-	 */
-	public void setCancelFocusAppendPart(boolean isCancelFocusAppendPart) {
-		this.isCancelFocusAppendPart = isCancelFocusAppendPart;
-	}
-	
-	/**
 	 * cancel all movementActions.
 	 */
 	void cancelAllMove(){
@@ -238,12 +224,16 @@ public abstract class MovementAction {
 		this.controller.setMovementAction(this);
 	}
 	
-	/**
-	 * check is cancelAction Finish or not.
-	 * @return
-	 */
+//	/**
+//	 * check is cancelAction Finish or not.
+//	 * @return
+//	 */
+//	public boolean isFinish(){
+//		return cancelAction.getAction().isFinish();
+//	}
+	
 	public boolean isFinish(){
-		return cancelAction.getAction().isFinish();
+		return getAction().isFinish();
 	}
 	
 	/**
@@ -338,11 +328,9 @@ public abstract class MovementAction {
 	 */
 	public abstract void accept(IMovementActionVisitor movementActionVisitor);
 	
-	IMovementActionMemento movementActionMemento=null;
-	
 	//not use yet
 	public IMovementActionMemento createMovementActionMemento(){
-		movementActionMemento = new MovementActionMementoImpl(actions, thread, timerOnTickListener, description, copyMovementActionList, currentInfoList, movementItemList, totalCopyMovementActionList, isCancelFocusAppendPart, isFinish, isLoop, isSigleThread, name, cancelAction, isRepeatSpriteActionIfMovementActionRepeat);
+		movementActionMemento = new MovementActionMementoImpl(actions, thread, timerOnTickListener, description, copyMovementActionList, currentInfoList, movementItemList, totalCopyMovementActionList, isFinish, isLoop, isSigleThread, name, cancelAction, isRepeatSpriteActionIfMovementActionRepeat);
 		return movementActionMemento;
 	}
 	
@@ -372,7 +360,6 @@ public abstract class MovementAction {
 		this.currentInfoList = mementoImpl.currentInfoList;
 		this.movementItemList = mementoImpl.movementItemList;
 		this.totalCopyMovementActionList = mementoImpl.totalCopyMovementActionList;
-		this.isCancelFocusAppendPart = mementoImpl.isCancelFocusAppendPart;
 		this.isFinish = mementoImpl.isFinish;
 		this.isLoop = mementoImpl.isLoop;
 		this.isSigleThread = mementoImpl.isSigleThread;
@@ -395,7 +382,6 @@ public abstract class MovementAction {
 		private List<MovementActionInfo> currentInfoList;
 		private List<MovementAction> movementItemList;
 		private List<MovementAction> totalCopyMovementActionList;
-		private boolean isCancelFocusAppendPart;
 		private boolean isFinish;
 		private boolean isLoop;
 		private boolean isSigleThread;
@@ -410,7 +396,7 @@ public abstract class MovementAction {
 				List<MovementActionInfo> currentInfoList,
 				List<MovementAction> movementItemList,
 				List<MovementAction> totalCopyMovementActionList,
-				boolean isCancelFocusAppendPart, boolean isFinish,
+				boolean isFinish,
 				boolean isLoop, boolean isSigleThread, String name,
 				MovementAction cancelAction, boolean isRepeatSpriteActionIfMovementActionRepeat) {
 			super();
@@ -422,7 +408,6 @@ public abstract class MovementAction {
 			this.currentInfoList = currentInfoList;
 			this.movementItemList = movementItemList;
 			this.totalCopyMovementActionList = totalCopyMovementActionList;
-			this.isCancelFocusAppendPart = isCancelFocusAppendPart;
 			this.isFinish = isFinish;
 			this.isLoop = isLoop;
 			this.isSigleThread = isSigleThread;
@@ -495,14 +480,6 @@ public abstract class MovementAction {
 		public void setTotalCopyMovementActionList(
 				List<MovementAction> totalCopyMovementActionList) {
 			this.totalCopyMovementActionList = totalCopyMovementActionList;
-		}
-
-		public boolean isCancelFocusAppendPart() {
-			return isCancelFocusAppendPart;
-		}
-
-		public void setCancelFocusAppendPart(boolean isCancelFocusAppendPart) {
-			this.isCancelFocusAppendPart = isCancelFocusAppendPart;
 		}
 
 		public boolean isFinish() {

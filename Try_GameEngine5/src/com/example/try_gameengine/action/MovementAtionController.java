@@ -37,17 +37,14 @@ public class MovementAtionController {
 		action.pause();
 	}
 	
-	/**
-	 * 
-	 */
-	public void resume(){
+	public void pause(long milliseconds){
 		action.pause();
 	}
 	
 	/**
-	 * @param ms
+	 * 
 	 */
-	public void pause(long ms){
+	public void resume(){
 		action.pause();
 	}
 	

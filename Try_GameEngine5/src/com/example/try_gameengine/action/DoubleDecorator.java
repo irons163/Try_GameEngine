@@ -47,7 +47,7 @@ public class DoubleDecorator extends MovementDecorator {
 		if (this.getAction().getActions().size() == 0) {
 			action.getAction().setInfo(getInfo());
 			action.getAction().initTimer();
-		} else {
+		} else { //this.getAction() is a MovementAction set or group or decorator. 
 			this.getAction().initTimer();
 			doIn();
 		}
@@ -99,7 +99,7 @@ public class DoubleDecorator extends MovementDecorator {
 		for (MovementActionInfo info : this.getAction().currentInfoList) {
 			Log.e("count", ++i + "");
 			Log.e("info", info.getDx() + "");
-			this.getAction().setInfo(info);
+			this.getAction().setInfo(info); //set info to composite like a temp info.
 			coreCalculationMovementActionInfo(this.getAction().getInfo());
 		}
 
@@ -118,45 +118,45 @@ public class DoubleDecorator extends MovementDecorator {
 		action.getAction().pause();
 	}
 	
-	@Override
-	public IMovementActionMemento createMovementActionMemento(){
-		movementActionMemento = new DoubleDecoratorMementoImpl(actions, thread, timerOnTickListener, description, copyMovementActionList, currentInfoList, movementItemList, totalCopyMovementActionList, isCancelFocusAppendPart, isFinish, isLoop, isSigleThread, name, cancelAction, action, isRepeatSpriteActionIfMovementActionRepeat);
-		return movementActionMemento;
-	}
-	
-	@Override
-	public void restoreMovementActionMemento(IMovementActionMemento movementActionMemento){
-//		MovementActionMementoImpl mementoImpl = (MovementActionMementoImpl) movementActionMemento;
-		super.restoreMovementActionMemento(this.movementActionMemento);
-		DoubleDecoratorMementoImpl mementoImpl = (DoubleDecoratorMementoImpl) this.movementActionMemento;
-		this.action = mementoImpl.action;
-	}
-	
-	protected static class DoubleDecoratorMementoImpl extends MovementActionMementoImpl{
-	
-		private MovementAction action; //Decorator
-		
-		public DoubleDecoratorMementoImpl(List<MovementAction> actions,
-				Thread thread, TimerOnTickListener timerOnTickListener,
-				String description,
-				List<MovementAction> copyMovementActionList,
-				List<MovementActionInfo> currentInfoList,
-				List<MovementAction> movementItemList,
-				List<MovementAction> totalCopyMovementActionList,
-				boolean isCancelFocusAppendPart, boolean isFinish,
-				boolean isLoop, boolean isSigleThread, String name,
-				MovementAction cancelAction, MovementAction action,
-				boolean isRepeatSpriteActionIfMovementActionRepeat) {
-			super(actions, thread, timerOnTickListener, description, copyMovementActionList, currentInfoList, movementItemList, totalCopyMovementActionList, isCancelFocusAppendPart, isFinish, isLoop, isSigleThread, name, cancelAction, isRepeatSpriteActionIfMovementActionRepeat);
-			this.action = action;
-		}
-
-		public MovementAction getAction() {
-			return action;
-		}
-
-		public void setAction(MovementAction action) {
-			this.action = action;
-		}			
-	}
+//	@Override
+//	public IMovementActionMemento createMovementActionMemento(){
+//		movementActionMemento = new DoubleDecoratorMementoImpl(actions, thread, timerOnTickListener, description, copyMovementActionList, currentInfoList, movementItemList, totalCopyMovementActionList, isCancelFocusAppendPart, isFinish, isLoop, isSigleThread, name, cancelAction, action, isRepeatSpriteActionIfMovementActionRepeat);
+//		return movementActionMemento;
+//	}
+//	
+//	@Override
+//	public void restoreMovementActionMemento(IMovementActionMemento movementActionMemento){
+////		MovementActionMementoImpl mementoImpl = (MovementActionMementoImpl) movementActionMemento;
+//		super.restoreMovementActionMemento(this.movementActionMemento);
+//		DoubleDecoratorMementoImpl mementoImpl = (DoubleDecoratorMementoImpl) this.movementActionMemento;
+//		this.action = mementoImpl.action;
+//	}
+//	
+//	protected static class DoubleDecoratorMementoImpl extends MovementActionMementoImpl{
+//	
+//		private MovementAction action; //Decorator
+//		
+//		public DoubleDecoratorMementoImpl(List<MovementAction> actions,
+//				Thread thread, TimerOnTickListener timerOnTickListener,
+//				String description,
+//				List<MovementAction> copyMovementActionList,
+//				List<MovementActionInfo> currentInfoList,
+//				List<MovementAction> movementItemList,
+//				List<MovementAction> totalCopyMovementActionList,
+//				boolean isCancelFocusAppendPart, boolean isFinish,
+//				boolean isLoop, boolean isSigleThread, String name,
+//				MovementAction cancelAction, MovementAction action,
+//				boolean isRepeatSpriteActionIfMovementActionRepeat) {
+//			super(actions, thread, timerOnTickListener, description, copyMovementActionList, currentInfoList, movementItemList, totalCopyMovementActionList, isCancelFocusAppendPart, isFinish, isLoop, isSigleThread, name, cancelAction, isRepeatSpriteActionIfMovementActionRepeat);
+//			this.action = action;
+//		}
+//
+//		public MovementAction getAction() {
+//			return action;
+//		}
+//
+//		public void setAction(MovementAction action) {
+//			this.action = action;
+//		}			
+//	}
 }

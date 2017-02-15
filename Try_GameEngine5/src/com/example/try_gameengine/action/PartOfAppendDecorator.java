@@ -5,6 +5,7 @@ import java.util.List;
 
 public class PartOfAppendDecorator extends MovementDecorator {
 	private MovementAction action;
+	boolean isCancelFocusAppendPart = false;
 	
 	public PartOfAppendDecorator(MovementAction action) {
 		this.action = action;
@@ -73,7 +74,8 @@ public class PartOfAppendDecorator extends MovementDecorator {
 
 	@Override
 	public List<MovementActionInfo> getCurrentInfoList() {
-		if(this.getAction().isCancelFocusAppendPart || isCancelFocusAppendPart){
+//		if(this.getAction().isCancelFocusAppendPart || isCancelFocusAppendPart){
+		if(isCancelFocusAppendPart){
 			return action.getCurrentInfoList();
 		}else{
 			List<MovementActionInfo> infos = action.getCurrentInfoList();

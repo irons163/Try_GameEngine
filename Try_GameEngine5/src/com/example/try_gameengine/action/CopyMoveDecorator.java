@@ -123,43 +123,43 @@ public class CopyMoveDecorator extends MovementDecorator {
 		}
 	}
 	
-	public IMovementActionMemento createMovementActionMemento(){
-		movementActionMemento = new CopyMoveDecoratorMementoImpl(actions, thread, timerOnTickListener, description, copyMovementActionList, currentInfoList, movementItemList, totalCopyMovementActionList, isCancelFocusAppendPart, isFinish, isLoop, isSigleThread, name, cancelAction, action, isRepeatSpriteActionIfMovementActionRepeat);
-		return movementActionMemento;
-	}
-	
-	public void restoreMovementActionMemento(IMovementActionMemento movementActionMemento){
-//		MovementActionMementoImpl mementoImpl = (MovementActionMementoImpl) movementActionMemento;
-		super.restoreMovementActionMemento(this.movementActionMemento);
-		CopyMoveDecoratorMementoImpl mementoImpl = (CopyMoveDecoratorMementoImpl) this.movementActionMemento;
-		this.action = mementoImpl.action;
-	}
-	
-	protected static class CopyMoveDecoratorMementoImpl extends MovementActionMementoImpl{
-	
-		private MovementAction action; //Decorator
-		
-		public CopyMoveDecoratorMementoImpl(List<MovementAction> actions,
-				Thread thread, TimerOnTickListener timerOnTickListener,
-				String description,
-				List<MovementAction> copyMovementActionList,
-				List<MovementActionInfo> currentInfoList,
-				List<MovementAction> movementItemList,
-				List<MovementAction> totalCopyMovementActionList,
-				boolean isCancelFocusAppendPart, boolean isFinish,
-				boolean isLoop, boolean isSigleThread, String name,
-				MovementAction cancelAction, MovementAction action,
-				boolean isRepeatSpriteActionIfMovementActionRepeat) {
-			super(actions, thread, timerOnTickListener, description, copyMovementActionList, currentInfoList, movementItemList, totalCopyMovementActionList, isCancelFocusAppendPart, isFinish, isLoop, isSigleThread, name, cancelAction, isRepeatSpriteActionIfMovementActionRepeat);
-			this.action = action;
-		}
-
-		public MovementAction getAction() {
-			return action;
-		}
-
-		public void setAction(MovementAction action) {
-			this.action = action;
-		}			
-	}
+//	public IMovementActionMemento createMovementActionMemento(){
+//		movementActionMemento = new CopyMoveDecoratorMementoImpl(actions, thread, timerOnTickListener, description, copyMovementActionList, currentInfoList, movementItemList, totalCopyMovementActionList, isCancelFocusAppendPart, isFinish, isLoop, isSigleThread, name, cancelAction, action, isRepeatSpriteActionIfMovementActionRepeat);
+//		return movementActionMemento;
+//	}
+//	
+//	public void restoreMovementActionMemento(IMovementActionMemento movementActionMemento){
+////		MovementActionMementoImpl mementoImpl = (MovementActionMementoImpl) movementActionMemento;
+//		super.restoreMovementActionMemento(this.movementActionMemento);
+//		CopyMoveDecoratorMementoImpl mementoImpl = (CopyMoveDecoratorMementoImpl) this.movementActionMemento;
+//		this.action = mementoImpl.action;
+//	}
+//	
+//	protected static class CopyMoveDecoratorMementoImpl extends MovementActionMementoImpl{
+//	
+//		private MovementAction action; //Decorator
+//		
+//		public CopyMoveDecoratorMementoImpl(List<MovementAction> actions,
+//				Thread thread, TimerOnTickListener timerOnTickListener,
+//				String description,
+//				List<MovementAction> copyMovementActionList,
+//				List<MovementActionInfo> currentInfoList,
+//				List<MovementAction> movementItemList,
+//				List<MovementAction> totalCopyMovementActionList,
+//				boolean isCancelFocusAppendPart, boolean isFinish,
+//				boolean isLoop, boolean isSigleThread, String name,
+//				MovementAction cancelAction, MovementAction action,
+//				boolean isRepeatSpriteActionIfMovementActionRepeat) {
+//			super(actions, thread, timerOnTickListener, description, copyMovementActionList, currentInfoList, movementItemList, totalCopyMovementActionList, isCancelFocusAppendPart, isFinish, isLoop, isSigleThread, name, cancelAction, isRepeatSpriteActionIfMovementActionRepeat);
+//			this.action = action;
+//		}
+//
+//		public MovementAction getAction() {
+//			return action;
+//		}
+//
+//		public void setAction(MovementAction action) {
+//			this.action = action;
+//		}			
+//	}
 }
