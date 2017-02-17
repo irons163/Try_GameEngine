@@ -35,6 +35,7 @@ public abstract class MovementAction {
 	protected MovementAction cancelAction;
 	public boolean isRepeatSpriteActionIfMovementActionRepeat = true;
 	IMovementActionMemento movementActionMemento=null;
+	boolean didInitTimer = false;
 	
 	public MovementAction addMovementAction(MovementAction action) {
 		throw new UnsupportedOperationException();
@@ -84,8 +85,12 @@ public abstract class MovementAction {
 	 * @return
 	 */
 	protected MovementAction initTimer(){
-		return this;
-		
+		if(!didInitTimer){
+			didInitTimer = true;
+			return this;
+		}else
+//			throw new RuntimeException("didInitTimer");
+			return this;
 	}
 	
 	/**

@@ -110,7 +110,10 @@ public class MAction { //MAction use threadPool it would delay during action by 
 	 * @return
 	 */
 	public static MovementAction moveTo(float targetX, float targetY, long durationMs){	
-		MovementActionInfo movementActionInfo = new MovementActionFPSInfo(durationMs, 1, 0, 0, "L", null, false);
+		long millisTotal = durationMs;
+		long totalTrigger = (long) (millisTotal/(1000.0f/Config.fps));
+		
+		MovementActionInfo movementActionInfo = new MovementActionFPSInfo(totalTrigger, 1, 0, 0, "L", null, false);
 		movementActionInfo.setTargetXY(targetX, targetY);
 		return new MovementActionItemBaseReugularFPS(movementActionInfo);
 	}

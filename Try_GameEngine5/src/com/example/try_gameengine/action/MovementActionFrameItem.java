@@ -156,7 +156,7 @@ public class MovementActionFrameItem extends MovementAction{
 	public boolean isStop = false;
 	
 	@Override
-	protected MovementAction initTimer(){
+	protected MovementAction initTimer(){ super.initTimer();
 		millisTotal = info.getTotal();
 		millisDelay = info.getDelay();
 		dx = info.getDx();

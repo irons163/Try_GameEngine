@@ -63,7 +63,7 @@ public class GravityInverseAngelMovementInfoAppendDecorator extends
 	}
 
 	@Override
-	protected MovementAction initTimer() {
+	protected MovementAction initTimer(){ super.initTimer();
 
 		if (this.getAction().getActions().size() == 0) {
 

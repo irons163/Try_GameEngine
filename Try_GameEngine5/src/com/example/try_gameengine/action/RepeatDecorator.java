@@ -132,7 +132,7 @@ public class RepeatDecorator extends MovementDecorator {
 	}
 
 	@Override
-	protected MovementAction initTimer() {
+	protected MovementAction initTimer(){ super.initTimer();
 		isTheOuterActionForInitMovementAction = false;
 		
 		if (this.action.getActions().size() == 0) {

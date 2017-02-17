@@ -1464,6 +1464,61 @@ public class MovementActionTest extends AndroidTestCase{
 		}	
 		actions = action.getMovementItemList();
 		assertEquals(true, correctInfoList.equals(currentInfoList));
+		
+		correctInfoList.clear();
+//		correctInfoList.add(new MovementActionInfo(1000, 20, 0.19999999f, 0f));
+		correctInfoList.add(new MovementActionInfo(50, 1, -0.2f, 0f));
+		
+		Config.fps = 50;
+		newaction4 = new MovementActionSet();
+		newaction4.addMovementAction(MAction.moveTo(90f, 500, 1000));
+		newaction4.addMovementAction(MAction.runBlock(new MAction.MActionBlock() {
+			
+			@Override
+			public void runBlock() {
+				// TODO Auto-generated method stub
+				
+			}
+		}));
+		
+		enemy = enemyFactory.createSpecialEnemy5(RedEnemy.class, new int[]{100, 500}, newaction4);
+		enemy.runMovementAction(newaction4);
+		
+		action = enemy.getAction();
+		currentInfoList.clear();
+		
+		for(MovementActionInfo movementActionInfo : action.getStartMovementInfoList()){
+			currentInfoList.add(movementActionInfo); 
+		}	
+		actions = action.getMovementItemList();
+		assertEquals(true, correctInfoList.equals(currentInfoList));
+		
+		correctInfoList.clear();
+//		correctInfoList.add(new MovementActionInfo(1000, 20, 0.19999999f, 0f));
+		correctInfoList.add(new MovementActionInfo(1000, 20, 0.2f, 0f));
+		
+		Config.fps = 50;
+		newaction4 = new MovementActionSet();
+		newaction4.addMovementAction(MAction2.moveByX(90f, 1000));
+		newaction4.addMovementAction(MAction.runBlock(new MAction.MActionBlock() {
+			
+			@Override
+			public void runBlock() {
+				// TODO Auto-generated method stub
+				
+			}
+		}));
+		
+		enemy = enemyFactory.createSpecialEnemy5(RedEnemy.class, new int[]{100, 500}, newaction4);
+		
+		action = enemy.getAction();
+		currentInfoList.clear();
+		
+		for(MovementActionInfo movementActionInfo : action.getStartMovementInfoList()){
+			currentInfoList.add(movementActionInfo); 
+		}	
+		actions = action.getMovementItemList();
+		assertEquals(true, correctInfoList.equals(currentInfoList));
 	}
 	
 	@LargeTest

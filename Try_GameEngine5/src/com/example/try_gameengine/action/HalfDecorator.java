@@ -32,7 +32,7 @@ public class HalfDecorator extends MovementDecorator{
 	}
 
 	@Override
-	protected MovementAction initTimer() {
+	protected MovementAction initTimer(){ super.initTimer();
 		for(MovementAction action : this.getAction().getActions()){
 			this.getAction().setInfo(action.getInfo());
 			action.getAction().setInfo(getInfo());

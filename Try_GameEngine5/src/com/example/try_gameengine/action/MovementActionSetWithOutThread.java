@@ -69,7 +69,7 @@ public class MovementActionSetWithOutThread extends MovementAction {
 	}
 	
 	@Override
-	protected MovementAction initTimer() {
+	protected MovementAction initTimer(){ super.initTimer();
 	
 		for (MovementAction action : this.actions) {
 			

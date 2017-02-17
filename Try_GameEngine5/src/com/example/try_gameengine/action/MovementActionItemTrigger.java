@@ -4,9 +4,50 @@ public interface MovementActionItemTrigger {
 
 	public interface MovementActionItemUpdateTimeDataDelegate{
 		public void update();
-		public void update(long interval);
+		public void update(float t);
 	}
 
+	public abstract class DataDelegate implements MovementActionItemUpdateTimeDataDelegate{
+		private MovementActionItemUpdateTimeDataDelegate other;
+		
+		public void addMovementActionItemUpdateTimeDataDelegate(MovementActionItemUpdateTimeDataDelegate dataDelegate){
+			if(other!=null && other instanceof DataDelegate)
+				((DataDelegate)other).addMovementActionItemUpdateTimeDataDelegate(dataDelegate);
+			else if(other!=null){
+				throw new RuntimeException("double setting");
+			}else{
+				other = dataDelegate;
+			}
+			
+//			DataDelegate lastDataDelegate = getDataDelegate();
+//			lastDataDelegate.addMovementActionItemUpdateTimeDataDelegate(dataDelegate);
+		}
+		
+		private MovementActionItemUpdateTimeDataDelegate getDataDelegate(){
+			if(other!=null && other instanceof DataDelegate)
+				return ((DataDelegate)other).getDataDelegate();
+			else if(other!=null){
+				return other;
+			}
+			return this;
+		}
+		
+		@Override
+		public void update() {
+			// TODO Auto-generated method stub
+			if(other!=null)
+				other.update();
+		}
+
+		@Override
+		public void update(float t) {
+			// TODO Auto-generated method stub
+			if(other!=null)
+				other.update(t);
+		}
+		
+	}
+	
 	public abstract boolean isCycleFinish();
 
 	public abstract void setCycleFinish(boolean isCycleFinish);

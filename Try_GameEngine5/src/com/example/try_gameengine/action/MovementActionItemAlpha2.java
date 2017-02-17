@@ -171,7 +171,7 @@ public class MovementActionItemAlpha2 extends MovementActionItemUpdate{
 	}
 
 	@Override
-	protected MovementAction initTimer(){
+	protected MovementAction initTimer(){ super.initTimer();
 		data = info.getData();
 		data.setMovementActionItemUpdateTimeDataDelegate(new MovementActionItemUpdateTimeDataDelegate() {
 			
@@ -183,10 +183,10 @@ public class MovementActionItemAlpha2 extends MovementActionItemUpdate{
 			}
 
 			@Override
-			public void update(long interval) {
-				Log.e("interval", interval+"");
+			public void update(float t) {
+				Log.e("interval", t+"");
 				Log.e("totle", data.getShouldActiveTotalValue()+"");
-				double percent = ((double)interval)/data.getShouldActiveTotalValue();
+				double percent = ((double)t)/data.getShouldActiveTotalValue();
 				int offsetAlpha= alpha - originalAlpha;
 				offsetAlphaByOnceTrigger += (float) (offsetAlpha*percent);
 				Log.e("offsetAlpha", offsetAlpha+" "+percent);

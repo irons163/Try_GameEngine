@@ -54,7 +54,9 @@ public abstract class MovementActionItem extends MovementAction {
 	}
 
 	@Override
-	protected MovementAction initTimer() {
+	protected MovementAction initTimer(){ super.initTimer();
+		if(getInfo().getSprite()!=null)
+			getInfo().modifyInfoWithSpriteXY(getInfo().getSprite().getX(), getInfo().getSprite().getY());
 		return this;
 	}
 

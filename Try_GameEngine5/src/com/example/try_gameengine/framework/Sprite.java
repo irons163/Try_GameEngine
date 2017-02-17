@@ -1271,8 +1271,8 @@ public class Sprite extends Layer {
 		MAction.setDefaultTimeToTickListenerIfNotSetYetToTargetSprite(movementAction, this);
 		if(movementAction.controller==null)
 			movementAction.setMovementActionController(new MovementAtionController());
-		movementAction.getCurrentInfoList();
-		movementAction.modifyWithSpriteXY(getX(), getY());
+//		movementAction.getCurrentInfoList();
+//		movementAction.modifyWithSpriteXY(getX(), getY());
 		movementAction.initMovementAction();
 		movementAction.start();
 	}

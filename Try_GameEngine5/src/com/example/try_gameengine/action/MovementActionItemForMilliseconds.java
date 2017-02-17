@@ -83,7 +83,7 @@ public class MovementActionItemForMilliseconds extends MovementActionItem {
 	}
 
 	@Override
-	protected MovementAction initTimer() {
+	protected MovementAction initTimer(){ super.initTimer();
 		return this;
 	}
 

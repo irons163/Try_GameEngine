@@ -8,7 +8,7 @@ public abstract class MovementActionFactory {
 	
 	public abstract MovementAction createMovementAction();
 	
-	public MovementAction actionInitTimer(){
+	public MovementAction actioninitTimer(){
 		action.initTimer();
 		return action;
 	}

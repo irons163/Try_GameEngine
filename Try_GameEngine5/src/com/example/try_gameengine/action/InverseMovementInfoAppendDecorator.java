@@ -51,7 +51,7 @@ public class InverseMovementInfoAppendDecorator extends MovementDecorator {
 	}
 
 	@Override
-	protected MovementAction initTimer() {
+	protected MovementAction initTimer(){ super.initTimer();
 
 		if (this.getAction().getActions().size() == 0) {
 

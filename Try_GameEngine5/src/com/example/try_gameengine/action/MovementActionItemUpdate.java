@@ -51,7 +51,7 @@ public class MovementActionItemUpdate extends MovementActionItem{
 			}
 
 			@Override
-			public void update(long interval) {
+			public void update(float t) {
 				// TODO Auto-generated method stub
 				
 			}
@@ -176,7 +176,7 @@ public class MovementActionItemUpdate extends MovementActionItem{
 	}
 	
 	@Override
-	protected MovementAction initTimer(){
+	protected MovementAction initTimer(){ super.initTimer();
 		rotationController = info.getRotationController();
 		gravityController = info.getGravityController();
 		

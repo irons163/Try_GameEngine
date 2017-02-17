@@ -198,7 +198,7 @@ public class MovementActionItemAlpha extends MovementActionItemBaseReugularFPS{
 	}
 
 	@Override
-	protected MovementAction initTimer(){
+	protected MovementAction initTimer(){ super.initTimer();
 		numberOfFramesTotal = info.getTotal();
 		numberOfFramesInterval = info.getDelay();
 		

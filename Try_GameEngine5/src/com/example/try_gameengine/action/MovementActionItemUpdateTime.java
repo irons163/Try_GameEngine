@@ -57,9 +57,14 @@ public class MovementActionItemUpdateTime extends MovementActionItemForMilliseco
 			}
 
 			@Override
-			public void update(long interval) {
+			public void update(float t) {
 				// TODO Auto-generated method stub
-				
+				float newDx = (float) (dx*t);
+				float newDy = (float) (dy*t);
+				doRotation();
+				doGravity();
+				if (timerOnTickListener != null)
+					timerOnTickListener.onTick(newDx, newDy);
 			}
 		});
 		
@@ -183,7 +188,7 @@ public class MovementActionItemUpdateTime extends MovementActionItemForMilliseco
 	}
 	
 	@Override
-	protected MovementAction initTimer(){
+	protected MovementAction initTimer(){ super.initTimer();
 		millisTotal = info.getTotal();
 		millisDelay = info.getDelay();
 		dx = info.getDx();

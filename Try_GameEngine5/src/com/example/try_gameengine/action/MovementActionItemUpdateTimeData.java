@@ -9,8 +9,51 @@ public class MovementActionItemUpdateTimeData implements MovementActionItemTrigg
 	private long resumeMillisCount;
 	private long lastMillisCount;
 	private boolean isEnableSetSpriteAction;
-	private MovementActionItemUpdateTimeDataDelegate movementActionItemUpdateTimeDataDelegate;
+//	private MovementActionItemUpdateTimeDataDelegate movementActionItemUpdateTimeDataDelegate;
+	private DataDelegate movementActionItemUpdateTimeDataDelegate = new DataDelegate() {
+	};
 	private UpdateType updateType = UpdateType.UpdateEverytime;
+	
+//	class DataDelegate implements MovementActionItemUpdateTimeDataDelegate{
+//		private MovementActionItemUpdateTimeDataDelegate other;
+//		
+//		public void addMovementActionItemUpdateTimeDataDelegate(MovementActionItemUpdateTimeDataDelegate dataDelegate){
+//			if(other!=null && other instanceof DataDelegate)
+//				((DataDelegate)other).addMovementActionItemUpdateTimeDataDelegate(dataDelegate);
+//			else if(other!=null){
+//				throw new RuntimeException("");
+//			}else{
+//				other = dataDelegate;
+//			}
+//			
+////			DataDelegate lastDataDelegate = getDataDelegate();
+////			lastDataDelegate.addMovementActionItemUpdateTimeDataDelegate(dataDelegate);
+//		}
+//		
+//		private MovementActionItemUpdateTimeDataDelegate getDataDelegate(){
+//			if(other!=null && other instanceof DataDelegate)
+//				return ((DataDelegate)other).getDataDelegate();
+//			else if(other!=null){
+//				return other;
+//			}
+//			return this;
+//		}
+//		
+//		@Override
+//		public void update() {
+//			// TODO Auto-generated method stub
+//			if(other!=null)
+//				other.update();
+//		}
+//
+//		@Override
+//		public void update(long interval) {
+//			// TODO Auto-generated method stub
+//			if(other!=null)
+//				other.update(interval);
+//		}
+//		
+//	}
 	
 	enum UpdateType{
 		UpdateEverytime,
@@ -160,7 +203,7 @@ public class MovementActionItemUpdateTimeData implements MovementActionItemTrigg
 	 */
 	@Override
 	public MovementActionItemUpdateTimeDataDelegate getMovementActionItemUpdateTimeDataDelegate() {
-		return movementActionItemUpdateTimeDataDelegate;
+		return null;
 	}
 
 	/* (non-Javadoc)
@@ -169,7 +212,8 @@ public class MovementActionItemUpdateTimeData implements MovementActionItemTrigg
 	@Override
 	public void setMovementActionItemUpdateTimeDataDelegate(
 			MovementActionItemUpdateTimeDataDelegate movementActionItemUpdateTimeDataDelegate) {
-		this.movementActionItemUpdateTimeDataDelegate = movementActionItemUpdateTimeDataDelegate;
+//		this.movementActionItemUpdateTimeDataDelegate = movementActionItemUpdateTimeDataDelegate;
+		this.movementActionItemUpdateTimeDataDelegate.addMovementActionItemUpdateTimeDataDelegate(movementActionItemUpdateTimeDataDelegate);
 	}
 	
 	public UpdateType getUpdateType() {
@@ -191,7 +235,7 @@ public class MovementActionItemUpdateTimeData implements MovementActionItemTrigg
 		this.setValueOfActivedCounter(this.getValueOfActivedCounter() + Time.DeltaTime);
 
 		if(updateType == UpdateType.UpdateEverytime){
-			movementActionItemUpdateTimeDataDelegate.update(this.getValueOfActivedCounter() - this.getActivedValueForLatestUpdated());
+			movementActionItemUpdateTimeDataDelegate.update((float) ((double)(this.getValueOfActivedCounter())/this.getShouldActiveTotalValue()));
 			this.setActivedValueForLatestUpdated(this.getValueOfActivedCounter());
 		}else {
 			do {
