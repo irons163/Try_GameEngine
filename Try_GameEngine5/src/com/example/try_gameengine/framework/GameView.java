@@ -36,6 +36,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback, IMo
 		this.gameController = gameController;
 		this.gameModel = gameModel;
 		gameModel.registerObserver(this);
+//		gameController.setGameview();
 		
 		surfaceHolder = getHolder();
 		surfaceHolder.addCallback(this);

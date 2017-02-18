@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -16,20 +17,20 @@ public class LayerManager {
 	}
 
 	public static DrawMode drawMode = DrawMode.DRAW_BY_LAYER_LEVEL;
-	private List<ILayer> hudLayerslList = new ArrayList<ILayer>();
+	private List<ILayer> hudLayerslList = new CopyOnWriteArrayList<ILayer>();
 	public LayerController layerController;
 
 	private void initLayerManager() {
 		switch (drawMode) {
 		case DRAW_BY_LAYER_LEVEL:
 			layerController = new LayerController(
-					new ArrayList<List<ILayer>>(),
+					new CopyOnWriteArrayList<List<ILayer>>(),
 					new HashMap<String, List<List<ILayer>>>());
 			break;
 
 		case DRAW_BY_Z_POSITION:
 			layerController = new LayerZpositionController(
-					new ArrayList<List<ILayer>>(),
+					new CopyOnWriteArrayList<List<ILayer>>(),
 					new HashMap<String, List<List<ILayer>>>());
 			break;
 		}
@@ -52,14 +53,14 @@ public class LayerManager {
 		return LayerManagerHolder.LayerManager;
 	}
 
-	public void setLayerBySenceIndex(int index) {
+	public synchronized void setLayerBySenceIndex(int index) {
 		layerController.setSceneLayerLevelByRecentlySet(index);
 
 		if (layerController.getSceneLayerLevelList().containsKey(index + ""))
 			layerController.setLayerLevelList(layerController
 					.getSceneLayerLevelList().get(index + ""));
 		else {
-			layerController.setLayerLevelList(new ArrayList<List<ILayer>>());
+			layerController.setLayerLevelList(new CopyOnWriteArrayList<List<ILayer>>());
 			initDefaultLavelforLayerList();
 			layerController.getSceneLayerLevelList().put(index + "",
 					layerController.getLayerLevelList());
@@ -426,7 +427,7 @@ public class LayerManager {
 	// ////////////////
 	// ////////////////
 	public void increaseNewLayer() {
-		layerController.getLayerLevelList().add(new ArrayList<ILayer>());
+		layerController.getLayerLevelList().add(new CopyOnWriteArrayList<ILayer>());
 	}
 
 	public List<ILayer> getLayersBySpecificLevel(int level) {

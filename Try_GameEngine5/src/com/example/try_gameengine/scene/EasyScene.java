@@ -257,7 +257,7 @@ public abstract class EasyScene extends Scene implements ContactListener{
 		gameController = new EasyGameController((Activity)context, gameModel);
 	}
 	
-	public abstract void initGameView(Activity activity, IGameController gameController,IGameModel gameModel);
+	public abstract GameView initGameView(Activity activity, IGameController gameController,IGameModel gameModel);
 	
 	// If override, need super.process().
 	public void process(){
@@ -312,9 +312,9 @@ public abstract class EasyScene extends Scene implements ContactListener{
 		}
 
 		@Override
-		protected void initGameView(Activity activity, IGameModel gameModel) {
+		protected GameView initGameView(Activity activity, IGameModel gameModel) {
 			// TODO Auto-generated method stub
-			EasyScene.this.initGameView(activity, this, gameModel);
+			return EasyScene.this.initGameView(activity, this, gameModel);
 		}
 
 		@Override

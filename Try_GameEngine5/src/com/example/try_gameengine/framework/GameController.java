@@ -15,7 +15,7 @@ import android.view.SurfaceHolder;
 public abstract class GameController implements IGameController{
 	protected IGameModel gameModel;
 	protected Activity activity;
-	GameView gameView;
+	protected GameView gameView;
 	protected int sceneMode = Scene.RESTART;
 	private boolean isGameViewCreated = false;
 	private boolean isBlocRunStart = false;
@@ -86,7 +86,13 @@ public abstract class GameController implements IGameController{
 				setActivityContentView(activity);
 				isGameViewCreated = true;
 			}else{
-				if(gameView!=null &&Utils.checkViewExist(activity.getWindow().getDecorView(), gameView)){
+//				if(gameView!=null &&Utils.checkViewExist(activity.getWindow().getDecorView(), gameView)){
+//					setActivityContentView(activity);
+//				}else{
+//					runStart();
+//				}
+				
+				if(gameView!=null){
 					setActivityContentView(activity);
 				}else{
 					runStart();
@@ -103,11 +109,11 @@ public abstract class GameController implements IGameController{
 	}
 	
 	private void createGameview(){
-		initGameView(activity, gameModel);
+		gameView = initGameView(activity, gameModel);
 		arrangeView();
 	}
 	
-	protected abstract void initGameView(Activity activity, IGameModel gameModel);
+	protected abstract GameView initGameView(Activity activity, IGameModel gameModel);
 	
 	protected abstract void arrangeView(); 
 	

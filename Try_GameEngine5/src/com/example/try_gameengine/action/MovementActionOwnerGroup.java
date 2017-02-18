@@ -1,5 +1,6 @@
 package com.example.try_gameengine.action;
 
+import java.security.acl.LastOwnerException;
 import java.util.ArrayList;
 import java.util.List;
 import android.util.Log;
@@ -61,6 +62,8 @@ public class MovementActionOwnerGroup {
 			public void onFinish(int finishIndex) {
 				// TODO Auto-generated method stub
 				onGroupListener.onFinish(finishIndex);
+				
+				
 			}
 		};
 	}
@@ -111,16 +114,18 @@ public class MovementActionOwnerGroup {
 				if(block!=null)
 					block.runBlock();
 				
+				if(finishIndex!=movementActions.size()-1)
+					run();
 				onGroupListener.onFinish(finishIndex);
 			}
 		};
 	}
 	
 	public void run(Sprite defaultSprite){
-		MovementAction action = movementActions.get(0);
+		MovementAction action = movementActions.get(startCount);
 		if(action==null)
 			return;
-		Sprite sprite = sprites.get(0);
+		Sprite sprite = sprites.get(startCount);
 		if(sprite!=null)
 			sprite.runMovementAction(action);
 		else if(defaultSprite!=null)
@@ -135,11 +140,11 @@ public class MovementActionOwnerGroup {
 		run(null);
 	}
 	
-	public void addMovementAction(MovementAction action, Block startBlock, Block finishBlock) {
+	public void addMovementAction(Sprite sprite, MovementAction action, Block startBlock, Block finishBlock) {
 		// TODO Auto-generated constructor stub
-		movementActions.add(action);
-		
+		sprites.add(sprite);
 		action = MAction2.sequence(new MovementAction[]{action});
+		movementActions.add(action);
 		
 		action.setActionListener(new IActionListener() {
 			

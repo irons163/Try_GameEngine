@@ -186,10 +186,13 @@ public class MovementActionItemAlpha2 extends MovementActionItemUpdate{
 			public void update(float t) {
 				Log.e("interval", t+"");
 				Log.e("totle", data.getShouldActiveTotalValue()+"");
-				double percent = ((double)t)/data.getShouldActiveTotalValue();
+//				double percent = ((double)t)/data.getShouldActiveTotalValue();
+//				int offsetAlpha= alpha - originalAlpha;
+//				offsetAlphaByOnceTrigger += (float) (offsetAlpha*percent);
+				
 				int offsetAlpha= alpha - originalAlpha;
-				offsetAlphaByOnceTrigger += (float) (offsetAlpha*percent);
-				Log.e("offsetAlpha", offsetAlpha+" "+percent);
+				offsetAlphaByOnceTrigger = (float) (offsetAlpha*t);
+				Log.e("offsetAlpha", offsetAlpha+" "+ t);
 				info.getSprite().setAlpha(originalAlpha + (int)offsetAlphaByOnceTrigger);
 			}
 		});

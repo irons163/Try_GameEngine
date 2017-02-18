@@ -45,7 +45,7 @@ public class DialogScene extends EasyScene{
 	
 	GameView gameview;
 	@Override
-	public void initGameView(final Activity activity, IGameController gameController,
+	public GameView initGameView(final Activity activity, IGameController gameController,
 			IGameModel gameModel) {
 		// TODO Auto-generated method stub
 		class MyGameView extends GameView{
@@ -73,9 +73,8 @@ public class DialogScene extends EasyScene{
 			}
 		}
 		
-		gameview = new MyGameView(activity, gameController, gameModel);
+		gameview = new MyGameView(activity, gameController, gameModel); return gameview;
 //		gameview.surfaceCreated(gameview.getHolder());
-		
 	}
 
 	@Override

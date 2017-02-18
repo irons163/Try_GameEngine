@@ -25,6 +25,7 @@ public class EaseRateDecorator extends MovementDecorator {
 	 */
 	private MovementActionInfo coreCalculationMovementActionInfo(
 			MovementActionInfo info) {
+		doinin(info);
 		return info;
 	}
 
@@ -59,8 +60,6 @@ public class EaseRateDecorator extends MovementDecorator {
 			doIn();
 		}
 		
-		this.getAction().isLoop = true;
-
 		return this;
 	}
 
@@ -110,7 +109,7 @@ public class EaseRateDecorator extends MovementDecorator {
 			Log.e("count", ++i + "");
 			Log.e("info", info.getDx() + "");
 			this.getAction().setInfo(info);
-			doinin(info);
+			
 			coreCalculationMovementActionInfo(this.getAction().getInfo());
 		}
 

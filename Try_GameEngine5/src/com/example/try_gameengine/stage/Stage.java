@@ -91,7 +91,7 @@ public abstract class Stage extends Activity{
 	
 	@Override
 	public void onBackPressed() {
-		if(!sceneManager.previous())
+		if(!sceneManager.previousWithExistedScenes())
 			finish();
 	}
 	

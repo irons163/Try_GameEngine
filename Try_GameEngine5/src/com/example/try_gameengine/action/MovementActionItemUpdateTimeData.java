@@ -1,5 +1,7 @@
 package com.example.try_gameengine.action;
 
+import android.util.Log;
+
 public class MovementActionItemUpdateTimeData implements MovementActionItemTrigger {
 	private boolean isCycleFinish;
 	private long millisTotal;
@@ -235,6 +237,7 @@ public class MovementActionItemUpdateTimeData implements MovementActionItemTrigg
 		this.setValueOfActivedCounter(this.getValueOfActivedCounter() + Time.DeltaTime);
 
 		if(updateType == UpdateType.UpdateEverytime){
+			Log.e("update", this.getValueOfActivedCounter() + " " + this.getShouldActiveTotalValue());
 			movementActionItemUpdateTimeDataDelegate.update((float) ((double)(this.getValueOfActivedCounter())/this.getShouldActiveTotalValue()));
 			this.setActivedValueForLatestUpdated(this.getValueOfActivedCounter());
 		}else {

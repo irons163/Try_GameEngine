@@ -15,7 +15,7 @@ import android.R.bool;
 import android.util.Log;
 
 public class MovementActionSetWithThreadPool extends MovementAction {
-	private boolean isActionFinish = true;
+	private boolean isActionFinish = false;
 	private MovementActionInfo info;
 	public boolean isStop = false;
 	Future future;
@@ -51,7 +51,7 @@ public class MovementActionSetWithThreadPool extends MovementAction {
 	public void start() {
 		// TODO Auto-generated method stub
 
-		if (isActionFinish) {
+		if (!isStop) {
 //			isActionFinish = false;
 			
 			Log.e("MovementActionSetWithThreadPool", "[MovementAction]:action start");
@@ -67,11 +67,11 @@ public class MovementActionSetWithThreadPool extends MovementAction {
 					actionListener.actionStart();
 					
 					do{
-						if(isActionFinish){
+						if(!isStop){
 							
 							Log.e("MovementActionSetWithThreadPool", "[MovementAction]:future start2");
 							
-						isActionFinish = false;
+//						isActionFinish = false;
 						for(MovementAction action : actions){
 							if(isStop){
 								isLoop = false;
