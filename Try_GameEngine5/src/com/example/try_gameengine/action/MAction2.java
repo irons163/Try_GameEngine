@@ -47,6 +47,31 @@ public class MAction2 {
 	 * 			milliseconds for move.
 	 * @return
 	 */
+	public static MovementAction jumpTo(float dy, long durationMs){
+		float fps = Config.fps; //60
+		float perFrame = 1000.0f/durationMs/fps; //1000/1000/60=1/60;
+		float perMove = dy * perFrame; //1*(1/60)=1/60
+		
+		long millisTotal = durationMs;
+		long totalTrigger = (long) (millisTotal/(1000.0f/Config.fps));
+		
+		MovementActionInfo movementActionInfo = new MovementActionInfo(totalTrigger, 1, 0, perMove, "L", null, false); 
+		movementActionInfo.gravityController = new GravityController();
+//		movementActionInfo.gravityController.
+		new MovementActionItemBaseReugularFPS(new MovementActionInfo(totalTrigger, 1, 0, perMove, "L", null, false));
+		
+//		new MovementActionFPSInfo(count, durationFPSFream, dx, dy)
+		return new MovementActionItemBaseReugularFPS(new MovementActionInfo(totalTrigger, 1, 0, perMove, "L", null, false));
+	}
+	
+	/**
+	 * {@code moveByY} is a MovementAction to move y-dir by {@code dy} during {@code durationMs} millisecond.
+	 * @param dy
+	 * 			y-dir move distance.
+	 * @param durationMs
+	 * 			milliseconds for move.
+	 * @return
+	 */
 	public static MovementAction moveByY(float dy, long durationMs){
 		float fps = Config.fps; //60
 		float perFrame = 1000.0f/durationMs/fps; //1000/1000/60=1/60;

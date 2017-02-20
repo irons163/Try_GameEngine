@@ -5,7 +5,7 @@ class GravityController implements IGravityController {
 	float origineDy;
 	boolean firstExecute = true;
 	MathUtil mathUtil;
-	public float ddx;
+	float ddx;
 
 	public GravityController() {
 		// TODO Auto-generated constructor stub
@@ -62,14 +62,15 @@ class GravityController implements IGravityController {
 
 			mathUtil.initGravity();
 
-			float newVx = getMathUtil().getJumpTime(ddx,
-					(int) Math.ceil(info.getTotal() / info.getDelay()));
+			getMathUtil().genJumpVx(dx);
+			float newVx = getMathUtil().vx;
 			info.setDx(newVx);
-			getMathUtil().vx = newVx;
+//			getMathUtil().vx = newVx;
 
 			firstExecute = false;
 		}
 
+//		mathUtil.setDeltaTime(deltaTime);
 		mathUtil.genGravity();
 		dx = mathUtil.getSpeedX();
 		dy = mathUtil.getSpeedY();

@@ -26,7 +26,7 @@ public class CircleController implements IRotationController {
 		mathUtil = new MathUtil(mx - x, my - y);
 		initspeedX = (float) Math.sqrt((mx - x) * (mx - x) + (my - y)
 				* (my - y));
-		mathUtil.setINITSPEEDX(initspeedX);
+		mathUtil.setInitSpeed(initspeedX);
 	}
 
 	public CircleController(float rotation, float x, float y, float mx,
@@ -39,7 +39,7 @@ public class CircleController implements IRotationController {
 		mathUtil = new MathUtil(mx - x, my - y);
 		initspeedX = (float) Math.sqrt((mx - x) * (mx - x) + (my - y)
 				* (my - y));
-		mathUtil.setINITSPEEDX(initspeedX);
+		mathUtil.setInitSpeed(initspeedX);
 		this.rotationController = rotationController;
 	}
 
@@ -158,7 +158,7 @@ public class CircleController implements IRotationController {
 	}
 
 	public void genSpeed() {
-		mathUtil.genSpeed();
+		mathUtil.genSpeedXY();
 		mx = x + mathUtil.getSpeedX();
 		my = y + mathUtil.getSpeedY();
 	}

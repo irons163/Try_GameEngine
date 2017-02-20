@@ -59,10 +59,10 @@ public class MovementActionItemUpdateTime extends MovementActionItemForMilliseco
 			@Override
 			public void update(float t) {
 				// TODO Auto-generated method stub
-				float newDx = (float) (dx*t);
-				float newDy = (float) (dy*t);
 				doRotation();
 				doGravity();
+				float newDx = (float) (dx*t);
+				float newDy = (float) (dy*t);
 				if (timerOnTickListener != null)
 					timerOnTickListener.onTick(newDx, newDy);
 			}

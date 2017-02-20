@@ -26,7 +26,7 @@ public class RotationCurveController implements IRotationController{
 		float dx = info.getDx();
 		float dy = info.getDy();
 		MathUtil mathUtil = new MathUtil(dx, dy);
-		mathUtil.setINITSPEEDX(initspeedX);
+		mathUtil.setInitSpeed(initspeedX);
 //		mathUtil.initAngle();
 		mathUtil.genAngle();
 		mathUtil.genSpeedByRotate(rotation);
