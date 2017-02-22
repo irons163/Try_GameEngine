@@ -81,7 +81,7 @@ public class MathUtil {
 		fAngle = 90;
 	}
 
-	public void genSpeedXY() {
+	public void genSpeedXY() { // speedX negative = left, speedY negative = up.
 		this.speedX = (float) Math.cos(Math.toRadians(this.fAngle))
 				* initSpeed;
 		this.speedY = (float) Math.sin(Math.toRadians(this.fAngle))
@@ -285,7 +285,7 @@ public class MathUtil {
 	}
 	
 	public void inverseAngel(){
-		float ovy = vy;
+//		float ovy = vy;
 		genAngle();
 		if(fAngle >= 0 && fAngle<90){
 			fAngle = 0 - fAngle + 180; 
@@ -300,7 +300,7 @@ public class MathUtil {
 //		genSpeed();
 		
 		ay = - ay;	
-		vy = ovy;
+//		vy = ovy;
 	}
 	
 	public void cyclePath(){
@@ -309,9 +309,14 @@ public class MathUtil {
 	
 	public void inversePath(){
 		float ovy = vy;
+		speedX = -speedX;
+		speedY = -speedY;
 		genAngle();
-		fAngle += 180;
+//		fAngle += 180;
+//		fAngle %= 360;
+//		genSpeedXY();
 		vy = ovy;
+		vy = -vy;
 	}
 	
 	public void wavePath(){
@@ -346,13 +351,16 @@ public class MathUtil {
 //		if(time==0)
 //			vx = 0;
 //		else
-//			vx = dx/time;
+//			vx = totalDistanceX/time;
 //		float newVx = vx;
 //		return newVx;
 		
 		float secondtime = 0;
 		secondtime = vy*2/-ay;
-		vx = totalDistanceX/secondtime;
+		if(secondtime==0f)
+			vx = 0;
+		else
+			vx = totalDistanceX/secondtime;
 	}
 	
 //	public void genJumpVxVy(float totalDistanceX, float totalDistanceY, float secondtime){

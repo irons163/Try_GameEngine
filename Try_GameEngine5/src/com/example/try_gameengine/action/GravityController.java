@@ -41,13 +41,17 @@ class GravityController implements IGravityController {
 			}
 
 			else if (isInversePath) {
+				
 				mathUtil.inversePath();
+				dx = mathUtil.getSpeedX();
 			}
 
 			else if (isWavePath) {
 				mathUtil.setXY(dx, dy);
+				mathUtil.setInitSpeed(mathUtil.genTotalSpeed());
 				mathUtil.genAngle();
 				mathUtil.wavePath();
+				mathUtil.genSpeedXY();
 			}
 
 			else if (isSlopeWavePath) {
@@ -63,6 +67,7 @@ class GravityController implements IGravityController {
 			mathUtil.initGravity();
 
 			getMathUtil().genJumpVx(dx);
+//			getMathUtil().genJumpVx(0);
 			float newVx = getMathUtil().vx;
 			info.setDx(newVx);
 //			getMathUtil().vx = newVx;

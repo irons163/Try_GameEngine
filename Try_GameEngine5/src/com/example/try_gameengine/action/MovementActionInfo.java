@@ -86,7 +86,7 @@ public class MovementActionInfo {
 	public MovementActionInfo(long total, long delay, float dx, float dy,
 			String description, IRotationController rotationController,
 			boolean enableGravity) {
-		this(total, delay, dx, dy, description, null, enableGravity, null, null);
+		this(total, delay, dx, dy, description, rotationController, enableGravity, null, null);
 //		this.total = total;
 //		this.delay = delay;
 //		this.dx = dx;

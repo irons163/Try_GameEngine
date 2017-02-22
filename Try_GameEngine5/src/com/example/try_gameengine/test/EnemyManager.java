@@ -251,7 +251,7 @@ public class EnemyManager {
 	
 	public void startMoveEnemies(){
 		for(Enemy enemy : enemies){
-			enemy.action.start();
+			enemy.getMovementAction().start();
 		}
 	}
 	

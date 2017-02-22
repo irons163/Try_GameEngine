@@ -209,6 +209,11 @@ public class MovementActionItemCountDownTimer extends MovementActionItemForMilli
 	}
 
 	@Override
+	public void trigger() {
+		// TODO Auto-generated method stub
+	}
+	
+	@Override
 	public MovementAction getAction() {
 		return this;
 	}

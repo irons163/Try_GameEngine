@@ -38,7 +38,7 @@ public abstract class Enemy extends Sprite implements Subject, Observer{
 //		this.bitmap = BitmapUtil.redPoint;
 		initBitmap();
 		setWH();
-		this.action = action;
+		setMovementAction(action);
 		setMovementActioinTimerOnTickListener();
 		if(action instanceof SimultaneouslyMultiCircleMovementActionSet)
 		infos = ((SimultaneouslyMultiCircleMovementActionSet)action).getCurrentInfoList();
@@ -52,13 +52,13 @@ public abstract class Enemy extends Sprite implements Subject, Observer{
 	}
 	
 	public void startMovementActioin(){
-		if(action!=null)
-			action.start();
+		if(getMovementAction()!=null)
+			getMovementAction().start();
 	}
 	
 	private void setMovementActioinTimerOnTickListener(){
-		if(action!=null)
-			action.setTimerOnTickListener(new MovementAction.TimerOnTickListener() {
+		if(getMovementAction()!=null)
+			getMovementAction().setTimerOnTickListener(new MovementAction.TimerOnTickListener() {
 				
 				@Override
 				public void onTick(float dx, float dy) {
@@ -150,19 +150,19 @@ public abstract class Enemy extends Sprite implements Subject, Observer{
 	}
 	
 	public String getMovementActionDescriptions(){
-		return action.getDescription();
+		return getMovementAction().getDescription();
 	}
 
 	public MovementAction getAction() {
-		return action;
+		return getMovementAction();
 	}
 
 	public void setAction(MovementAction action) {
-		this.action = action;
+		setMovementAction(action);
 	}
 	
 	public MovementAtionController getC(){
-		return action.controller;
+		return getMovementAction().controller;
 	}
 
 	List<MovementActionInfo> infos;
@@ -177,7 +177,7 @@ public abstract class Enemy extends Sprite implements Subject, Observer{
 //			((ICircleController)info.getRotationController()).action(mx, my, angle);
 //		}
 		
-		PointF pointF = ((SimultaneouslyMultiCircleMovementActionSet)action).notyMediator2(((ICircleController)infos.get(0).getRotationController()), mx, my, angle);
+		PointF pointF = ((SimultaneouslyMultiCircleMovementActionSet)getMovementAction()).notyMediator2(((ICircleController)infos.get(0).getRotationController()), mx, my, angle);
 //		if(pointF!=null){
 //		setX(pointF.x);
 //		setY(pointF.y);
