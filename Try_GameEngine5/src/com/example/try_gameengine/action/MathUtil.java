@@ -285,7 +285,6 @@ public class MathUtil {
 	}
 	
 	public void inverseAngel(){
-//		float ovy = vy;
 		genAngle();
 		if(fAngle >= 0 && fAngle<90){
 			fAngle = 0 - fAngle + 180; 
@@ -296,11 +295,8 @@ public class MathUtil {
 		}else if(fAngle >= 270 && fAngle<360){
 			fAngle = 360 - fAngle + 180;
 		}
-
 //		genSpeed();
-		
 		ay = - ay;	
-//		vy = ovy;
 	}
 	
 	public void cyclePath(){

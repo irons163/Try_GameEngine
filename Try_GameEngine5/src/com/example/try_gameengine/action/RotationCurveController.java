@@ -11,6 +11,13 @@ public class RotationCurveController implements IRotationController{
 		this.rotation = rotation;
 	}
 	
+
+	@Override
+	public void execute(MovementActionInfo info, float t) {
+		// TODO Auto-generated method stub
+		
+	}
+	
 	@Override
 	public void execute(MovementActionInfo info) {
 		// TODO Auto-generated method stub
@@ -59,5 +66,6 @@ public class RotationCurveController implements IRotationController{
 	public IRotationController copyNewRotationController() {
 		return new RotationCurveController(rotation);
 	}
+
 
 }

@@ -6,11 +6,9 @@ import java.util.List;
 import android.graphics.PointF;
 import android.os.CountDownTimer;
 
-import com.example.try_gameengine.action.ICircleController;
 import com.example.try_gameengine.action.MovementAction;
 import com.example.try_gameengine.action.MovementActionInfo;
 import com.example.try_gameengine.action.MovementAtionController;
-import com.example.try_gameengine.action.SimultaneouslyMultiCircleMovementActionSet;
 import com.example.try_gameengine.framework.Sprite;
 import com.example.try_gameengine.observer.Observer;
 import com.example.try_gameengine.observer.Subject;
@@ -40,8 +38,8 @@ public abstract class Enemy extends Sprite implements Subject, Observer{
 		setWH();
 		setMovementAction(action);
 		setMovementActioinTimerOnTickListener();
-		if(action instanceof SimultaneouslyMultiCircleMovementActionSet)
-		infos = ((SimultaneouslyMultiCircleMovementActionSet)action).getCurrentInfoList();
+//		if(action instanceof SimultaneouslyMultiCircleMovementActionSet)
+//		infos = ((SimultaneouslyMultiCircleMovementActionSet)action).getCurrentInfoList();
 	}
 	
 	public abstract void initBitmap();
@@ -177,7 +175,7 @@ public abstract class Enemy extends Sprite implements Subject, Observer{
 //			((ICircleController)info.getRotationController()).action(mx, my, angle);
 //		}
 		
-		PointF pointF = ((SimultaneouslyMultiCircleMovementActionSet)getMovementAction()).notyMediator2(((ICircleController)infos.get(0).getRotationController()), mx, my, angle);
+//		PointF pointF = ((SimultaneouslyMultiCircleMovementActionSet)getMovementAction()).notyMediator2(((ICircleController)infos.get(0).getRotationController()), mx, my, angle);
 //		if(pointF!=null){
 //		setX(pointF.x);
 //		setY(pointF.y);

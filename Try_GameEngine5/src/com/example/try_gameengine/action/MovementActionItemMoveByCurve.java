@@ -13,8 +13,10 @@ import com.example.try_gameengine.action.visitor.IMovementActionVisitor;
  * @author irons
  *
  */
-public class MovementActionItemAlpha2 extends MovementActionItemUpdate{ 
+public class MovementActionItemMoveByCurve extends MovementActionItemUpdate{ 
 	MovementActionItemTrigger data;
+	IRotationController rotationController;
+	float dx, dy;
 	FrameTrigger myTrigger = new FrameTrigger() {
 		
 		@Override
@@ -33,17 +35,8 @@ public class MovementActionItemAlpha2 extends MovementActionItemUpdate{
 	 * @param millisTotal
 	 * @param alpha
 	 */
-	public MovementActionItemAlpha2(long millisTotal, int alpha){
-		this(millisTotal, 1, NO_ORGINAL_ALPHA, alpha, "MovementActionItemAlpha");
-	}
-	
-	/**
-	 * @param millisTotal
-	 * @param originalAlpha
-	 * @param alpha
-	 */
-	public MovementActionItemAlpha2(long millisTotal, int originalAlpha, int alpha){
-		this(millisTotal, 1, originalAlpha, alpha, "MovementActionItemAlpha");
+	public MovementActionItemMoveByCurve(long millisTotal, IRotationController rotationController){
+		this(millisTotal, 1, rotationController, "MovementActionItemAlpha");
 	}
 	
 	/**
@@ -51,18 +44,8 @@ public class MovementActionItemAlpha2 extends MovementActionItemUpdate{
 	 * @param triggerInterval
 	 * @param alpha
 	 */
-	public MovementActionItemAlpha2(long triggerTotal, long triggerInterval, int alpha){
-		this(triggerTotal, triggerTotal, NO_ORGINAL_ALPHA, alpha, "MovementActionItemAlpha");
-	}
-	
-	/**
-	 * @param triggerTotal
-	 * @param triggerInterval
-	 * @param originalAlpha
-	 * @param alpha
-	 */
-	public MovementActionItemAlpha2(long triggerTotal, long triggerInterval, int originalAlpha, int alpha){
-		this(triggerTotal, triggerInterval, originalAlpha, alpha, "MovementActionItemAlpha");
+	public MovementActionItemMoveByCurve(long triggerTotal, long triggerInterval, IRotationController rotationController){
+		this(triggerTotal, triggerTotal, rotationController, "MovementActionItemAlpha");
 	}
 	
 	/**
@@ -72,12 +55,11 @@ public class MovementActionItemAlpha2 extends MovementActionItemUpdate{
 	 * @param alpha
 	 * @param description
 	 */
-	public MovementActionItemAlpha2(long millisTotal, long millisDelay, int originalAlpha, int alpha, String description){
-		super(new MovementActionInfo(millisTotal, millisDelay, 0, 0));
+	public MovementActionItemMoveByCurve(long millisTotal, long millisDelay, IRotationController rotationController, String description){
+		super(new MovementActionInfo(millisTotal, millisDelay, 0, 0, "",rotationController));
 		
 		this.description = description + ",";
-		this.originalAlpha = originalAlpha;
-		this.alpha = alpha;
+		this.rotationController = rotationController;
 	}
 	
 	@Override
@@ -134,7 +116,7 @@ public class MovementActionItemAlpha2 extends MovementActionItemUpdate{
 
 	private void frameTriggerFPSStart(){
 		if (!isStop) {
-			synchronized (MovementActionItemAlpha2.this) {
+			synchronized (MovementActionItemMoveByCurve.this) {
 			data.dodo();
 			
 			if(!isLoop && data.isCycleFinish()){
@@ -153,14 +135,14 @@ public class MovementActionItemAlpha2 extends MovementActionItemUpdate{
 					if(actionListener!=null)
 						actionListener.actionFinish();
 					
-					MovementActionItemAlpha2.this.notifyAll();
+					MovementActionItemMoveByCurve.this.notifyAll();
 				}
 			}
 			
 			}
 		}else{
-			synchronized (MovementActionItemAlpha2.this) {
-				MovementActionItemAlpha2.this.notifyAll();
+			synchronized (MovementActionItemMoveByCurve.this) {
+				MovementActionItemMoveByCurve.this.notifyAll();
 			}
 		}
 	}
@@ -173,22 +155,27 @@ public class MovementActionItemAlpha2 extends MovementActionItemUpdate{
 			@Override
 			public void update() {
 				// TODO Auto-generated method stub
-//				timerOnTickListener.onTick(dx, dy);		
-				info.getSprite().setAlpha(originalAlpha + (int)offsetAlphaByOnceTrigger);
+//				doRotation();
+//				doGravity();
+				rotationController.execute(info);
+				dx = info.getDx();
+				dy = info.getDy();
+				if (timerOnTickListener != null)
+					timerOnTickListener.onTick(dx, dy);
 			}
 
 			@Override
 			public void update(float t) {
-				Log.e("interval", t+"");
-				Log.e("totle", data.getShouldActiveTotalValue()+"");
-//				double percent = ((double)t)/data.getShouldActiveTotalValue();
-//				int offsetAlpha= alpha - originalAlpha;
-//				offsetAlphaByOnceTrigger += (float) (offsetAlpha*percent);
-				
-				int offsetAlpha= alpha - originalAlpha;
-				offsetAlphaByOnceTrigger = (float) (offsetAlpha*t);
-				Log.e("offsetAlpha", offsetAlpha+" "+ t);
-				info.getSprite().setAlpha(originalAlpha + (int)offsetAlphaByOnceTrigger);
+				// TODO Auto-generated method stub
+//				doRotation();
+//				doGravity();
+				rotationController.execute(info, t);
+				dx = info.getDx();
+				dy = info.getDy();
+				float newDx = (float) (dx*t);
+				float newDy = (float) (dy*t);
+				if (timerOnTickListener != null)
+					timerOnTickListener.onTick(newDx, newDy);
 			}
 		});
 		
@@ -252,8 +239,8 @@ public class MovementActionItemAlpha2 extends MovementActionItemUpdate{
 	@Override
 	public void cancelMove(){
 		isStop = true;
-		synchronized (MovementActionItemAlpha2.this) {
-			MovementActionItemAlpha2.this.notifyAll();
+		synchronized (MovementActionItemMoveByCurve.this) {
+			MovementActionItemMoveByCurve.this.notifyAll();
 		}
 	}
 	

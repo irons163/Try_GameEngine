@@ -22,7 +22,8 @@ public class MovementActionItemUpdate extends MovementActionItem{
 		
 		long millisTotal = info.getTotal();
 		long millisDelay = info.getDelay();
-		data = new MovementActionItemUpdateTimeData();
+//		data = new MovementActionItemUpdateTimeData();
+		data = info.getData();
 		data.setShouldActiveTotalValue(millisTotal);
 		data.setShouldActiveIntervalValue(millisDelay);
 		if(info.getDescription()!=null)
