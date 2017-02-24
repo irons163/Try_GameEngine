@@ -2,48 +2,61 @@ package com.example.try_gameengine.action;
 
 import java.util.List;
 
+import com.example.try_gameengine.action.visitor.IMovementActionVisitor;
+import com.example.try_gameengine.action.visitor.MovementActionItemVisitor;
+import com.example.try_gameengine.action.visitor.MovementActionObjectStructure;
+
 import android.util.Log;
 
 public class GravityCyclePathMovementInfoAppendDecorator extends
 		MovementDecorator {
 	private MovementAction action;
 
-	public GravityCyclePathMovementInfoAppendDecorator(MovementAction action) {
+	public GravityCyclePathMovementInfoAppendDecorator(MovementActionItemMoveByCurve action) {
 		this.action = action;
 		this.copyMovementActionList = action.copyMovementActionList;
 	}
 
-	private MovementActionInfo coreCalculationMovementActionInfo(
-			MovementActionInfo info) {
-
-		MovementActionInfo newInfo = new MovementActionInfo(info.getTotal(),
-				info.getDelay(), info.getDx(), info.getDy(),
-				info.getDescription(), info.getRotationController(),
-				info.isEnableGravity());
-		if (this.getAction().getActions().size() != 0) {
-			MovementAction action = new MovementActionItemCountDownTimer(newInfo);
-			copyMovementActionList.add(action);
-			this.getAction().totalCopyMovementActionList.add(action);
-		}
-
-		newInfo.setTotal(info.getTotal());
-		newInfo.setDelay(info.getDelay());
-		newInfo.setDx(info.getDx());
-		newInfo.setDy(info.getDy());
-
-		if (newInfo.getGravityController() != null) {
-			newInfo.setRotationController(info.getRotationController()
-					.copyNewRotationController());
-			newInfo.getRotationController().setRotation(
-					info.getRotationController().getRotation() + 180);
-		}
-		if (newInfo.getGravityController() != null) {
-			MathUtil mathUtil = info.getGravityController().getMathUtil();
-			newInfo.getGravityController().setMathUtil(mathUtil);
-			newInfo.getGravityController().isCyclePath();
-		}
-		return info;
-	}
+//	private MovementActionInfo coreCalculationMovementActionInfo(
+//			MovementActionInfo info) {
+//
+//		MovementActionInfo newInfo = new MovementActionInfo(info.getTotal(),
+//				info.getDelay(), info.getDx(), info.getDy(),
+//				info.getDescription());
+//		if (this.getAction().getActions().size() != 0) {
+//			MovementAction action = new MovementActionItemCountDownTimer(newInfo);
+//			copyMovementActionList.add(action);
+//			this.getAction().totalCopyMovementActionList.add(action);
+//		}
+//
+//		newInfo.setTotal(info.getTotal());
+//		newInfo.setDelay(info.getDelay());
+//		newInfo.setDx(info.getDx());
+//		newInfo.setDy(info.getDy());
+//
+//		if (newInfo.getGravityController() != null) {
+//			newInfo.setRotationController(info.getRotationController()
+//					.copyNewRotationController());
+//			newInfo.getRotationController().setRotation(
+//					info.getRotationController().getRotation() + 180);
+//		}
+//		if (newInfo.getGravityController() != null) {
+//			MathUtil mathUtil = info.getGravityController().getMathUtil();
+//			newInfo.getGravityController().setMathUtil(mathUtil);
+//			newInfo.getGravityController().isCyclePath();
+//		}
+//		return info;
+//	}
+//	
+//	private MovementActionItem coreCalculationMovementActionItem(
+//			MovementActionItem item) {
+//
+//		MovementActionItemMoveByCurve newItem = (MovementActionItemMoveByCurve) item.clone();
+//		newItem.getGravityController().isCyclePath();
+//		newItem
+//		
+//		return newItem;
+//	}
 
 	@Override
 	public void start() {
@@ -93,7 +106,8 @@ public class GravityCyclePathMovementInfoAppendDecorator extends
 
 	@Override
 	public MovementActionInfo getInfo() {
-		return coreCalculationMovementActionInfo(action.getInfo());
+//		return coreCalculationMovementActionInfo(action.getInfo());
+		return null;
 	}
 
 	@Override
@@ -130,8 +144,14 @@ public class GravityCyclePathMovementInfoAppendDecorator extends
 			Log.e("count", ++i + "");
 			Log.e("info", info.getDx() + "");
 			this.getAction().setInfo(info);
-			coreCalculationMovementActionInfo(this.getAction().getInfo());
+//			coreCalculationMovementActionInfo(this.getAction().getInfo());
+			
 		}
+		
+		MovementActionObjectStructure objectStructure = new MovementActionObjectStructure();
+		objectStructure.setRoot(this);
+		IMovementActionVisitor movementActionVisitor = new MovementActionItemVisitor(this);
+		objectStructure.handleRequest(movementActionVisitor);
 
 		for (MovementAction action : copyMovementActionList) {
 			this.getAction().addMovementAction(action);

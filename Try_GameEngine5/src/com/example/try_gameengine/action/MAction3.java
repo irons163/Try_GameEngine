@@ -18,7 +18,7 @@ public class MAction3 {
 	 * @return
 	 */
 	public static MovementAction moveByX(float dx, long durationMs){
-		return new MovementActionItemUpdateTime(new MovementActionInfo(durationMs, 1, dx, 0, "L", null, false));
+		return new MovementActionItemUpdateTime(new MovementActionInfo(durationMs, 1, dx, 0, "L"));
 	}
 	
 	/**
@@ -38,7 +38,7 @@ public class MAction3 {
 		long totalTrigger = (long) (millisTotal/(1000.0f/Config.fps));
 		
 //		new MovementActionFPSInfo(count, durationFPSFream, dx, dy)
-		return new MovementActionItemBaseReugularFPS(new MovementActionInfo(totalTrigger, 1, 0, perMove, "L", null, false));
+		return new MovementActionItemBaseReugularFPS(new MovementActionInfo(totalTrigger, 1, 0, perMove, "L"));
 	}
 	
 	/**
@@ -54,5 +54,21 @@ public class MAction3 {
 			movementActionSetWithOutThread.addMovementAction(movementActions[i]);
 		}
 		return movementActionSetWithOutThread;
+	}
+	
+	public static MovementAction gravityCyclePathMovement(MovementActionItemMoveByCurve moveByCurve){
+		MovementAction action = new MovementActionSetWithOutThread();
+		MovementActionItemMoveByCurve newMoveByCurve = null;
+		try {
+			newMoveByCurve = (MovementActionItemMoveByCurve) moveByCurve.clone();
+		} catch (CloneNotSupportedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		newMoveByCurve.setMathUtil(moveByCurve.getMathUtil());
+		newMoveByCurve.isCyclePath();
+		action.addMovementAction(moveByCurve);
+		action.addMovementAction(newMoveByCurve);
+		return action;
 	}
 }

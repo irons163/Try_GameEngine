@@ -453,14 +453,14 @@ public abstract class MovementAction {
 			this.description = description;
 		}
 
-		public List<MovementAction> getCopyMovementActionList() {
-			return copyMovementActionList;
-		}
-
-		public void setCopyMovementActionList(
-				List<MovementAction> copyMovementActionList) {
-			this.copyMovementActionList = copyMovementActionList;
-		}
+//		public List<MovementAction> getCopyMovementActionList() {
+//			return copyMovementActionList;
+//		}
+//
+//		public void setCopyMovementActionList(
+//				List<MovementAction> copyMovementActionList) {
+//			this.copyMovementActionList = copyMovementActionList;
+//		}
 
 		public List<MovementActionInfo> getCurrentInfoList() {
 			return currentInfoList;

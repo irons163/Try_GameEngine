@@ -16,9 +16,6 @@ public class MovementActionInfo {
 	protected long delay;
 	protected float dx, dy;
 	protected String description;
-	protected IRotationController rotationController;
-	protected IGravityController gravityController;
-	protected boolean enableGravity;
 	protected Sprite sprite;
 	protected String spriteActionName;
 	protected boolean isLoop = false;
@@ -45,57 +42,7 @@ public class MovementActionInfo {
 	 */
 	public MovementActionInfo(long total, long delay, float dx, float dy,
 			String description) {
-		this(total, delay, dx, dy, description, null);
-	}
-
-	/**
-	 * @param total
-	 * @param delay
-	 * @param dx
-	 * @param dy
-	 * @param description
-	 * @param rotationController
-	 */
-	public MovementActionInfo(long total, long delay, float dx, float dy,
-			String description, IRotationController rotationController) {
-		this(total, delay, dx, dy, description, rotationController, false);
-	}
-
-	/**
-	 * @param total
-	 * @param delay
-	 * @param dx
-	 * @param dy
-	 * @param description
-	 * @param enableGravity
-	 */
-	public MovementActionInfo(long total, long delay, float dx, float dy,
-			String description, boolean enableGravity) {
-		this(total, delay, dx, dy, description, null, enableGravity);
-	}
-
-	/**
-	 * @param total
-	 * @param delay
-	 * @param dx
-	 * @param dy
-	 * @param description
-	 * @param rotationController
-	 * @param enableGravity
-	 */
-	public MovementActionInfo(long total, long delay, float dx, float dy,
-			String description, IRotationController rotationController,
-			boolean enableGravity) {
-		this(total, delay, dx, dy, description, rotationController, enableGravity, null, null);
-//		this.total = total;
-//		this.delay = delay;
-//		this.dx = dx;
-//		this.dy = dy;
-//		this.description = description;
-//		this.rotationController = rotationController;
-//		this.enableGravity = enableGravity;
-//		if (enableGravity)
-//			this.gravityController = new GravityController();
+		this(total, delay, dx, dy, description, null, null);
 	}
 
 	/**
@@ -110,17 +57,12 @@ public class MovementActionInfo {
 	 * @param spriteActionName
 	 */
 	public MovementActionInfo(long total, long delay, float dx, float dy,
-			String description, IRotationController rotationController,
-			boolean enableGravity, Sprite sprite, String spriteActionName) {
+			String description, Sprite sprite, String spriteActionName) {
 		this.total = total;
 		this.delay = delay;
 		this.dx = dx;
 		this.dy = dy;
 		this.description = description;
-		this.rotationController = rotationController;
-		this.enableGravity = enableGravity;
-		if (enableGravity)
-			this.gravityController = new GravityController();
 		this.sprite = sprite;
 		this.spriteActionName = spriteActionName;
 		this.data = new MovementActionItemUpdateTimeData();
@@ -199,27 +141,6 @@ public class MovementActionInfo {
 	/**
 	 * @return
 	 */
-	public IRotationController getRotationController() {
-		return rotationController;
-	}
-
-	/**
-	 * @param rotationController
-	 */
-	public void setRotationController(IRotationController rotationController) {
-		this.rotationController = rotationController;
-	}
-
-	/**
-	 * @return
-	 */
-	public IGravityController getGravityController() {
-		return gravityController;
-	}
-
-	/**
-	 * @return
-	 */
 	public Sprite getSprite() {
 		return sprite;
 	}
@@ -251,28 +172,6 @@ public class MovementActionInfo {
 
 	void setData(MovementActionItemTrigger data) {
 		this.data = data;
-	}
-
-	/**
-	 * @return
-	 */
-	public boolean isEnableGravity() {
-		return enableGravity;
-	}
-
-	/**
-	 * @param enableGravity
-	 */
-	public void isEnableGravity(boolean enableGravity) {
-		if (enableGravity) {
-			if (!this.enableGravity) {
-				this.enableGravity = enableGravity;
-				gravityController = new GravityController();
-			}
-		} else {
-			this.enableGravity = enableGravity;
-			gravityController = null;
-		}
 	}
 
 	/**
@@ -353,7 +252,7 @@ public class MovementActionInfo {
 	@Override
 	public MovementActionInfo clone() {
 		MovementActionInfo info = new MovementActionInfo(total, delay, dx, dy,
-				description, rotationController, enableGravity, sprite,
+				description, sprite,
 				spriteActionName);
 		return info;
 	}
@@ -372,86 +271,86 @@ public class MovementActionInfo {
 	 */
 	IMovementActionInfoMemento movementActionInfoMemento;
 
-	/**
-	 * create MovementActionInfoMemento.
-	 * @return a MovementActionInfoMemento.
-	 */
-	public IMovementActionInfoMemento createIMovementActionInfoMemento() {
-		movementActionInfoMemento = new MovementActionInfoMementoMementoImpl(
-				total, delay, dx, dy, description, rotationController,
-				gravityController, enableGravity, sprite, spriteActionName,
-				isLoop, isSettingTargetXY, targetX, targetY);
-		return movementActionInfoMemento;
-	}
+//	/**
+//	 * create MovementActionInfoMemento.
+//	 * @return a MovementActionInfoMemento.
+//	 */
+//	public IMovementActionInfoMemento createIMovementActionInfoMemento() {
+//		movementActionInfoMemento = new MovementActionInfoMementoMementoImpl(
+//				total, delay, dx, dy, description, rotationController,
+//				gravityController, enableGravity, sprite, spriteActionName,
+//				isLoop, isSettingTargetXY, targetX, targetY);
+//		return movementActionInfoMemento;
+//	}
 
-	/**
-	 * restore MovementActionInfoMemento.
-	 * @param movementActionInfoMemento
-	 */
-	public void restoreMovementActionMemento(
-			IMovementActionInfoMemento movementActionInfoMemento) {
-		MovementActionInfoMementoMementoImpl mementoImpl = (MovementActionInfoMementoMementoImpl) this.movementActionInfoMemento;
-		this.total = mementoImpl.total;
-		this.delay = mementoImpl.delay;
-		this.dx = mementoImpl.dx;
-		this.dy = mementoImpl.dy;
-		this.description = mementoImpl.description;
-		this.rotationController = mementoImpl.rotationController;
-		this.gravityController = mementoImpl.gravityController;
-		this.enableGravity = mementoImpl.enableGravity;
-		this.sprite = mementoImpl.sprite;
-		this.spriteActionName = mementoImpl.spriteActionName;
-		this.isLoop = mementoImpl.isLoop;
-		this.isSettingTargetXY = mementoImpl.isSettingTargetXY;
-		this.targetX = mementoImpl.targetX;
-		this.targetY = mementoImpl.targetY;
-		
-//		if(this.rotationController!=null)
-//			this.rotationController.reset(info);
-	}
-
-	/**
-	 * MovementActionInfoMementoMementoImpl implements IMovementActionInfoMemento.
-	 * @author irons
-	 *
-	 */
-	protected static class MovementActionInfoMementoMementoImpl implements
-			IMovementActionInfoMemento {
-		private long total;
-		private long delay;
-		private float dx, dy;
-		private String description;
-		private IRotationController rotationController;
-		private IGravityController gravityController;
-		private boolean enableGravity;
-		private Sprite sprite;
-		private String spriteActionName;
-		private boolean isLoop = false;
-		private boolean isSettingTargetXY = false;
-		private float targetX, targetY;
-
-		public MovementActionInfoMementoMementoImpl(long total, long delay,
-				float dx, float dy, String description,
-				IRotationController rotationController,
-				IGravityController gravityController, boolean enableGravity,
-				Sprite sprite, String spriteActionName, boolean isLoop,
-				boolean isSettingTargetXY, float targetX, float targetY) {
-			super();
-			this.total = total;
-			this.delay = delay;
-			this.dx = dx;
-			this.dy = dy;
-			this.description = description;
-			this.rotationController = rotationController;
-			this.gravityController = gravityController;
-			this.enableGravity = enableGravity;
-			this.sprite = sprite;
-			this.spriteActionName = spriteActionName;
-			this.isLoop = isLoop;
-			this.isSettingTargetXY = isSettingTargetXY;
-			this.targetX = targetX;
-			this.targetY = targetY;
-		}
-
-	}
+//	/**
+//	 * restore MovementActionInfoMemento.
+//	 * @param movementActionInfoMemento
+//	 */
+//	public void restoreMovementActionMemento(
+//			IMovementActionInfoMemento movementActionInfoMemento) {
+//		MovementActionInfoMementoMementoImpl mementoImpl = (MovementActionInfoMementoMementoImpl) this.movementActionInfoMemento;
+//		this.total = mementoImpl.total;
+//		this.delay = mementoImpl.delay;
+//		this.dx = mementoImpl.dx;
+//		this.dy = mementoImpl.dy;
+//		this.description = mementoImpl.description;
+//		this.rotationController = mementoImpl.rotationController;
+//		this.gravityController = mementoImpl.gravityController;
+//		this.enableGravity = mementoImpl.enableGravity;
+//		this.sprite = mementoImpl.sprite;
+//		this.spriteActionName = mementoImpl.spriteActionName;
+//		this.isLoop = mementoImpl.isLoop;
+//		this.isSettingTargetXY = mementoImpl.isSettingTargetXY;
+//		this.targetX = mementoImpl.targetX;
+//		this.targetY = mementoImpl.targetY;
+//		
+////		if(this.rotationController!=null)
+////			this.rotationController.reset(info);
+//	}
+//
+//	/**
+//	 * MovementActionInfoMementoMementoImpl implements IMovementActionInfoMemento.
+//	 * @author irons
+//	 *
+//	 */
+//	protected static class MovementActionInfoMementoMementoImpl implements
+//			IMovementActionInfoMemento {
+//		private long total;
+//		private long delay;
+//		private float dx, dy;
+//		private String description;
+//		private IRotationController rotationController;
+//		private IGravityController gravityController;
+//		private boolean enableGravity;
+//		private Sprite sprite;
+//		private String spriteActionName;
+//		private boolean isLoop = false;
+//		private boolean isSettingTargetXY = false;
+//		private float targetX, targetY;
+//
+//		public MovementActionInfoMementoMementoImpl(long total, long delay,
+//				float dx, float dy, String description,
+//				IRotationController rotationController,
+//				IGravityController gravityController, boolean enableGravity,
+//				Sprite sprite, String spriteActionName, boolean isLoop,
+//				boolean isSettingTargetXY, float targetX, float targetY) {
+//			super();
+//			this.total = total;
+//			this.delay = delay;
+//			this.dx = dx;
+//			this.dy = dy;
+//			this.description = description;
+//			this.rotationController = rotationController;
+//			this.gravityController = gravityController;
+//			this.enableGravity = enableGravity;
+//			this.sprite = sprite;
+//			this.spriteActionName = spriteActionName;
+//			this.isLoop = isLoop;
+//			this.isSettingTargetXY = isSettingTargetXY;
+//			this.targetX = targetX;
+//			this.targetY = targetY;
+//		}
+//
+//	}
 }

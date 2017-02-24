@@ -13,7 +13,7 @@ import com.example.try_gameengine.action.visitor.IMovementActionVisitor;
  * @author irons
  *
  */
-public class MovementActionItemMoveByCurve extends MovementActionItemUpdate{ 
+public class MovementActionItemMoveByCurve extends MovementActionItemUpdate implements Cloneable{ 
 	MovementActionItemTrigger data;
 	IRotationController rotationController;
 	float dx, dy;
@@ -25,11 +25,6 @@ public class MovementActionItemMoveByCurve extends MovementActionItemUpdate{
 			frameTriggerFPSStart();
 		}
 	};
-	
-	private static final int NO_ORGINAL_ALPHA = -1;
-	private int originalAlpha;
-	private int alpha;
-	private float offsetAlphaByOnceTrigger;
 	
 	/**
 	 * @param millisTotal
@@ -56,7 +51,11 @@ public class MovementActionItemMoveByCurve extends MovementActionItemUpdate{
 	 * @param description
 	 */
 	public MovementActionItemMoveByCurve(long millisTotal, long millisDelay, IRotationController rotationController, String description){
-		super(new MovementActionInfo(millisTotal, millisDelay, 0, 0, "",rotationController));
+		this(new MovementActionInfo(millisTotal, millisDelay, 0, 0, ""), rotationController, description);
+	}
+	
+	public MovementActionItemMoveByCurve(MovementActionInfo info, IRotationController rotationController, String description){
+		super(info);
 		
 		this.description = description + ",";
 		this.rotationController = rotationController;
@@ -72,19 +71,12 @@ public class MovementActionItemMoveByCurve extends MovementActionItemUpdate{
 	public void start() {
 		// TODO Auto-generated method stub	
 //		resumeFrameIndex = 0;
-
+		rotationController.start(info);
 		data.setValueOfActivedCounter(0);
 		data.setShouldPauseValue(0);
 		data.setValueOfPausedCounter(0);
 		isStop = false;
 		data.setCycleFinish(false);
-		if(originalAlpha==NO_ORGINAL_ALPHA)
-			originalAlpha = info.getSprite().getAlpha();
-		else
-			info.getSprite().setAlpha(originalAlpha);
-		
-		int offsetAlpha= alpha - originalAlpha;
-		offsetAlphaByOnceTrigger = (int) (offsetAlpha/(info.getTotal()/info.getDelay()));
 		
 		if(!data.isEnableSetSpriteAction())
 			data.setEnableSetSpriteAction(isRepeatSpriteActionIfMovementActionRepeat);
@@ -126,7 +118,7 @@ public class MovementActionItemMoveByCurve extends MovementActionItemUpdate{
 			}
 			
 			if(data.isCycleFinish()){
-				info.getSprite().setAlpha(alpha);
+//				info.getSprite().setAlpha(alpha);
 				
 				if(actionListener!=null)
 					actionListener.actionCycleFinish();
@@ -254,6 +246,18 @@ public class MovementActionItemMoveByCurve extends MovementActionItemUpdate{
 		return isStop;
 	}
 	
+	void setMathUtil(MathUtil mathUtil){
+		rotationController.setMathUtil(mathUtil);
+	}
+	
+	MathUtil getMathUtil(){
+		return rotationController.getMathUtil();
+	}
+	
+	public void isCyclePath(){
+		rotationController.isCyclePath();
+	}
+	
 //	public IMovementActionMemento createMovementActionMemento(){
 //		movementActionMemento = new MovementActionItemAlphaMementoImpl(actions, thread, timerOnTickListener, name, copyMovementActionList, currentInfoList, movementItemList, totalCopyMovementActionList, isCycleFinish, isCycleFinish, isCycleFinish, isCycleFinish, name, cancelAction, millisTotal, millisDelay, info, resumeTotal, resetTotal, name, updateTime, frameIdx, isStop, isCycleFinish, triggerEnable, frameTimes, resumeFrameIndex, resumeFrameCount, numberOfPauseFrames, pauseFrameCounter, nextframeTrigger, numberOfFramesAfterLastTrigger);
 //		if(this.info!=null){
@@ -362,5 +366,14 @@ public class MovementActionItemMoveByCurve extends MovementActionItemUpdate{
 	@Override
 	public void accept(IMovementActionVisitor movementActionVisitor){
 		movementActionVisitor.visitLeaf(this);
+	}
+	
+	@Override
+	protected MovementActionItemMoveByCurve clone() throws CloneNotSupportedException {
+		// TODO Auto-generated method stub
+		MovementActionInfo info = getInfo().clone();
+		IRotationController newRotationController = rotationController.copyNewRotationController();
+		MovementActionItemMoveByCurve movementActionItemMoveByCurve = new MovementActionItemMoveByCurve(info, newRotationController, description);
+		return movementActionItemMoveByCurve;
 	}
 }

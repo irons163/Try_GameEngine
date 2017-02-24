@@ -132,8 +132,6 @@ public class MovementActionItemCountDownTimer extends MovementActionItemForMilli
 		millisDelay = info.getDelay();
 		dx = info.getDx();
 		dy = info.getDy();
-		rotationController = info.getRotationController();
-		gravityController = info.getGravityController();
 
 		countDownTimer = new CountDownTimer(millisTotal, millisDelay) {
 
@@ -141,9 +139,6 @@ public class MovementActionItemCountDownTimer extends MovementActionItemForMilli
 			public void onTick(long millisUntilFinished) {
 				Log.e("t", millisUntilFinished + "");
 				Log.e("t", millisUntilFinished / 1000 + "");
-
-				doRotation();
-				doGravity();
 				Log.e("dx", dx + "");
 				Log.e("dy", dy + "");
 
@@ -170,37 +165,9 @@ public class MovementActionItemCountDownTimer extends MovementActionItemForMilli
 	}
 
 	/**
-	 * If rotationController is not null do rotation execute.
-	 */
-	private void doRotation() {
-		if (rotationController != null) {
-			rotationController.execute(info);
-			dx = info.getDx();
-			dy = info.getDy();
-		}
-	}
-
-	/**
-	 * If gravityController is not null do gravity execute.
-	 */
-	private void doGravity() {
-		if (gravityController != null) {
-			gravityController.execute(info);
-			dx = info.getDx();
-			dy = info.getDy();
-		}
-	}
-
-	/**
 	 * reset action.
 	 */
 	private void doReset() {
-		if (gravityController != null) {
-			gravityController.reset(info);
-		}
-		if (rotationController != null)
-			rotationController.reset(info);
-
 		millisTotal = info.getTotal();
 		millisDelay = info.getDelay();
 		dx = info.getDx();

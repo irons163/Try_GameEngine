@@ -46,6 +46,7 @@ public class MovementActionSetWithOutThread extends MovementAction {
 
 		if (isActionFinish) {
 			isActionFinish = false;
+			actionIndex = 0;
 			actionListener.actionStart();
 			if(actions.size()>0){
 				MovementAction action = actions.get(0);

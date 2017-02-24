@@ -77,56 +77,56 @@ public class MovementInfoFactory {
 		return right;
 	}
 	
-	public static MovementActionInfo createCurveSingleRMovementInfo(){
-		MovementActionInfo right = new MovementActionInfo(12000, 200, 10, 0, "R", new RotationCurveController(30));
-		return right;
-	}
+//	public static MovementActionInfo createCurveSingleRMovementInfo(){
+//		MovementActionInfo right = new MovementActionInfo(12000, 200, 10, 0, "R", new RotationCurveController(30));
+//		return right;
+//	}
+//	
+//	public static MovementActionInfo createGravitySingleRMovementInfo(){
+//		MovementActionInfo right = new MovementActionInfo(1000, 200, 10, 0, "R", true);
+//		return right;
+//	}
+//	
+//	public static MovementActionInfo createRotation45GravitySingleRMovementInfo(){
+//		MovementActionInfo right = new MovementActionInfo(1000, 200, 30, 0, "R", new RotationOnceController(45), true);
+//		return right;
+//	}
 	
-	public static MovementActionInfo createGravitySingleRMovementInfo(){
-		MovementActionInfo right = new MovementActionInfo(1000, 200, 10, 0, "R", true);
-		return right;
-	}
-	
-	public static MovementActionInfo createRotation45GravitySingleRMovementInfo(){
-		MovementActionInfo right = new MovementActionInfo(1000, 200, 30, 0, "R", new RotationOnceController(45), true);
-		return right;
-	}
-	
-	public static MovementActionFrameInfo createFrameRotation45GravitySingleRMovementInfo(){
-		MovementActionFrameInfo right = new MovementActionFrameInfo(new long[]{1000,1000,1000}, 30, 0, "R", new RotationOnceController(45), true);
-		return right;
-	}
+//	public static MovementActionFrameInfo createFrameRotation45GravitySingleRMovementInfo(){
+//		MovementActionFrameInfo right = new MovementActionFrameInfo(new long[]{1000,1000,1000}, 30, 0, "R", new RotationOnceController(45), true);
+//		return right;
+//	}
 	
 	public static MovementActionInfo createSingleR12MovementInfo(){
 		MovementActionInfo right = new MovementActionInfo(12000, 200, 10, 0, "R");
 		return right;
 	}
 	
-	public static MovementActionInfo createCurveSingleR12MovementInfo(){
-		MovementActionInfo right = new MovementActionInfo(12000, 200, 10, 0, "R", new RotationCurveController(30));
-		return right;
-	}
-	
-	public static MovementActionInfo createCurveSingleR121MovementInfo(){
-		MovementActionInfo right = new MovementActionInfo(12000, 200, 100, 0, "R", new RotationCurveController(50));
-		return right;
-	}
-	
-	public static MovementActionInfo createCurveSingleR122MovementInfo(){
-		MovementActionInfo right = new MovementActionInfo(12000, 200, 30, 0, "R", new RotationCurveController(10));
-		return right;
-	}
-	
-	public static MovementActionInfo createCircleMovementInfo(){
-		MovementActionInfo right = new MovementActionInfo(24000, 100, 10, 0, "R", new CircleController(-10, 400f, 700f, 450f, 750f));
-		return right;
-	}
-	
-	public static MovementActionInfo createSubCircleMovementInfo(){
-		MovementActionInfo right = new MovementActionInfo(24000, 100, 30, 0, "R", new CircleController(-10, 450, 750, 500, 800));
-		return right;
-	}
-	
+//	public static MovementActionInfo createCurveSingleR12MovementInfo(){
+//		MovementActionInfo right = new MovementActionInfo(12000, 200, 10, 0, "R", new RotationCurveController(30));
+//		return right;
+//	}
+//	
+//	public static MovementActionInfo createCurveSingleR121MovementInfo(){
+//		MovementActionInfo right = new MovementActionInfo(12000, 200, 100, 0, "R", new RotationCurveController(50));
+//		return right;
+//	}
+//	
+//	public static MovementActionInfo createCurveSingleR122MovementInfo(){
+//		MovementActionInfo right = new MovementActionInfo(12000, 200, 30, 0, "R", new RotationCurveController(10));
+//		return right;
+//	}
+//	
+//	public static MovementActionInfo createCircleMovementInfo(){
+//		MovementActionInfo right = new MovementActionInfo(24000, 100, 10, 0, "R", new CircleController(-10, 400f, 700f, 450f, 750f));
+//		return right;
+//	}
+//	
+//	public static MovementActionInfo createSubCircleMovementInfo(){
+//		MovementActionInfo right = new MovementActionInfo(24000, 100, 30, 0, "R", new CircleController(-10, 450, 750, 500, 800));
+//		return right;
+//	}
+//	
 //	public static MovementActionInfo create2CircleMovementInfo(){
 //		MovementActionInfo right = new MovementActionInfo(24000, 100, 30, 0, "R", new Circle22Controller(-10, 400, 700, 450, 750));
 //		GameView.circleController1 = (Circle22Controller) right.getRotationController();
@@ -138,29 +138,29 @@ public class MovementInfoFactory {
 //		GameView.circleController2 = (Circle22Controller) right.getRotationController();
 //		return right;
 //	}
-	
-	public static MovementActionInfo createSub2CircleMovementInfo(){
-		MovementActionInfo right = new MovementActionInfo(24000, 100, 30, 0, "R", new CircleController(-10, 450, 750, 500, 800));
-		return right;
-	}
-	
-	public static MovementActionInfo create3CircleMovementInfo(){
-		MovementActionInfo right = new MovementActionInfo(24000, 100, 10, 0, "R", new CircleController(5, 400, 700, 450, 750));
-		return right;
-	}
-	
-	public static MovementActionInfo create3SubCircleMovementInfo(){
-		MovementActionInfo right = new MovementActionInfo(24000, 50, 30, 0, "R", new CircleController(5, 450, 750, 500, 800));
-		return right;
-	}
-	
-	public static MovementActionInfo create32CircleMovementInfo(){
-		MovementActionInfo right = new MovementActionInfo(24000, 100, 30, 0, "R", new CircleController(5, 500, 800, 550, 850));
-		return right;
-	}
-	
-	public static MovementActionInfo create3Sub2CircleMovementInfo(){
-		MovementActionInfo right = new MovementActionInfo(24000, 100, 30, 0, "R", new CircleController(5, 550, 800, 600, 900));
-		return right;
-	}
+//	
+//	public static MovementActionInfo createSub2CircleMovementInfo(){
+//		MovementActionInfo right = new MovementActionInfo(24000, 100, 30, 0, "R", new CircleController(-10, 450, 750, 500, 800));
+//		return right;
+//	}
+//	
+//	public static MovementActionInfo create3CircleMovementInfo(){
+//		MovementActionInfo right = new MovementActionInfo(24000, 100, 10, 0, "R", new CircleController(5, 400, 700, 450, 750));
+//		return right;
+//	}
+//	
+//	public static MovementActionInfo create3SubCircleMovementInfo(){
+//		MovementActionInfo right = new MovementActionInfo(24000, 50, 30, 0, "R", new CircleController(5, 450, 750, 500, 800));
+//		return right;
+//	}
+//	
+//	public static MovementActionInfo create32CircleMovementInfo(){
+//		MovementActionInfo right = new MovementActionInfo(24000, 100, 30, 0, "R", new CircleController(5, 500, 800, 550, 850));
+//		return right;
+//	}
+//	
+//	public static MovementActionInfo create3Sub2CircleMovementInfo(){
+//		MovementActionInfo right = new MovementActionInfo(24000, 100, 30, 0, "R", new CircleController(5, 550, 800, 600, 900));
+//		return right;
+//	}
 }

@@ -58,7 +58,7 @@ public class MAction { //MAction use threadPool it would delay during action by 
 		long totalTrigger = (long) (millisTotal/(1000.0f/Config.fps));
 		
 //		new MovementActionFPSInfo(count, durationFPSFream, dx, dy)
-		return new MovementActionItemBaseReugularFPS(new MovementActionInfo(totalTrigger, 1, perMove, 0, "L", null, false));
+		return new MovementActionItemBaseReugularFPS(new MovementActionInfo(totalTrigger, 1, perMove, 0, "L"));
 	}
 	
 	/**
@@ -78,7 +78,7 @@ public class MAction { //MAction use threadPool it would delay during action by 
 		long totalTrigger = (long) (millisTotal/(1000.0f/Config.fps));
 		
 //		new MovementActionFPSInfo(count, durationFPSFream, dx, dy)
-		return new MovementActionItemBaseReugularFPS(new MovementActionInfo(totalTrigger, 1, 0, perMove, "L", null, false));
+		return new MovementActionItemBaseReugularFPS(new MovementActionInfo(totalTrigger, 1, 0, perMove, "L"));
 	}
 	
 	/**
@@ -96,7 +96,7 @@ public class MAction { //MAction use threadPool it would delay during action by 
 //		float perFrame = 1000.0f/durationMs/fps; //1000/1000/60=1/60;
 //		float perMove = dy * perFrame; //1*(1/60)=1/60
 
-		return new MovementActionItemBaseReugularFPS(new MovementActionInfo(count, durationFPSFream, 0, dy, "L", null, false));
+		return new MovementActionItemBaseReugularFPS(new MovementActionInfo(count, durationFPSFream, 0, dy, "L"));
 	}
 	
 	/**
@@ -113,7 +113,7 @@ public class MAction { //MAction use threadPool it would delay during action by 
 		long millisTotal = durationMs;
 		long totalTrigger = (long) (millisTotal/(1000.0f/Config.fps));
 		
-		MovementActionInfo movementActionInfo = new MovementActionFPSInfo(totalTrigger, 1, 0, 0, "L", null, false);
+		MovementActionInfo movementActionInfo = new MovementActionFPSInfo(totalTrigger, 1, 0, 0, "L");
 		movementActionInfo.setTargetXY(targetX, targetY);
 		return new MovementActionItemBaseReugularFPS(movementActionInfo);
 	}
@@ -128,7 +128,7 @@ public class MAction { //MAction use threadPool it would delay during action by 
 	 */
 	public static MovementAction moveTo(float targetX, float targetY, long durationFPSFream, int count){	
 //		MovementActionInfo movementActionInfo = new MovementActionInfo(count, durationFPSFream, 0, 0, "L", null, false);
-		MovementActionInfo movementActionInfo = new MovementActionFPSInfo(count, durationFPSFream, 0, 0, "L", null, false);
+		MovementActionInfo movementActionInfo = new MovementActionFPSInfo(count, durationFPSFream, 0, 0, "L");
 		movementActionInfo.setTargetXY(targetX, targetY);
 		return new MovementActionItemBaseReugularFPS(movementActionInfo);
 	}
@@ -541,7 +541,7 @@ public class MAction { //MAction use threadPool it would delay during action by 
 	 * @return
 	 */
 	public static MovementAction waitAction(long triggerTotal){
-		return new MovementActionItemBaseReugularFPS(new MovementActionInfo(triggerTotal, 1, 0, 0, "waitAction", null, false));	
+		return new MovementActionItemBaseReugularFPS(new MovementActionInfo(triggerTotal, 1, 0, 0, "waitAction"));	
 	}
 	
 	/**

@@ -68,4 +68,60 @@ public class RotationCurveController implements IRotationController{
 	}
 
 
+	@Override
+	public MathUtil getMathUtil() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public void setMathUtil(MathUtil mathUtil) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void isInverseAngel() {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void isCyclePath() {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void isInversePath() {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void isWavePath() {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void isSlopeWavePath() {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void start(MovementActionInfo info) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
 }

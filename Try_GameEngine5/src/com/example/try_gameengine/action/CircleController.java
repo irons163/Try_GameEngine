@@ -8,6 +8,7 @@ import com.example.try_gameengine.framework.BitmapUtil;
 
 public class CircleController implements IRotationController {
 	float rotation;
+	float offsetRotationPerUpdate;
 	float origineDx;
 	float origineDy;
 	boolean firstExecute = true;
@@ -32,12 +33,8 @@ public class CircleController implements IRotationController {
 	}
 	
 	public void execute(MovementActionInfo info, float t) {
+		float offsetRotation = offsetRotationPerUpdate*t;
 		
-	}
-
-	@Override
-	public void execute(MovementActionInfo info) {
-		// TODO Auto-generated method stub
 		if (firstExecute) {
 			long millisTotal = info.getTotal();
 			long millisDelay = info.getDelay();
@@ -61,9 +58,9 @@ public class CircleController implements IRotationController {
 			firstExecute = false;
 		}
 
-			mathUtil.setXY(mx - x, my - y);
+			mathUtil.setXY(mx - x, my - y);//need modify
 			mathUtil.genAngle();
-			mathUtil.genSpeedByRotate(rotation);
+			mathUtil.genSpeedByRotate(offsetRotation);
 			float speedx = mathUtil.getSpeedX();
 			float speedy = mathUtil.getSpeedY();
 			float newMx = x + speedx;
@@ -74,6 +71,12 @@ public class CircleController implements IRotationController {
 			my = newMy;
 			info.setDx(speedx);
 			info.setDy(speedy);
+	}
+
+	@Override
+	public void execute(MovementActionInfo info) {
+		// TODO Auto-generated method stub
+		execute(info, 1);
 	}
 
 	@Override
@@ -145,5 +148,75 @@ public class CircleController implements IRotationController {
 				+ BitmapUtil.redPoint.getHeight() / 2, paint);
 		canvas.drawPoint(mx + BitmapUtil.redPoint.getWidth() / 2, my
 				+ BitmapUtil.redPoint.getHeight() / 2, paint);
+	}
+
+	@Override
+	public MathUtil getMathUtil() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setMathUtil(MathUtil mathUtil) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void isInverseAngel() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void isCyclePath() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void isInversePath() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void isWavePath() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void isSlopeWavePath() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void start(MovementActionInfo info) {
+		// TODO Auto-generated method stub
+		if(info.data instanceof MovementActionItemUpdateTimeData)
+			offsetRotationPerUpdate = rotation;
+		else
+			offsetRotationPerUpdate = (int) (rotation/(info.getTotal()/info.getDelay()));
+		
+		origineDx = info.getDx();
+		origineDy = info.getDy();
+
+//		float x = millisDelay / millisTotal;
+//
+//		float tx = origineDx * x;
+//		float ty = origineDy * x;
+		
+		if(mathUtil==null){
+			this.mx = info.getSprite().getCenterX();
+			this.my = info.getSprite().getCenterY();
+			mathUtil = new MathUtil(mx - x, my - y);
+		}
+		initspeedX = (float) Math.sqrt((mx - x) * (mx - x) + (my - y)
+				* (my - y));
+		mathUtil.setInitSpeed(initspeedX);
+
+		firstExecute = false;
 	}
 }
