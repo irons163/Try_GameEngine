@@ -3,15 +3,10 @@ package com.example.try_gameengine.action;
 import java.util.ArrayList;
 import java.util.List;
 
-import android.graphics.YuvImage;
 import android.util.Log;
-
-import com.example.try_gameengine.action.MovementActionItemBaseReugularFPS.FrameTrigger;
 import com.example.try_gameengine.action.MovementActionItemTrigger.MovementActionItemUpdateTimeDataDelegate;
 import com.example.try_gameengine.action.listener.IActionListener;
 import com.example.try_gameengine.action.visitor.IMovementActionVisitor;
-import com.example.try_gameengine.framework.Config;
-
 
 /**
  * MovementActionItemAlpha is a movement action that control alpha value.

@@ -36,7 +36,7 @@ public class Sprite extends Layer {
 //	public boolean isEnableInterruptAction = false;
 	public float scale = 1.0f;
 	public boolean canCollision = true;
-	public MovementAction action;
+	private MovementAction action;
 	public ConcurrentLinkedQueue<MovementAction> movementActions = new ConcurrentLinkedQueue<MovementAction>();
 	
 	protected RectF moveRage;

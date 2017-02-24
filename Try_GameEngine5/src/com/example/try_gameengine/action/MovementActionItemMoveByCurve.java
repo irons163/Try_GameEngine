@@ -3,11 +3,20 @@ package com.example.try_gameengine.action;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.util.Log;
 import com.example.try_gameengine.action.MovementActionItemTrigger.MovementActionItemUpdateTimeDataDelegate;
 import com.example.try_gameengine.action.listener.IActionListener;
+import com.example.try_gameengine.action.visitor.IMovementActionVisitor;
 
-public class MovementActionItemUpdateTime extends MovementActionItemForMilliseconds{ 
+/**
+ * MovementActionItemAlpha is a movement action that control alpha value.
+ * @author irons
+ *
+ */
+public class MovementActionItemMoveByCurve extends MovementActionItemUpdate implements Cloneable{ 
 	MovementActionItemTrigger data;
+	IRotationController rotationController;
+	float dx, dy;
 	FrameTrigger myTrigger = new FrameTrigger() {
 		
 		@Override
@@ -17,24 +26,39 @@ public class MovementActionItemUpdateTime extends MovementActionItemForMilliseco
 		}
 	};
 	
-	public MovementActionItemUpdateTime(long millisTotal, long millisDelay, final int dx, final int dy){
-		this(millisTotal, millisDelay, dx, dy, "MovementItem");
+	/**
+	 * @param millisTotal
+	 * @param alpha
+	 */
+	public MovementActionItemMoveByCurve(long millisTotal, IRotationController rotationController){
+		this(millisTotal, 1, rotationController, "MovementActionItemAlpha");
 	}
 	
-	public MovementActionItemUpdateTime(long millisTotal, long millisDelay, final int dx, final int dy, String description){
-		super(millisTotal, millisDelay, dx, dy, description);
+	/**
+	 * @param triggerTotal
+	 * @param triggerInterval
+	 * @param alpha
+	 */
+	public MovementActionItemMoveByCurve(long triggerTotal, long triggerInterval, IRotationController rotationController){
+		this(triggerTotal, triggerTotal, rotationController, "MovementActionItemAlpha");
 	}
 	
-	public MovementActionItemUpdateTime(MovementActionInfo info){
+	/**
+	 * @param millisTotal
+	 * @param millisDelay
+	 * @param originalAlpha
+	 * @param alpha
+	 * @param description
+	 */
+	public MovementActionItemMoveByCurve(long millisTotal, long millisDelay, IRotationController rotationController, String description){
+		this(new MovementActionInfo(millisTotal, millisDelay, 0, 0, ""), rotationController, description);
+	}
+	
+	public MovementActionItemMoveByCurve(MovementActionInfo info, IRotationController rotationController, String description){
 		super(info);
-		millisTotal = info.getTotal();
-		millisDelay = info.getDelay();
-		dx = info.getDx();
-		dy = info.getDy();
-		if(info.getDescription()!=null)
-			this.description = info.getDescription() + ",";
-		this.info = info;
-		movementItemList.add(this);
+		
+		this.description = description + ",";
+		this.rotationController = rotationController;
 	}
 	
 	@Override
@@ -45,30 +69,15 @@ public class MovementActionItemUpdateTime extends MovementActionItemForMilliseco
 	
 	@Override
 	public void start() {
-		data.setMovementActionItemUpdateTimeDataDelegate(new MovementActionItemUpdateTimeDataDelegate() {
-			
-			@Override
-			public void update() {
-				// TODO Auto-generated method stub
-				if (timerOnTickListener != null)
-					timerOnTickListener.onTick(dx, dy);
-			}
-
-			@Override
-			public void update(float t) {
-				// TODO Auto-generated method stub
-				float newDx = (float) (dx*t);
-				float newDy = (float) (dy*t);
-				if (timerOnTickListener != null)
-					timerOnTickListener.onTick(newDx, newDy);
-			}
-		});
-		
+		// TODO Auto-generated method stub	
+//		resumeFrameIndex = 0;
+		rotationController.start(info);
 		data.setValueOfActivedCounter(0);
 		data.setShouldPauseValue(0);
 		data.setValueOfPausedCounter(0);
 		isStop = false;
 		data.setCycleFinish(false);
+		
 		if(!data.isEnableSetSpriteAction())
 			data.setEnableSetSpriteAction(isRepeatSpriteActionIfMovementActionRepeat);
 		if(info.getSprite()!=null && data.isEnableSetSpriteAction())
@@ -76,130 +85,104 @@ public class MovementActionItemUpdateTime extends MovementActionItemForMilliseco
 		
 		triggerEnable = true;
 		data.setEnableSetSpriteAction(isRepeatSpriteActionIfMovementActionRepeat);
-		
-		actionListener.actionStart();
 	}
-	
-	
-	
-	public interface FrameTrigger{
-		public void trigger();
-	}
-	
-	
-	
+
 	@Override
 	public void trigger(){
-		if(triggerEnable && data.getValueOfPausedCounter()>=data.getShouldPauseValue()){
+		if(triggerEnable && data.getValueOfPausedCounter()==data.getShouldPauseValue()){
 			
 			data.setShouldPauseValue(0);
 			data.setValueOfPausedCounter(0);
 			myTrigger.trigger();
 		}else if(triggerEnable){
-			data.setValueOfPausedCounter(data.getValueOfPausedCounter()
-					+ Time.DeltaTime);
+			data.setValueOfPausedCounter(data.getValueOfPausedCounter() + 1);
 		}else{
 			data.setShouldPauseValue(0);
 			data.setValueOfPausedCounter(0);
 		}
 	}
 	
-	
 	public void setActionListener(IActionListener actionListener){
 		this.actionListener = actionListener;
 	}
-	
-	
-	
+
 	private void frameTriggerFPSStart(){
 		if (!isStop) {
-			synchronized (MovementActionItemUpdateTime.this) {
-				data.dodo();
-			
-			if(data.isCycleFinish()){
-				if(actionListener!=null)
-					actionListener.actionCycleFinish();
-			}
+			synchronized (MovementActionItemMoveByCurve.this) {
+			data.dodo();
 			
 			if(!isLoop && data.isCycleFinish()){
 				isStop = true;
-				doReset();	
+				doReset();
 				triggerEnable = false;
-			} 
+			}
 			
-			if(isStop){
-				if(actionListener!=null)
-					actionListener.actionFinish();
+			if(data.isCycleFinish()){
+//				info.getSprite().setAlpha(alpha);
 				
-				MovementActionItemUpdateTime.this.notifyAll();
-			}
-			
-			/*
-			if(resumeFrameCount>=info.getDelay()){	
-				if(resumeFrameCount==info.getTotal())
-					isCycleFinish = true;
-			}
-			
-			if(isCycleFinish){
-				resumeFrameCount = 0;
-				lastTriggerFrameNum = 0;
-			}
-			
-			resumeFrameCount++;
-			
-			if(!isLoop && isCycleFinish){
-				isStop = true;
-				doReset();	
-				triggerEnable = false;
-				if(actionListener!=null)
-					actionListener.actionFinish();
-				
-				MovementActionItem2.this.notifyAll();
-			}else if(resumeFrameCount==lastTriggerFrameNum+info.getDelay()){
-				doRotation();
-				doGravity();
-				if(timerOnTickListener!=null)
-					timerOnTickListener.onTick(dx, dy);		
-				lastTriggerFrameNum += info.getDelay();
-				
-			// add by 150228. if the delay change by main app, the function: else if(resumeFrameCount==lastTriggerFrameNum+info.getDelay() maybe make problem.
-			}else if(resumeFrameCount>lastTriggerFrameNum+info.getDelay()){ 
-//				resumeFrameCount--;
-//				lastTriggerFrameNum++;
-				lastTriggerFrameNum = resumeFrameCount+1-info.getDelay();
-			}
-			
-			if(isCycleFinish){
 				if(actionListener!=null)
 					actionListener.actionCycleFinish();
-				isCycleFinish = false;
+				
+				if(!isLoop){
+					if(actionListener!=null)
+						actionListener.actionFinish();
+					
+					MovementActionItemMoveByCurve.this.notifyAll();
+				}
 			}
-			*/
+			
 			}
 		}else{
-			synchronized (MovementActionItemUpdateTime.this) {
-				MovementActionItemUpdateTime.this.notifyAll();
+			synchronized (MovementActionItemMoveByCurve.this) {
+				MovementActionItemMoveByCurve.this.notifyAll();
 			}
 		}
 	}
-	
+
 	@Override
 	protected MovementAction initTimer(){ super.initTimer();
-		millisTotal = info.getTotal();
-		millisDelay = info.getDelay();
-		dx = info.getDx();
-		dy = info.getDy();
+		data = info.getData();
+		data.setMovementActionItemUpdateTimeDataDelegate(new MovementActionItemUpdateTimeDataDelegate() {
+			
+			@Override
+			public void update() {
+				// TODO Auto-generated method stub
+//				doRotation();
+//				doGravity();
+				rotationController.execute(info);
+				dx = info.getDx();
+				dy = info.getDy();
+				if (timerOnTickListener != null)
+					timerOnTickListener.onTick(dx, dy);
+			}
+
+			@Override
+			public void update(float t) {
+				// TODO Auto-generated method stub
+//				doRotation();
+//				doGravity();
+				rotationController.execute(info, t);
+				dx = info.getDx();
+				dy = info.getDy();
+				float newDx = (float) (dx*t);
+				float newDy = (float) (dy*t);
+				if (timerOnTickListener != null)
+					timerOnTickListener.onTick(newDx, newDy);
+			}
+		});
 		
+		data.setShouldActiveTotalValue(info.getTotal());
+		data.setShouldActiveIntervalValue(info.getDelay());
+		
+//		resumeFrameIndex = 0;
 		return this;
 	}
 	
 	private void doReset(){
-		millisTotal = info.getTotal();
-		millisDelay = info.getDelay();
-		dx = info.getDx();
-		dy = info.getDy();
+		data.setShouldActiveTotalValue(info.getTotal());
+		data.setShouldActiveIntervalValue(info.getDelay());
 	}
-
+	
 	@Override
 	public MovementAction getAction(){
 		return this;
@@ -248,14 +231,14 @@ public class MovementActionItemUpdateTime extends MovementActionItemForMilliseco
 	@Override
 	public void cancelMove(){
 		isStop = true;
-		synchronized (MovementActionItemUpdateTime.this) {
-			MovementActionItemUpdateTime.this.notifyAll();
+		synchronized (MovementActionItemMoveByCurve.this) {
+			MovementActionItemMoveByCurve.this.notifyAll();
 		}
 	}
 	
 	@Override
 	void pause(){	
-		data.setShouldPauseValue(millisDelay);
+		data.setShouldPauseValue(data.getShouldActiveIntervalValue());
 	}
 	
 	@Override
@@ -263,8 +246,20 @@ public class MovementActionItemUpdateTime extends MovementActionItemForMilliseco
 		return isStop;
 	}
 	
+	void setMathUtil(MathUtil mathUtil){
+		rotationController.setMathUtil(mathUtil);
+	}
+	
+	MathUtil getMathUtil(){
+		return rotationController.getMathUtil();
+	}
+	
+	public void isCyclePath(){
+		rotationController.isCyclePath();
+	}
+	
 //	public IMovementActionMemento createMovementActionMemento(){
-//		movementActionMemento = new MovementActionItemBaseReugularFPSMementoImpl(actions, thread, timerOnTickListener, name, copyMovementActionList, currentInfoList, movementItemList, totalCopyMovementActionList, isCycleFinish, isCycleFinish, isCycleFinish, isCycleFinish, name, cancelAction, millisTotal, millisDelay, dx, dy, info, resumeTotal, resetTotal, rotationController, gravityController, name, updateTime, frameIdx, isStop, isCycleFinish, triggerEnable, frameTimes, resumeMillisCount, pauseFrameNum, pauseFrameCounter, nextframeTrigger, lastMillisCount);
+//		movementActionMemento = new MovementActionItemAlphaMementoImpl(actions, thread, timerOnTickListener, name, copyMovementActionList, currentInfoList, movementItemList, totalCopyMovementActionList, isCycleFinish, isCycleFinish, isCycleFinish, isCycleFinish, name, cancelAction, millisTotal, millisDelay, info, resumeTotal, resetTotal, name, updateTime, frameIdx, isStop, isCycleFinish, triggerEnable, frameTimes, resumeFrameIndex, resumeFrameCount, numberOfPauseFrames, pauseFrameCounter, nextframeTrigger, numberOfFramesAfterLastTrigger);
 //		if(this.info!=null){
 //			this.info.createIMovementActionInfoMemento();
 //		}
@@ -274,16 +269,12 @@ public class MovementActionItemUpdateTime extends MovementActionItemForMilliseco
 //	public void restoreMovementActionMemento(IMovementActionMemento movementActionMemento){
 ////		MovementActionMementoImpl mementoImpl = (MovementActionMementoImpl) movementActionMemento;
 //		super.restoreMovementActionMemento(this.movementActionMemento);
-//		MovementActionItemBaseReugularFPSMementoImpl mementoImpl = (MovementActionItemBaseReugularFPSMementoImpl) this.movementActionMemento;
+//		MovementActionItemAlphaMementoImpl mementoImpl = (MovementActionItemAlphaMementoImpl) this.movementActionMemento;
 //		this.millisTotal = mementoImpl.millisTotal;
 //		this.millisDelay = mementoImpl.millisDelay;
-//		this.dx = mementoImpl.dx;
-//		this.dy = mementoImpl.dy;
 //		this.info = mementoImpl.info;
 //		this.resumeTotal = mementoImpl.resumeTotal;
 //		this.resetTotal = mementoImpl.resetTotal;
-//		this.rotationController = mementoImpl.rotationController;
-//		this.gravityController = mementoImpl.gravityController;
 //		this.name = mementoImpl.name;
 //		this.updateTime = mementoImpl.updateTime;
 //		this.frameIdx = mementoImpl.frameIdx;
@@ -291,11 +282,12 @@ public class MovementActionItemUpdateTime extends MovementActionItemForMilliseco
 //		this.isCycleFinish = mementoImpl.isCycleFinish;
 //		this.triggerEnable = mementoImpl.triggerEnable;
 //		this.frameTimes = mementoImpl.frameTimes;
-//		this.resumeMillisCount = mementoImpl.resumeMillisCount;
-//		this.pauseFrameNum = mementoImpl.pauseFrameNum;
+//		this.resumeFrameIndex = mementoImpl.resumeFrameIndex;
+//		this.resumeFrameCount = mementoImpl.resumeFrameCount;
+//		this.numberOfPauseFrames = mementoImpl.pauseFrameNum;
 //		this.pauseFrameCounter = mementoImpl.pauseFrameCounter;
 //		this.nextframeTrigger = mementoImpl.nextframeTrigger;
-//		this.lastMillisCount = mementoImpl.lastMillisCount;
+//		this.numberOfFramesAfterLastTrigger = mementoImpl.lastTriggerFrameNum;
 ////		this.isEnableSetSpriteAction = mementoImpl.isEnableSetSpriteAction;
 //		
 //		if(this.info!=null){
@@ -305,17 +297,13 @@ public class MovementActionItemUpdateTime extends MovementActionItemForMilliseco
 //
 //	}
 //	
-//	protected static class MovementActionItemBaseReugularFPSMementoImpl extends MovementActionMementoImpl{
+//	protected static class MovementActionItemAlphaMementoImpl extends MovementActionMementoImpl{
 //	
 //		long millisTotal;
 //		long millisDelay;
-//		float dx;
-//		float dy;
 //		MovementActionInfo info;
 //		long resumeTotal;
-//		long resetTotal;
-//		IRotationController rotationController;
-//		IGravityController gravityController;	
+//		long resetTotal;	
 //		public String name;	
 //		private long updateTime;	
 //		public int frameIdx;	
@@ -323,16 +311,15 @@ public class MovementActionItemUpdateTime extends MovementActionItemForMilliseco
 //		public boolean isCycleFinish = false;	
 //		boolean triggerEnable = false;	
 //		long[] frameTimes;
-////		int resumeFrameCount;	
+//		int resumeFrameIndex;
+//		int resumeFrameCount;	
 //		long pauseFrameNum;
 //		int pauseFrameCounter;	
 //		FrameTrigger nextframeTrigger;
-////		private long lastTriggerFrameNum;
-//		long resumeMillisCount = 0;
-//		long lastMillisCount = 0;
+//		private long lastTriggerFrameNum;
 ////		private boolean isEnableSetSpriteAction = true;
 //		
-//		public MovementActionItemBaseReugularFPSMementoImpl(
+//		public MovementActionItemAlphaMementoImpl(
 //				List<MovementAction> actions, Thread thread,
 //				TimerOnTickListener timerOnTickListener, String description,
 //				List<MovementAction> copyMovementActionList,
@@ -342,28 +329,22 @@ public class MovementActionItemUpdateTime extends MovementActionItemForMilliseco
 //				boolean isCancelFocusAppendPart, boolean isFinish,
 //				boolean isLoop, boolean isSigleThread, String name,
 //				MovementAction cancelAction, long millisTotal,
-//				long millisDelay, float dx, float dy, MovementActionInfo info,
-//				long resumeTotal, long resetTotal,
-//				IRotationController rotationController,
-//				IGravityController gravityController, String name2,
+//				long millisDelay, MovementActionInfo info,
+//				long resumeTotal, long resetTotal, String name2,
 //				long updateTime, int frameIdx, boolean isStop,
 //				boolean isCycleFinish, boolean triggerEnable,
-//				long[] frameTimes, long resumeMillisCount,
+//				long[] frameTimes, int resumeFrameIndex, int resumeFrameCount,
 //				long pauseFrameNum, int pauseFrameCounter,
-//				FrameTrigger nextframeTrigger, long lastMillisCount) {
+//				FrameTrigger nextframeTrigger, long lastTriggerFrameNum) {
 //			super(actions, thread, timerOnTickListener, description,
 //					copyMovementActionList, currentInfoList, movementItemList,
 //					totalCopyMovementActionList, isCancelFocusAppendPart,
 //					isFinish, isLoop, isSigleThread, name, cancelAction);
 //			this.millisTotal = millisTotal;
 //			this.millisDelay = millisDelay;
-//			this.dx = dx;
-//			this.dy = dy;
 //			this.info = info;
 //			this.resumeTotal = resumeTotal;
 //			this.resetTotal = resetTotal;
-//			this.rotationController = rotationController;
-//			this.gravityController = gravityController;
 //			name = name2;
 //			this.updateTime = updateTime;
 //			this.frameIdx = frameIdx;
@@ -371,13 +352,28 @@ public class MovementActionItemUpdateTime extends MovementActionItemForMilliseco
 //			this.isCycleFinish = isCycleFinish;
 //			this.triggerEnable = triggerEnable;
 //			this.frameTimes = frameTimes;
-//			this.resumeMillisCount = resumeMillisCount;
+//			this.resumeFrameIndex = resumeFrameIndex;
+//			this.resumeFrameCount = resumeFrameCount;
 //			this.pauseFrameNum = pauseFrameNum;
 //			this.pauseFrameCounter = pauseFrameCounter;
 //			this.nextframeTrigger = nextframeTrigger;
-//			this.lastMillisCount = lastMillisCount;
+//			this.lastTriggerFrameNum = lastTriggerFrameNum;
 ////			this.isEnableSetSpriteAction = isEnableSetSpriteAction;
 //		}
 //			
 //	}
+	
+	@Override
+	public void accept(IMovementActionVisitor movementActionVisitor){
+		movementActionVisitor.visitLeaf(this);
+	}
+	
+	@Override
+	protected MovementActionItemMoveByCurve clone() throws CloneNotSupportedException {
+		// TODO Auto-generated method stub
+		MovementActionInfo info = getInfo().clone();
+		IRotationController newRotationController = rotationController.copyNewRotationController();
+		MovementActionItemMoveByCurve movementActionItemMoveByCurve = new MovementActionItemMoveByCurve(info, newRotationController, description);
+		return movementActionItemMoveByCurve;
+	}
 }

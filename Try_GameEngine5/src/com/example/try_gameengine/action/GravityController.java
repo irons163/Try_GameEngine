@@ -5,30 +5,27 @@ class GravityController implements IGravityController {
 	float origineDy;
 	boolean firstExecute = true;
 	MathUtil mathUtil;
-	public float ddx;
 
 	public GravityController() {
 		// TODO Auto-generated constructor stub
 		mathUtil = new MathUtil();
 	}
 
-	@Override
-	public void execute(MovementActionInfo info) {
-		// TODO Auto-generated method stub
+	public void execute(MovementActionInfo info, float t) {
 
 		float dx = info.getDx();
 		float dy = info.getDy();
 
 		if (firstExecute) {
-			long millisTotal = info.getTotal();
-			long millisDelay = info.getDelay();
+//			long millisTotal = info.getTotal();
+//			long millisDelay = info.getDelay();
 			origineDx = info.getDx();
 			origineDy = info.getDy();
 
-			float x = millisDelay / millisTotal;
+//			float x = millisDelay / millisTotal;
 
-			float tx = origineDx * x;
-			float ty = origineDy * x;
+//			float tx = origineDx * x;
+//			float ty = origineDy * x;
 
 			if (isInverseAngel) {
 				mathUtil.inverseAngel();
@@ -41,13 +38,17 @@ class GravityController implements IGravityController {
 			}
 
 			else if (isInversePath) {
+				
 				mathUtil.inversePath();
+				dx = mathUtil.getSpeedX();
 			}
 
 			else if (isWavePath) {
 				mathUtil.setXY(dx, dy);
+				mathUtil.setInitSpeed(mathUtil.genTotalSpeed());
 				mathUtil.genAngle();
 				mathUtil.wavePath();
+				mathUtil.genSpeedXY();
 			}
 
 			else if (isSlopeWavePath) {
@@ -62,14 +63,16 @@ class GravityController implements IGravityController {
 
 			mathUtil.initGravity();
 
-			float newVx = getMathUtil().getJumpTime(ddx,
-					(int) Math.ceil(info.getTotal() / info.getDelay()));
+			getMathUtil().genJumpVx(dx);
+//			getMathUtil().genJumpVx(0);
+			float newVx = getMathUtil().vx;
 			info.setDx(newVx);
-			getMathUtil().vx = newVx;
+//			getMathUtil().vx = newVx;
 
 			firstExecute = false;
 		}
 
+		mathUtil.setDeltaTime(info.getDelay()/1000f*t);
 		mathUtil.genGravity();
 		dx = mathUtil.getSpeedX();
 		dy = mathUtil.getSpeedY();
@@ -77,11 +80,11 @@ class GravityController implements IGravityController {
 		info.setDx(dx);
 		info.setDy(dy);
 	}
-
+	
 	@Override
-	public void setX(float x) {
+	public void execute(MovementActionInfo info) {
 		// TODO Auto-generated method stub
-		this.ddx = x;
+		execute(info, 1f);
 	}
 
 	@Override

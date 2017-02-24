@@ -14,7 +14,7 @@ public class MovementActionItemUpdateTimeData implements MovementActionItemTrigg
 //	private MovementActionItemUpdateTimeDataDelegate movementActionItemUpdateTimeDataDelegate;
 	private DataDelegate movementActionItemUpdateTimeDataDelegate = new DataDelegate() {
 	};
-	private UpdateType updateType = UpdateType.UpdateEverytime;
+	private UpdateType updateType = UpdateType.UpdateByInterval;
 	
 //	class DataDelegate implements MovementActionItemUpdateTimeDataDelegate{
 //		private MovementActionItemUpdateTimeDataDelegate other;

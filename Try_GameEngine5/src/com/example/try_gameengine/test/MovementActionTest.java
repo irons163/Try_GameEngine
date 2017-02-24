@@ -1531,7 +1531,7 @@ public class MovementActionTest extends AndroidTestCase{
 			String actionName = "";
 			
 			Sprite sprite = new Sprite(10, 10, false);
-			MovementActionInfo info = new MovementActionInfo(1000, 1, 0, -10, "", null, false, sprite, actionName);
+			MovementActionInfo info = new MovementActionInfo(1000, 1, 0, -10, "", sprite, actionName);
 			MovementAction action = new MovementActionItemBaseReugularFPS(info);
 			movementAction.addMovementAction(action);
 			

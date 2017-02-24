@@ -17,8 +17,6 @@ import android.util.Log;
  */
 public abstract class MovementActionItem extends MovementAction {
 	MovementActionInfo info;
-	IRotationController rotationController;
-	IGravityController gravityController;
 	boolean isReset = true;
 	private boolean isActionFinish = false;
 //	public int frameIdx;

@@ -11,7 +11,6 @@ import android.os.Looper;
 import android.util.Log;
 
 public class MovementActionFrameItem extends MovementAction{
-	CountDownTimer countDownTimer; 
 	long millisTotal;
 	long millisDelay;
 	float dx;
@@ -19,8 +18,7 @@ public class MovementActionFrameItem extends MovementAction{
 	MovementActionInfo info;
 	long resumeTotal;
 	long resetTotal;
-	IRotationController rotationController;
-	IGravityController gravityController;
+	boolean isStop = false;
 	
 	public MovementActionFrameItem(long millisTotal, long millisDelay, final int dx, final int dy){
 		this(millisTotal, millisDelay, dx, dy, "MovementItem");
@@ -77,32 +75,6 @@ public class MovementActionFrameItem extends MovementAction{
 	int resumeFrameIndex;
 	int resumeFrameCount;
 	
-	public interface FrameTrigger{
-		public void trigger();
-	}
-	
-	private void nextFrameTrigger(){
-		myTrigger.trigger();
-		nextframeTrigger.trigger();
-	}
-	
-	FrameTrigger nextframeTrigger;
-	FrameTrigger myTrigger = new FrameTrigger() {
-		
-		@Override
-		public void trigger() {
-			// TODO Auto-generated method stub
-			frameStart();
-			
-		}
-	};
-	public FrameTrigger setNextFrameTrigger(FrameTrigger nextframeTrigger){
-		
-		this.nextframeTrigger = nextframeTrigger;
-		
-		return myTrigger;
-	}
-	
 	public void setActionListener(IActionListener actionListener){
 		this.actionListener = actionListener;
 	}
@@ -117,6 +89,9 @@ public class MovementActionFrameItem extends MovementAction{
 				// TODO Auto-generated method stub
 				
 				for(; resumeFrameIndex < frameTimes.length; resumeFrameIndex++){
+					if(isStop)
+						break;
+					
 					actionListener.beforeChangeFrame(resumeFrameIndex+1);
 
 						try {
@@ -126,9 +101,6 @@ public class MovementActionFrameItem extends MovementAction{
 							e.printStackTrace();
 						}
 
-					
-					doRotation();
-					doGravity();
 					timerOnTickListener.onTick(dx, dy);
 //					actionListener.afterChangeFrame(periousId);
 					resumeFrameCount = 0;
@@ -147,85 +119,30 @@ public class MovementActionFrameItem extends MovementAction{
 		
 	}
 	
-	public String name;
-	
-	private long updateTime;
-	
-	public int frameIdx;
-	
-	public boolean isStop = false;
-	
 	@Override
 	protected MovementAction initTimer(){ super.initTimer();
 		millisTotal = info.getTotal();
 		millisDelay = info.getDelay();
 		dx = info.getDx();
 		dy = info.getDy();
-		rotationController = info.getRotationController();
-		gravityController = info.getGravityController();
 		
 		resumeFrameIndex = 0;
 		
-		countDownTimer = new CountDownTimer(millisTotal,
-				millisDelay) {
-
-			@Override
-			public void onTick(long millisUntilFinished) {
-				Log.e("t", millisUntilFinished+"");
-				Log.e("t", millisUntilFinished/1000+"");
-				// TODO Auto-generated method stub
-				float x = dx;
-				float y = dy;
-				
-				doRotation();
-				doGravity();
-				Log.e("dx", dx+"");
-				Log.e("dy", dy+"");
-				
-				resumeTotal = millisUntilFinished;
-				timerOnTickListener.onTick(dx, dy);
-			}
-
-			@Override
-			public void onFinish() {
-				// TODO Auto-generated method stub
-				synchronized (MovementActionFrameItem.this) {
-					MovementActionFrameItem.this.notifyAll();
-				}			
-				doReset();
-			}
-		};
 		return this;
 	}
 	
-	private void doRotation(){
-		if(rotationController!=null){
-			rotationController.execute(info);
-			dx = info.getDx();
-			dy = info.getDy();
-		}
-	}
-	
-	private void doGravity(){
-		if(gravityController!=null){
-			gravityController.execute(info);
-			dx = info.getDx();
-			dy = info.getDy();
-		}
-	}
-	
 	private void doReset(){
-		if(gravityController!=null){
-			gravityController.reset(info);
-		}
-		if(rotationController!=null)
-			rotationController.reset(info);
-
-
 		millisTotal = info.getTotal();
 		millisDelay = info.getDelay();
 		dx = info.getDx();
 		dy = info.getDy();
+		isStop = false;
+	}
+	
+	@Override
+	public boolean isFinish() {
+		// TODO Auto-generated method stub
+		return isStop;
 	}
 	
 	@Override
@@ -274,13 +191,11 @@ public class MovementActionFrameItem extends MovementAction{
 	
 	@Override
 	public void cancelMove(){
-		countDownTimer.cancel();
+		isStop = true;
 	}
 	
 	@Override
 	void pause(){
-		countDownTimer.cancel();
-		
 		try {
 			Thread.sleep(400);
 		} catch (InterruptedException e) {

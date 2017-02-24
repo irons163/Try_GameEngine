@@ -17,8 +17,8 @@ public class InverseMovementInfoDecorator extends MovementDecorator{
 		info.setDelay(info.getDelay());
 		info.setDx(-info.getDx());
 		info.setDy(-info.getDy());
-		if(info.getRotationController()!=null)
-			info.getRotationController().setRotation(-info.getRotationController().getRotation());
+//		if(info.getRotationController()!=null)
+//			info.getRotationController().setRotation(-info.getRotationController().getRotation());
 		return info;
 	}
 

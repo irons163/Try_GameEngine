@@ -22,7 +22,8 @@ public class MovementActionItemUpdate extends MovementActionItem{
 		
 		long millisTotal = info.getTotal();
 		long millisDelay = info.getDelay();
-		data = new MovementActionItemUpdateTimeData();
+//		data = new MovementActionItemUpdateTimeData();
+		data = info.getData();
 		data.setShouldActiveTotalValue(millisTotal);
 		data.setShouldActiveIntervalValue(millisDelay);
 		if(info.getDescription()!=null)
@@ -44,8 +45,6 @@ public class MovementActionItemUpdate extends MovementActionItem{
 			@Override
 			public void update() {
 				// TODO Auto-generated method stub
-				doRotation();
-				doGravity();
 				if (timerOnTickListener != null)
 					timerOnTickListener.onTick(info.getDx(), info.getDy());
 			}
@@ -177,30 +176,10 @@ public class MovementActionItemUpdate extends MovementActionItem{
 	
 	@Override
 	protected MovementAction initTimer(){ super.initTimer();
-		rotationController = info.getRotationController();
-		gravityController = info.getGravityController();
-		
 		return this;
 	}
 	
-	private void doRotation(){
-		if(rotationController!=null){
-			rotationController.execute(info);
-		}
-	}
-	
-	private void doGravity(){
-		if(gravityController!=null){
-			gravityController.execute(info);
-		}
-	}
-	
 	private void doReset(){
-		if(gravityController!=null){
-			gravityController.reset(info);
-		}
-		if(rotationController!=null)
-			rotationController.reset(info);
 
 	}
 

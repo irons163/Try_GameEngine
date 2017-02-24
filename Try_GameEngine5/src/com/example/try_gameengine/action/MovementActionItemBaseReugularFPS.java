@@ -125,8 +125,6 @@ public class MovementActionItemBaseReugularFPS extends MovementActionItem{
 			resumeFrameCount++;
 			
 			if(resumeFrameCount==numberOfFramesAfterLastTrigger+info.getDelay()){
-				doRotation();
-				doGravity();
 				if(timerOnTickListener!=null)
 					timerOnTickListener.onTick(dx, dy);		
 				numberOfFramesAfterLastTrigger += info.getDelay();
@@ -183,8 +181,6 @@ public class MovementActionItemBaseReugularFPS extends MovementActionItem{
 		numberOfFramesInterval = info.getDelay();
 		dx = info.getDx();
 		dy = info.getDy();
-		rotationController = info.getRotationController();
-		gravityController = info.getGravityController();
 		
 //		resumeFrameIndex = 0;
 		initLastTriggerFrameNum();
@@ -203,30 +199,7 @@ public class MovementActionItemBaseReugularFPS extends MovementActionItem{
 		}
 	}
 	
-	private void doRotation(){
-		if(rotationController!=null){
-			rotationController.execute(info);
-			dx = info.getDx();
-			dy = info.getDy();
-		}
-	}
-	
-	private void doGravity(){
-		if(gravityController!=null){
-			gravityController.execute(info);
-			dx = info.getDx();
-			dy = info.getDy();
-		}
-	}
-	
 	private void doReset(){
-		if(gravityController!=null){
-			gravityController.reset(info);
-		}
-		if(rotationController!=null)
-			rotationController.reset(info);
-
-
 		numberOfFramesTotal = info.getTotal();
 		numberOfFramesInterval = info.getDelay();
 		dx = info.getDx();

@@ -10,5 +10,4 @@ public interface IGravityController {
 	public void isSlopeWavePath();
 	public MathUtil getMathUtil();
 	public void setMathUtil(MathUtil mathUtil);
-	public void setX(float x);
 }
