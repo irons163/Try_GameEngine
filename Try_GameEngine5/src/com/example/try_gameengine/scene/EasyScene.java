@@ -132,7 +132,7 @@ public abstract class EasyScene extends Scene implements ContactListener{
 		/**嚙踝蕭l嚙複小嚙踝蕭嚙踝蕭m*/
 		AngryBirdActivity.startX=100;
 		AngryBirdActivity.startY=screenH-500;
-		/**嚙踝蕭l嚙複橘蕭硉嚙踝蕭嚙踝蕭嚙�/
+
 		AngryBirdActivity.touchDistance=0.2f*screenH;
 		
 		
