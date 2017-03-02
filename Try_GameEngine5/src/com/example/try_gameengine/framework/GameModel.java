@@ -193,7 +193,7 @@ public class GameModel implements IGameModel{
 				canvas = surfaceHolder.lockCanvas();
 
 			if(camera==null)
-				camera = new Camera(canvas.getWidth(), canvas.getHeight());
+				camera = new Camera(canvas.getWidth(), canvas.getHeight()); //If screen rotation, the size changed, then???
 			
 			camera.applyViewPort(canvas);
 			canvas.concat(camera.getMatrix());
