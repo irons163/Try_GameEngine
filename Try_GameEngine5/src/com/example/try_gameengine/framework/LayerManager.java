@@ -52,15 +52,20 @@ public class LayerManager {
 	}
 
 	public synchronized void setLayerBySenceIndex(int index) {
+		if(index<0){
+			layerController.changeToGameModel();
+			return;
+		}
+			
 		layerController.setSceneLayerLevelByRecentlySet(index);
 
-		if (layerController.getSceneLayerLevelList().containsKey(index + ""))
+		if (layerController.getScenesLayerLevelList().containsKey(index + ""))
 			layerController.setLayerLevelList(layerController
-					.getSceneLayerLevelList().get(index + ""));
+					.getScenesLayerLevelList().get(index + ""));
 		else {
 			layerController.setLayerLevelList(new CopyOnWriteArrayList<List<ILayer>>());
 			initDefaultLavelforLayerList();
-			layerController.getSceneLayerLevelList().put(index + "",
+			layerController.getScenesLayerLevelList().put(index + "",
 					layerController.getLayerLevelList());
 		}
 	}
@@ -210,7 +215,7 @@ public class LayerManager {
 	public void deleteLayerBySearchAll(ILayer layer) {
 		// maybe change to check and remove in all layerLevelList?
 		if (!layerController.getLayerLevelList().get(0).remove(layer)) { 
-			if (layerController.getSceneLayerLevelList().isEmpty()) {
+			if (layerController.getScenesLayerLevelList().isEmpty()) {
 				boolean isFind = false;
 				synchronized (layerController.getLayerLevelList()) {
 					for (List<ILayer> layersByTheSameLevel : layerController
@@ -226,9 +231,9 @@ public class LayerManager {
 				}
 			} else {
 				int sceneLayerLevel = 0;
-				synchronized (layerController.getSceneLayerLevelList()) {
+				synchronized (layerController.getScenesLayerLevelList()) {
 					for (Map.Entry<String, List<List<ILayer>>> sceneLayers : layerController
-							.getSceneLayerLevelList().entrySet()) {
+							.getScenesLayerLevelList().entrySet()) {
 						sceneLayerLevel = Integer
 								.parseInt(sceneLayers.getKey());
 						List<List<ILayer>> layerLevelList = sceneLayers
@@ -264,11 +269,11 @@ public class LayerManager {
 	// // addSceneLayerByLayerLevel
 	// ///////////////////////////////
 	public void addSceneLayerBySceneLayerLevel(ILayer layer, int sceneLayerLevel) {
-		if (layerController.getSceneLayerLevelList().containsKey(
+		if (layerController.getScenesLayerLevelList().containsKey(
 				sceneLayerLevel + "")) {
-			synchronized (layerController.getSceneLayerLevelList()) {
+			synchronized (layerController.getScenesLayerLevelList()) {
 				List<List<ILayer>> layerLevelList = layerController
-						.getSceneLayerLevelList().get(sceneLayerLevel + "");
+						.getScenesLayerLevelList().get(sceneLayerLevel + "");
 
 				synchronized (layerLevelList) {
 					List<ILayer> layersByTheSameLevel = layerLevelList.get(0);
@@ -280,10 +285,10 @@ public class LayerManager {
 	}
 
 	public void deleteSceneLayersBySceneLayerLevel(int sceneLayerLevel) {
-		if (layerController.getSceneLayerLevelList().containsKey(
+		if (layerController.getScenesLayerLevelList().containsKey(
 				sceneLayerLevel + "")) {
 			List<List<ILayer>> layerLevelList = layerController
-					.getSceneLayerLevelList().get(sceneLayerLevel + "");
+					.getScenesLayerLevelList().get(sceneLayerLevel + "");
 			for (List<ILayer> layersByTheSameLevel : layerLevelList) {
 				layersByTheSameLevel.clear();
 			}
@@ -296,7 +301,7 @@ public class LayerManager {
 	// // drawSceneLayers
 	// /////////////////////////////////
 	public void drawSceneLayers(Canvas canvas, Paint paint, int sceneLayerLevel) {
-		if (layerController.getSceneLayerLevelList().containsKey(
+		if (layerController.getScenesLayerLevelList().containsKey(
 				sceneLayerLevel + "")) {
 			drawLayers(canvas, paint, sceneLayerLevel);
 		}
@@ -304,7 +309,7 @@ public class LayerManager {
 
 	public void drawSceneLayersForNegativeZOrder(Canvas canvas, Paint paint,
 			int sceneLayerLevel) {
-		if (layerController.getSceneLayerLevelList().containsKey(
+		if (layerController.getScenesLayerLevelList().containsKey(
 				sceneLayerLevel + "")) {
 			drawLayersForNegativeZOrder(canvas, paint, sceneLayerLevel);
 		}
@@ -312,7 +317,7 @@ public class LayerManager {
 
 	public void drawSceneLayersForOppositeZOrder(Canvas canvas, Paint paint,
 			int sceneLayerLevel) {
-		if (layerController.getSceneLayerLevelList().containsKey(
+		if (layerController.getScenesLayerLevelList().containsKey(
 				sceneLayerLevel + "")) {
 			drawLayersForOppositeZOrder(canvas, paint, sceneLayerLevel);
 		}
