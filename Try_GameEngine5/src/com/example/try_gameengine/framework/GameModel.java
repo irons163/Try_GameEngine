@@ -1,16 +1,12 @@
 package com.example.try_gameengine.framework;
 
-import java.sql.PreparedStatement;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
-
 import com.example.try_gameengine.Camera.Camera;
 import com.example.try_gameengine.action.MovementAction;
 import com.example.try_gameengine.action.Time;
 import com.example.try_gameengine.framework.GameController.BlockRunData;
 import com.example.try_gameengine.scene.Scene;
-
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;

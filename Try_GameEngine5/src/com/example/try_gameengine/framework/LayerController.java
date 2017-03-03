@@ -15,14 +15,16 @@ public class LayerController {
 	 * 
 	 */
 	private List<List<ILayer>> layerLevelList;
-	private Map<String, List<List<ILayer>>> sceneLayerLevelList;
+	private List<List<ILayer>> gameModelLayerLevelList;
+	private List<List<ILayer>> sceneLayerLevelList;
+	private Map<String, List<List<ILayer>>> scenesLayerLevelList;
 	private int sceneLayerLevelByRecentlySet;
 
 	public LayerController(
 			List<List<ILayer>> layerLevelList,
-			Map<String, List<List<ILayer>>> sceneLayerLevelList) {
-		this.layerLevelList = layerLevelList;
-		this.sceneLayerLevelList = sceneLayerLevelList;
+			Map<String, List<List<ILayer>>> scenesLayerLevelList) {
+		sceneLayerLevelList = gameModelLayerLevelList = this.layerLevelList = layerLevelList;
+		this.scenesLayerLevelList = scenesLayerLevelList;
 	}
 
 	public List<List<ILayer>> getLayerLevelList() {
@@ -30,16 +32,24 @@ public class LayerController {
 	}
 
 	public void setLayerLevelList(List<List<ILayer>> layerLevelList) {
-		this.layerLevelList = layerLevelList;
+		this.layerLevelList = sceneLayerLevelList = layerLevelList;
+	}
+	
+	public void changeToGameModel(){
+		layerLevelList = gameModelLayerLevelList;
 	}
 
+	public void changeToSence(){
+		layerLevelList = sceneLayerLevelList;
+	}
+	
 	public Map<String, List<List<ILayer>>> getSceneLayerLevelList() {
-		return sceneLayerLevelList;
+		return scenesLayerLevelList;
 	}
 
 	public void setSceneLayerLevelList(
 			Map<String, List<List<ILayer>>> sceneLayerLevelList) {
-		this.sceneLayerLevelList = sceneLayerLevelList;
+		this.scenesLayerLevelList = sceneLayerLevelList;
 	}
 
 	public int getSceneLayerLevelByRecentlySet() {

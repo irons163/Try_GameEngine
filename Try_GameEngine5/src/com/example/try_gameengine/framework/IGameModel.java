@@ -21,4 +21,5 @@ public interface IGameModel {
 	public void setBackgroundColor(int backgroundColor);
 	public Camera getCamera();
 	public void setCamera(Camera camera);
+	public void addPreProcessBlock(ProcessBlock processBlock);
 }

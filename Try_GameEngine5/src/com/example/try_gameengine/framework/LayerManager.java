@@ -1,12 +1,10 @@
 package com.example.try_gameengine.framework;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
-
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.view.MotionEvent;
@@ -18,7 +16,7 @@ public class LayerManager {
 
 	public static DrawMode drawMode = DrawMode.DRAW_BY_LAYER_LEVEL;
 	private List<ILayer> hudLayerslList = new CopyOnWriteArrayList<ILayer>();
-	public LayerController layerController;
+	private LayerController layerController;
 
 	private void initLayerManager() {
 		switch (drawMode) {
