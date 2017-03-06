@@ -1,6 +1,7 @@
 package com.example.try_gameengine.framework;
 
 import com.example.try_gameengine.Camera.Camera;
+import com.example.try_gameengine.action.Time;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -22,4 +23,6 @@ public interface IGameModel {
 	public Camera getCamera();
 	public void setCamera(Camera camera);
 	public void addPreProcessBlock(ProcessBlock processBlock);
+//	public void setTime(Time time);
+//	public Time getTime();
 }

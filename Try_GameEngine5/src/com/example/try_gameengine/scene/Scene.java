@@ -3,6 +3,7 @@ package com.example.try_gameengine.scene;
 import java.util.Iterator;
 import android.content.Context;
 import com.example.try_gameengine.Camera.Camera;
+import com.example.try_gameengine.action.Time;
 import com.example.try_gameengine.framework.ALayer;
 import com.example.try_gameengine.framework.Data;
 import com.example.try_gameengine.framework.IGameController;
@@ -37,6 +38,10 @@ public abstract class Scene extends Sprite{
 	
 	protected int sceneLayerLevel;
 	
+//	public Time getTime(){
+//		return gameModel.getTime();
+//	}
+	
 	public Scene(Context context, String id){
 		this(context, id, -1);
 	}
@@ -56,6 +61,9 @@ public abstract class Scene extends Sprite{
 		
 		initGameModel();
 		initGameController();
+		
+//		if(sceneLayerLevel>=0)
+//			gameModel.setTime(new Time);
 	}
 	
 	public String getId(){
