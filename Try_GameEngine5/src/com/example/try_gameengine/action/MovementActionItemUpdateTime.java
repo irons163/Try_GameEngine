@@ -34,7 +34,7 @@ public class MovementActionItemUpdateTime extends MovementActionItemForMilliseco
 		if(info.getDescription()!=null)
 			this.description = info.getDescription() + ",";
 		this.info = info;
-		movementItemList.add(this);
+//		movementItemList.add(this);
 	}
 	
 	@Override

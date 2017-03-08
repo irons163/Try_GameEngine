@@ -86,11 +86,6 @@ public class ReturnBackDecorator extends MovementDecorator{
 	}
 	
 	@Override
-	public List<MovementAction> getMovementItemList() {
-		return action.getMovementItemList();
-	}
-	
-	@Override
 	public List<MovementActionInfo> getMovementInfoList() {
 		return action.getMovementInfoList();
 	}
@@ -109,9 +104,9 @@ public class ReturnBackDecorator extends MovementDecorator{
 
 		inverseOrder(this);
 		
-		for (MovementAction movementItem : this.getAction().movementItemList) {
-			movementItem.initTimer();
-		}
+//		for (MovementAction movementItem : this.getAction().movementItemList) {
+//			movementItem.initTimer();
+//		}
 	}
 	
 	private void inverseOrder(MovementAction targetAction){

@@ -88,41 +88,10 @@ public class CopyMoveDecorator extends MovementDecorator {
 	}
 
 	@Override
-	public List<MovementAction> getMovementItemList() {
-		return action.getMovementItemList();
-	}
-
-	@Override
 	public List<MovementActionInfo> getMovementInfoList() {
 		return action.getMovementInfoList();
 	}
 
-	@Override
-	public void doIn() {
-		action.doIn();
-//		doing = true;
-		copyMovementActionList.clear();
-
-		int i = 0;
-		for (MovementActionInfo info : this.getAction().currentInfoList) {
-			Log.e("count", ++i + "");
-			Log.e("info", info.getDx() + "");
-			this.getAction().setInfo(info);
-			coreCalculationMovementActionInfo(this.getAction().getInfo());
-		}
-
-		for (MovementAction action : copyMovementActionList) {
-			this.getAction().addMovementAction(action);
-			this.getAction().movementItemList.add(action);
-			action.description = "copyAppend";
-			action.initTimer();
-		}
-
-		for (MovementAction movementItem : this.getAction().movementItemList) {
-			movementItem.initTimer();
-		}
-	}
-	
 //	public IMovementActionMemento createMovementActionMemento(){
 //		movementActionMemento = new CopyMoveDecoratorMementoImpl(actions, thread, timerOnTickListener, description, copyMovementActionList, currentInfoList, movementItemList, totalCopyMovementActionList, isCancelFocusAppendPart, isFinish, isLoop, isSigleThread, name, cancelAction, action, isRepeatSpriteActionIfMovementActionRepeat);
 //		return movementActionMemento;

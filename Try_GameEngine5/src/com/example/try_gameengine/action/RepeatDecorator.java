@@ -181,23 +181,20 @@ public class RepeatDecorator extends MovementDecorator {
 	public List<MovementAction> getCurrentActionList() {
 		// TODO Auto-generated method stub
 		
-		movementItemList.clear();
-		for(MovementAction actionItem : action.getCurrentActionList()){
-			movementItemList.add(actionItem);
-		}
+//		movementItemList.clear();
+//		for(MovementAction actionItem : action.getCurrentActionList()){
+//			movementItemList.add(actionItem);
+//		}
+//		
+//		return movementItemList;
 		
-		return movementItemList;
+		return null;
 	}
 
 	@Override
 	public List<MovementActionInfo> getCurrentInfoList() {
 		// TODO Auto-generated method stub
 		return action.getCurrentInfoList();
-	}
-
-	@Override
-	public List<MovementAction> getMovementItemList() {
-		return action.getMovementItemList();
 	}
 
 	@Override

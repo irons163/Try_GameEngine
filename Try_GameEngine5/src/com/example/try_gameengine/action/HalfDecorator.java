@@ -69,12 +69,6 @@ public class HalfDecorator extends MovementDecorator{
 		return action.getCurrentInfoList();
 	}
 	
-	
-	@Override
-	public List<MovementAction> getMovementItemList() {
-		return action.getMovementItemList();
-	}
-	
 	@Override
 	public List<MovementActionInfo> getMovementInfoList() {
 		return action.getMovementInfoList();

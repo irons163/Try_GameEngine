@@ -151,7 +151,7 @@ public class MovementActionSetWithThreadPool extends MovementAction {
 				action.initTimer();
 			}
 			for(MovementAction movementAction : action.getAction().totalCopyMovementActionList){
-				this.getAction().movementItemList.add(movementAction);
+//				this.getAction().movementItemList.add(movementAction);
 			}
 			
 //			action.getAction().setCancelFocusAppendPart(true);
@@ -194,16 +194,18 @@ public class MovementActionSetWithThreadPool extends MovementAction {
 	
 	@Override
 	public List<MovementAction> getCurrentActionList() {
-		// TODO Auto-generated method stub
+//		// TODO Auto-generated method stub
+//		
+//		movementItemList.clear();
+//		for(MovementAction action : actions){
+//			for(MovementAction actionItem : action.getCurrentActionList()){
+//				movementItemList.add(actionItem);
+//			}
+//		}
+//		
+//		return movementItemList;
 		
-		movementItemList.clear();
-		for(MovementAction action : actions){
-			for(MovementAction actionItem : action.getCurrentActionList()){
-				movementItemList.add(actionItem);
-			}
-		}
-		
-		return movementItemList;
+		return null;
 	}
 	
 	@Override

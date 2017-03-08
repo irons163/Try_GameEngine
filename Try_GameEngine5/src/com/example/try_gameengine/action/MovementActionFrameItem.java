@@ -31,7 +31,7 @@ public class MovementActionFrameItem extends MovementAction{
 		this.dy = dy;
 		info = new MovementActionInfo(millisTotal, millisDelay, dx, dy);
 		this.description = description + ",";
-		movementItemList.add(this);
+//		movementItemList.add(this);
 	}
 	
 	public MovementActionFrameItem(MovementActionFrameInfo info){
@@ -41,7 +41,7 @@ public class MovementActionFrameItem extends MovementAction{
 		if(info.getDescription()!=null)
 			this.description = info.getDescription() + ",";
 		this.info = info;
-		movementItemList.add(this);
+//		movementItemList.add(this);
 	}
 	
 	public MovementActionFrameItem(long[] frameTimes, final int dx, final int dy, String description){
@@ -50,7 +50,7 @@ public class MovementActionFrameItem extends MovementAction{
 		this.dy = dy;
 		info = new MovementActionInfo(millisTotal, millisDelay, dx, dy);
 		this.description = description + ",";
-		movementItemList.add(this);
+//		movementItemList.add(this);
 	}
 	
 	@Override

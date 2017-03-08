@@ -1205,7 +1205,6 @@ public class MovementActionTest extends AndroidTestCase{
 		for(MovementActionInfo movementActionInfo : action.getStartMovementInfoList()){
 			currentInfoList.add(movementActionInfo); 
 		}	
-		List<MovementAction> actions = action.getMovementItemList();
 		assertEquals(true, correctInfoList.equals(currentInfoList));
 		
 		
@@ -1240,7 +1239,6 @@ public class MovementActionTest extends AndroidTestCase{
 		for(MovementActionInfo movementActionInfo : action.getStartMovementInfoList()){
 			currentInfoList.add(movementActionInfo); 
 		}	
-		actions = action.getMovementItemList();
 		assertEquals(true, correctInfoList.equals(currentInfoList));
 		
 		
@@ -1276,7 +1274,6 @@ public class MovementActionTest extends AndroidTestCase{
 		for(MovementActionInfo movementActionInfo : action.getStartMovementInfoList()){
 			currentInfoList.add(movementActionInfo); 
 		}	
-		actions = action.getMovementItemList();
 		assertEquals(true, correctInfoList.equals(currentInfoList));
 		
 		
@@ -1312,7 +1309,6 @@ public class MovementActionTest extends AndroidTestCase{
 		for(MovementActionInfo movementActionInfo : action.getStartMovementInfoList()){
 			currentInfoList.add(movementActionInfo); 
 		}	
-		actions = action.getMovementItemList();
 		assertEquals(true, correctInfoList.equals(currentInfoList));
 		
 		
@@ -1366,7 +1362,6 @@ public class MovementActionTest extends AndroidTestCase{
 		for(MovementActionInfo movementActionInfo : action.getStartMovementInfoList()){
 			currentInfoList.add(movementActionInfo); 
 		}	
-		actions = action.getMovementItemList();
 		assertEquals(true, correctInfoList.equals(currentInfoList));
 		
 		
@@ -1408,7 +1403,6 @@ public class MovementActionTest extends AndroidTestCase{
 		for(MovementActionInfo movementActionInfo : action.getStartMovementInfoList()){
 			currentInfoList.add(movementActionInfo); 
 		}	
-		actions = action.getMovementItemList();
 		assertEquals(true, correctInfoList.equals(currentInfoList));
 		
 		correctInfoList.clear();
@@ -1435,7 +1429,6 @@ public class MovementActionTest extends AndroidTestCase{
 		for(MovementActionInfo movementActionInfo : action.getStartMovementInfoList()){
 			currentInfoList.add(movementActionInfo); 
 		}	
-		actions = action.getMovementItemList();
 		assertEquals(true, correctInfoList.equals(currentInfoList));
 		
 		correctInfoList.clear();
@@ -1462,7 +1455,6 @@ public class MovementActionTest extends AndroidTestCase{
 		for(MovementActionInfo movementActionInfo : action.getStartMovementInfoList()){
 			currentInfoList.add(movementActionInfo); 
 		}	
-		actions = action.getMovementItemList();
 		assertEquals(true, correctInfoList.equals(currentInfoList));
 		
 		correctInfoList.clear();
@@ -1490,12 +1482,11 @@ public class MovementActionTest extends AndroidTestCase{
 		for(MovementActionInfo movementActionInfo : action.getStartMovementInfoList()){
 			currentInfoList.add(movementActionInfo); 
 		}	
-		actions = action.getMovementItemList();
 		assertEquals(true, correctInfoList.equals(currentInfoList));
 		
 		correctInfoList.clear();
 //		correctInfoList.add(new MovementActionInfo(1000, 20, 0.19999999f, 0f));
-		correctInfoList.add(new MovementActionInfo(1000, 20, 0.2f, 0f));
+		correctInfoList.add(new MovementActionInfo(1000, 20, 1.8f, 0f));
 		
 		Config.fps = 50;
 		newaction4 = new MovementActionSet();
@@ -1517,7 +1508,6 @@ public class MovementActionTest extends AndroidTestCase{
 		for(MovementActionInfo movementActionInfo : action.getStartMovementInfoList()){
 			currentInfoList.add(movementActionInfo); 
 		}	
-		actions = action.getMovementItemList();
 		assertEquals(true, correctInfoList.equals(currentInfoList));
 	}
 	

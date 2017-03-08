@@ -106,26 +106,15 @@ public class SimultaneouslyMovementActionSet extends MovementAction {
 	
 	@Override
 	protected MovementAction initTimer(){ super.initTimer();
-	
 		for (MovementAction action : this.actions) {
-			
 			if(action.getAction().getActions().size()==0){
-			
-//				MovementActionInfo info = action.getInfo();
-//				action.getAction().setInfo(info);
-//				action.getAction().initTimer();
 				action.initTimer();
 			}else{
 				action.initTimer();
 			}
-//			for(MovementAction movementAction : action.copyMovementActionList){
-//				this.getAction().movementItemList.add(movementAction);
-//			}
 			for(MovementAction movementAction : action.getAction().totalCopyMovementActionList){
-				this.getAction().movementItemList.add(movementAction);
+//				this.getAction().movementItemList.add(movementAction);
 			}
-			
-//			action.getAction().setCancelFocusAppendPart(true);
 		}
 		this.getAction().getCurrentInfoList();
 
@@ -167,14 +156,15 @@ public class SimultaneouslyMovementActionSet extends MovementAction {
 	public List<MovementAction> getCurrentActionList() {
 		// TODO Auto-generated method stub
 		
-		movementItemList.clear();
-		for(MovementAction action : actions){
-			for(MovementAction actionItem : action.getCurrentActionList()){
-				movementItemList.add(actionItem);
-			}
-		}
+//		movementItemList.clear();
+//		for(MovementAction action : actions){
+//			for(MovementAction actionItem : action.getCurrentActionList()){
+//				movementItemList.add(actionItem);
+//			}
+//		}
 		
-		return movementItemList;
+//		return movementItemList;
+		return null;
 	}
 	
 	@Override

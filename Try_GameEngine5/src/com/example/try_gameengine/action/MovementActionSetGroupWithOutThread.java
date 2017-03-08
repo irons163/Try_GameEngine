@@ -98,9 +98,9 @@ public class MovementActionSetGroupWithOutThread extends MovementAction {
 			}else{
 				action.initTimer();
 			}
-			for(MovementAction movementAction : action.getAction().totalCopyMovementActionList){
-				this.getAction().movementItemList.add(movementAction);
-			}
+//			for(MovementAction movementAction : action.getAction().totalCopyMovementActionList){
+//				this.getAction().movementItemList.add(movementAction);
+//			}
 			
 //			action.getAction().setCancelFocusAppendPart(true);
 		}
@@ -144,14 +144,16 @@ public class MovementActionSetGroupWithOutThread extends MovementAction {
 	public List<MovementAction> getCurrentActionList() {
 		// TODO Auto-generated method stub
 		
-		movementItemList.clear();
-		for(MovementAction action : actions){
-			for(MovementAction actionItem : action.getCurrentActionList()){
-				movementItemList.add(actionItem);
-			}
-		}
+//		movementItemList.clear();
+//		for(MovementAction action : actions){
+//			for(MovementAction actionItem : action.getCurrentActionList()){
+//				movementItemList.add(actionItem);
+//			}
+//		}
+//		
+//		return movementItemList;
 		
-		return movementItemList;
+		return null;
 	}
 	
 	@Override

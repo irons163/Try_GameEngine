@@ -2,6 +2,8 @@ package com.example.try_gameengine.action;
 
 import java.util.List;
 
+import android.util.Log;
+
 //import com.example.try_gameengine.action.DoubleDecorator.DoubleDecoratorMementoImpl;
 import com.example.try_gameengine.action.MovementAction.MovementActionMementoImpl;
 import com.example.try_gameengine.action.MovementAction.TimerOnTickListener;
@@ -32,6 +34,31 @@ public abstract class MovementDecorator extends MovementAction{
 		for(MovementAction movementAction : getAction().getActions()){
 			movementAction.accept(movementActionVisitor);
 		}
+	}
+	
+	public void doIn() {
+		action.doIn();
+//		doing = true;
+		copyMovementActionList.clear();
+
+		int i = 0;
+		for (MovementActionInfo info : this.getAction().currentInfoList) {
+			Log.e("count", ++i + "");
+			Log.e("info", info.getDx() + "");
+			this.getAction().setInfo(info);
+//			coreCalculationMovementActionInfo(this.getAction().getInfo());
+		}
+
+		for (MovementAction action : copyMovementActionList) {
+			this.getAction().addMovementAction(action);
+//			this.getAction().movementItemList.add(action);
+			action.description = "copyAppend";
+			action.initTimer();
+		}
+
+//		for (MovementAction movementItem : this.getAction().movementItemList) {
+//			movementItem.initTimer();
+//		}
 	}
 	
 //	@Override

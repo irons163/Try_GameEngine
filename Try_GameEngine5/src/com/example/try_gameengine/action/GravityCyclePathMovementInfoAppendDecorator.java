@@ -123,11 +123,6 @@ public class GravityCyclePathMovementInfoAppendDecorator extends
 	}
 
 	@Override
-	public List<MovementAction> getMovementItemList() {
-		return action.getMovementItemList();
-	}
-
-	@Override
 	public List<MovementActionInfo> getMovementInfoList() {
 		return action.getMovementInfoList();
 	}
@@ -137,11 +132,9 @@ public class GravityCyclePathMovementInfoAppendDecorator extends
 		action.doIn();
 		copyMovementActionList.clear();
 		this.getAction().getCurrentInfoList();
-		int i = 0;
 
 		for (int j = 0; j < this.getAction().currentInfoList.size(); j++) {
 			MovementActionInfo info = this.getAction().currentInfoList.get(j);
-			Log.e("count", ++i + "");
 			Log.e("info", info.getDx() + "");
 			this.getAction().setInfo(info);
 //			coreCalculationMovementActionInfo(this.getAction().getInfo());
@@ -155,14 +148,14 @@ public class GravityCyclePathMovementInfoAppendDecorator extends
 
 		for (MovementAction action : copyMovementActionList) {
 			this.getAction().addMovementAction(action);
-			this.getAction().movementItemList.add(action);
+//			this.getAction().movementItemList.add(action);
 			action.description = "inverseAppend";
 			action.initTimer();
 		}
 
-		for (MovementAction movementItem : this.getAction().movementItemList) {
-			movementItem.initTimer();
-		}
+//		for (MovementAction movementItem : this.getAction().movementItemList) {
+//			movementItem.initTimer();
+//		}
 
 	}
 	

@@ -90,11 +90,6 @@ public class PartOfOrigizalDecorator extends MovementDecorator {
 	}
 	
 	@Override
-	public List<MovementAction> getMovementItemList() {
-		return action.getMovementItemList();
-	}
-	
-	@Override
 	public List<MovementActionInfo> getMovementInfoList() {
 		return action.getMovementInfoList();
 	}

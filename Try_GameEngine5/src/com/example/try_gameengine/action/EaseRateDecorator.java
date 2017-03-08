@@ -92,11 +92,6 @@ public class EaseRateDecorator extends MovementDecorator {
 	}
 
 	@Override
-	public List<MovementAction> getMovementItemList() {
-		return action.getMovementItemList();
-	}
-
-	@Override
 	public List<MovementActionInfo> getMovementInfoList() {
 		return action.getMovementInfoList();
 	}
@@ -104,18 +99,16 @@ public class EaseRateDecorator extends MovementDecorator {
 	@Override
 	public void doIn() {
 		action.doIn();
-		int i = 0;
 		for (MovementActionInfo info : this.getAction().currentInfoList) {
-			Log.e("count", ++i + "");
 			Log.e("info", info.getDx() + "");
 			this.getAction().setInfo(info);
 			
 			coreCalculationMovementActionInfo(this.getAction().getInfo());
 		}
 
-		for (MovementAction movementItem : this.getAction().movementItemList) {
-			movementItem.initTimer();
-		}
+//		for (MovementAction movementItem : this.getAction().movementItemList) {
+//			movementItem.initTimer();
+//		}
 	}
 	
 	void doinin(final MovementActionInfo info){

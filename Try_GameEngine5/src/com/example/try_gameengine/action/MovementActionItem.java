@@ -32,7 +32,7 @@ public abstract class MovementActionItem extends MovementAction {
 		if (info.getDescription() != null)
 			this.description = info.getDescription() + ",";
 		this.info = info;
-		movementItemList.add(this);
+//		movementItemList.add(this);
 	}
 	
 	/**
@@ -43,7 +43,7 @@ public abstract class MovementActionItem extends MovementAction {
 	public MovementActionItem(MovementActionInfo info, String description) {
 		this.description = description + ",";
 		this.info = info;
-		movementItemList.add(this);
+//		movementItemList.add(this);
 	}
 
 	@Override

@@ -26,7 +26,6 @@ public abstract class MovementAction {
 	protected String description = "Unknown Movement";
 	List<MovementAction> copyMovementActionList = new ArrayList<MovementAction>();
 	List<MovementActionInfo> currentInfoList = new ArrayList<MovementActionInfo>();
-	List<MovementAction> movementItemList = new ArrayList<MovementAction>();
 	List<MovementAction> totalCopyMovementActionList = new ArrayList<MovementAction>();
 	protected boolean isFinish = false;
 	public boolean isLoop = false;
@@ -146,14 +145,6 @@ public abstract class MovementAction {
 		getCurrentInfoList();
 	}
 
-	/**
-	 * get movement action list.
-	 * @return
-	 */
-	public List<MovementAction> getMovementItemList() {
-		return movementItemList;
-	}
-	
 	/**
 	 * @return
 	 */
@@ -335,7 +326,7 @@ public abstract class MovementAction {
 	
 	//not use yet
 	public IMovementActionMemento createMovementActionMemento(){
-		movementActionMemento = new MovementActionMementoImpl(actions, thread, timerOnTickListener, description, copyMovementActionList, currentInfoList, movementItemList, totalCopyMovementActionList, isFinish, isLoop, isSigleThread, name, cancelAction, isRepeatSpriteActionIfMovementActionRepeat);
+		movementActionMemento = new MovementActionMementoImpl(actions, thread, timerOnTickListener, description, copyMovementActionList, currentInfoList, totalCopyMovementActionList, isFinish, isLoop, isSigleThread, name, cancelAction, isRepeatSpriteActionIfMovementActionRepeat);
 		return movementActionMemento;
 	}
 	
@@ -363,7 +354,6 @@ public abstract class MovementAction {
 		this.description = mementoImpl.description;
 		this.copyMovementActionList = mementoImpl.copyMovementActionList;
 		this.currentInfoList = mementoImpl.currentInfoList;
-		this.movementItemList = mementoImpl.movementItemList;
 		this.totalCopyMovementActionList = mementoImpl.totalCopyMovementActionList;
 		this.isFinish = mementoImpl.isFinish;
 		this.isLoop = mementoImpl.isLoop;
@@ -385,7 +375,6 @@ public abstract class MovementAction {
 		private String description = "Unknown Movement";
 		private List<MovementAction> copyMovementActionList;
 		private List<MovementActionInfo> currentInfoList;
-		private List<MovementAction> movementItemList;
 		private List<MovementAction> totalCopyMovementActionList;
 		private boolean isFinish;
 		private boolean isLoop;
@@ -399,7 +388,6 @@ public abstract class MovementAction {
 				String description,
 				List<MovementAction> copyMovementActionList,
 				List<MovementActionInfo> currentInfoList,
-				List<MovementAction> movementItemList,
 				List<MovementAction> totalCopyMovementActionList,
 				boolean isFinish,
 				boolean isLoop, boolean isSigleThread, String name,
@@ -411,7 +399,6 @@ public abstract class MovementAction {
 			this.description = description;
 			this.copyMovementActionList = copyMovementActionList;
 			this.currentInfoList = currentInfoList;
-			this.movementItemList = movementItemList;
 			this.totalCopyMovementActionList = totalCopyMovementActionList;
 			this.isFinish = isFinish;
 			this.isLoop = isLoop;
@@ -468,14 +455,6 @@ public abstract class MovementAction {
 
 		public void setCurrentInfoList(List<MovementActionInfo> currentInfoList) {
 			this.currentInfoList = currentInfoList;
-		}
-
-		public List<MovementAction> getMovementItemList() {
-			return movementItemList;
-		}
-
-		public void setMovementItemList(List<MovementAction> movementItemList) {
-			this.movementItemList = movementItemList;
 		}
 
 		public List<MovementAction> getTotalCopyMovementActionList() {

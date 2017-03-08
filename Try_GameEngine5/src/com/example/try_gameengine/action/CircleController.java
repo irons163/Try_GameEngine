@@ -56,33 +56,6 @@ public class CircleController implements IRotationController {
 //		my = newMxMy.y;
 	}
 	
-	private void e(MovementActionInfo info){
-//		float offsetRotation = offsetRotationPerUpdate*t;
-//		
-//		if (firstExecute) {
-//			long millisTotal = info.getTotal();
-//			long millisDelay = info.getDelay();
-//			origineDx = info.getDx();
-//			origineDy = info.getDy();
-//
-////			float x = millisDelay / millisTotal;
-////
-////			float tx = origineDx * x;
-////			float ty = origineDy * x;
-//			
-//			if(mathUtil==null){
-//				this.mx = info.getSprite().getCenterX();
-//				this.my = info.getSprite().getCenterY();
-//				mathUtil = new MathUtil(mx - x, my - y);
-//			}
-//			initspeedX = (float) Math.sqrt((mx - x) * (mx - x) + (my - y)
-//					* (my - y));
-//			mathUtil.setInitSpeed(initspeedX);
-//
-//			firstExecute = false;
-//		}
-	}
-
 	private PointF exe(MovementActionInfo info, float offsetRotation) {
 		
 		
@@ -222,21 +195,9 @@ public class CircleController implements IRotationController {
 
 	@Override
 	public void start(MovementActionInfo info) {
-		// TODO Auto-generated method stub
-//		if(info.data instanceof MovementActionItemUpdateTimeData)
-//			offsetRotationPerUpdate = rotation;
-//		else
-//			offsetRotationPerUpdate = (int) (rotation/(info.getTotal()/info.getDelay()));
-		
 		offsetRotationPerUpdate = (float) (rotation*info.data.getValueOfFactorByUpdate());
-		
 		origineDx = info.getDx();
 		origineDy = info.getDy();
-
-//		float x = millisDelay / millisTotal;
-//
-//		float tx = origineDx * x;
-//		float ty = origineDy * x;
 		
 		if(mathUtil==null){
 			this.mx = info.getSprite().getCenterX();

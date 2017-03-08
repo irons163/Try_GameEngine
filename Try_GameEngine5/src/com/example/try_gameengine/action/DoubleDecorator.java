@@ -83,11 +83,6 @@ public class DoubleDecorator extends MovementDecorator {
 	}
 
 	@Override
-	public List<MovementAction> getMovementItemList() {
-		return action.getMovementItemList();
-	}
-
-	@Override
 	public List<MovementActionInfo> getMovementInfoList() {
 		return action.getMovementInfoList();
 	}
@@ -103,9 +98,9 @@ public class DoubleDecorator extends MovementDecorator {
 			coreCalculationMovementActionInfo(this.getAction().getInfo());
 		}
 
-		for (MovementAction movementItem : this.getAction().movementItemList) {
-			movementItem.initTimer();
-		}
+//		for (MovementAction movementItem : this.getAction().movementItemList) {
+//			movementItem.initTimer();
+//		}
 	}
 
 	@Override

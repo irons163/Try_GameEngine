@@ -29,7 +29,7 @@ public class MovementActionItemUpdate extends MovementActionItem{
 		if(info.getDescription()!=null)
 			this.description = info.getDescription() + ",";
 		this.info = info;
-		movementItemList.add(this);
+//		movementItemList.add(this);
 	}
 	
 	@Override
