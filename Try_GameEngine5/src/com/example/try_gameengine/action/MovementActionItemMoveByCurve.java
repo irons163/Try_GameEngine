@@ -164,8 +164,10 @@ public class MovementActionItemMoveByCurve extends MovementActionItemUpdate impl
 				rotationController.execute(info, t);
 				dx = info.getDx();
 				dy = info.getDy();
-				float newDx = (float) (dx*t);
-				float newDy = (float) (dy*t);
+//				float newDx = (float) (dx*t);
+//				float newDy = (float) (dy*t);
+				float newDx = (float) (dx);
+				float newDy = (float) (dy);
 				if (timerOnTickListener != null)
 					timerOnTickListener.onTick(newDx, newDy);
 			}

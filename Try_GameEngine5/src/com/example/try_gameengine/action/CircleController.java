@@ -3,6 +3,8 @@ package com.example.try_gameengine.action;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Point;
+import android.graphics.PointF;
 
 import com.example.try_gameengine.framework.BitmapUtil;
 
@@ -35,48 +37,74 @@ public class CircleController implements IRotationController {
 	public void execute(MovementActionInfo info, float t) {
 		float offsetRotation = offsetRotationPerUpdate*t;
 		
-		if (firstExecute) {
-			long millisTotal = info.getTotal();
-			long millisDelay = info.getDelay();
-			origineDx = info.getDx();
-			origineDy = info.getDy();
-
-//			float x = millisDelay / millisTotal;
-//
-//			float tx = origineDx * x;
-//			float ty = origineDy * x;
-			
-			if(mathUtil==null){
-				this.mx = info.getSprite().getCenterX();
-				this.my = info.getSprite().getCenterY();
-				mathUtil = new MathUtil(mx - x, my - y);
-			}
-			initspeedX = (float) Math.sqrt((mx - x) * (mx - x) + (my - y)
-					* (my - y));
-			mathUtil.setInitSpeed(initspeedX);
-
-			firstExecute = false;
-		}
-
-			mathUtil.setXY(mx - x, my - y);//need modify
-			mathUtil.genAngle();
-			mathUtil.genSpeedByRotate(offsetRotation);
-			float speedx = mathUtil.getSpeedX();
-			float speedy = mathUtil.getSpeedY();
-			float newMx = x + speedx;
-			float newMy = y + speedy;
-			speedx = newMx - mx;
-			speedy = newMy - my;
-			mx = newMx;
-			my = newMy;
-			info.setDx(speedx);
-			info.setDy(speedy);
+		float originalSpeedx = mathUtil.getSpeedX();
+		float originalSpeedy = mathUtil.getSpeedY();
+		exe(info, offsetRotation);
+		mathUtil.setXY(originalSpeedx, originalSpeedy);
 	}
 
 	@Override
 	public void execute(MovementActionInfo info) {
 		// TODO Auto-generated method stub
-		execute(info, 1);
+//		execute(info, 1);
+		float offsetRotation = offsetRotationPerUpdate;
+		
+		mathUtil.setXY(mx - x, my - y);//need modify
+		PointF newMxMy = exe(info, offsetRotation);
+		
+//		mx = newMxMy.x;
+//		my = newMxMy.y;
+	}
+	
+	private void e(MovementActionInfo info){
+//		float offsetRotation = offsetRotationPerUpdate*t;
+//		
+//		if (firstExecute) {
+//			long millisTotal = info.getTotal();
+//			long millisDelay = info.getDelay();
+//			origineDx = info.getDx();
+//			origineDy = info.getDy();
+//
+////			float x = millisDelay / millisTotal;
+////
+////			float tx = origineDx * x;
+////			float ty = origineDy * x;
+//			
+//			if(mathUtil==null){
+//				this.mx = info.getSprite().getCenterX();
+//				this.my = info.getSprite().getCenterY();
+//				mathUtil = new MathUtil(mx - x, my - y);
+//			}
+//			initspeedX = (float) Math.sqrt((mx - x) * (mx - x) + (my - y)
+//					* (my - y));
+//			mathUtil.setInitSpeed(initspeedX);
+//
+//			firstExecute = false;
+//		}
+	}
+
+	private PointF exe(MovementActionInfo info, float offsetRotation) {
+		
+		
+		mathUtil.genAngle();
+		mathUtil.genSpeedByRotate(offsetRotation);
+		
+		float speedx = mathUtil.getSpeedX();
+		float speedy = mathUtil.getSpeedY();
+		float newMx = x + speedx;
+		float newMy = y + speedy;
+		speedx = newMx - mx;
+		speedy = newMy - my;
+		
+		info.setDx(speedx);
+		info.setDy(speedy);
+		
+		mx = newMx;
+		my = newMy;
+		
+		
+		
+		return new PointF(newMx, newMy);
 	}
 
 	@Override
@@ -195,10 +223,12 @@ public class CircleController implements IRotationController {
 	@Override
 	public void start(MovementActionInfo info) {
 		// TODO Auto-generated method stub
-		if(info.data instanceof MovementActionItemUpdateTimeData)
-			offsetRotationPerUpdate = rotation;
-		else
-			offsetRotationPerUpdate = (int) (rotation/(info.getTotal()/info.getDelay()));
+//		if(info.data instanceof MovementActionItemUpdateTimeData)
+//			offsetRotationPerUpdate = rotation;
+//		else
+//			offsetRotationPerUpdate = (int) (rotation/(info.getTotal()/info.getDelay()));
+		
+		offsetRotationPerUpdate = (float) (rotation*info.data.getValueOfFactorByUpdate());
 		
 		origineDx = info.getDx();
 		origineDy = info.getDy();
@@ -211,8 +241,10 @@ public class CircleController implements IRotationController {
 		if(mathUtil==null){
 			this.mx = info.getSprite().getCenterX();
 			this.my = info.getSprite().getCenterY();
-			mathUtil = new MathUtil(mx - x, my - y);
+			mathUtil = new MathUtil();
 		}
+		
+		mathUtil.setXY(mx - x, my - y);
 		initspeedX = (float) Math.sqrt((mx - x) * (mx - x) + (my - y)
 				* (my - y));
 		mathUtil.setInitSpeed(initspeedX);

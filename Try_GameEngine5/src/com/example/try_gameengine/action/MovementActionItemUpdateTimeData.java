@@ -265,4 +265,13 @@ public class MovementActionItemUpdateTimeData implements MovementActionItemTrigg
 			this.setActivedValueForLatestUpdated(0);
 		}
 	}
+
+	@Override
+	public double getValueOfFactorByUpdate() {
+		// TODO Auto-generated method stub
+		if(updateType == UpdateType.UpdateEverytime)
+			return 1;
+		else
+			return (double)getShouldActiveIntervalValue()/getShouldActiveTotalValue();
+	}
 }
