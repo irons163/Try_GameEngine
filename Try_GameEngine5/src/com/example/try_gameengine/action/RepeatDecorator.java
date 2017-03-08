@@ -42,7 +42,7 @@ public class RepeatDecorator extends MovementDecorator {
 	 * 			info for calculate.
 	 * @return
 	 */
-	private MovementActionInfo coreCalculationMovementActionInfo(
+	protected MovementActionInfo coreCalculationMovementActionInfo(
 			MovementActionInfo info) {
 		return info;
 	}

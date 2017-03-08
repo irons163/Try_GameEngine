@@ -23,7 +23,7 @@ public class EaseRateDecorator extends MovementDecorator {
 	 * @param info
 	 * @return
 	 */
-	private MovementActionInfo coreCalculationMovementActionInfo(
+	protected MovementActionInfo coreCalculationMovementActionInfo(
 			MovementActionInfo info) {
 		doinin(info);
 		return info;
@@ -100,7 +100,6 @@ public class EaseRateDecorator extends MovementDecorator {
 	public void doIn() {
 		action.doIn();
 		for (MovementActionInfo info : this.getAction().currentInfoList) {
-			Log.e("info", info.getDx() + "");
 			this.getAction().setInfo(info);
 			
 			coreCalculationMovementActionInfo(this.getAction().getInfo());

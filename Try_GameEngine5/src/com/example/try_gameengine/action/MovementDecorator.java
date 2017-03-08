@@ -38,15 +38,11 @@ public abstract class MovementDecorator extends MovementAction{
 	
 	public void doIn() {
 		action.doIn();
-//		doing = true;
 		copyMovementActionList.clear();
 
-		int i = 0;
 		for (MovementActionInfo info : this.getAction().currentInfoList) {
-			Log.e("count", ++i + "");
-			Log.e("info", info.getDx() + "");
 			this.getAction().setInfo(info);
-//			coreCalculationMovementActionInfo(this.getAction().getInfo());
+			coreCalculationMovementActionInfo(this.getAction().getInfo());
 		}
 
 		for (MovementAction action : copyMovementActionList) {
@@ -59,6 +55,11 @@ public abstract class MovementDecorator extends MovementAction{
 //		for (MovementAction movementItem : this.getAction().movementItemList) {
 //			movementItem.initTimer();
 //		}
+	}
+	
+	protected MovementActionInfo coreCalculationMovementActionInfo(
+			MovementActionInfo info) {
+		return info;
 	}
 	
 //	@Override

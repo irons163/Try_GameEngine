@@ -8,7 +8,7 @@ public class HalfDecorator extends MovementDecorator{
 		this.action = action;
 	}
 	
-	private MovementActionInfo coreCalculationMovementActionInfo(MovementActionInfo info){
+	protected MovementActionInfo coreCalculationMovementActionInfo(MovementActionInfo info){
 		info.setTotal(info.getTotal());
 		info.setDelay(info.getDelay());
 		info.setDx(0.5f * info.getDx());

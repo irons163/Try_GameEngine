@@ -21,7 +21,7 @@ public class LooperDecorator extends MovementDecorator {
 	 * @param info
 	 * @return
 	 */
-	private MovementActionInfo coreCalculationMovementActionInfo(
+	protected MovementActionInfo coreCalculationMovementActionInfo(
 			MovementActionInfo info) {
 		return info;
 	}

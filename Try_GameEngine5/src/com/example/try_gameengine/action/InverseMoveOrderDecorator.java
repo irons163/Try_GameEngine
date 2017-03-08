@@ -12,7 +12,7 @@ public class InverseMoveOrderDecorator extends MovementDecorator {
 		this.copyMovementActionList = action.copyMovementActionList;
 	}
 
-	private MovementActionInfo coreCalculationMovementActionInfo(
+	protected MovementActionInfo coreCalculationMovementActionInfo(
 			MovementActionInfo info) {
 		return info;
 	}

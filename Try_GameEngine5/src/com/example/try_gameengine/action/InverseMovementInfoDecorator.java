@@ -11,7 +11,7 @@ public class InverseMovementInfoDecorator extends MovementDecorator{
 		this.copyMovementActionList = action.copyMovementActionList;
 	}
 
-	private MovementActionInfo coreCalculationMovementActionInfo(
+	protected MovementActionInfo coreCalculationMovementActionInfo(
 			MovementActionInfo info) {
 		info.setTotal(info.getTotal());
 		info.setDelay(info.getDelay());

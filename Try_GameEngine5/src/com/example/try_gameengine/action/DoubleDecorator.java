@@ -12,7 +12,7 @@ public class DoubleDecorator extends MovementDecorator {
 		this.copyMovementActionList = action.copyMovementActionList;
 	}
 
-	private MovementActionInfo coreCalculationMovementActionInfo(
+	protected MovementActionInfo coreCalculationMovementActionInfo(
 			MovementActionInfo info) {
 		info.setTotal(info.getTotal());
 		info.setDelay(info.getDelay());
@@ -81,6 +81,7 @@ public class DoubleDecorator extends MovementDecorator {
 		// TODO Auto-generated method stub
 		return action.getCurrentInfoList();
 	}
+
 
 	@Override
 	public List<MovementActionInfo> getMovementInfoList() {
