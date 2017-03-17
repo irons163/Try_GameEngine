@@ -9,7 +9,7 @@ public class InverseMoveOrderDecorator extends MovementDecorator {
 
 	public InverseMoveOrderDecorator(MovementAction action) {
 		this.action = action;
-		this.copyMovementActionList = action.copyMovementActionList;
+//		this.copyMovementActionList = action.copyMovementActionList;
 	}
 
 	protected MovementActionInfo coreCalculationMovementActionInfo(
@@ -30,11 +30,6 @@ public class InverseMoveOrderDecorator extends MovementDecorator {
 	@Override
 	public String getDescription() {
 		return "Double " + action.getDescription();
-	}
-
-	@Override
-	public MovementAction initMovementAction() {
-		return initTimer();
 	}
 
 	@Override
@@ -62,11 +57,6 @@ public class InverseMoveOrderDecorator extends MovementDecorator {
 	}
 
 	@Override
-	public MovementActionInfo getInfo() {
-		return coreCalculationMovementActionInfo(action.getInfo());
-	}
-
-	@Override
 	public List<MovementAction> getCurrentActionList() {
 		// TODO Auto-generated method stub
 		return action.getCurrentActionList();
@@ -84,7 +74,7 @@ public class InverseMoveOrderDecorator extends MovementDecorator {
 	}
 
 	@Override
-	public void doIn() {
+	protected void doIn() {
 		action.doIn();
 		this.getAction().getCurrentInfoList();
 		int i = 0;

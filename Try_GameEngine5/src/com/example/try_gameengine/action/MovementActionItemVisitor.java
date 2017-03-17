@@ -1,7 +1,8 @@
-package com.example.try_gameengine.action.visitor;
+package com.example.try_gameengine.action;
 
 import com.example.try_gameengine.action.MovementAction;
 import com.example.try_gameengine.action.MovementDecorator;
+import com.example.try_gameengine.action.visitor.IMovementActionVisitor;
 import com.example.try_gameengine.framework.Sprite;
 import com.example.try_gameengine.test.MovementActionDecoratorFactory;
 
@@ -29,7 +30,7 @@ public class MovementActionItemVisitor implements IMovementActionVisitor{
 	@Override
 	public void visitLeaf(MovementAction movementAction) {
 		if(movementAction.getInfo()!=null){
-			movementDecorator.doIn();
+			movementDecorator.coreCalculationMovementActionInfo(movementAction.getInfo());
 		}
 	}
 

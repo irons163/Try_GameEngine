@@ -24,9 +24,9 @@ public abstract class MovementAction {
 	protected Thread thread;
 	protected TimerOnTickListener timerOnTickListener;
 	protected String description = "Unknown Movement";
-	List<MovementAction> copyMovementActionList = new ArrayList<MovementAction>();
+//	List<MovementAction> copyMovementActionList = new ArrayList<MovementAction>();
 	List<MovementActionInfo> currentInfoList = new ArrayList<MovementActionInfo>();
-	List<MovementAction> totalCopyMovementActionList = new ArrayList<MovementAction>();
+//	List<MovementAction> totalCopyMovementActionList = new ArrayList<MovementAction>();
 	protected boolean isFinish = false;
 	public boolean isLoop = false;
 	public boolean isSigleThread = false;
@@ -77,6 +77,7 @@ public abstract class MovementAction {
 	}
 	
 	public MovementAction initMovementAction(){
+		doIn();
 		return initTimer();
 	}
 	
@@ -88,8 +89,8 @@ public abstract class MovementAction {
 			didInitTimer = true;
 			return this;
 		}else
-//			throw new RuntimeException("didInitTimer");
-			return this;
+			throw new RuntimeException("didInitTimer");
+//			return this;
 	}
 	
 	/**
@@ -155,8 +156,10 @@ public abstract class MovementAction {
 	/**
 	 * 
 	 */
-	public void doIn(){
-		
+	protected void doIn(){
+		for (MovementAction action : this.getAction().getActions()){
+			action.doIn();
+		}
 	}
 
 	/**
@@ -326,7 +329,7 @@ public abstract class MovementAction {
 	
 	//not use yet
 	public IMovementActionMemento createMovementActionMemento(){
-		movementActionMemento = new MovementActionMementoImpl(actions, thread, timerOnTickListener, description, copyMovementActionList, currentInfoList, totalCopyMovementActionList, isFinish, isLoop, isSigleThread, name, cancelAction, isRepeatSpriteActionIfMovementActionRepeat);
+//		movementActionMemento = new MovementActionMementoImpl(actions, thread, timerOnTickListener, description, copyMovementActionList, currentInfoList, totalCopyMovementActionList, isFinish, isLoop, isSigleThread, name, cancelAction, isRepeatSpriteActionIfMovementActionRepeat);
 		return movementActionMemento;
 	}
 	
@@ -352,9 +355,9 @@ public abstract class MovementAction {
 		this.thread = mementoImpl.thread;
 		this.timerOnTickListener = mementoImpl.timerOnTickListener;
 		this.description = mementoImpl.description;
-		this.copyMovementActionList = mementoImpl.copyMovementActionList;
+//		this.copyMovementActionList = mementoImpl.copyMovementActionList;
 		this.currentInfoList = mementoImpl.currentInfoList;
-		this.totalCopyMovementActionList = mementoImpl.totalCopyMovementActionList;
+//		this.totalCopyMovementActionList = mementoImpl.totalCopyMovementActionList;
 		this.isFinish = mementoImpl.isFinish;
 		this.isLoop = mementoImpl.isLoop;
 		this.isSigleThread = mementoImpl.isSigleThread;

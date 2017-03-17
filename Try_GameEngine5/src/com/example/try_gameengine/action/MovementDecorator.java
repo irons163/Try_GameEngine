@@ -1,13 +1,8 @@
 package com.example.try_gameengine.action;
 
-import java.util.List;
-
-import android.util.Log;
-
 //import com.example.try_gameengine.action.DoubleDecorator.DoubleDecoratorMementoImpl;
-import com.example.try_gameengine.action.MovementAction.MovementActionMementoImpl;
-import com.example.try_gameengine.action.MovementAction.TimerOnTickListener;
 import com.example.try_gameengine.action.visitor.IMovementActionVisitor;
+import com.example.try_gameengine.action.visitor.MovementActionObjectStructure;
 
 /**
  * {@code MovementDecorator} is a decorator
@@ -30,27 +25,44 @@ public abstract class MovementDecorator extends MovementAction{
 //		for(MovementAction movementAction : actions){
 //			movementAction.accept(movementActionVisitor);
 //		}
+		
 		movementActionVisitor.visitComposite(getAction());
-		for(MovementAction movementAction : getAction().getActions()){
-			movementAction.accept(movementActionVisitor);
-		}
+//		for(MovementAction movementAction : getAction().getActions()){
+//			movementAction.accept(movementActionVisitor);
+//		}
+		
+		action.accept(movementActionVisitor);
 	}
 	
-	public void doIn() {
+	@Override
+	protected MovementAction initTimer() {
+		// TODO Auto-generated method stub
+		return super.initTimer();
+	}
+	
+	@Override
+	protected void doIn() {
 		action.doIn();
-		copyMovementActionList.clear();
+//		copyMovementActionList.clear();
 
-		for (MovementActionInfo info : this.getAction().currentInfoList) {
-			this.getAction().setInfo(info);
-			coreCalculationMovementActionInfo(this.getAction().getInfo());
-		}
+//		for (MovementActionInfo info : this.getAction().currentInfoList) {
+//			this.getAction().setInfo(info); //set info to composite like a temp info.
+//			coreCalculationMovementActionInfo(this.getAction().getInfo());
+//		}
+		
+		MovementActionObjectStructure objectStructure = new MovementActionObjectStructure();
+		objectStructure.setRoot(this);
+		IMovementActionVisitor movementActionVisitor = new MovementActionItemVisitor(this);
+		objectStructure.handleRequest(movementActionVisitor);
+		
+//		coreCalculationMovementActionInfo(this.getAction().getInfo());
 
-		for (MovementAction action : copyMovementActionList) {
-			this.getAction().addMovementAction(action);
-//			this.getAction().movementItemList.add(action);
-			action.description = "copyAppend";
-			action.initTimer();
-		}
+//		for (MovementAction action : copyMovementActionList) {
+//			this.getAction().addMovementAction(action);
+////			this.getAction().movementItemList.add(action);
+//			action.description = "copyAppend";
+//			action.initTimer();
+//		}
 
 //		for (MovementAction movementItem : this.getAction().movementItemList) {
 //			movementItem.initTimer();
@@ -61,6 +73,17 @@ public abstract class MovementDecorator extends MovementAction{
 			MovementActionInfo info) {
 		return info;
 	}
+
+	@Override
+	public MovementActionInfo getInfo() {
+//		return coreCalculationMovementActionInfo(action.getInfo());
+		return action.getInfo();
+	}
+
+//	@Override
+//	public MovementAction initMovementAction() {
+//		return initTimer();
+//	}
 	
 //	@Override
 //	public IMovementActionMemento createMovementActionMemento(){

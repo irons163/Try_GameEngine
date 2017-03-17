@@ -10,7 +10,7 @@ public class ReturnBackDecorator extends MovementDecorator{
 
 	public ReturnBackDecorator(MovementAction action) {
 		this.action = action;
-		this.copyMovementActionList = action.copyMovementActionList;
+//		this.copyMovementActionList = action.copyMovementActionList;
 	}
 
 	protected MovementActionInfo coreCalculationMovementActionInfo(
@@ -38,11 +38,6 @@ public class ReturnBackDecorator extends MovementDecorator{
 	}
 	
 	@Override
-	public MovementAction initMovementAction(){	
-		return initTimer();
-	}
-
-	@Override
 	protected MovementAction initTimer(){ super.initTimer();
 
 		if (this.getAction().getActions().size() == 0) {
@@ -69,11 +64,6 @@ public class ReturnBackDecorator extends MovementDecorator{
 	}
 
 	@Override
-	public MovementActionInfo getInfo() {
-		return coreCalculationMovementActionInfo(action.getInfo());
-	}
-
-	@Override
 	public List<MovementAction> getCurrentActionList() {
 		// TODO Auto-generated method stub
 		return action.getCurrentActionList();
@@ -91,13 +81,10 @@ public class ReturnBackDecorator extends MovementDecorator{
 	}
 	
 	@Override
-	public void doIn(){
+	protected void doIn(){
 		action.doIn();
 		this.getAction().getCurrentInfoList();
-		int i = 0;
 		for (MovementActionInfo info : this.getAction().currentInfoList) {
-			Log.e("count", ++i + "");
-			Log.e("info", info.getDx() + "");
 			this.getAction().setInfo(info);
 			coreCalculationMovementActionInfo(this.getAction().getInfo());
 		}

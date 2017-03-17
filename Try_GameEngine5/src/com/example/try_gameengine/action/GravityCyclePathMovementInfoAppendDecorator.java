@@ -3,7 +3,7 @@ package com.example.try_gameengine.action;
 import java.util.List;
 
 import com.example.try_gameengine.action.visitor.IMovementActionVisitor;
-import com.example.try_gameengine.action.visitor.MovementActionItemVisitor;
+//import com.example.try_gameengine.action.visitor.MovementActionItemVisitor;
 import com.example.try_gameengine.action.visitor.MovementActionObjectStructure;
 
 import android.util.Log;
@@ -14,7 +14,7 @@ public class GravityCyclePathMovementInfoAppendDecorator extends
 
 	public GravityCyclePathMovementInfoAppendDecorator(MovementActionItemMoveByCurve action) {
 		this.action = action;
-		this.copyMovementActionList = action.copyMovementActionList;
+//		this.copyMovementActionList = action.copyMovementActionList;
 	}
 
 //	private MovementActionInfo coreCalculationMovementActionInfo(
@@ -74,11 +74,6 @@ public class GravityCyclePathMovementInfoAppendDecorator extends
 	}
 
 	@Override
-	public MovementAction initMovementAction() {
-		return initTimer();
-	}
-
-	@Override
 	protected MovementAction initTimer(){ super.initTimer();
 
 		if (this.getAction().getActions().size() == 0) {
@@ -105,12 +100,6 @@ public class GravityCyclePathMovementInfoAppendDecorator extends
 	}
 
 	@Override
-	public MovementActionInfo getInfo() {
-//		return coreCalculationMovementActionInfo(action.getInfo());
-		return null;
-	}
-
-	@Override
 	public List<MovementAction> getCurrentActionList() {
 		// TODO Auto-generated method stub
 		return action.getCurrentActionList();
@@ -128,9 +117,9 @@ public class GravityCyclePathMovementInfoAppendDecorator extends
 	}
 
 	@Override
-	public void doIn() {
+	protected void doIn() {
 		action.doIn();
-		copyMovementActionList.clear();
+//		copyMovementActionList.clear();
 		this.getAction().getCurrentInfoList();
 
 		for (int j = 0; j < this.getAction().currentInfoList.size(); j++) {
@@ -141,17 +130,17 @@ public class GravityCyclePathMovementInfoAppendDecorator extends
 			
 		}
 		
-		MovementActionObjectStructure objectStructure = new MovementActionObjectStructure();
-		objectStructure.setRoot(this);
-		IMovementActionVisitor movementActionVisitor = new MovementActionItemVisitor(this);
-		objectStructure.handleRequest(movementActionVisitor);
+//		MovementActionObjectStructure objectStructure = new MovementActionObjectStructure();
+//		objectStructure.setRoot(this);
+//		IMovementActionVisitor movementActionVisitor = new MovementActionItemVisitor(this);
+//		objectStructure.handleRequest(movementActionVisitor);
 
-		for (MovementAction action : copyMovementActionList) {
-			this.getAction().addMovementAction(action);
-//			this.getAction().movementItemList.add(action);
-			action.description = "inverseAppend";
-			action.initTimer();
-		}
+//		for (MovementAction action : copyMovementActionList) {
+//			this.getAction().addMovementAction(action);
+////			this.getAction().movementItemList.add(action);
+//			action.description = "inverseAppend";
+//			action.initTimer();
+//		}
 
 //		for (MovementAction movementItem : this.getAction().movementItemList) {
 //			movementItem.initTimer();

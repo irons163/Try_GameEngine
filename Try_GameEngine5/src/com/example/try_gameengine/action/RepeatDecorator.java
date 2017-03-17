@@ -29,7 +29,7 @@ public class RepeatDecorator extends MovementDecorator {
 	public RepeatDecorator(MovementAction action, long count) {
 		this.action = action;
 		this.count = count;
-		this.copyMovementActionList = action.copyMovementActionList;
+//		this.copyMovementActionList = action.copyMovementActionList;
 		
 		List<MovementAction> actions = new ArrayList<MovementAction>(); // add 105/09/01
 		actions.add(this.action);
@@ -126,7 +126,7 @@ public class RepeatDecorator extends MovementDecorator {
 
 	@Override
 	public MovementAction initMovementAction() {
-		MovementAction movementAction = initTimer();
+		MovementAction movementAction = super.initMovementAction();
 		isTheOuterActionForInitMovementAction = true;
 		return movementAction;
 	}
@@ -173,11 +173,6 @@ public class RepeatDecorator extends MovementDecorator {
 	}
 
 	@Override
-	public MovementActionInfo getInfo() {
-		return coreCalculationMovementActionInfo(action.getInfo());
-	}
-
-	@Override
 	public List<MovementAction> getCurrentActionList() {
 		// TODO Auto-generated method stub
 		
@@ -203,7 +198,7 @@ public class RepeatDecorator extends MovementDecorator {
 	}
 
 	@Override
-	public void doIn() {
+	protected void doIn() {
 //		for (MovementActionInfo info : this.getAction().currentInfoList) {
 //			this.getAction().setInfo(info);
 //			coreCalculationMovementActionInfo(this.getAction().getInfo());

@@ -9,7 +9,7 @@ public class PartOfAppendDecorator extends MovementDecorator {
 	
 	public PartOfAppendDecorator(MovementAction action) {
 		this.action = action;
-		this.copyMovementActionList = action.copyMovementActionList;
+//		this.copyMovementActionList = action.copyMovementActionList;
 	}
 
 	protected MovementActionInfo coreCalculationMovementActionInfo(
@@ -18,7 +18,7 @@ public class PartOfAppendDecorator extends MovementDecorator {
 		MovementActionInfo newInfo = new MovementActionInfo(info.getTotal(), info.getDelay(), info.getDx(), info.getDy(), info.getDescription());
 		if(this.getAction().getActions().size() != 0){
 			MovementAction action = new MovementActionItemCountDownTimer(newInfo);
-			copyMovementActionList.add(action);
+//			copyMovementActionList.add(action);
 		}
 		return newInfo;
 	}
@@ -63,11 +63,6 @@ public class PartOfAppendDecorator extends MovementDecorator {
 	}
 
 	@Override
-	public MovementActionInfo getInfo() {
-		return coreCalculationMovementActionInfo(action.getInfo());
-	}
-
-	@Override
 	public List<MovementAction> getCurrentActionList() {
 		return action.getCurrentActionList();
 	}
@@ -80,10 +75,10 @@ public class PartOfAppendDecorator extends MovementDecorator {
 		}else{
 			List<MovementActionInfo> infos = action.getCurrentInfoList();
 			List<MovementActionInfo> newInfos = new ArrayList<MovementActionInfo>();
-			for(int i = infos.size() - copyMovementActionList.size(); i < infos.size(); i++){
-				MovementActionInfo info = infos.get(i);
-				newInfos.add(info);
-			}
+//			for(int i = infos.size() - copyMovementActionList.size(); i < infos.size(); i++){
+//				MovementActionInfo info = infos.get(i);
+//				newInfos.add(info);
+//			}
 			return newInfos;
 		}
 	}
@@ -94,7 +89,7 @@ public class PartOfAppendDecorator extends MovementDecorator {
 	}
 	
 	@Override
-	public void doIn(){		
+	protected void doIn(){		
 		action.doIn();
 		
 		this.getAction().currentInfoList =  this.getCurrentInfoList();

@@ -16,7 +16,7 @@ public class EaseRateDecorator extends MovementDecorator {
 	public EaseRateDecorator(MovementAction action, float rate) {
 		this.action = action;
 		this.rate = rate;
-		this.copyMovementActionList = action.copyMovementActionList;
+//		this.copyMovementActionList = action.copyMovementActionList;
 	}
 
 	/**
@@ -45,11 +45,6 @@ public class EaseRateDecorator extends MovementDecorator {
 	}
 
 	@Override
-	public MovementAction initMovementAction() {
-		return initTimer();
-	}
-
-	@Override
 	protected MovementAction initTimer(){ super.initTimer();
 
 		if (this.getAction().getActions().size() == 0) {
@@ -75,11 +70,6 @@ public class EaseRateDecorator extends MovementDecorator {
 	}
 
 	@Override
-	public MovementActionInfo getInfo() {
-		return coreCalculationMovementActionInfo(action.getInfo());
-	}
-
-	@Override
 	public List<MovementAction> getCurrentActionList() {
 		// TODO Auto-generated method stub
 		return action.getCurrentActionList();
@@ -96,20 +86,6 @@ public class EaseRateDecorator extends MovementDecorator {
 		return action.getMovementInfoList();
 	}
 
-	@Override
-	public void doIn() {
-		action.doIn();
-		for (MovementActionInfo info : this.getAction().currentInfoList) {
-			this.getAction().setInfo(info);
-			
-			coreCalculationMovementActionInfo(this.getAction().getInfo());
-		}
-
-//		for (MovementAction movementItem : this.getAction().movementItemList) {
-//			movementItem.initTimer();
-//		}
-	}
-	
 	void doinin(final MovementActionInfo info){
 		info.getData().setMovementActionItemUpdateTimeDataDelegate(new MovementActionItemTrigger.DataDelegate() {
 			@Override

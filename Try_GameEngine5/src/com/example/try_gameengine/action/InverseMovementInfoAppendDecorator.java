@@ -8,7 +8,7 @@ public class InverseMovementInfoAppendDecorator extends MovementDecorator {
 
 	public InverseMovementInfoAppendDecorator(MovementAction action) {
 		this.action = action;
-		this.copyMovementActionList = action.copyMovementActionList;
+//		this.copyMovementActionList = action.copyMovementActionList;
 	}
 
 	protected MovementActionInfo coreCalculationMovementActionInfo(
@@ -19,8 +19,8 @@ public class InverseMovementInfoAppendDecorator extends MovementDecorator {
 				info.getDescription());
 		if (this.getAction().getActions().size() != 0) {
 			MovementAction action = new MovementActionItemCountDownTimer(newInfo);
-			copyMovementActionList.add(action);
-			this.getAction().totalCopyMovementActionList.add(action);
+//			copyMovementActionList.add(action);
+//			this.getAction().totalCopyMovementActionList.add(action);
 		}
 
 		newInfo.setTotal(info.getTotal());
@@ -43,11 +43,6 @@ public class InverseMovementInfoAppendDecorator extends MovementDecorator {
 	@Override
 	public String getDescription() {
 		return "Double " + action.getDescription();
-	}
-
-	@Override
-	public MovementAction initMovementAction() {
-		return initTimer();
 	}
 
 	@Override
@@ -74,11 +69,6 @@ public class InverseMovementInfoAppendDecorator extends MovementDecorator {
 	@Override
 	protected void setActionsTheSameTimerOnTickListener() {
 		getAction().setTimerOnTickListener(timerOnTickListener);
-	}
-
-	@Override
-	public MovementActionInfo getInfo() {
-		return coreCalculationMovementActionInfo(action.getInfo());
 	}
 
 	@Override

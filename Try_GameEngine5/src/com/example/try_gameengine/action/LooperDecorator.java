@@ -14,7 +14,7 @@ public class LooperDecorator extends MovementDecorator {
 
 	public LooperDecorator(MovementAction action) {
 		this.action = action;
-		this.copyMovementActionList = action.copyMovementActionList;
+//		this.copyMovementActionList = action.copyMovementActionList;
 	}
 
 	/**
@@ -39,11 +39,6 @@ public class LooperDecorator extends MovementDecorator {
 	@Override
 	public String getDescription() {
 		return "Double " + action.getDescription();
-	}
-
-	@Override
-	public MovementAction initMovementAction() {
-		return initTimer();
 	}
 
 	@Override
@@ -74,11 +69,6 @@ public class LooperDecorator extends MovementDecorator {
 	}
 
 	@Override
-	public MovementActionInfo getInfo() {
-		return coreCalculationMovementActionInfo(action.getInfo());
-	}
-
-	@Override
 	public List<MovementAction> getCurrentActionList() {
 		// TODO Auto-generated method stub
 		return action.getCurrentActionList();
@@ -93,22 +83,6 @@ public class LooperDecorator extends MovementDecorator {
 	@Override
 	public List<MovementActionInfo> getMovementInfoList() {
 		return action.getMovementInfoList();
-	}
-
-	@Override
-	public void doIn() {
-		action.doIn();
-		int i = 0;
-		for (MovementActionInfo info : this.getAction().currentInfoList) {
-			Log.e("count", ++i + "");
-			Log.e("info", info.getDx() + "");
-			this.getAction().setInfo(info);
-			coreCalculationMovementActionInfo(this.getAction().getInfo());
-		}
-
-//		for (MovementAction movementItem : this.getAction().movementItemList) {
-//			movementItem.initTimer();
-//		}
 	}
 
 	@Override

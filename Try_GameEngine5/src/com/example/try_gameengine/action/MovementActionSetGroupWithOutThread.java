@@ -84,11 +84,6 @@ public class MovementActionSetGroupWithOutThread extends MovementAction {
 	}
 	
 	@Override
-	public MovementAction initMovementAction(){		
-		return initTimer();
-	}
-	
-	@Override
 	protected MovementAction initTimer(){ super.initTimer();
 	
 		for (MovementAction action : this.actions) {

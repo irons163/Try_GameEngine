@@ -5,26 +5,20 @@ import java.util.List;
 import android.util.Log;
 
 public class CopyMoveDecorator extends MovementDecorator {
-	private MovementAction action;
 //	boolean doing = false;
 
 	public CopyMoveDecorator(MovementAction action) {
 		this.action = action;
-		this.copyMovementActionList = action.copyMovementActionList;
+//		this.copyMovementActionList = action.copyMovementActionList;
 	}
 
 	protected MovementActionInfo coreCalculationMovementActionInfo(
 			MovementActionInfo info) {
-
-//		MovementActionInfo newInfo = new MovementActionInfo(info.getTotal(),
-//				info.getDelay(), info.getDx(), info.getDy(),
-//				info.getDescription(), info.getRotationController(),
-//				info.isEnableGravity());
 		MovementActionInfo newInfo = info.clone();
 		if (this.getAction().getActions().size() != 0) {
 			MovementAction action = new MovementActionItemCountDownTimer(newInfo);
-			copyMovementActionList.add(action);
-			this.getAction().totalCopyMovementActionList.add(action);
+//			copyMovementActionList.add(action);
+//			this.getAction().totalCopyMovementActionList.add(action);
 		}
 		return newInfo;
 	}
@@ -68,11 +62,6 @@ public class CopyMoveDecorator extends MovementDecorator {
 	@Override
 	protected void setActionsTheSameTimerOnTickListener() {
 		getAction().setTimerOnTickListener(timerOnTickListener);
-	}
-
-	@Override
-	public MovementActionInfo getInfo() {
-		return coreCalculationMovementActionInfo(action.getInfo());
 	}
 
 	@Override

@@ -60,11 +60,6 @@ public class MovementActionSetWithOutThread extends MovementAction {
 	}
 	
 	@Override
-	public MovementAction initMovementAction(){		
-		return initTimer();
-	}
-	
-	@Override
 	protected MovementAction initTimer(){ super.initTimer();
 	
 		for (MovementAction action : this.actions) {
@@ -74,9 +69,9 @@ public class MovementActionSetWithOutThread extends MovementAction {
 			}else{
 				action.initTimer();
 			}
-			for(MovementAction movementAction : action.getAction().totalCopyMovementActionList){
+//			for(MovementAction movementAction : action.getAction().totalCopyMovementActionList){
 //				this.getAction().movementItemList.add(movementAction);
-			}
+//			}
 			
 //			action.getAction().setCancelFocusAppendPart(true);
 		}

@@ -5,11 +5,10 @@ import java.util.List;
 import android.util.Log;
 
 public class DoubleDecorator extends MovementDecorator {
-	private MovementAction action;
 
 	public DoubleDecorator(MovementAction action) {
 		this.action = action;
-		this.copyMovementActionList = action.copyMovementActionList;
+//		this.copyMovementActionList = action.copyMovementActionList;
 	}
 
 	protected MovementActionInfo coreCalculationMovementActionInfo(
@@ -37,11 +36,6 @@ public class DoubleDecorator extends MovementDecorator {
 	}
 
 	@Override
-	public MovementAction initMovementAction() {
-		return initTimer();
-	}
-
-	@Override
 	protected MovementAction initTimer(){ super.initTimer();
 
 		if (this.getAction().getActions().size() == 0) {
@@ -49,7 +43,7 @@ public class DoubleDecorator extends MovementDecorator {
 			action.getAction().initTimer();
 		} else { //this.getAction() is a MovementAction set or group or decorator. 
 			this.getAction().initTimer();
-			doIn();
+//			doIn();
 		}
 		return this;
 	}
@@ -63,11 +57,6 @@ public class DoubleDecorator extends MovementDecorator {
 	@Override
 	protected void setActionsTheSameTimerOnTickListener() {
 		getAction().setTimerOnTickListener(timerOnTickListener);
-	}
-
-	@Override
-	public MovementActionInfo getInfo() {
-		return coreCalculationMovementActionInfo(action.getInfo());
 	}
 
 	@Override
@@ -86,22 +75,6 @@ public class DoubleDecorator extends MovementDecorator {
 	@Override
 	public List<MovementActionInfo> getMovementInfoList() {
 		return action.getMovementInfoList();
-	}
-
-	@Override
-	public void doIn() {
-		action.doIn();
-		int i = 0;
-		for (MovementActionInfo info : this.getAction().currentInfoList) {
-			Log.e("count", ++i + "");
-			Log.e("info", info.getDx() + "");
-			this.getAction().setInfo(info); //set info to composite like a temp info.
-			coreCalculationMovementActionInfo(this.getAction().getInfo());
-		}
-
-//		for (MovementAction movementItem : this.getAction().movementItemList) {
-//			movementItem.initTimer();
-//		}
 	}
 
 	@Override

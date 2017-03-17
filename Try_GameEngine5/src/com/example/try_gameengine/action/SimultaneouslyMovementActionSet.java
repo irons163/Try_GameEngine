@@ -94,17 +94,6 @@ public class SimultaneouslyMovementActionSet extends MovementAction {
 	}
 	
 	@Override
-	public MovementAction initMovementAction(){
-//		Cloner cloner=new Cloner();
-//
-//		MovementAction actionClone = cloner.deepClone(this);
-//		
-//		this.actions = actionClone.actions;
-		
-		return initTimer();
-	}
-	
-	@Override
 	protected MovementAction initTimer(){ super.initTimer();
 		for (MovementAction action : this.actions) {
 			if(action.getAction().getActions().size()==0){
@@ -112,9 +101,9 @@ public class SimultaneouslyMovementActionSet extends MovementAction {
 			}else{
 				action.initTimer();
 			}
-			for(MovementAction movementAction : action.getAction().totalCopyMovementActionList){
+//			for(MovementAction movementAction : action.getAction().totalCopyMovementActionList){
 //				this.getAction().movementItemList.add(movementAction);
-			}
+//			}
 		}
 		this.getAction().getCurrentInfoList();
 
