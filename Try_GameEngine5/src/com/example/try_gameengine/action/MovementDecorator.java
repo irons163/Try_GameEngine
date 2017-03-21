@@ -26,7 +26,8 @@ public abstract class MovementDecorator extends MovementAction{
 //			movementAction.accept(movementActionVisitor);
 //		}
 		
-		movementActionVisitor.visitComposite(getAction());
+//		movementActionVisitor.visitComposite(getAction());
+		
 //		for(MovementAction movementAction : getAction().getActions()){
 //			movementAction.accept(movementActionVisitor);
 //		}
@@ -69,9 +70,9 @@ public abstract class MovementDecorator extends MovementAction{
 //		}
 	}
 	
-	protected MovementActionInfo coreCalculationMovementActionInfo(
-			MovementActionInfo info) {
-		return info;
+	protected MovementAction coreCalculationMovementActionInfo(
+			MovementAction action) {
+		return action;
 	}
 
 	@Override

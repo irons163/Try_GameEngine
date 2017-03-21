@@ -18,12 +18,12 @@ public class LooperDecorator extends MovementDecorator {
 	}
 
 	/**
-	 * @param info
+	 * @param action
 	 * @return
 	 */
-	protected MovementActionInfo coreCalculationMovementActionInfo(
-			MovementActionInfo info) {
-		return info;
+	protected MovementAction coreCalculationMovementActionInfo(
+			MovementAction action) {
+		return action;
 	}
 
 	@Override

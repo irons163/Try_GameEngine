@@ -11,23 +11,25 @@ public class InverseMovementInfoAppendDecorator extends MovementDecorator {
 //		this.copyMovementActionList = action.copyMovementActionList;
 	}
 
-	protected MovementActionInfo coreCalculationMovementActionInfo(
-			MovementActionInfo info) {
+	protected MovementAction coreCalculationMovementActionInfo(
+			MovementAction action) {
 
-		MovementActionInfo newInfo = new MovementActionInfo(info.getTotal(),
-				info.getDelay(), info.getDx(), info.getDy(),
-				info.getDescription());
-		if (this.getAction().getActions().size() != 0) {
-			MovementAction action = new MovementActionItemCountDownTimer(newInfo);
-//			copyMovementActionList.add(action);
-//			this.getAction().totalCopyMovementActionList.add(action);
-		}
+//		MovementActionInfo newInfo = new MovementActionInfo(action.getTotal(),
+//				action.getDelay(), action.getDx(), action.getDy(),
+//				action.getDescription());
+//		if (this.getAction().getActions().size() != 0) {
+//			MovementAction action = new MovementActionItemCountDownTimer(newInfo);
+////			copyMovementActionList.add(action);
+////			this.getAction().totalCopyMovementActionList.add(action);
+//		}
 
+		MovementActionInfo info = action.getInfo();
+		MovementActionInfo newInfo = info.clone();
 		newInfo.setTotal(info.getTotal());
 		newInfo.setDelay(info.getDelay());
 		newInfo.setDx(-info.getDx());
 		newInfo.setDy(-info.getDy());
-		return info;
+		return action;
 	}
 
 	@Override

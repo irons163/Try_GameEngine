@@ -12,15 +12,22 @@ public class CopyMoveDecorator extends MovementDecorator {
 //		this.copyMovementActionList = action.copyMovementActionList;
 	}
 
-	protected MovementActionInfo coreCalculationMovementActionInfo(
-			MovementActionInfo info) {
-		MovementActionInfo newInfo = info.clone();
-		if (this.getAction().getActions().size() != 0) {
-			MovementAction action = new MovementActionItemCountDownTimer(newInfo);
+	protected MovementAction coreCalculationMovementActionInfo(
+			MovementAction action) {
+		MovementAction newAction = null;
+		try {
+			newAction = (MovementAction) action.clone();
+		} catch (CloneNotSupportedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+//		if (this.getAction().getActions().size() != 0) {
+//			MovementAction action = new MovementActionItemCountDownTimer(newInfo);
 //			copyMovementActionList.add(action);
 //			this.getAction().totalCopyMovementActionList.add(action);
-		}
-		return newInfo;
+//		}
+		
+		return newAction;
 	}
 
 	@Override
@@ -120,4 +127,19 @@ public class CopyMoveDecorator extends MovementDecorator {
 //			this.action = action;
 //		}			
 //	}
+	
+	@Override
+	protected CopyMoveDecorator clone() throws CloneNotSupportedException {
+		CopyMoveDecorator copy = new CopyMoveDecorator((MovementAction) this.action.clone());
+		copy.actionListener = this.actionListener;
+		copy.timerOnTickListener = this.timerOnTickListener;
+		copy.controller = this.controller;
+		copy.timerOnTickListener = this.timerOnTickListener;
+		for(MovementAction action : this.actions){
+			MovementAction subCopy = (MovementAction) action.clone();
+			copy.addMovementAction(subCopy);
+		}
+		copy.name = name;
+		return copy;
+	}
 }

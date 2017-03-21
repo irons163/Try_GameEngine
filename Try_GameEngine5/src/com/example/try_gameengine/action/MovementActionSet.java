@@ -11,7 +11,7 @@ import com.example.try_gameengine.action.visitor.IMovementActionVisitor;
  */
 public class MovementActionSet extends MovementAction {
 	private boolean isActionFinish = true;
-	private MovementActionInfo info;
+//	private MovementActionInfo info;
 	
 	@Override
 	public MovementAction addMovementAction(MovementAction action) {
@@ -118,12 +118,12 @@ public class MovementActionSet extends MovementAction {
 	@Override
 	public MovementActionInfo getInfo() {
 		// TODO Auto-generated method stub
-		return info;
+		return null;
 	}
 	
 	@Override
 	public void setInfo(MovementActionInfo info){
-		this.info = info;
+//		this.info = info;
 	}
 
 	@Override
@@ -193,5 +193,19 @@ public class MovementActionSet extends MovementAction {
 		for(MovementAction movementAction : actions){
 			movementAction.accept(movementActionVisitor);
 		}
+	}
+	
+	@Override
+	protected MovementActionSet clone() throws CloneNotSupportedException {
+		MovementActionSet copy = new MovementActionSet();
+		copy.actionListener = this.actionListener;
+		copy.timerOnTickListener = this.timerOnTickListener;
+		copy.controller = this.controller;
+		copy.timerOnTickListener = this.timerOnTickListener;
+		for(MovementAction action : this.actions){
+			MovementAction subCopy = (MovementAction) action.clone();
+			copy.addMovementAction(subCopy);
+		}
+		return copy;
 	}
 }

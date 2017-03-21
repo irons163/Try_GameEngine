@@ -12,9 +12,9 @@ public class InverseMoveOrderDecorator extends MovementDecorator {
 //		this.copyMovementActionList = action.copyMovementActionList;
 	}
 
-	protected MovementActionInfo coreCalculationMovementActionInfo(
-			MovementActionInfo info) {
-		return info;
+	protected MovementAction coreCalculationMovementActionInfo(
+			MovementAction action) {
+		return action;
 	}
 
 	@Override
@@ -82,7 +82,8 @@ public class InverseMoveOrderDecorator extends MovementDecorator {
 			Log.e("count", ++i + "");
 			Log.e("info", info.getDx() + "");
 			this.getAction().setInfo(info);
-			coreCalculationMovementActionInfo(this.getAction().getInfo());
+//			coreCalculationMovementActionInfo(this.getAction().getInfo());
+			coreCalculationMovementActionInfo(this.getAction());
 		}
 
 		inverseOrder(this);

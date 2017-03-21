@@ -12,15 +12,26 @@ public class PartOfOrigizalDecorator extends MovementDecorator {
 //		this.copyMovementActionList = action.copyMovementActionList;
 	}
 
-	protected MovementActionInfo coreCalculationMovementActionInfo(
-			MovementActionInfo info) {
+	protected MovementAction coreCalculationMovementActionInfo(
+			MovementAction action) {
 		
-		MovementActionInfo newInfo = new MovementActionInfo(info.getTotal(), info.getDelay(), info.getDx(), info.getDy(), info.getDescription());
-		if(this.getAction().getActions().size() != 0){
-			MovementAction action = new MovementActionItemCountDownTimer(newInfo);
-//			copyMovementActionList.add(action);
+//		MovementActionInfo newInfo = new MovementActionInfo(action.getTotal(), action.getDelay(), action.getDx(), action.getDy(), action.getDescription());
+//		if(this.getAction().getActions().size() != 0){
+//			MovementAction action = new MovementActionItemCountDownTimer(newInfo);
+////			copyMovementActionList.add(action);
+//		}
+//		return newInfo;
+		
+		MovementAction copy = null;
+		
+		try {
+			copy = (MovementAction) action.clone();
+		} catch (CloneNotSupportedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		return newInfo;
+		
+		return copy;
 	}
 
 	@Override

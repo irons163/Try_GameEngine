@@ -23,14 +23,14 @@ public class MovementActionItemVisitor implements IMovementActionVisitor{
 	
 	@Override
 	public void visitComposite(MovementAction movementAction) {
-		if(movementAction.getInfo()!=null){
-		}	
+//		if(movementAction.getInfo()!=null)
+//			movementDecorator.coreCalculationMovementActionInfo(movementAction);	
 	}
 
 	@Override
 	public void visitLeaf(MovementAction movementAction) {
 		if(movementAction.getInfo()!=null){
-			movementDecorator.coreCalculationMovementActionInfo(movementAction.getInfo());
+			movementDecorator.coreCalculationMovementActionInfo(movementAction);
 		}
 	}
 

@@ -16,9 +16,9 @@ public class PauseInEndingDecorator extends MovementDecorator {
 //		this.copyMovementActionList = action.copyMovementActionList;
 	}
 
-	protected MovementActionInfo coreCalculationMovementActionInfo(
-			MovementActionInfo info) {
-		return info;
+	protected MovementAction coreCalculationMovementActionInfo(
+			MovementAction action) {
+		return action;
 	}
 
 	@Override

@@ -38,13 +38,13 @@ public class RepeatDecorator extends MovementDecorator {
 
 	/**
 	 * coreCalculationMovementActionInfo for calculate.
-	 * @param info
+	 * @param action
 	 * 			info for calculate.
 	 * @return
 	 */
-	protected MovementActionInfo coreCalculationMovementActionInfo(
-			MovementActionInfo info) {
-		return info;
+	protected MovementAction coreCalculationMovementActionInfo(
+			MovementAction action) {
+		return action;
 	}
 
 	@Override

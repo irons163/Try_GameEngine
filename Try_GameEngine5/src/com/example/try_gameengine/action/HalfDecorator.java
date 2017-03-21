@@ -8,12 +8,13 @@ public class HalfDecorator extends MovementDecorator{
 		this.action = action;
 	}
 	
-	protected MovementActionInfo coreCalculationMovementActionInfo(MovementActionInfo info){
+	protected MovementAction coreCalculationMovementActionInfo(MovementAction action){
+		MovementActionInfo info = action.getInfo();
 		info.setTotal(info.getTotal());
 		info.setDelay(info.getDelay());
 		info.setDx(0.5f * info.getDx());
 		info.setDy(0.5f * info.getDy());
-		return info;
+		return action;
 	}
 	
 	@Override

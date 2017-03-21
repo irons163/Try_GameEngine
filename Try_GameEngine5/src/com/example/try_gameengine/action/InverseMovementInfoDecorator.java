@@ -11,15 +11,16 @@ public class InverseMovementInfoDecorator extends MovementDecorator{
 //		this.copyMovementActionList = action.copyMovementActionList;
 	}
 
-	protected MovementActionInfo coreCalculationMovementActionInfo(
-			MovementActionInfo info) {
+	protected MovementAction coreCalculationMovementActionInfo(
+			MovementAction action) {
+		MovementActionInfo info = action.getInfo();
 		info.setTotal(info.getTotal());
 		info.setDelay(info.getDelay());
 		info.setDx(-info.getDx());
 		info.setDy(-info.getDy());
 //		if(info.getRotationController()!=null)
 //			info.getRotationController().setRotation(-info.getRotationController().getRotation());
-		return info;
+		return action;
 	}
 
 	@Override
@@ -89,7 +90,7 @@ public class InverseMovementInfoDecorator extends MovementDecorator{
 			Log.e("count", ++i + "");
 			Log.e("info", info.getDx() + "");
 			this.getAction().setInfo(info);
-			coreCalculationMovementActionInfo(this.getAction().getInfo());
+			coreCalculationMovementActionInfo(this.getAction());
 		}
 
 //		for (MovementAction movementItem : this.getAction().movementItemList) {

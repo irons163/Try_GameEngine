@@ -20,13 +20,13 @@ public class EaseRateDecorator extends MovementDecorator {
 	}
 
 	/**
-	 * @param info
+	 * @param action
 	 * @return
 	 */
-	protected MovementActionInfo coreCalculationMovementActionInfo(
-			MovementActionInfo info) {
-		doinin(info);
-		return info;
+	protected MovementAction coreCalculationMovementActionInfo(
+			MovementAction action) {
+		doinin(action.getInfo());
+		return action;
 	}
 
 	@Override

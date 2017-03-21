@@ -17,12 +17,11 @@ import android.util.Log;
  * @author irons
  *
  */
-public abstract class MovementAction {
+public abstract class MovementAction implements Cloneable{
 	protected static ExecutorService executor = Executors.newFixedThreadPool(20);
-	
 	protected List<MovementAction> actions = new ArrayList<MovementAction>();
 	protected Thread thread;
-	protected TimerOnTickListener timerOnTickListener;
+	
 	protected String description = "Unknown Movement";
 //	List<MovementAction> copyMovementActionList = new ArrayList<MovementAction>();
 	List<MovementActionInfo> currentInfoList = new ArrayList<MovementActionInfo>();
@@ -35,6 +34,10 @@ public abstract class MovementAction {
 	public boolean isRepeatSpriteActionIfMovementActionRepeat = true;
 	IMovementActionMemento movementActionMemento=null;
 	boolean didInitTimer = false;
+	
+	protected TimerOnTickListener timerOnTickListener;
+	protected IActionListener actionListener = new DefaultActionListener();
+	public MovementAtionController controller;
 	
 	public MovementAction addMovementAction(MovementAction action) {
 		throw new UnsupportedOperationException();
@@ -213,8 +216,6 @@ public abstract class MovementAction {
 		cancelAction.getAction().pause();
 	}
 	
-	public MovementAtionController controller;
-	
 	/**
 	 * @param controller
 	 */
@@ -288,8 +289,6 @@ public abstract class MovementAction {
 	public void setActionListener(IActionListener actionListener){
 		this.actionListener = actionListener;
 	}
-	
-	protected IActionListener actionListener = new DefaultActionListener();
 	
 	/**
 	 * get action listener from movement action.
@@ -517,5 +516,11 @@ public abstract class MovementAction {
 				boolean isRepeatSpriteActionIfMovementActionRepeat) {
 			this.isRepeatSpriteActionIfMovementActionRepeat = isRepeatSpriteActionIfMovementActionRepeat;
 		}
+	}
+	
+	@Override
+	protected Object clone() throws CloneNotSupportedException {
+		// TODO Auto-generated method stub
+		return super.clone();
 	}
 }

@@ -11,13 +11,14 @@ public class DoubleDecorator extends MovementDecorator {
 //		this.copyMovementActionList = action.copyMovementActionList;
 	}
 
-	protected MovementActionInfo coreCalculationMovementActionInfo(
-			MovementActionInfo info) {
+	protected MovementAction coreCalculationMovementActionInfo(
+			MovementAction action) {
+		MovementActionInfo info = action.getInfo();
 		info.setTotal(info.getTotal());
 		info.setDelay(info.getDelay());
 		info.setDx(2 * info.getDx());
 		info.setDy(2 * info.getDy());
-		return info;
+		return action;
 	}
 
 	@Override
@@ -128,4 +129,19 @@ public class DoubleDecorator extends MovementDecorator {
 //			this.action = action;
 //		}			
 //	}
+	
+	@Override
+	protected DoubleDecorator clone() throws CloneNotSupportedException {
+		DoubleDecorator copy = new DoubleDecorator((MovementAction) this.action.clone());
+		copy.actionListener = this.actionListener;
+		copy.timerOnTickListener = this.timerOnTickListener;
+		copy.controller = this.controller;
+		copy.timerOnTickListener = this.timerOnTickListener;
+		for(MovementAction action : this.actions){
+			MovementAction subCopy = (MovementAction) action.clone();
+			copy.addMovementAction(subCopy);
+		}
+		copy.name = name;
+		return copy;
+	}
 }

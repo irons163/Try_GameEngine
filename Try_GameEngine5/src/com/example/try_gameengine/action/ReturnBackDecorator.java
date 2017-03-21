@@ -13,13 +13,14 @@ public class ReturnBackDecorator extends MovementDecorator{
 //		this.copyMovementActionList = action.copyMovementActionList;
 	}
 
-	protected MovementActionInfo coreCalculationMovementActionInfo(
-			MovementActionInfo info) {
+	protected MovementAction coreCalculationMovementActionInfo(
+			MovementAction action) {
+		MovementActionInfo info = action.getInfo();
 		info.setTotal(info.getTotal());
 		info.setDelay(info.getDelay());
 		info.setDx(-info.getDx());
 		info.setDy(-info.getDy());
-		return info;
+		return action;
 	}
 
 	@Override
@@ -86,7 +87,7 @@ public class ReturnBackDecorator extends MovementDecorator{
 		this.getAction().getCurrentInfoList();
 		for (MovementActionInfo info : this.getAction().currentInfoList) {
 			this.getAction().setInfo(info);
-			coreCalculationMovementActionInfo(this.getAction().getInfo());
+			coreCalculationMovementActionInfo(this.getAction());
 		}
 
 		inverseOrder(this);
