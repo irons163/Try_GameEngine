@@ -83,7 +83,7 @@ public class GravityCyclePathMovementInfoAppendDecorator extends
 
 		} else {
 			this.getAction().initTimer();
-			doIn();
+//			doIn(null);
 		}
 		return this;
 	}
@@ -117,8 +117,8 @@ public class GravityCyclePathMovementInfoAppendDecorator extends
 	}
 
 	@Override
-	protected void doIn() {
-		action.doIn();
+	protected List<MovementAction> doIn(MovementActionSet actionSet) {
+		List<MovementAction> actions = action.doIn(actionSet);
 //		copyMovementActionList.clear();
 		this.getAction().getCurrentInfoList();
 
@@ -129,6 +129,8 @@ public class GravityCyclePathMovementInfoAppendDecorator extends
 //			coreCalculationMovementActionInfo(this.getAction().getInfo());
 			
 		}
+		
+		return actions;
 		
 //		MovementActionObjectStructure objectStructure = new MovementActionObjectStructure();
 //		objectStructure.setRoot(this);

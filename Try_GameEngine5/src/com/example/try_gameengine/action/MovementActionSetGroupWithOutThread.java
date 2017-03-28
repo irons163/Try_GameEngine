@@ -12,7 +12,7 @@ import android.util.Log;
 
 //import com.rits.cloning.Cloner;
 
-public class MovementActionSetGroupWithOutThread extends MovementAction {
+public class MovementActionSetGroupWithOutThread extends MovementActionSet {
 	private boolean isActionFinish = true;
 	private MovementActionInfo info;
 	public boolean isStop = false;
@@ -197,7 +197,7 @@ public class MovementActionSetGroupWithOutThread extends MovementAction {
 	}
 	
 	@Override
-	void cancelAllMove(){
+	protected void cancelAllMove(){
 		if(this.getAction().actions.size()!=0){
 			for(MovementAction action : this.getAction().actions){
 				action.cancelMove();

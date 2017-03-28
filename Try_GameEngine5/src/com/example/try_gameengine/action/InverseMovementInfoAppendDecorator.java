@@ -57,7 +57,7 @@ public class InverseMovementInfoAppendDecorator extends MovementDecorator {
 
 		} else {
 			this.getAction().initTimer();
-			doIn();
+			doIn(null);
 		}
 		return this;
 	}

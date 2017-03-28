@@ -44,7 +44,7 @@ public class PauseInEndingDecorator extends MovementDecorator {
 			action.getAction().initTimer();
 		} else {
 			this.getAction().initTimer();
-			doIn();
+			doIn(null);
 		}
 		
 		setPauseInEnding();

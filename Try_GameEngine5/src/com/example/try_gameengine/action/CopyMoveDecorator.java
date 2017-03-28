@@ -1,14 +1,18 @@
 package com.example.try_gameengine.action;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import android.util.Log;
+import com.example.try_gameengine.action.visitor.IMovementActionVisitor;
+import com.example.try_gameengine.action.visitor.MovementActionObjectStructure;
 
 public class CopyMoveDecorator extends MovementDecorator {
 //	boolean doing = false;
+//	MovementActionSet actionSet;
 
 	public CopyMoveDecorator(MovementAction action) {
 		this.action = action;
+//		this.actionSet = actionSet;
 //		this.copyMovementActionList = action.copyMovementActionList;
 	}
 
@@ -26,6 +30,8 @@ public class CopyMoveDecorator extends MovementDecorator {
 //			copyMovementActionList.add(action);
 //			this.getAction().totalCopyMovementActionList.add(action);
 //		}
+		
+//		this.action.addMovementAction(newAction);
 		
 		return newAction;
 	}
@@ -55,7 +61,7 @@ public class CopyMoveDecorator extends MovementDecorator {
 
 		} else {
 			this.getAction().initTimer();
-			doIn();
+//			doIn(null);
 		}
 		return this;
 	}
@@ -86,6 +92,27 @@ public class CopyMoveDecorator extends MovementDecorator {
 	@Override
 	public List<MovementActionInfo> getMovementInfoList() {
 		return action.getMovementInfoList();
+	}
+	
+	@Override
+	protected List<MovementAction> doIn(MovementActionSet actionSet) {
+		List<MovementAction> actions = action.doIn(actionSet);
+		
+		List<MovementAction> newactions = new ArrayList<MovementAction>(actions); 
+		if(actionSet!=null){
+//			actionSet.addMovementAction(coreCalculationMovementActionInfo(action));
+			newactions.add(coreCalculationMovementActionInfo(action));
+		}
+		
+		for(MovementAction action : actions){
+			newactions.add(coreCalculationMovementActionInfo(action));
+		}
+//		for(MovementAction action : this.getAction().getActions()){
+//			coreCalculationMovementActionInfo(action);
+//		}
+		return newactions;
+		
+
 	}
 
 //	public IMovementActionMemento createMovementActionMemento(){
@@ -130,7 +157,7 @@ public class CopyMoveDecorator extends MovementDecorator {
 	
 	@Override
 	protected CopyMoveDecorator clone() throws CloneNotSupportedException {
-		CopyMoveDecorator copy = new CopyMoveDecorator((MovementAction) this.action.clone());
+		CopyMoveDecorator copy = new CopyMoveDecorator((MovementActionSet) this.action.clone());
 		copy.actionListener = this.actionListener;
 		copy.timerOnTickListener = this.timerOnTickListener;
 		copy.controller = this.controller;

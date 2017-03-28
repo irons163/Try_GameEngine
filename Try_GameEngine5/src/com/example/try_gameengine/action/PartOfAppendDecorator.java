@@ -56,7 +56,7 @@ public class PartOfAppendDecorator extends MovementDecorator {
 			action.getAction().initTimer();
 		} else {		
 			this.getAction().initTimer();
-			doIn();
+//			doIn(null);
 		}
 		return this;
 	}
@@ -99,10 +99,12 @@ public class PartOfAppendDecorator extends MovementDecorator {
 	}
 	
 	@Override
-	protected void doIn(){		
-		action.doIn();
+	protected List<MovementAction> doIn(MovementActionSet actionSet){		
+		List<MovementAction> actions = action.doIn(actionSet);
 		
 		this.getAction().currentInfoList =  this.getCurrentInfoList();
 		this.isCancelFocusAppendPart = true;
+		
+		return actions;
 	}
 }

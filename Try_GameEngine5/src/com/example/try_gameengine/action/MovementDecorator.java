@@ -1,6 +1,8 @@
 package com.example.try_gameengine.action;
 
 //import com.example.try_gameengine.action.DoubleDecorator.DoubleDecoratorMementoImpl;
+import java.util.List;
+
 import com.example.try_gameengine.action.visitor.IMovementActionVisitor;
 import com.example.try_gameengine.action.visitor.MovementActionObjectStructure;
 
@@ -42,8 +44,8 @@ public abstract class MovementDecorator extends MovementAction{
 	}
 	
 	@Override
-	protected void doIn() {
-		action.doIn();
+	protected List<MovementAction> doIn(MovementActionSet actionSet) {
+		List<MovementAction> actions = action.doIn(actionSet);
 //		copyMovementActionList.clear();
 
 //		for (MovementActionInfo info : this.getAction().currentInfoList) {
@@ -51,10 +53,21 @@ public abstract class MovementDecorator extends MovementAction{
 //			coreCalculationMovementActionInfo(this.getAction().getInfo());
 //		}
 		
+
+		
 		MovementActionObjectStructure objectStructure = new MovementActionObjectStructure();
 		objectStructure.setRoot(this);
 		IMovementActionVisitor movementActionVisitor = new MovementActionItemVisitor(this);
 		objectStructure.handleRequest(movementActionVisitor);
+		
+		for(MovementAction action : actions){
+			objectStructure = new MovementActionObjectStructure();
+			objectStructure.setRoot(action);
+			movementActionVisitor = new MovementActionItemVisitor(this);
+			objectStructure.handleRequest(movementActionVisitor);
+		}
+		
+		return actions;
 		
 //		coreCalculationMovementActionInfo(this.getAction().getInfo());
 

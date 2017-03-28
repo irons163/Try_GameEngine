@@ -48,7 +48,7 @@ public class InverseMovementInfoDecorator extends MovementDecorator{
 
 		} else {	
 			this.getAction().initTimer();
-			doIn();
+//			doIn(null);
 		}
 		return this;
 	}
@@ -81,20 +81,22 @@ public class InverseMovementInfoDecorator extends MovementDecorator{
 		return action.getMovementInfoList();
 	}
 	
-	@Override
-	protected void doIn(){
-		action.doIn();
-		this.getAction().getCurrentInfoList();
-		int i = 0;
-		for (MovementActionInfo info : this.getAction().currentInfoList) {
-			Log.e("count", ++i + "");
-			Log.e("info", info.getDx() + "");
-			this.getAction().setInfo(info);
-			coreCalculationMovementActionInfo(this.getAction());
-		}
-
-//		for (MovementAction movementItem : this.getAction().movementItemList) {
-//			movementItem.initTimer();
+//	@Override
+//	protected List<MovementAction> doIn(MovementActionSet actionSet){
+//		List<MovementAction> actions = action.doIn(actionSet);
+//		this.getAction().getCurrentInfoList();
+//		int i = 0;
+//		for (MovementActionInfo info : this.getAction().currentInfoList) {
+//			Log.e("count", ++i + "");
+//			Log.e("info", info.getDx() + "");
+//			this.getAction().setInfo(info);
+//			coreCalculationMovementActionInfo(this.getAction());
 //		}
-	}
+//		
+//		return actions;
+//
+////		for (MovementAction movementItem : this.getAction().movementItemList) {
+////			movementItem.initTimer();
+////		}
+//	}
 }

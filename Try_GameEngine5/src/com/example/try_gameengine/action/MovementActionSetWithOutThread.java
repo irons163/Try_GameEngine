@@ -7,7 +7,7 @@ import com.example.try_gameengine.action.visitor.IMovementActionVisitor;
 
 //import com.rits.cloning.Cloner;
 
-public class MovementActionSetWithOutThread extends MovementAction {
+public class MovementActionSetWithOutThread extends MovementActionSet {
 	private boolean isActionFinish = true;
 	private MovementActionInfo info;
 	public boolean isStop = false;
@@ -189,6 +189,7 @@ public class MovementActionSetWithOutThread extends MovementAction {
 	}
 	
 	@Override
+	protected
 	void cancelAllMove(){
 		if(this.getAction().actions.size()!=0){
 			for(MovementAction action : this.getAction().actions){

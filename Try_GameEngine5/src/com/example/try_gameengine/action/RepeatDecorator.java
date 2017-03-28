@@ -140,7 +140,7 @@ public class RepeatDecorator extends MovementDecorator {
 			action.getAction().initTimer();
 		} else {
 			this.action.initTimer();
-			doIn();
+			doIn(null);
 		}
 		
 //		for(MovementAction movementAction : getCurrentActionList()){
@@ -198,7 +198,7 @@ public class RepeatDecorator extends MovementDecorator {
 	}
 
 	@Override
-	protected void doIn() {
+	protected List<MovementAction> doIn(MovementActionSet actionSet) {
 //		for (MovementActionInfo info : this.getAction().currentInfoList) {
 //			this.getAction().setInfo(info);
 //			coreCalculationMovementActionInfo(this.getAction().getInfo());
@@ -208,7 +208,7 @@ public class RepeatDecorator extends MovementDecorator {
 //			movementItem.initTimer();
 //		}
 		
-		
+		return super.doIn(actionSet);
 	}
 	
 	@Override

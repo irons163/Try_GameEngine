@@ -80,7 +80,7 @@ public abstract class MovementAction implements Cloneable{
 	}
 	
 	public MovementAction initMovementAction(){
-		doIn();
+		doIn(null);
 		return initTimer();
 	}
 	
@@ -157,12 +157,22 @@ public abstract class MovementAction implements Cloneable{
 	}
 
 	/**
+	 * @param actionSet TODO
+	 * @return TODO
 	 * 
 	 */
-	protected void doIn(){
+	protected List<MovementAction> doIn(MovementActionSet actionSet){
+		List<MovementAction> actions = new ArrayList<MovementAction>();
+		
 		for (MovementAction action : this.getAction().getActions()){
-			action.doIn();
+//			actions.addAll(action.doIn(actionSet));
+			actions.add(action);
+			actions.addAll(action.doIn(actionSet));
 		}
+		
+		this.actions = actions;
+		
+		return new ArrayList<MovementAction>();
 	}
 
 	/**

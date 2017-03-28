@@ -14,7 +14,7 @@ import com.example.try_gameengine.action.visitor.IMovementActionVisitor;
 import android.R.bool;
 import android.util.Log;
 
-public class MovementActionSetWithThreadPool extends MovementAction {
+public class MovementActionSetWithThreadPool extends MovementActionSet {
 	private boolean isActionFinish = false;
 	private MovementActionInfo info;
 	public boolean isStop = false;
@@ -233,7 +233,7 @@ public class MovementActionSetWithThreadPool extends MovementAction {
 	}
 	
 	@Override
-	void cancelAllMove() {
+	protected void cancelAllMove() {
 		// TODO Auto-generated method stub
 		isStop = true;
 		isLoop = false;

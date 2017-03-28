@@ -52,7 +52,7 @@ public class EaseRateDecorator extends MovementDecorator {
 			action.getAction().initTimer();
 		} else {
 			this.getAction().initTimer();
-			doIn();
+//			doIn(null);
 		}
 		
 		return this;

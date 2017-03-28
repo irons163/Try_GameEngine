@@ -6,7 +6,7 @@ import com.example.try_gameengine.action.DoubleDecorator;
 import com.example.try_gameengine.action.MovementAction;
 import com.example.try_gameengine.action.MovementActionFactory;
 import com.example.try_gameengine.action.MovementActionItemCountDownTimer;
-import com.example.try_gameengine.action.MovementActionSet;
+import com.example.try_gameengine.action.MovementActionSetWithThread;
 
 public class RLMovementActionFactory extends MovementActionFactory{
 
@@ -16,9 +16,9 @@ public class RLMovementActionFactory extends MovementActionFactory{
 		MovementAction newAction;
 		
 		if(action==null){
-			newAction = new DoubleDecorator(new MovementActionSet());
+			newAction = new DoubleDecorator(new MovementActionSetWithThread());
 		}else
-			newAction = new DoubleDecorator(new MovementActionSet());
+			newAction = new DoubleDecorator(new MovementActionSetWithThread());
 			newAction.addMovementAction(new DoubleDecorator(new MovementActionItemCountDownTimer(1000, 200, 10, 0, "R")) );
 			newAction.addMovementAction(new DoubleDecorator(new MovementActionItemCountDownTimer(1000, 200, -10, 0, "L")) );
 		

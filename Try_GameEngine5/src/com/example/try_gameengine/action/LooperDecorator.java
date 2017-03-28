@@ -49,7 +49,7 @@ public class LooperDecorator extends MovementDecorator {
 			action.getAction().initTimer();
 		} else {
 			this.getAction().initTimer();
-			doIn();
+			doIn(null);
 		}
 
 		this.getAction().isLoop = true;

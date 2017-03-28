@@ -48,7 +48,7 @@ public class ReturnBackDecorator extends MovementDecorator{
 
 		} else {	
 			this.getAction().initTimer();
-			doIn();
+			doIn(null);
 		}
 		return this;
 	}
@@ -82,8 +82,8 @@ public class ReturnBackDecorator extends MovementDecorator{
 	}
 	
 	@Override
-	protected void doIn(){
-		action.doIn();
+	protected List<MovementAction> doIn(MovementActionSet actionSet){
+		List<MovementAction> actions = action.doIn(actionSet);
 		this.getAction().getCurrentInfoList();
 		for (MovementActionInfo info : this.getAction().currentInfoList) {
 			this.getAction().setInfo(info);
@@ -91,6 +91,8 @@ public class ReturnBackDecorator extends MovementDecorator{
 		}
 
 		inverseOrder(this);
+		
+		return actions;
 		
 //		for (MovementAction movementItem : this.getAction().movementItemList) {
 //			movementItem.initTimer();

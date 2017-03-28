@@ -40,7 +40,7 @@ public class InverseMoveOrderDecorator extends MovementDecorator {
 			action.getAction().initTimer();
 		} else {
 			this.getAction().initTimer();
-			doIn();
+//			doIn(null);
 		}
 		return this;
 	}
@@ -74,19 +74,21 @@ public class InverseMoveOrderDecorator extends MovementDecorator {
 	}
 
 	@Override
-	protected void doIn() {
-		action.doIn();
-		this.getAction().getCurrentInfoList();
-		int i = 0;
-		for (MovementActionInfo info : this.getAction().currentInfoList) {
-			Log.e("count", ++i + "");
-			Log.e("info", info.getDx() + "");
-			this.getAction().setInfo(info);
-//			coreCalculationMovementActionInfo(this.getAction().getInfo());
-			coreCalculationMovementActionInfo(this.getAction());
-		}
+	protected List<MovementAction> doIn(MovementActionSet actionSet) {
+		List<MovementAction> actions = super.doIn(actionSet);
+//		this.getAction().getCurrentInfoList();
+//		int i = 0;
+//		for (MovementActionInfo info : this.getAction().currentInfoList) {
+//			Log.e("count", ++i + "");
+//			Log.e("info", info.getDx() + "");
+//			this.getAction().setInfo(info);
+////			coreCalculationMovementActionInfo(this.getAction().getInfo());
+//			coreCalculationMovementActionInfo(this.getAction());
+//		}
 
 		inverseOrder(this);
+		
+		return actions;
 
 //		for (MovementAction movementItem : this.getAction().movementItemList) {
 //			movementItem.initTimer();
