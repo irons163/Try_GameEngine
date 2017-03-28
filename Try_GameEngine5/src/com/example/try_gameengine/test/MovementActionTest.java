@@ -22,8 +22,6 @@ import com.example.try_gameengine.action.MovementActionSetWithThread;
 import com.example.try_gameengine.action.MovementActionSetWithThreadPool;
 import com.example.try_gameengine.action.MovementAtionController;
 import com.example.try_gameengine.action.MovementInfoFactory;
-import com.example.try_gameengine.action.PartOfAppendDecorator;
-import com.example.try_gameengine.action.PartOfOrigizalDecorator;
 import com.example.try_gameengine.action.SpecialMovementActionFactory;
 import com.example.try_gameengine.framework.Config;
 import com.example.try_gameengine.framework.Sprite;
