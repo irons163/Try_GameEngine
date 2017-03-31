@@ -11,8 +11,8 @@ import com.example.try_gameengine.framework.BitmapUtil;
 public class CircleController implements IRotationController {
 	float rotation;
 	float offsetRotationPerUpdate;
-	float origineDx;
-	float origineDy;
+//	float origineDx;
+//	float origineDy;
 	boolean firstExecute = true;
 	float initspeedX;
 	private float x, y, mx, my;
@@ -83,8 +83,8 @@ public class CircleController implements IRotationController {
 	@Override
 	public void reset(MovementActionInfo info) {
 		// TODO Auto-generated method stub
-		info.setDx(origineDx);
-		info.setDy(origineDy);
+//		info.setDx(origineDx);
+//		info.setDy(origineDy);
 		firstExecute = true;
 	}
 
@@ -196,8 +196,8 @@ public class CircleController implements IRotationController {
 	@Override
 	public void start(MovementActionInfo info) {
 		offsetRotationPerUpdate = (float) (rotation*info.data.getValueOfFactorByUpdate());
-		origineDx = info.getDx();
-		origineDy = info.getDy();
+//		origineDx = info.getDx();
+//		origineDy = info.getDy();
 		
 		if(mathUtil==null){
 			this.mx = info.getSprite().getCenterX();

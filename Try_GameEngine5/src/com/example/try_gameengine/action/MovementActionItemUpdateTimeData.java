@@ -238,7 +238,7 @@ public class MovementActionItemUpdateTimeData implements MovementActionItemTrigg
 
 		if(updateType == UpdateType.UpdateEverytime){
 			Log.e("update", this.getValueOfActivedCounter() + " " + this.getShouldActiveTotalValue());
-			movementActionItemUpdateTimeDataDelegate.update((float) ((double)(this.getValueOfActivedCounter())/this.getShouldActiveTotalValue()));
+			movementActionItemUpdateTimeDataDelegate.update(Math.min(1, (float) ((double)(this.getValueOfActivedCounter())/this.getShouldActiveTotalValue())));
 			this.setActivedValueForLatestUpdated(this.getValueOfActivedCounter());
 		}else {
 			do {
