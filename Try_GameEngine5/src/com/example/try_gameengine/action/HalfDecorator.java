@@ -8,12 +8,13 @@ public class HalfDecorator extends MovementDecorator{
 		this.action = action;
 	}
 	
-	private MovementActionInfo coreCalculationMovementActionInfo(MovementActionInfo info){
+	protected MovementAction coreCalculationMovementActionInfo(MovementAction action){
+		MovementActionInfo info = action.getInfo();
 		info.setTotal(info.getTotal());
 		info.setDelay(info.getDelay());
 		info.setDx(0.5f * info.getDx());
 		info.setDy(0.5f * info.getDy());
-		return info;
+		return action;
 	}
 	
 	@Override
@@ -53,11 +54,6 @@ public class HalfDecorator extends MovementDecorator{
 	}
 
 	@Override
-	public MovementActionInfo getInfo() {
-		return coreCalculationMovementActionInfo(action.getInfo());
-	}
-	
-	@Override
 	public List<MovementAction> getCurrentActionList() {
 		// TODO Auto-generated method stub
 		return action.getCurrentActionList();
@@ -67,12 +63,6 @@ public class HalfDecorator extends MovementDecorator{
 	public List<MovementActionInfo> getCurrentInfoList() {
 		// TODO Auto-generated method stub
 		return action.getCurrentInfoList();
-	}
-	
-	
-	@Override
-	public List<MovementAction> getMovementItemList() {
-		return action.getMovementItemList();
 	}
 	
 	@Override

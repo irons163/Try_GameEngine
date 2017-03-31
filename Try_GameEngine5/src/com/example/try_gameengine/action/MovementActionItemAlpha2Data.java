@@ -151,4 +151,10 @@ public class MovementActionItemAlpha2Data implements MovementActionItemTrigger{
 		// TODO Auto-generated method stub
 		this.isEnableSetSpriteAction = isEnableSetSpriteAction;
 	}
+
+	@Override
+	public double getValueOfFactorByUpdate() {
+		// TODO Auto-generated method stub
+		return (double)getShouldActiveIntervalValue()/getShouldActiveTotalValue();
+	}
 }

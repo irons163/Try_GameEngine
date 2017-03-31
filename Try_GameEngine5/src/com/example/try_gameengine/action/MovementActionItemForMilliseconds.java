@@ -16,8 +16,6 @@ import android.util.Log;
  * 
  */
 public class MovementActionItemForMilliseconds extends MovementActionItem {
-	IRotationController rotationController;
-	IGravityController gravityController;
 	long millisTotal;
 	long millisDelay;
 	float dx;
@@ -87,45 +85,6 @@ public class MovementActionItemForMilliseconds extends MovementActionItem {
 		return this;
 	}
 
-	/**
-	 * If rotationController is not null do rotation execute.
-	 */
-	private void doRotation() {
-		if (rotationController != null) {
-			rotationController.execute(info);
-			dx = info.getDx();
-			dy = info.getDy();
-		}
-	}
-
-	/**
-	 * If gravityController is not null do gravity execute.
-	 */
-	private void doGravity() {
-		if (gravityController != null) {
-			gravityController.execute(info);
-			dx = info.getDx();
-			dy = info.getDy();
-		}
-	}
-
-	/**
-	 * reset action.
-	 */
-	private void doReset() {
-		if (gravityController != null) {
-			gravityController.reset(info);
-		}
-		if (rotationController != null)
-			rotationController.reset(info);
-
-		millisTotal = info.getTotal();
-		millisDelay = info.getDelay();
-		dx = info.getDx();
-		dy = info.getDy();
-		initTimer();
-	}
-
 	@Override
 	public MovementAction getAction() {
 		return this;
@@ -178,5 +137,20 @@ public class MovementActionItemForMilliseconds extends MovementActionItem {
 	@Override
 	public boolean isFinish() {
 		return isActionFinish;
+	}
+	
+	@Override
+	protected MovementActionItemForMilliseconds clone() throws CloneNotSupportedException {
+		MovementActionItemForMilliseconds copy = new MovementActionItemForMilliseconds(this.info.clone());
+		copy.actionListener = this.actionListener;
+		copy.timerOnTickListener = this.timerOnTickListener;
+		copy.controller = this.controller;
+		copy.timerOnTickListener = this.timerOnTickListener;
+		for(MovementAction action : this.actions){
+			MovementAction subCopy = (MovementAction) action.clone();
+			copy.addMovementAction(subCopy);
+		}
+		copy.name = name;
+		return copy;
 	}
 }

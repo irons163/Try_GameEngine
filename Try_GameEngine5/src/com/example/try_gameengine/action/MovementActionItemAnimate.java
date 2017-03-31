@@ -140,7 +140,7 @@ public class MovementActionItemAnimate extends MovementAction{
 		}
 		this.frameTriggerTimes = frameTriggerTimes;
 		this.scale = scale;
-		movementItemList.add(this);
+//		movementItemList.add(this);
 		info = new MovementActionInfo(millisTotal, millisDelay, 0, 0);
 		info.setSpriteActionName(description);
 	}
@@ -247,7 +247,7 @@ public class MovementActionItemAnimate extends MovementAction{
 		this.frameTriggerTimes = frameTriggerTimes;
 		
 		this.scale = scale;
-		movementItemList.add(this);
+//		movementItemList.add(this);
 		info = new MovementActionInfo(millisTotal, millisDelay, 0, 0);
 		info.setSpriteActionName(description);
 	}

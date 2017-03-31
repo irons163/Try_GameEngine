@@ -5,20 +5,20 @@ import java.util.List;
 import android.util.Log;
 
 public class DoubleDecorator extends MovementDecorator {
-	private MovementAction action;
 
 	public DoubleDecorator(MovementAction action) {
 		this.action = action;
-		this.copyMovementActionList = action.copyMovementActionList;
+//		this.copyMovementActionList = action.copyMovementActionList;
 	}
 
-	private MovementActionInfo coreCalculationMovementActionInfo(
-			MovementActionInfo info) {
+	protected MovementAction coreCalculationMovementActionInfo(
+			MovementAction action) {
+		MovementActionInfo info = action.getInfo();
 		info.setTotal(info.getTotal());
 		info.setDelay(info.getDelay());
 		info.setDx(2 * info.getDx());
 		info.setDy(2 * info.getDy());
-		return info;
+		return action;
 	}
 
 	@Override
@@ -37,11 +37,6 @@ public class DoubleDecorator extends MovementDecorator {
 	}
 
 	@Override
-	public MovementAction initMovementAction() {
-		return initTimer();
-	}
-
-	@Override
 	protected MovementAction initTimer(){ super.initTimer();
 
 		if (this.getAction().getActions().size() == 0) {
@@ -49,7 +44,7 @@ public class DoubleDecorator extends MovementDecorator {
 			action.getAction().initTimer();
 		} else { //this.getAction() is a MovementAction set or group or decorator. 
 			this.getAction().initTimer();
-			doIn();
+//			doIn();
 		}
 		return this;
 	}
@@ -66,11 +61,6 @@ public class DoubleDecorator extends MovementDecorator {
 	}
 
 	@Override
-	public MovementActionInfo getInfo() {
-		return coreCalculationMovementActionInfo(action.getInfo());
-	}
-
-	@Override
 	public List<MovementAction> getCurrentActionList() {
 		// TODO Auto-generated method stub
 		return action.getCurrentActionList();
@@ -82,30 +72,10 @@ public class DoubleDecorator extends MovementDecorator {
 		return action.getCurrentInfoList();
 	}
 
-	@Override
-	public List<MovementAction> getMovementItemList() {
-		return action.getMovementItemList();
-	}
 
 	@Override
 	public List<MovementActionInfo> getMovementInfoList() {
 		return action.getMovementInfoList();
-	}
-
-	@Override
-	public void doIn() {
-		action.doIn();
-		int i = 0;
-		for (MovementActionInfo info : this.getAction().currentInfoList) {
-			Log.e("count", ++i + "");
-			Log.e("info", info.getDx() + "");
-			this.getAction().setInfo(info); //set info to composite like a temp info.
-			coreCalculationMovementActionInfo(this.getAction().getInfo());
-		}
-
-		for (MovementAction movementItem : this.getAction().movementItemList) {
-			movementItem.initTimer();
-		}
 	}
 
 	@Override
@@ -159,4 +129,19 @@ public class DoubleDecorator extends MovementDecorator {
 //			this.action = action;
 //		}			
 //	}
+	
+	@Override
+	protected DoubleDecorator clone() throws CloneNotSupportedException {
+		DoubleDecorator copy = new DoubleDecorator((MovementAction) this.action.clone());
+		copy.actionListener = this.actionListener;
+		copy.timerOnTickListener = this.timerOnTickListener;
+		copy.controller = this.controller;
+		copy.timerOnTickListener = this.timerOnTickListener;
+		for(MovementAction action : this.actions){
+			MovementAction subCopy = (MovementAction) action.clone();
+			copy.addMovementAction(subCopy);
+		}
+		copy.name = name;
+		return copy;
+	}
 }

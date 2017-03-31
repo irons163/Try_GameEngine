@@ -34,7 +34,7 @@ public class MovementActionItemUpdateTime extends MovementActionItemForMilliseco
 		if(info.getDescription()!=null)
 			this.description = info.getDescription() + ",";
 		this.info = info;
-		movementItemList.add(this);
+//		movementItemList.add(this);
 	}
 	
 	@Override
@@ -50,8 +50,6 @@ public class MovementActionItemUpdateTime extends MovementActionItemForMilliseco
 			@Override
 			public void update() {
 				// TODO Auto-generated method stub
-				doRotation();
-				doGravity();
 				if (timerOnTickListener != null)
 					timerOnTickListener.onTick(dx, dy);
 			}
@@ -61,8 +59,6 @@ public class MovementActionItemUpdateTime extends MovementActionItemForMilliseco
 				// TODO Auto-generated method stub
 				float newDx = (float) (dx*t);
 				float newDy = (float) (dy*t);
-				doRotation();
-				doGravity();
 				if (timerOnTickListener != null)
 					timerOnTickListener.onTick(newDx, newDy);
 			}
@@ -193,36 +189,11 @@ public class MovementActionItemUpdateTime extends MovementActionItemForMilliseco
 		millisDelay = info.getDelay();
 		dx = info.getDx();
 		dy = info.getDy();
-		rotationController = info.getRotationController();
-		gravityController = info.getGravityController();
 		
 		return this;
 	}
 	
-	private void doRotation(){
-		if(rotationController!=null){
-			rotationController.execute(info);
-			dx = info.getDx();
-			dy = info.getDy();
-		}
-	}
-	
-	private void doGravity(){
-		if(gravityController!=null){
-			gravityController.execute(info);
-			dx = info.getDx();
-			dy = info.getDy();
-		}
-	}
-	
 	private void doReset(){
-		if(gravityController!=null){
-			gravityController.reset(info);
-		}
-		if(rotationController!=null)
-			rotationController.reset(info);
-
-
 		millisTotal = info.getTotal();
 		millisDelay = info.getDelay();
 		dx = info.getDx();

@@ -3,59 +3,19 @@ package com.example.try_gameengine.action;
 import com.example.try_gameengine.framework.Sprite;
 
 public class MovementActionFrameInfo extends MovementActionInfo{
-	private long total=1;
-	private long delay;
-	private float dx, dy;
-	private String description;
-	private IRotationController rotationController;
-	private IGravityController gravityController;
-	private boolean enableGravity;
 	private long[] frameTimes;
-	private Sprite sprite;
-	private String spriteActionName;
 	
 	public MovementActionFrameInfo(long[] frameTimes, float dx, float dy){
 		this(frameTimes, dx, dy, null);
 	}
 	
 	public MovementActionFrameInfo(long[] frameTimes, float dx, float dy, String description){
-		this(frameTimes, dx, dy, description, null);
+		this(frameTimes, dx, dy, description, null, null);
 	}
 	
-	public MovementActionFrameInfo(long[] frameTimes, float dx, float dy, String description, IRotationController rotationController){
-		this(frameTimes, dx, dy, description, rotationController, false);
-	}
-	
-	public MovementActionFrameInfo(long[] frameTimes, float dx, float dy, String description, boolean enableGravity){
-		this(frameTimes, dx, dy, description, null, enableGravity);
-	}
-	
-	public MovementActionFrameInfo(long[] frameTimes, float dx, float dy, String description, IRotationController rotationController, boolean enableGravity){
-		super(0, 0, dx, dy);
-		
+	public MovementActionFrameInfo(long[] frameTimes, float dx, float dy, String description, Sprite sprite, String spriteActionName){
+		super(0, 0, dx, dy, description, sprite, spriteActionName);
 		this.frameTimes = frameTimes;
-		this.dx = dx;
-		this.dy = dy;
-		this.description = description;
-		this.rotationController = rotationController;
-		this.enableGravity = enableGravity;
-		if(enableGravity)
-			this.gravityController = new GravityController();
-	}
-	
-	public MovementActionFrameInfo(long[] frameTimes, float dx, float dy, String description, IRotationController rotationController, boolean enableGravity, Sprite sprite, String spriteActionName){
-		super(0, 0, dx, dy, description, rotationController, enableGravity, sprite, spriteActionName);
-		
-		this.frameTimes = frameTimes;
-		this.dx = dx;
-		this.dy = dy;
-		this.description = description;
-		this.rotationController = rotationController;
-		this.enableGravity = enableGravity;
-		if(enableGravity)
-			this.gravityController = new GravityController();
-		this.sprite = sprite;
-		this.spriteActionName = spriteActionName;
 	}
 	
 	public long getTotal() {
@@ -88,30 +48,6 @@ public class MovementActionFrameInfo extends MovementActionInfo{
 	public void setDescription(String description) {
 		this.description = description;
 	}	
-	public IRotationController getRotationController() {
-		return rotationController;
-	}
-	public void setRotationController(IRotationController rotationController) {
-		this.rotationController = rotationController;
-	}
-	public IGravityController getGravityController() {
-		return gravityController;
-	}
-
-	public boolean isEnableGravity(){
-		return enableGravity;
-	}
-	public void isEnableGravity(boolean enableGravity){
-		if(enableGravity){
-			if(!this.enableGravity){
-				this.enableGravity = enableGravity;
-				gravityController = new GravityController();
-			}
-		}else{
-			this.enableGravity = enableGravity;
-			gravityController = null;
-		}
-	}
 
 	@Override
 	public boolean equals(Object obj) {  

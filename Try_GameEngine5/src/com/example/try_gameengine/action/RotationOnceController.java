@@ -10,6 +10,13 @@ public class RotationOnceController implements IRotationController{
 		this.rotation = rotation;
 	}
 	
+
+	@Override
+	public void execute(MovementActionInfo info, float t) {
+		// TODO Auto-generated method stub
+		
+	}
+	
 	@Override
 	public void execute(MovementActionInfo info) {
 		// TODO Auto-generated method stub
@@ -19,7 +26,7 @@ public class RotationOnceController implements IRotationController{
 			
 			MathUtil mathUtil = new MathUtil(origineDx, origineDy);
 			float totalSpeed = mathUtil.genTotalSpeed();
-			mathUtil.setINITSPEEDX(totalSpeed);
+			mathUtil.setInitSpeed(totalSpeed);
 			mathUtil.genAngle();
 			mathUtil.genSpeedByRotate(rotation);
 			
@@ -55,6 +62,62 @@ public class RotationOnceController implements IRotationController{
 	public IRotationController copyNewRotationController() {
 		// TODO Auto-generated method stub
 		return new RotationOnceController(rotation);
+	}
+
+
+	@Override
+	public MathUtil getMathUtil() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public void setMathUtil(MathUtil mathUtil) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void isInverseAngel() {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void isCyclePath() {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void isInversePath() {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void isWavePath() {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void isSlopeWavePath() {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void start(MovementActionInfo info) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

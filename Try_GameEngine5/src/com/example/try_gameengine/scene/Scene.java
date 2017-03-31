@@ -1,18 +1,15 @@
 package com.example.try_gameengine.scene;
 
-
 import java.util.Iterator;
-
-import android.app.Activity;
 import android.content.Context;
-
 import com.example.try_gameengine.Camera.Camera;
+import com.example.try_gameengine.action.Time;
 import com.example.try_gameengine.framework.ALayer;
 import com.example.try_gameengine.framework.Data;
 import com.example.try_gameengine.framework.IGameController;
 import com.example.try_gameengine.framework.IGameModel;
-import com.example.try_gameengine.framework.Layer;
 import com.example.try_gameengine.framework.LayerManager;
+import com.example.try_gameengine.framework.ProcessBlock;
 import com.example.try_gameengine.framework.Sprite;
 import com.example.try_gameengine.remotecontroller.IRemoteController;
 import com.example.try_gameengine.remotecontroller.RemoteController;
@@ -41,6 +38,10 @@ public abstract class Scene extends Sprite{
 	
 	protected int sceneLayerLevel;
 	
+//	public Time getTime(){
+//		return gameModel.getTime();
+//	}
+	
 	public Scene(Context context, String id){
 		this(context, id, -1);
 	}
@@ -60,6 +61,9 @@ public abstract class Scene extends Sprite{
 		
 		initGameModel();
 		initGameController();
+		
+//		if(sceneLayerLevel>=0)
+//			gameModel.setTime(new Time);
 	}
 	
 	public String getId(){
@@ -158,6 +162,10 @@ public abstract class Scene extends Sprite{
 	
 	public void setCamera(Camera camera){
 		gameModel.setCamera(camera);
+	}
+	
+	public void addPreProcessBlock(ProcessBlock processBlock){
+		gameModel.addPreProcessBlock(processBlock);
 	}
 	
 //	@Override

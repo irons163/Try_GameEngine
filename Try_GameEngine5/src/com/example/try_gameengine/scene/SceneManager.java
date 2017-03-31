@@ -7,9 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import android.app.Activity;
 import android.content.Context;
-
 import com.example.try_gameengine.framework.LayerManager;
 
 public class SceneManager {
@@ -25,7 +23,6 @@ public class SceneManager {
 		private int sceneLayerLevel = -1;
 		private int mode = -1;
 		private Object obj;
-		
 		
 		public Context getContext() {
 			return context;
@@ -51,6 +48,18 @@ public class SceneManager {
 		public void setMode(int mode) {
 			this.mode = mode;
 		}	
+	}
+	
+	private static class SceneManagerHolder {
+		public static SceneManager SceneManager = new SceneManager();
+	}
+
+	public static SceneManager getInstance() {
+		return SceneManagerHolder.SceneManager;
+	}
+	
+	private SceneManager() {
+		
 	}
 	
 	@Deprecated
@@ -115,6 +124,19 @@ public class SceneManager {
 			Scene scene = scenes.get(i);
 			if(scene.getId()!=null && scene.getId().equals(id)){
 				targetScene = scene;
+			}
+		}
+
+		return targetScene;
+	}
+	
+	public Scene getSceneAt(int index){
+		Scene targetScene = null;
+		for(int i =0; i<scenes.size(); i++){
+			Scene scene = scenes.get(i);
+			if(scene.getLayerLevel() == index){
+				targetScene = scene;
+				break;
 			}
 		}
 

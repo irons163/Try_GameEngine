@@ -86,7 +86,7 @@ public class MovementActionItemRotation extends MovementAction{
 		this.millisDelay = triggerInterval;
 		this.description = description + ",";
 
-		movementItemList.add(this);
+//		movementItemList.add(this);
 		info = new MovementActionInfo(millisTotal, millisDelay, 0, 0);
 	}
 	

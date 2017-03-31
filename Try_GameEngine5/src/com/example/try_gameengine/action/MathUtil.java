@@ -7,7 +7,7 @@ public class MathUtil {
 	private float fAngle;
 	private float speedY = -15;
 	private float speedX = -15;
-	float BALL_INIT_SPEEDX = 50;
+	private float initSpeed = 50;
 	
 	public MathUtil() {
 
@@ -18,8 +18,8 @@ public class MathUtil {
 		this.speedY = speedY;
 	}
 	
-	public void setINITSPEEDX(float initspeedX){
-		BALL_INIT_SPEEDX = initspeedX;
+	public void setInitSpeed(float initspeed){
+		initSpeed = initspeed;
 	}
 	
 	public float genTotalSpeed(){
@@ -81,19 +81,19 @@ public class MathUtil {
 		fAngle = 90;
 	}
 
-	public void genSpeed() {
+	public void genSpeedXY() { // speedX negative = left, speedY negative = up.
 		this.speedX = (float) Math.cos(Math.toRadians(this.fAngle))
-				* BALL_INIT_SPEEDX;
+				* initSpeed;
 		this.speedY = (float) Math.sin(Math.toRadians(this.fAngle))
-				* BALL_INIT_SPEEDX * (-1);
+				* initSpeed * (-1);
 	}
 	
 	public void genSpeedByRotate(float rotation) {
 		this.fAngle += rotation;
 		this.speedX = (float) Math.cos(Math.toRadians(this.fAngle))
-				* BALL_INIT_SPEEDX;
+				* initSpeed;
 		this.speedY = (float) Math.sin(Math.toRadians(this.fAngle))
-				* BALL_INIT_SPEEDX * (-1) ;
+				* initSpeed * (-1) ;
 	}
 	
 	public float getSpeedX() {
@@ -105,16 +105,16 @@ public class MathUtil {
 	}
 
 	public float getSpeedX(float fAngle) {
-		return (float) Math.cos(Math.toRadians(fAngle)) * BALL_INIT_SPEEDX;
+		return (float) Math.cos(Math.toRadians(fAngle)) * initSpeed;
 	}
 
 	public float getSpeedY(float fAngle) {
-		return (float) Math.sin(Math.toRadians(fAngle)) * BALL_INIT_SPEEDX
+		return (float) Math.sin(Math.toRadians(fAngle)) * initSpeed
 				* (-1);
 	}
 
 	public float getSpeedXBySpeedY(float fAngle) {
-		return (float) Math.cos(Math.toRadians(fAngle)) * BALL_INIT_SPEEDX;
+		return (float) Math.cos(Math.toRadians(fAngle)) * initSpeed;
 	}
 
 	public float getSpeedYBySpeedX(float speedX) {
@@ -128,9 +128,9 @@ public class MathUtil {
 
 	public void getNewSpeedAfterHitCoener(float newAngleAfterHitCoener) {
 		this.speedX = (float) Math.cos(Math.toRadians(newAngleAfterHitCoener))
-				* (BALL_INIT_SPEEDX);
+				* (initSpeed);
 		this.speedY = (float) Math.sin(Math.toRadians(newAngleAfterHitCoener))
-				* (BALL_INIT_SPEEDX) * (-1);
+				* (initSpeed) * (-1);
 	}
 
 	public void genAngle() {
@@ -268,6 +268,14 @@ public class MathUtil {
 		    vy += ay*deltaTime;
 	}
 	
+	public void setDeltaTime(float deltaTime){
+		this.deltaTime = deltaTime;
+	}
+	
+	public float getDeltaTime(){
+		return this.deltaTime;
+	}
+	
 	public float getAngle(){
 		return fAngle;
 	}
@@ -277,7 +285,6 @@ public class MathUtil {
 	}
 	
 	public void inverseAngel(){
-		float ovy = vy;
 		genAngle();
 		if(fAngle >= 0 && fAngle<90){
 			fAngle = 0 - fAngle + 180; 
@@ -288,9 +295,8 @@ public class MathUtil {
 		}else if(fAngle >= 270 && fAngle<360){
 			fAngle = 360 - fAngle + 180;
 		}
-
+//		genSpeed();
 		ay = - ay;	
-		vy = ovy;
 	}
 	
 	public void cyclePath(){
@@ -299,9 +305,14 @@ public class MathUtil {
 	
 	public void inversePath(){
 		float ovy = vy;
+		speedX = -speedX;
+		speedY = -speedY;
 		genAngle();
-		fAngle += 180;
+//		fAngle += 180;
+//		fAngle %= 360;
+//		genSpeedXY();
 		vy = ovy;
+		vy = -vy;
 	}
 	
 	public void wavePath(){
@@ -330,14 +341,28 @@ public class MathUtil {
 		ay = 9.8f;
 	}
 	
-	public float getJumpTime(float dx, int count){
-		int time = 0;
-		time = (int)Math.ceil(vy*2/-ay);
-		if(time==0)
+	public void genJumpVx(float totalDistanceX){
+//		int time = 0;
+//		time = (int)Math.ceil(vy*2/-ay);
+//		if(time==0)
+//			vx = 0;
+//		else
+//			vx = totalDistanceX/time;
+//		float newVx = vx;
+//		return newVx;
+		
+		float secondtime = 0;
+		secondtime = vy*2/-ay;
+		if(secondtime==0f)
 			vx = 0;
 		else
-			vx = dx/time;
-		float newVx = vx;
-		return newVx;
+			vx = totalDistanceX/secondtime;
 	}
+	
+//	public void genJumpVxVy(float totalDistanceX, float totalDistanceY, float secondtime){
+////		secondtime = vy*2/-ay;
+//		vx = totalDistanceX/secondtime;
+////		vy = secondtime*-ay/2;
+//		vy = secondtime*-ay/2 + (secondtime*-ay/2-totalDistanceY);
+//	}
 }

@@ -238,7 +238,7 @@ public class MovementActionItemUpdateTimeData implements MovementActionItemTrigg
 
 		if(updateType == UpdateType.UpdateEverytime){
 			Log.e("update", this.getValueOfActivedCounter() + " " + this.getShouldActiveTotalValue());
-			movementActionItemUpdateTimeDataDelegate.update((float) ((double)(this.getValueOfActivedCounter())/this.getShouldActiveTotalValue()));
+			movementActionItemUpdateTimeDataDelegate.update(Math.min(1, (float) ((double)(this.getValueOfActivedCounter())/this.getShouldActiveTotalValue())));
 			this.setActivedValueForLatestUpdated(this.getValueOfActivedCounter());
 		}else {
 			do {
@@ -264,5 +264,14 @@ public class MovementActionItemUpdateTimeData implements MovementActionItemTrigg
 					- this.getShouldActiveTotalValue()); // during each cycle has no delay.
 			this.setActivedValueForLatestUpdated(0);
 		}
+	}
+
+	@Override
+	public double getValueOfFactorByUpdate() {
+		// TODO Auto-generated method stub
+		if(updateType == UpdateType.UpdateEverytime)
+			return 1;
+		else
+			return (double)getShouldActiveIntervalValue()/getShouldActiveTotalValue();
 	}
 }

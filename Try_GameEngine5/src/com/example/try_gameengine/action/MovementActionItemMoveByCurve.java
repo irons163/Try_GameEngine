@@ -13,8 +13,10 @@ import com.example.try_gameengine.action.visitor.IMovementActionVisitor;
  * @author irons
  *
  */
-public class MovementActionItemAlpha2 extends MovementActionItemUpdate{ 
+public class MovementActionItemMoveByCurve extends MovementActionItemUpdate implements Cloneable{ 
 	MovementActionItemTrigger data;
+	IRotationController rotationController;
+	float dx, dy;
 	FrameTrigger myTrigger = new FrameTrigger() {
 		
 		@Override
@@ -24,26 +26,12 @@ public class MovementActionItemAlpha2 extends MovementActionItemUpdate{
 		}
 	};
 	
-	private static final int NO_ORGINAL_ALPHA = -1;
-	private int originalAlpha;
-	private int alpha;
-	private float offsetAlphaByOnceTrigger;
-	
 	/**
 	 * @param millisTotal
 	 * @param alpha
 	 */
-	public MovementActionItemAlpha2(long millisTotal, int alpha){
-		this(millisTotal, 1, NO_ORGINAL_ALPHA, alpha, "MovementActionItemAlpha");
-	}
-	
-	/**
-	 * @param millisTotal
-	 * @param originalAlpha
-	 * @param alpha
-	 */
-	public MovementActionItemAlpha2(long millisTotal, int originalAlpha, int alpha){
-		this(millisTotal, 1, originalAlpha, alpha, "MovementActionItemAlpha");
+	public MovementActionItemMoveByCurve(long millisTotal, IRotationController rotationController){
+		this(millisTotal, 1, rotationController, "MovementActionItemAlpha");
 	}
 	
 	/**
@@ -51,18 +39,8 @@ public class MovementActionItemAlpha2 extends MovementActionItemUpdate{
 	 * @param triggerInterval
 	 * @param alpha
 	 */
-	public MovementActionItemAlpha2(long triggerTotal, long triggerInterval, int alpha){
-		this(triggerTotal, triggerTotal, NO_ORGINAL_ALPHA, alpha, "MovementActionItemAlpha");
-	}
-	
-	/**
-	 * @param triggerTotal
-	 * @param triggerInterval
-	 * @param originalAlpha
-	 * @param alpha
-	 */
-	public MovementActionItemAlpha2(long triggerTotal, long triggerInterval, int originalAlpha, int alpha){
-		this(triggerTotal, triggerInterval, originalAlpha, alpha, "MovementActionItemAlpha");
+	public MovementActionItemMoveByCurve(long triggerTotal, long triggerInterval, IRotationController rotationController){
+		this(triggerTotal, triggerTotal, rotationController, "MovementActionItemAlpha");
 	}
 	
 	/**
@@ -72,12 +50,15 @@ public class MovementActionItemAlpha2 extends MovementActionItemUpdate{
 	 * @param alpha
 	 * @param description
 	 */
-	public MovementActionItemAlpha2(long millisTotal, long millisDelay, int originalAlpha, int alpha, String description){
-		super(new MovementActionInfo(millisTotal, millisDelay, 0, 0));
+	public MovementActionItemMoveByCurve(long millisTotal, long millisDelay, IRotationController rotationController, String description){
+		this(new MovementActionInfo(millisTotal, millisDelay, 0, 0, ""), rotationController, description);
+	}
+	
+	public MovementActionItemMoveByCurve(MovementActionInfo info, IRotationController rotationController, String description){
+		super(info);
 		
 		this.description = description + ",";
-		this.originalAlpha = originalAlpha;
-		this.alpha = alpha;
+		this.rotationController = rotationController;
 	}
 	
 	@Override
@@ -90,19 +71,12 @@ public class MovementActionItemAlpha2 extends MovementActionItemUpdate{
 	public void start() {
 		// TODO Auto-generated method stub	
 //		resumeFrameIndex = 0;
-
+		rotationController.start(info);
 		data.setValueOfActivedCounter(0);
 		data.setShouldPauseValue(0);
 		data.setValueOfPausedCounter(0);
 		isStop = false;
 		data.setCycleFinish(false);
-		if(originalAlpha==NO_ORGINAL_ALPHA)
-			originalAlpha = info.getSprite().getAlpha();
-		else
-			info.getSprite().setAlpha(originalAlpha);
-		
-		int offsetAlpha= alpha - originalAlpha;
-		offsetAlphaByOnceTrigger = (int) (offsetAlpha/(info.getTotal()/info.getDelay()));
 		
 		if(!data.isEnableSetSpriteAction())
 			data.setEnableSetSpriteAction(isRepeatSpriteActionIfMovementActionRepeat);
@@ -134,7 +108,7 @@ public class MovementActionItemAlpha2 extends MovementActionItemUpdate{
 
 	private void frameTriggerFPSStart(){
 		if (!isStop) {
-			synchronized (MovementActionItemAlpha2.this) {
+			synchronized (MovementActionItemMoveByCurve.this) {
 			data.dodo();
 			
 			if(!isLoop && data.isCycleFinish()){
@@ -144,7 +118,7 @@ public class MovementActionItemAlpha2 extends MovementActionItemUpdate{
 			}
 			
 			if(data.isCycleFinish()){
-				info.getSprite().setAlpha(alpha);
+//				info.getSprite().setAlpha(alpha);
 				
 				if(actionListener!=null)
 					actionListener.actionCycleFinish();
@@ -153,14 +127,14 @@ public class MovementActionItemAlpha2 extends MovementActionItemUpdate{
 					if(actionListener!=null)
 						actionListener.actionFinish();
 					
-					MovementActionItemAlpha2.this.notifyAll();
+					MovementActionItemMoveByCurve.this.notifyAll();
 				}
 			}
 			
 			}
 		}else{
-			synchronized (MovementActionItemAlpha2.this) {
-				MovementActionItemAlpha2.this.notifyAll();
+			synchronized (MovementActionItemMoveByCurve.this) {
+				MovementActionItemMoveByCurve.this.notifyAll();
 			}
 		}
 	}
@@ -173,22 +147,29 @@ public class MovementActionItemAlpha2 extends MovementActionItemUpdate{
 			@Override
 			public void update() {
 				// TODO Auto-generated method stub
-//				timerOnTickListener.onTick(dx, dy);		
-				info.getSprite().setAlpha(originalAlpha + (int)offsetAlphaByOnceTrigger);
+//				doRotation();
+//				doGravity();
+				rotationController.execute(info);
+				dx = info.getDx();
+				dy = info.getDy();
+				if (timerOnTickListener != null)
+					timerOnTickListener.onTick(dx, dy);
 			}
 
 			@Override
 			public void update(float t) {
-				Log.e("interval", t+"");
-				Log.e("totle", data.getShouldActiveTotalValue()+"");
-//				double percent = ((double)t)/data.getShouldActiveTotalValue();
-//				int offsetAlpha= alpha - originalAlpha;
-//				offsetAlphaByOnceTrigger += (float) (offsetAlpha*percent);
-				
-				int offsetAlpha= alpha - originalAlpha;
-				offsetAlphaByOnceTrigger = (float) (offsetAlpha*t);
-				Log.e("offsetAlpha", offsetAlpha+" "+ t);
-				info.getSprite().setAlpha(originalAlpha + (int)offsetAlphaByOnceTrigger);
+				// TODO Auto-generated method stub
+//				doRotation();
+//				doGravity();
+				rotationController.execute(info, t);
+				dx = info.getDx();
+				dy = info.getDy();
+//				float newDx = (float) (dx*t);
+//				float newDy = (float) (dy*t);
+				float newDx = (float) (dx);
+				float newDy = (float) (dy);
+				if (timerOnTickListener != null)
+					timerOnTickListener.onTick(newDx, newDy);
 			}
 		});
 		
@@ -252,8 +233,8 @@ public class MovementActionItemAlpha2 extends MovementActionItemUpdate{
 	@Override
 	public void cancelMove(){
 		isStop = true;
-		synchronized (MovementActionItemAlpha2.this) {
-			MovementActionItemAlpha2.this.notifyAll();
+		synchronized (MovementActionItemMoveByCurve.this) {
+			MovementActionItemMoveByCurve.this.notifyAll();
 		}
 	}
 	
@@ -265,6 +246,18 @@ public class MovementActionItemAlpha2 extends MovementActionItemUpdate{
 	@Override
 	public boolean isFinish(){
 		return isStop;
+	}
+	
+	void setMathUtil(MathUtil mathUtil){
+		rotationController.setMathUtil(mathUtil);
+	}
+	
+	MathUtil getMathUtil(){
+		return rotationController.getMathUtil();
+	}
+	
+	public void isCyclePath(){
+		rotationController.isCyclePath();
 	}
 	
 //	public IMovementActionMemento createMovementActionMemento(){
@@ -375,5 +368,14 @@ public class MovementActionItemAlpha2 extends MovementActionItemUpdate{
 	@Override
 	public void accept(IMovementActionVisitor movementActionVisitor){
 		movementActionVisitor.visitLeaf(this);
+	}
+	
+	@Override
+	protected MovementActionItemMoveByCurve clone() throws CloneNotSupportedException {
+		// TODO Auto-generated method stub
+		MovementActionInfo info = getInfo().clone();
+		IRotationController newRotationController = rotationController.copyNewRotationController();
+		MovementActionItemMoveByCurve movementActionItemMoveByCurve = new MovementActionItemMoveByCurve(info, newRotationController, description);
+		return movementActionItemMoveByCurve;
 	}
 }

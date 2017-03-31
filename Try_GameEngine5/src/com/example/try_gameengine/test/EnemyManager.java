@@ -11,6 +11,7 @@ import com.example.try_gameengine.action.CopyMoveDecorator;
 import com.example.try_gameengine.action.DoubleDecorator;
 import com.example.try_gameengine.action.MovementAction;
 import com.example.try_gameengine.action.MovementActionSet;
+import com.example.try_gameengine.action.MovementActionSetWithThread;
 import com.example.try_gameengine.action.MovementInfoFactory;
 import com.example.try_gameengine.action.SpecialMovementActionFactory;
 
@@ -47,7 +48,7 @@ public class EnemyManager {
 		RLMovementActionFactory factory = new RLMovementActionFactory();
 		MovementAction innerAction = factory.createMovementAction();
 //		MovementAction action = new DoubleDecorator(new DoubleDecorator(new DoubleDecorator(innerAction)));
-		MovementAction action = new MovementActionSet();
+		MovementAction action = new MovementActionSetWithThread();
 		action.addMovementAction(new DoubleDecorator(innerAction));
 //		enemies.add(enemyFactory.createSpecialEnemy5(RedEnemy.class, new int[]{0, 1050}, action));
 		MovementAction actionD = new DoubleDecorator(action);
@@ -55,7 +56,7 @@ public class EnemyManager {
 		actionD = new DoubleDecorator(new DoubleDecorator(actionD));
 //		MovementAction actionDD = new DoubleDecorator(new DoubleDecorator(actionD));
 		MovementAction actionDD = new DoubleDecorator(actionD);
-		MovementAction newaction = new MovementActionSet();
+		MovementAction newaction = new MovementActionSetWithThread();
 //		newaction.addMovementAction(new DoubleDecorator(actionDD));
 //		
 //		newaction = new CopyMoveDecorator(newaction);
@@ -63,9 +64,10 @@ public class EnemyManager {
 //		newaction = new CopyMoveDecorator(new DoubleDecorator(new RLMovementActionFactory().createMovementAction()));
 //		newaction = new DoubleDecorator(new DoubleDecorator(new CopyMoveDecorator(new RLMovementActionFactory().createMovementAction())));
 //		newaction = new CopyMoveDecorator(new CopyMoveDecorator(new CopyMoveDecorator(new RLMovementActionFactory().createMovementAction())));
-		newaction = new CopyMoveDecorator(new CopyMoveDecorator(new RLMovementActionFactory().createMovementAction()));
-		MovementAction newaction2 = new MovementActionSet();
+		newaction = new CopyMoveDecorator((MovementActionSet)new MovementActionSetWithThread().addMovementAction(new CopyMoveDecorator((MovementActionSet)new MovementActionSetWithThread().addMovementAction(new RLMovementActionFactory().createMovementAction()))));
+		MovementAction newaction2 = new MovementActionSetWithThread();
 		newaction2.addMovementAction(newaction);
+		/*s
 		newaction2.addMovementAction(actionDD);
 //		MovementAction action2 = new MovementActionSet();
 		newaction = new CopyMoveDecorator(new DoubleDecorator(new CopyMoveDecorator(new RLMovementActionFactory().createMovementAction())));
@@ -74,12 +76,13 @@ public class EnemyManager {
 //		newaction2 = new CopyMoveDecorator(new CopyMoveDecorator(newaction2));
 		newaction2 = new DoubleDecorator(new CopyMoveDecorator(newaction2));
 		
-		MovementAction newaction3 = new MovementActionSet();
+		MovementAction newaction3 = new MovementActionSetWithThread();
 		
 		newaction3.addMovementAction(newaction2);
 		newaction3.addMovementAction(new RLMovementActionFactory().createMovementAction());
-		newaction3.addMovementAction(new MovementActionSet().addMovementAction(new MovementActionSet().addMovementAction(new MovementActionSet().addMovementAction(new RLMovementActionFactory().createMovementAction()))));
+		newaction3.addMovementAction(new MovementActionSetWithThread().addMovementAction(new MovementActionSetWithThread().addMovementAction(new MovementActionSetWithThread().addMovementAction(new RLMovementActionFactory().createMovementAction()))));
 		newaction3 = new DoubleDecorator(new CopyMoveDecorator(newaction3));
+		*/
 		
 		
 //		enemies.add(enemyFactory.createSpecialEnemy5(RedEnemy.class, new int[]{0, 1100}, actionD));
@@ -251,7 +254,7 @@ public class EnemyManager {
 	
 	public void startMoveEnemies(){
 		for(Enemy enemy : enemies){
-			enemy.action.start();
+			enemy.getMovementAction().start();
 		}
 	}
 	

@@ -17,8 +17,6 @@ import android.util.Log;
  */
 public abstract class MovementActionItem extends MovementAction {
 	MovementActionInfo info;
-	IRotationController rotationController;
-	IGravityController gravityController;
 	boolean isReset = true;
 	private boolean isActionFinish = false;
 //	public int frameIdx;
@@ -34,7 +32,7 @@ public abstract class MovementActionItem extends MovementAction {
 		if (info.getDescription() != null)
 			this.description = info.getDescription() + ",";
 		this.info = info;
-		movementItemList.add(this);
+//		movementItemList.add(this);
 	}
 	
 	/**
@@ -45,7 +43,7 @@ public abstract class MovementActionItem extends MovementAction {
 	public MovementActionItem(MovementActionInfo info, String description) {
 		this.description = description + ",";
 		this.info = info;
-		movementItemList.add(this);
+//		movementItemList.add(this);
 	}
 
 	@Override

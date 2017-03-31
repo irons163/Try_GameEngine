@@ -14,7 +14,7 @@ import com.example.try_gameengine.action.visitor.IMovementActionVisitor;
 import android.R.bool;
 import android.util.Log;
 
-public class MovementActionSetWithThreadPool extends MovementAction {
+public class MovementActionSetWithThreadPool extends MovementActionSet {
 	private boolean isActionFinish = false;
 	private MovementActionInfo info;
 	public boolean isStop = false;
@@ -136,11 +136,6 @@ public class MovementActionSetWithThreadPool extends MovementAction {
 	}
 	
 	@Override
-	public MovementAction initMovementAction(){		
-		return initTimer();
-	}
-	
-	@Override
 	protected MovementAction initTimer(){ super.initTimer();
 	
 		for (MovementAction action : this.actions) {
@@ -150,9 +145,9 @@ public class MovementActionSetWithThreadPool extends MovementAction {
 			}else{
 				action.initTimer();
 			}
-			for(MovementAction movementAction : action.getAction().totalCopyMovementActionList){
-				this.getAction().movementItemList.add(movementAction);
-			}
+//			for(MovementAction movementAction : action.getAction().totalCopyMovementActionList){
+//				this.getAction().movementItemList.add(movementAction);
+//			}
 			
 //			action.getAction().setCancelFocusAppendPart(true);
 		}
@@ -194,16 +189,18 @@ public class MovementActionSetWithThreadPool extends MovementAction {
 	
 	@Override
 	public List<MovementAction> getCurrentActionList() {
-		// TODO Auto-generated method stub
+//		// TODO Auto-generated method stub
+//		
+//		movementItemList.clear();
+//		for(MovementAction action : actions){
+//			for(MovementAction actionItem : action.getCurrentActionList()){
+//				movementItemList.add(actionItem);
+//			}
+//		}
+//		
+//		return movementItemList;
 		
-		movementItemList.clear();
-		for(MovementAction action : actions){
-			for(MovementAction actionItem : action.getCurrentActionList()){
-				movementItemList.add(actionItem);
-			}
-		}
-		
-		return movementItemList;
+		return null;
 	}
 	
 	@Override
@@ -236,7 +233,7 @@ public class MovementActionSetWithThreadPool extends MovementAction {
 	}
 	
 	@Override
-	void cancelAllMove() {
+	protected void cancelAllMove() {
 		// TODO Auto-generated method stub
 		isStop = true;
 		isLoop = false;

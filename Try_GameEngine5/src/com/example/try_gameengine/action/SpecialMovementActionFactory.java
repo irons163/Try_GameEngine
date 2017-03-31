@@ -8,7 +8,7 @@ public class SpecialMovementActionFactory extends MovementActionFactory{
 	@Override
 	public MovementAction createMovementAction() {
 		// TODO Auto-generated method stub
-		MovementAction action = new MovementActionSet();
+		MovementAction action = new MovementActionSetWithThread();
 		action.addMovementAction(new MovementActionItemCountDownTimer(1000, 200, 10, 0));
 		action.addMovementAction(new MovementActionItemCountDownTimer(1000, 200, -10, 0));
 		action.addMovementAction(new MovementActionItemCountDownTimer(1000, 200, -10, 0));
@@ -21,7 +21,7 @@ public class SpecialMovementActionFactory extends MovementActionFactory{
 	@Override
 	public MovementAction createMovementAction(List<MovementActionInfo> infos) {
 		// TODO Auto-generated method stub
-		MovementAction action = new MovementActionSet();
+		MovementAction action = new MovementActionSetWithThread();
 		for(MovementActionInfo info : infos){
 //			action.addMovementAction(new MovementActionItem(info.getTotal(), info.getDelay(), info.getDx(), info.getDy()));
 			action.addMovementAction(new MovementActionItemCountDownTimer(info));	
@@ -33,7 +33,7 @@ public class SpecialMovementActionFactory extends MovementActionFactory{
 	@Override
 	public MovementAction createMovementAction(List<MovementActionInfo> infos, List<Class<? extends MovementDecorator>> decoratorClassList) {
 		// TODO Auto-generated method stub
-		MovementAction action = new MovementActionSet();
+		MovementAction action = new MovementActionSetWithThread();
 		for(Class<? extends MovementDecorator> decoratorClass : decoratorClassList){
 			try {
 				action = decoratorClass.getConstructor(MovementAction.class).newInstance(action);

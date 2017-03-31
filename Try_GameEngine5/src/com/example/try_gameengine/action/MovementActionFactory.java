@@ -22,7 +22,7 @@ public abstract class MovementActionFactory {
 	}
 	
 	public MovementAction createMovementActionByDecorator(List<Class<? extends MovementDecorator>> decoratorClassList){
-		action = new MovementActionSet();
+		action = new MovementActionSetWithThread();
 		for(Class<? extends MovementDecorator> decoratorClass : decoratorClassList){
 			try {
 				action = decoratorClass.getConstructor(MovementAction.class).newInstance(action);
@@ -47,7 +47,7 @@ public abstract class MovementActionFactory {
 	} 
 	
 	public MovementAction createMovementActionByMerge(MovementAction beginnerAction, MovementAction endAction){
-		action = new MovementActionSet();
+		action = new MovementActionSetWithThread();
 		action.addMovementAction(beginnerAction);
 		action.addMovementAction(endAction);
 		

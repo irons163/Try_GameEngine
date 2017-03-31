@@ -17,17 +17,15 @@ import android.util.Log;
  * @author irons
  *
  */
-public abstract class MovementAction {
+public abstract class MovementAction implements Cloneable{
 	protected static ExecutorService executor = Executors.newFixedThreadPool(20);
-	
 	protected List<MovementAction> actions = new ArrayList<MovementAction>();
 	protected Thread thread;
-	protected TimerOnTickListener timerOnTickListener;
+	
 	protected String description = "Unknown Movement";
-	List<MovementAction> copyMovementActionList = new ArrayList<MovementAction>();
+//	List<MovementAction> copyMovementActionList = new ArrayList<MovementAction>();
 	List<MovementActionInfo> currentInfoList = new ArrayList<MovementActionInfo>();
-	List<MovementAction> movementItemList = new ArrayList<MovementAction>();
-	List<MovementAction> totalCopyMovementActionList = new ArrayList<MovementAction>();
+//	List<MovementAction> totalCopyMovementActionList = new ArrayList<MovementAction>();
 	protected boolean isFinish = false;
 	public boolean isLoop = false;
 	public boolean isSigleThread = false;
@@ -36,6 +34,10 @@ public abstract class MovementAction {
 	public boolean isRepeatSpriteActionIfMovementActionRepeat = true;
 	IMovementActionMemento movementActionMemento=null;
 	boolean didInitTimer = false;
+	
+	protected TimerOnTickListener timerOnTickListener;
+	protected IActionListener actionListener = new DefaultActionListener();
+	public MovementAtionController controller;
 	
 	public MovementAction addMovementAction(MovementAction action) {
 		throw new UnsupportedOperationException();
@@ -78,6 +80,7 @@ public abstract class MovementAction {
 	}
 	
 	public MovementAction initMovementAction(){
+		doIn(null);
 		return initTimer();
 	}
 	
@@ -89,8 +92,8 @@ public abstract class MovementAction {
 			didInitTimer = true;
 			return this;
 		}else
-//			throw new RuntimeException("didInitTimer");
-			return this;
+			throw new RuntimeException("didInitTimer");
+//			return this;
 	}
 	
 	/**
@@ -147,14 +150,6 @@ public abstract class MovementAction {
 	}
 
 	/**
-	 * get movement action list.
-	 * @return
-	 */
-	public List<MovementAction> getMovementItemList() {
-		return movementItemList;
-	}
-	
-	/**
 	 * @return
 	 */
 	public List<MovementActionInfo> getMovementInfoList() {
@@ -162,10 +157,22 @@ public abstract class MovementAction {
 	}
 
 	/**
+	 * @param actionSet TODO
+	 * @return TODO
 	 * 
 	 */
-	public void doIn(){
+	protected List<MovementAction> doIn(MovementActionSet actionSet){
+		List<MovementAction> actions = new ArrayList<MovementAction>();
 		
+		for (MovementAction action : this.getAction().getActions()){
+//			actions.addAll(action.doIn(actionSet));
+			actions.add(action);
+			actions.addAll(action.doIn(actionSet));
+		}
+		
+		this.actions = actions;
+		
+		return new ArrayList<MovementAction>();
 	}
 
 	/**
@@ -218,8 +225,6 @@ public abstract class MovementAction {
 	void pause(){
 		cancelAction.getAction().pause();
 	}
-	
-	public MovementAtionController controller;
 	
 	/**
 	 * @param controller
@@ -295,8 +300,6 @@ public abstract class MovementAction {
 		this.actionListener = actionListener;
 	}
 	
-	protected IActionListener actionListener = new DefaultActionListener();
-	
 	/**
 	 * get action listener from movement action.
 	 * @return IActionListener.
@@ -335,7 +338,7 @@ public abstract class MovementAction {
 	
 	//not use yet
 	public IMovementActionMemento createMovementActionMemento(){
-		movementActionMemento = new MovementActionMementoImpl(actions, thread, timerOnTickListener, description, copyMovementActionList, currentInfoList, movementItemList, totalCopyMovementActionList, isFinish, isLoop, isSigleThread, name, cancelAction, isRepeatSpriteActionIfMovementActionRepeat);
+//		movementActionMemento = new MovementActionMementoImpl(actions, thread, timerOnTickListener, description, copyMovementActionList, currentInfoList, totalCopyMovementActionList, isFinish, isLoop, isSigleThread, name, cancelAction, isRepeatSpriteActionIfMovementActionRepeat);
 		return movementActionMemento;
 	}
 	
@@ -361,10 +364,9 @@ public abstract class MovementAction {
 		this.thread = mementoImpl.thread;
 		this.timerOnTickListener = mementoImpl.timerOnTickListener;
 		this.description = mementoImpl.description;
-		this.copyMovementActionList = mementoImpl.copyMovementActionList;
+//		this.copyMovementActionList = mementoImpl.copyMovementActionList;
 		this.currentInfoList = mementoImpl.currentInfoList;
-		this.movementItemList = mementoImpl.movementItemList;
-		this.totalCopyMovementActionList = mementoImpl.totalCopyMovementActionList;
+//		this.totalCopyMovementActionList = mementoImpl.totalCopyMovementActionList;
 		this.isFinish = mementoImpl.isFinish;
 		this.isLoop = mementoImpl.isLoop;
 		this.isSigleThread = mementoImpl.isSigleThread;
@@ -385,7 +387,6 @@ public abstract class MovementAction {
 		private String description = "Unknown Movement";
 		private List<MovementAction> copyMovementActionList;
 		private List<MovementActionInfo> currentInfoList;
-		private List<MovementAction> movementItemList;
 		private List<MovementAction> totalCopyMovementActionList;
 		private boolean isFinish;
 		private boolean isLoop;
@@ -399,7 +400,6 @@ public abstract class MovementAction {
 				String description,
 				List<MovementAction> copyMovementActionList,
 				List<MovementActionInfo> currentInfoList,
-				List<MovementAction> movementItemList,
 				List<MovementAction> totalCopyMovementActionList,
 				boolean isFinish,
 				boolean isLoop, boolean isSigleThread, String name,
@@ -411,7 +411,6 @@ public abstract class MovementAction {
 			this.description = description;
 			this.copyMovementActionList = copyMovementActionList;
 			this.currentInfoList = currentInfoList;
-			this.movementItemList = movementItemList;
 			this.totalCopyMovementActionList = totalCopyMovementActionList;
 			this.isFinish = isFinish;
 			this.isLoop = isLoop;
@@ -453,14 +452,14 @@ public abstract class MovementAction {
 			this.description = description;
 		}
 
-		public List<MovementAction> getCopyMovementActionList() {
-			return copyMovementActionList;
-		}
-
-		public void setCopyMovementActionList(
-				List<MovementAction> copyMovementActionList) {
-			this.copyMovementActionList = copyMovementActionList;
-		}
+//		public List<MovementAction> getCopyMovementActionList() {
+//			return copyMovementActionList;
+//		}
+//
+//		public void setCopyMovementActionList(
+//				List<MovementAction> copyMovementActionList) {
+//			this.copyMovementActionList = copyMovementActionList;
+//		}
 
 		public List<MovementActionInfo> getCurrentInfoList() {
 			return currentInfoList;
@@ -468,14 +467,6 @@ public abstract class MovementAction {
 
 		public void setCurrentInfoList(List<MovementActionInfo> currentInfoList) {
 			this.currentInfoList = currentInfoList;
-		}
-
-		public List<MovementAction> getMovementItemList() {
-			return movementItemList;
-		}
-
-		public void setMovementItemList(List<MovementAction> movementItemList) {
-			this.movementItemList = movementItemList;
 		}
 
 		public List<MovementAction> getTotalCopyMovementActionList() {
@@ -535,5 +526,11 @@ public abstract class MovementAction {
 				boolean isRepeatSpriteActionIfMovementActionRepeat) {
 			this.isRepeatSpriteActionIfMovementActionRepeat = isRepeatSpriteActionIfMovementActionRepeat;
 		}
+	}
+	
+	@Override
+	protected Object clone() throws CloneNotSupportedException {
+		// TODO Auto-generated method stub
+		return super.clone();
 	}
 }

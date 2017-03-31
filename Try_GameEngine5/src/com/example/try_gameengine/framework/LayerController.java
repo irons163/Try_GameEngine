@@ -308,5 +308,4 @@ public class LayerController {
 		}
 		return isTouched;
 	}
-
 }

@@ -43,7 +43,7 @@ public abstract class BaseStage extends Stage{
 	public SceneManager initSceneManager() {
 		// TODO Auto-generated method stub
 //		LayerManager.getInstance().setNoSceneLayer();
-		return new SceneManager();
+		return SceneManager.getInstance();
 	}
 
 }

@@ -1,16 +1,12 @@
 package com.example.try_gameengine.framework;
 
-import java.sql.PreparedStatement;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
-
 import com.example.try_gameengine.Camera.Camera;
 import com.example.try_gameengine.action.MovementAction;
 import com.example.try_gameengine.action.Time;
 import com.example.try_gameengine.framework.GameController.BlockRunData;
 import com.example.try_gameengine.scene.Scene;
-
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -39,6 +35,7 @@ public class GameModel implements IGameModel{
 	private long interval;
 	private long startTimeForShowFPS;
 	private boolean timeLock = false;
+	protected boolean isGameRun = true;
 	private long fpsCounter;
 	float fps;
 	Paint paint = new Paint();
@@ -47,6 +44,15 @@ public class GameModel implements IGameModel{
 	Camera camera;
 	Canvas canvas;
 	private List<ProcessBlock> processBlocks = new CopyOnWriteArrayList<ProcessBlock>();
+//	private Time time = new Time();
+//	
+//	public Time getTime(){
+//		return time;
+//	}
+//	
+//	public void setTime(Time time){
+//		this.time = time;
+//	}
 	
 	/**
 	 * Contructor.
@@ -264,7 +270,7 @@ public class GameModel implements IGameModel{
 		
 		@Override
 		public void run() {
-			Time.Time = System.currentTimeMillis();
+//			time.time = System.currentTimeMillis();
 			while(isGameRun){
 				if(surfaceHolder==null) //when game scene start, the surfaceHolder may not stand by.
 					continue;
@@ -310,7 +316,12 @@ public class GameModel implements IGameModel{
 		}
 	});
 	
-	protected boolean isGameRun = true;
+	public void resetTime(){
+//		Time.time = 0;
+		Time.Time = System.currentTimeMillis();
+		Time.DeltaTime = 0;
+		previousStartTime = startTime = 0;
+	}
 
 	@Override
 	public void start() {
@@ -343,11 +354,14 @@ public class GameModel implements IGameModel{
 			return;
 		}
 		isGameStop = false;
-		if(!gameThread.isAlive())
+		if(!gameThread.isAlive()){
+			resetTime();
 			gameThread.start();
+		}
 		isSurfaceCreated = true;
 		if(isGameReallyStop){
 			isGameReallyStop = false;
+			resetTime();
 			gameLoopResume();
 		}
 	}

@@ -12,7 +12,7 @@ import android.util.Log;
 
 //import com.rits.cloning.Cloner;
 
-public class MovementActionSetGroupWithOutThread extends MovementAction {
+public class MovementActionSetGroupWithOutThread extends MovementActionSet {
 	private boolean isActionFinish = true;
 	private MovementActionInfo info;
 	public boolean isStop = false;
@@ -84,11 +84,6 @@ public class MovementActionSetGroupWithOutThread extends MovementAction {
 	}
 	
 	@Override
-	public MovementAction initMovementAction(){		
-		return initTimer();
-	}
-	
-	@Override
 	protected MovementAction initTimer(){ super.initTimer();
 	
 		for (MovementAction action : this.actions) {
@@ -98,9 +93,9 @@ public class MovementActionSetGroupWithOutThread extends MovementAction {
 			}else{
 				action.initTimer();
 			}
-			for(MovementAction movementAction : action.getAction().totalCopyMovementActionList){
-				this.getAction().movementItemList.add(movementAction);
-			}
+//			for(MovementAction movementAction : action.getAction().totalCopyMovementActionList){
+//				this.getAction().movementItemList.add(movementAction);
+//			}
 			
 //			action.getAction().setCancelFocusAppendPart(true);
 		}
@@ -144,14 +139,16 @@ public class MovementActionSetGroupWithOutThread extends MovementAction {
 	public List<MovementAction> getCurrentActionList() {
 		// TODO Auto-generated method stub
 		
-		movementItemList.clear();
-		for(MovementAction action : actions){
-			for(MovementAction actionItem : action.getCurrentActionList()){
-				movementItemList.add(actionItem);
-			}
-		}
+//		movementItemList.clear();
+//		for(MovementAction action : actions){
+//			for(MovementAction actionItem : action.getCurrentActionList()){
+//				movementItemList.add(actionItem);
+//			}
+//		}
+//		
+//		return movementItemList;
 		
-		return movementItemList;
+		return null;
 	}
 	
 	@Override
@@ -200,7 +197,7 @@ public class MovementActionSetGroupWithOutThread extends MovementAction {
 	}
 	
 	@Override
-	void cancelAllMove(){
+	protected void cancelAllMove(){
 		if(this.getAction().actions.size()!=0){
 			for(MovementAction action : this.getAction().actions){
 				action.cancelMove();
