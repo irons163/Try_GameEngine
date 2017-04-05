@@ -3,6 +3,7 @@ package com.example.try_gameengine.action;
 import java.util.Vector;
 
 import android.graphics.PointF;
+import android.util.Log;
 
 public class GravityController implements IGravityController {
 	boolean firstExecute = true;
@@ -42,6 +43,14 @@ public class GravityController implements IGravityController {
 //		mathUtil = new MathUtil();
 //	}
 	
+	public void setAy(float ay){
+		mathUtil.setAy(ay);
+	}
+	
+	public float getAy(){
+		return mathUtil.getAy();
+	}
+	
 	public float getVx() {
 		return vectorXY.x;
 	}
@@ -73,6 +82,9 @@ public class GravityController implements IGravityController {
 		
 //		float dx = info.getDx();
 //		float dy = info.getDy();
+		
+		mx = 0;
+		my = 0;
 		
 		float dx = vectorXY.x;
 		float dy = vectorXY.y;
@@ -145,15 +157,18 @@ public class GravityController implements IGravityController {
 		mathUtil.setXY(vectorXY.x, vectorXY.y);
 		mathUtil.initGravity();
 		mathUtil.setDeltaTime(info.getTotal()/1000f*t);
-		mathUtil.genGravity();
-		float dx = mathUtil.getSpeedX();
-		float dy = mathUtil.getSpeedY();
+//		mathUtil.genGravity();
+		PointF deltaXY = mathUtil.genDeltaXY();
+		float dx = deltaXY.x;
+		float dy = deltaXY.y;
 		
 		float newDx = dx - mx;
 		float newDy = dy - my;
 		
 		mx = dx;
 		my = dy;
+		
+		Log.e("dy", dy+"");
 		
 		info.setDx(newDx);
 		info.setDy(newDy);
@@ -162,7 +177,9 @@ public class GravityController implements IGravityController {
 	@Override
 	public void execute(MovementActionInfo info) {
 		// TODO Auto-generated method stub
-		execute(info, 1f);
+//		execute(info, 1f);
+		execute(info, (float) ((info.data.getActivedValueForLatestUpdated()
+				+ info.data.getShouldActiveIntervalValue()) / (double)info.data.getShouldActiveTotalValue()));
 	}
 
 	@Override

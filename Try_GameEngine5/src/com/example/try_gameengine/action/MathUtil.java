@@ -1,6 +1,7 @@
 package com.example.try_gameengine.action;
 
 import android.graphics.Point;
+import android.graphics.PointF;
 import android.graphics.Rect;
 
 public class MathUtil {
@@ -268,6 +269,13 @@ public class MathUtil {
 		    vy += ay*deltaTime;
 	}
 	
+	public PointF genDeltaXY(){
+		float dx = vx * deltaTime;
+		float dy = vy * deltaTime + 1/2f*ay*(float)Math.pow(deltaTime, 2);
+		
+		return new PointF((float)dx, (float)dy);
+	}
+	
 	public void setDeltaTime(float deltaTime){
 		this.deltaTime = deltaTime;
 	}
@@ -358,6 +366,16 @@ public class MathUtil {
 		else
 			vx = totalDistanceX/secondtime;
 	}
+
+	public float getAy() {
+		return ay;
+	}
+
+	public void setAy(float ay) {
+		this.ay = ay;
+	}
+	
+	
 	
 //	public void genJumpVxVy(float totalDistanceX, float totalDistanceY, float secondtime){
 ////		secondtime = vy*2/-ay;
