@@ -15,50 +15,60 @@ public class LayerController {
 	 * 
 	 */
 	private List<List<ILayer>> layerLevelList;
-	private Map<String, List<List<ILayer>>> sceneLayerLevelList;
-	private int sceneLayerLevelByRecentlySet;
+	private List<List<ILayer>> gameModelLayerLevelList;
+	private List<List<ILayer>> sceneLayerLevelList;
+	private Map<String, List<List<ILayer>>> scenesLayerLevelList;
+	private int sceneLayerLevelByRecentlySet = -1;
 
 	public LayerController(
 			List<List<ILayer>> layerLevelList,
-			Map<String, List<List<ILayer>>> sceneLayerLevelList) {
-		this.layerLevelList = layerLevelList;
-		this.sceneLayerLevelList = sceneLayerLevelList;
+			Map<String, List<List<ILayer>>> scenesLayerLevelList) {
+		sceneLayerLevelList = gameModelLayerLevelList = this.layerLevelList = layerLevelList;
+		this.scenesLayerLevelList = scenesLayerLevelList;
 	}
 
-	public List<List<ILayer>> getLayerLevelList() {
+	List<List<ILayer>> getLayerLevelList() {
 		return layerLevelList;
 	}
 
-	public void setLayerLevelList(List<List<ILayer>> layerLevelList) {
-		this.layerLevelList = layerLevelList;
+	void setLayerLevelList(List<List<ILayer>> layerLevelList) {
+		this.layerLevelList = sceneLayerLevelList = layerLevelList;
+	}
+	
+	void changeToGameModel(){
+		layerLevelList = gameModelLayerLevelList;
 	}
 
-	public Map<String, List<List<ILayer>>> getSceneLayerLevelList() {
-		return sceneLayerLevelList;
+	void changeToSence(){
+		layerLevelList = sceneLayerLevelList;
+	}
+	
+	Map<String, List<List<ILayer>>> getScenesLayerLevelList() {
+		return scenesLayerLevelList;
 	}
 
-	public void setSceneLayerLevelList(
-			Map<String, List<List<ILayer>>> sceneLayerLevelList) {
-		this.sceneLayerLevelList = sceneLayerLevelList;
-	}
+//	private void setSceneLayerLevelList(
+//			Map<String, List<List<ILayer>>> sceneLayerLevelList) {
+//		this.scenesLayerLevelList = sceneLayerLevelList;
+//	}
 
-	public int getSceneLayerLevelByRecentlySet() {
+	int getSceneLayerLevelByRecentlySet() {
 		return sceneLayerLevelByRecentlySet;
 	}
 
-	public void setSceneLayerLevelByRecentlySet(int sceneLayerLevelByRecentlySet) {
+	void setSceneLayerLevelByRecentlySet(int sceneLayerLevelByRecentlySet) {
 		this.sceneLayerLevelByRecentlySet = sceneLayerLevelByRecentlySet;
 	}
 
-	public boolean iterateRootNotCompositeLayers(IterateLayersListener iterateLayersListener) {
+	boolean iterateRootNotCompositeLayers(IterateLayersListener iterateLayersListener) {
 		return iterateLayerLevelsRootLayers(iterateLayersListener);
 	}
 
-	public boolean iterateAllLayersInCurrentScene(IterateLayersListener iterateLayersListener) {
+	boolean iterateAllLayersInCurrentScene(IterateLayersListener iterateLayersListener) {
 		return iterateLayerLevelsAllLayers(iterateLayersListener);
 	}
 
-	public boolean iterateLayerLevelsRootLayers(
+	boolean iterateLayerLevelsRootLayers(
 			IterateLayersListener iterateLayersListener) {
 		for (List<ILayer> layersByTheSameLevel : getLayerLevelList()) {
 			for (ILayer layerOrderByZposition : layersByTheSameLevel) {
@@ -94,19 +104,19 @@ public class LayerController {
 		return false;
 	}
 
-	public void updateLayerOrder(List<List<ILayer>> layerLevelList) {
+	void updateLayerOrder(List<List<ILayer>> layerLevelList) {
 		// do nothing.
 	}
 
-	public void updateLayerOrder() {
+	void updateLayerOrder() {
 		// do nothing.
 	}
 
-	public void updateLayerOrder(ILayer layer) {
+	void updateLayerOrder(ILayer layer) {
 		updateLayerOrder(layer, getLayerLevelList());
 	}
 
-	public void updateLayerOrder(ILayer layer, List<List<ILayer>> layerLevelList) {
+	void updateLayerOrder(ILayer layer, List<List<ILayer>> layerLevelList) {
 		updateLevelLayersByZposition(layer, layerLevelList);
 	}
 
@@ -146,38 +156,39 @@ public class LayerController {
 		}
 	}
 
-	public void deleteLayer(ILayer layer) {
+	void deleteLayer(ILayer layer) {
 		getLayerLevelList().get(0).remove(layer);
 	}
 
 	// //////////////////////////
 	// // process
 	// //////////////////////////
-	public void processLayersForNegativeZOrder() {
+	void processLayersForNegativeZOrder() {
 		processLayers(true);
 	}
 
-	public void processLayersForOppositeZOrder() {
+	void processLayersForOppositeZOrder() {
 		processLayers(false);
 	}
 
-	public void processLayersForNegativeZOrder(int sceneLayerLevel) {
+	void processLayersForNegativeZOrder(int sceneLayerLevel) {
 		processLayers(sceneLayerLevel, true);
 	}
 
-	public void processLayersForOppositeZOrder(int sceneLayerLevel) {
+	void processLayersForOppositeZOrder(int sceneLayerLevel) {
 		processLayers(sceneLayerLevel, false);
 	}
 
 	private void processLayers(int sceneLayerLevel, boolean doNegativeZOrder) {
-		List<List<ILayer>> layerLevelListInScene = getSceneLayerLevelList()
+		List<List<ILayer>> layerLevelListInScene = getScenesLayerLevelList()
 				.get(sceneLayerLevel + "");
 		processLayers(layerLevelListInScene, doNegativeZOrder);
 	}
 
 	private void processLayers(boolean doNegativeZOrder) {
-		List<List<ILayer>> layerLevelListInScene = getSceneLayerLevelList()
-				.get(getSceneLayerLevelByRecentlySet() + "");
+//		List<List<ILayer>> layerLevelListInScene = getSceneLayerLevelList()
+//				.get(getSceneLayerLevelByRecentlySet() + "");
+		List<List<ILayer>> layerLevelListInScene = getLayerLevelList();
 		processLayers(layerLevelListInScene, doNegativeZOrder);
 	}
 
@@ -200,16 +211,18 @@ public class LayerController {
 	///////////////////////////////////
 	//// draw
 	///////////////////////////////////
-	public void drawLayers(Canvas canvas, Paint paint, boolean doNegativeZOrder) {
-		List<List<ILayer>> layerLevelListByZposition = getSceneLayerLevelList()
-				.get(getSceneLayerLevelByRecentlySet() + "");
+	void drawLayers(Canvas canvas, Paint paint, boolean doNegativeZOrder) {
+//		List<List<ILayer>> layerLevelListByZposition = getSceneLayerLevelList()
+//				.get(getSceneLayerLevelByRecentlySet() + "");
+		List<List<ILayer>> layerLevelListByZposition = getLayerLevelList();
 		drawLayers(canvas, paint, layerLevelListByZposition, doNegativeZOrder);
 	}
 
-	public void drawLayers(Canvas canvas, Paint paint, int sceneLayerLevel,
+	void drawLayers(Canvas canvas, Paint paint, int sceneLayerLevel,
 			boolean doNegativeZOrder) {
-		List<List<ILayer>> layerLevelListByZposition = getSceneLayerLevelList()
-				.get(getSceneLayerLevelByRecentlySet() + "");
+//		List<List<ILayer>> layerLevelListByZposition = getSceneLayerLevelList()
+//				.get(getSceneLayerLevelByRecentlySet() + "");
+		List<List<ILayer>> layerLevelListByZposition = getLayerLevelList();
 		drawLayers(canvas, paint, layerLevelListByZposition, doNegativeZOrder);
 	}
 
@@ -228,14 +241,14 @@ public class LayerController {
 		}
 	}
 
-	public void drawLayers(
+	void drawLayers(
 			Canvas canvas,
 			Paint paint,
 			ConcurrentSkipListMap<Integer, List<ILayer>> layerLevelListByZposition) {
 		drawLayersByLayerLevel(canvas, paint, layerLevelListByZposition);
 	}
 
-	public void drawLayersByLayerLevel(
+	void drawLayersByLayerLevel(
 			Canvas canvas,
 			Paint paint,
 			ConcurrentSkipListMap<Integer, List<ILayer>> layerLevelListByZposition) {
@@ -244,7 +257,7 @@ public class LayerController {
 		}
 	}
 
-	public void drawLayersBySpecificLevel(Canvas canvas, Paint paint, int level) {
+	void drawLayersBySpecificLevel(Canvas canvas, Paint paint, int level) {
 		List<ILayer> layersByTheSameLevel = getLayerLevelList().get(level);
 		for (ILayer layer : layersByTheSameLevel) {
 			layer.drawSelf(canvas, paint);
@@ -263,16 +276,17 @@ public class LayerController {
 	// /////////////////////////////////
 	boolean onTouchLayers(MotionEvent event, int sceneLayerLevel,
 			boolean doNegativeZOrder) {
-		if (!getSceneLayerLevelList().containsKey(sceneLayerLevel + ""))
+		if (!getScenesLayerLevelList().containsKey(sceneLayerLevel + ""))
 			return false;
 		return onTouchLayersForLayerLevel(event,
-				getSceneLayerLevelList().get(sceneLayerLevel + ""),
+				getScenesLayerLevelList().get(sceneLayerLevel + ""),
 				doNegativeZOrder);
 	}
 
 	boolean onTouchLayers(MotionEvent event, boolean doNegativeZOrder) {
-		List<List<ILayer>> layerLevelListInScene = getSceneLayerLevelList()
-				.get(getSceneLayerLevelByRecentlySet() + "");
+//		List<List<ILayer>> layerLevelListInScene = getSceneLayerLevelList()
+//				.get(getSceneLayerLevelByRecentlySet() + "");
+		List<List<ILayer>> layerLevelListInScene = getLayerLevelList();
 		return onTouchLayersForLayerLevel(event, layerLevelListInScene,
 				doNegativeZOrder);
 	}
@@ -308,4 +322,5 @@ public class LayerController {
 		}
 		return isTouched;
 	}
+
 }
