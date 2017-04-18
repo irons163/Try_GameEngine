@@ -9,6 +9,7 @@ public class GravityController implements IGravityController {
 	private float mx, my, distanceX, height, distanceY;
 	private PointF vectorXY = new PointF();
 	GravityType gravityType;
+	PathType pathType;
 	
 	private enum GravityType{
 		KNOWN_VECTOR,
@@ -113,57 +114,41 @@ public class GravityController implements IGravityController {
 		}
 		
 		if (firstExecute) {
-//			long millisTotal = info.getTotal();
-//			long millisDelay = info.getDelay();
-//			float x = millisDelay / millisTotal;
-//			float tx = origineDx * x;
-//			float ty = origineDy * x;
-
-			if (isInverseAngel) {
+			if (pathType == PathType.REFLECTION_PATH_BY_HORIZONTAL_MIRROR) {
 				mathUtil.setDeltaTime(info.getTotal()/1000f);
 				PointF vxy = mathUtil.genVxVy();
 				mathUtil.vx = vxy.x;
 				mathUtil.vy = vxy.y;
 				mathUtil.reflectionByHorizontalMirror();
 			}
-
-			else if (isCyclePath) {
-//				mathUtil.setXY(dx, dy);
-//				mathUtil.genAngle();
-//				mathUtil.cyclePath();
+			else if (pathType == PathType.REFLECTION_PATH_BY_VERTICAL_MIRROR) {
+				mathUtil.setDeltaTime(info.getTotal()/1000f);
+				PointF vxy = mathUtil.genVxVy();
+				mathUtil.vx = vxy.x;
+				mathUtil.vy = vxy.y;
+				mathUtil.reflectionByVerticalMirror();
+			}
+			else if (pathType == PathType.CYCLE_PATH) {
 				mathUtil.cyclePath();
 			}
-
-			else if (isInversePath) {
-//				mathUtil.inversePath();
-//				dx = mathUtil.getSpeedX();
+			else if (pathType == PathType.INVERSE_PATH) {
 				mathUtil.setDeltaTime(info.getTotal()/1000f);
 				PointF vxy = mathUtil.genVxVy();
 				mathUtil.vx = vxy.x;
 				mathUtil.vy = vxy.y;
 				mathUtil.inversePath();
-//				dx = mathUtil.getSpeedX();
 			}
-
-			else if (isWavePath) {
-//				mathUtil.setXY(dx, dy);
-//				mathUtil.setInitSpeed(mathUtil.genTotalSpeed());
-//				mathUtil.genAngle();
-//				mathUtil.setXY(dx, dy);
+			else if (pathType == PathType.WAVE_PATH) {
 				mathUtil.wavePath();
-//				mathUtil.genSpeedXY();
 			}
-
-			else if (isSlopeWavePath) {
+			else if (pathType == PathType.WAVE_SLOPE_PATH) {
 				mathUtil.setDeltaTime(info.getTotal()/1000f);
 				PointF vxy = mathUtil.genVxVy();
 				mathUtil.vx = vxy.x;
 				mathUtil.vy = vxy.y;
 				mathUtil.slopeWavePath();
 			}
-
 			else {
-//				mathUtil.setXY(dx, dy);
 				mathUtil.genAngle();
 			}
 
@@ -215,40 +200,10 @@ public class GravityController implements IGravityController {
 		firstExecute = true;
 	}
 
-	boolean isInverseAngel = false;
-	boolean isCyclePath = false;
-	boolean isInversePath = false;
-	boolean isWavePath = false;
-	boolean isSlopeWavePath = false;
-
 	@Override
-	public void isInverseAngel() {
+	public void setPathType(PathType pathType) {
 		// TODO Auto-generated method stub
-		isInverseAngel = true;
-	}
-
-	@Override
-	public void isCyclePath() {
-		// TODO Auto-generated method stub
-		this.isCyclePath = true;
-	}
-
-	@Override
-	public void isInversePath() {
-		// TODO Auto-generated method stub
-		isInversePath = true;
-	}
-
-	@Override
-	public void isWavePath() {
-		// TODO Auto-generated method stub
-		isWavePath = true;
-	}
-
-	@Override
-	public void isSlopeWavePath() {
-		// TODO Auto-generated method stub
-		isSlopeWavePath = true;
+		this.pathType = pathType;
 	}
 
 	@Override

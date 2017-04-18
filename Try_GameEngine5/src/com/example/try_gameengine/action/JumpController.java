@@ -1,11 +1,14 @@
 package com.example.try_gameengine.action;
 
+import android.graphics.PointF;
+
 public class JumpController implements IGravityController {
 	boolean firstExecute = true;
 	MathUtil mathUtil;
 	private float height, distanceX, distanceY;
 	private float mx, my;
-
+	PathType pathType;
+	
 	public JumpController(float height, float distanceX, float distanceY) {
 		// TODO Auto-generated constructor stub
 		mathUtil = new MathUtil();
@@ -27,47 +30,32 @@ public class JumpController implements IGravityController {
 		mx = 0;
 		my = 0;
 		
-//		if (firstExecute) {
-//			origineDx = info.getDx();
-//			origineDy = info.getDy();
-//
-			
-
-			
-//
-//			else if (isInversePath) {
-//				mathUtil.inversePath();
-//				dx = mathUtil.getSpeedX();
-//			}
-//
-//			else if (isWavePath) {
-//				mathUtil.setXY(dx, dy);
-//				mathUtil.setInitSpeed(mathUtil.genTotalSpeed());
-//				mathUtil.genAngle();
-//				mathUtil.wavePath();
-//				mathUtil.genSpeedXY();
-//			}
-//
-//			else if (isSlopeWavePath) {
-//				mathUtil.slopeWavePath();
-//			}
-//
-//			else {
-//				mathUtil.setXY(dx, dy);
-//				mathUtil.genAngle();
-//
-//			}
-//
-//			mathUtil.initGravity();
-//
-//			getMathUtil().genJumpVx(dx);
-////			getMathUtil().genJumpVx(0);
-//			float newVx = getMathUtil().vx;
-//			info.setDx(newVx);
-////			getMathUtil().vx = newVx;
-//
-//			firstExecute = false;
-//		}
+		if (pathType == PathType.REFLECTION_PATH_BY_HORIZONTAL_MIRROR) {
+			distanceY = -distanceY;
+		}
+		else if (pathType == PathType.REFLECTION_PATH_BY_VERTICAL_MIRROR) {
+			mathUtil.setDeltaTime(info.getTotal()/1000f);
+			PointF vxy = mathUtil.genVxVy();
+			mathUtil.vx = vxy.x;
+			mathUtil.vy = vxy.y;
+			mathUtil.reflectionByVerticalMirror();
+		}
+		else if (pathType == PathType.CYCLE_PATH) {
+			height = -height;
+			distanceX = -distanceX;
+			distanceY = -distanceY;
+		}
+		else if (pathType == PathType.INVERSE_PATH) {
+			distanceX = -distanceX;
+			distanceY = -distanceY;
+		}
+		else if (pathType == PathType.WAVE_PATH) {
+			height = -height;
+			distanceY = -distanceY;
+		}
+		else if (pathType == PathType.WAVE_SLOPE_PATH) {
+			height = -height;
+		}
 
 		firstExecute = false;
 	}
@@ -105,63 +93,10 @@ public class JumpController implements IGravityController {
 		firstExecute = true;
 	}
 
-	boolean isInverseAngel = false;
-	boolean isCyclePath = false;
-	boolean isInversePath = false;
-	boolean isWavePath = false;
-	boolean isSlopeWavePath = false;
-
 	@Override
-	public void isInverseAngel() {
+	public void setPathType(PathType pathType) {
 		// TODO Auto-generated method stub
-		isInverseAngel = true;
-		if (isInverseAngel) {
-//			height = -distanceY + height;
-			distanceY = -distanceY;
-		}
-	}
-
-	@Override
-	public void isCyclePath() {
-		// TODO Auto-generated method stub
-		this.isCyclePath = true;
-		if (isCyclePath) {
-			height = -height;
-			distanceX = -distanceX;
-			distanceY = -distanceY;
-		}
-	}
-
-	@Override
-	public void isInversePath() {
-		// TODO Auto-generated method stub
-		isInversePath = true;
-		if (isInversePath) {
-//			height = -distanceY + height;
-			distanceX = -distanceX;
-			distanceY = -distanceY;
-		}
-	}
-
-	@Override
-	public void isWavePath() {
-		// TODO Auto-generated method stub
-		isWavePath = true;
-		if (isWavePath) {
-			height = -height;
-			distanceY = -distanceY;
-		}
-	}
-
-	@Override
-	public void isSlopeWavePath() {
-		// TODO Auto-generated method stub
-		isSlopeWavePath = true;
-		if (isSlopeWavePath) {
-//			height = -distanceY + height;
-			height = -height;
-//			distanceY = -distanceY;
-		}
+		this.pathType = pathType;
 	}
 
 	@Override

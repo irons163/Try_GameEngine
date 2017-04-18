@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.util.Log;
+
+import com.example.try_gameengine.action.IGravityController.PathType;
 import com.example.try_gameengine.action.MovementActionItemTrigger.MovementActionItemUpdateTimeDataDelegate;
 import com.example.try_gameengine.action.listener.IActionListener;
 import com.example.try_gameengine.action.visitor.IMovementActionVisitor;
@@ -256,24 +258,9 @@ public class MovementActionItemMoveByGravity extends MovementActionItemUpdate im
 		return gravityController.getMathUtil();
 	}
 	
-	public void isCyclePath(){
-		gravityController.isCyclePath();
-	}
-	
-	public void isInversePath(){
-		gravityController.isInversePath();
-	}
-	
-	public void isInverseAngel(){
-		gravityController.isInverseAngel();
-	}
-	
-	public void isWavePath(){
-		gravityController.isWavePath();
-	}
-	
-	public void isSlopeWavePath(){
-		gravityController.isSlopeWavePath();
+	public void setPathType(PathType pathType) {
+		// TODO Auto-generated method stub
+		gravityController.setPathType(pathType);
 	}
 	
 //	public IMovementActionMemento createMovementActionMemento(){

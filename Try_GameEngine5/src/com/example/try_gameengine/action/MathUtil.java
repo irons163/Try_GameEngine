@@ -315,6 +315,12 @@ public class MathUtil implements Cloneable{
 //		ay = - ay;	
 	}
 	
+	public void reflectionByVerticalMirror(){
+		speedX = -vx;
+		speedY = vy;
+		ay = - ay;	
+	}
+	
 	public void cyclePath(){
 		speedX = -speedX;
 		speedY = -speedY;

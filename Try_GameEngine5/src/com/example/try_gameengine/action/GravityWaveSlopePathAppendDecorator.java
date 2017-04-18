@@ -1,10 +1,12 @@
 package com.example.try_gameengine.action;
 
+import com.example.try_gameengine.action.IGravityController.PathType;
 
-public class GravitySlopeWavePathMovementInfoAppendDecorator extends
+
+public class GravityWaveSlopePathAppendDecorator extends
 		CopyMoveDecorator {
 	
-	public GravitySlopeWavePathMovementInfoAppendDecorator(MovementActionItemMoveByGravity action) {
+	public GravityWaveSlopePathAppendDecorator(MovementActionItemMoveByGravity action) {
 		super(action);
 		// TODO Auto-generated constructor stub
 	}
@@ -13,7 +15,7 @@ public class GravitySlopeWavePathMovementInfoAppendDecorator extends
 	protected MovementAction coreCalculationMovementActionInfo(
 			MovementAction action) {
 		MovementActionItemMoveByGravity copy = (MovementActionItemMoveByGravity) super.coreCalculationMovementActionInfo(action);
-		copy.isSlopeWavePath();
+		copy.setPathType(PathType.WAVE_SLOPE_PATH);
 		return copy;
 	}
 }

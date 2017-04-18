@@ -1,8 +1,11 @@
 package com.example.try_gameengine.action;
 
-public class GravityInversePathMovementInfoAppendDecorator extends CopyMoveDecorator {
+import com.example.try_gameengine.action.IGravityController.PathType;
 
-	public GravityInversePathMovementInfoAppendDecorator(MovementActionItemMoveByGravity action) {
+public class GravityWavePathAppendDecorator extends
+		CopyMoveDecorator {
+	
+	public GravityWavePathAppendDecorator(MovementActionItemMoveByGravity action) {
 		super(action);
 		// TODO Auto-generated constructor stub
 	}
@@ -11,7 +14,7 @@ public class GravityInversePathMovementInfoAppendDecorator extends CopyMoveDecor
 	protected MovementAction coreCalculationMovementActionInfo(
 			MovementAction action) {
 		MovementActionItemMoveByGravity copy = (MovementActionItemMoveByGravity) super.coreCalculationMovementActionInfo(action);
-		copy.isInversePath();
+		copy.setPathType(PathType.WAVE_PATH);
 		return copy;
 	}
 }
