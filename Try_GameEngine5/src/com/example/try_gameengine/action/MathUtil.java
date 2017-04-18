@@ -4,11 +4,16 @@ import android.graphics.Point;
 import android.graphics.PointF;
 import android.graphics.Rect;
 
-public class MathUtil {
+public class MathUtil implements Cloneable{
 	private float fAngle;
 	private float speedY = -15;
 	private float speedX = -15;
 	private float initSpeed = 50;
+	float vx ;
+	float vy ;
+	float deltaTime = 1.0f;
+	float ay = 9.8f;
+	float ax = 0;
 	
 	public MathUtil() {
 
@@ -242,12 +247,6 @@ public class MathUtil {
 		return CollisionLoc.None;
 	}
 	
-	float vx ;
-	float vy ;
-	float deltaTime = 1.0f;
-	float ay = 9.8f;
-	float ax = 0;
-	
 	public void initGravity(){
 		vx = speedX;
 		vy = speedY;
@@ -270,10 +269,17 @@ public class MathUtil {
 	}
 	
 	public PointF genDeltaXY(){
-		float dx = vx * deltaTime;
-		float dy = vy * deltaTime + 1/2f*ay*(float)Math.pow(deltaTime, 2);
+		float dx = speedX * deltaTime;
+		float dy = speedY * deltaTime + 1/2f*ay*(float)Math.pow(deltaTime, 2);
 		
 		return new PointF((float)dx, (float)dy);
+	}
+	
+	public PointF genVxVy(){
+		vx = speedX + ax*deltaTime;
+		vy = speedY + ay*deltaTime;
+		
+		return new PointF((float)vx, (float)vy);
 	}
 	
 	public void setDeltaTime(float deltaTime){
@@ -292,7 +298,9 @@ public class MathUtil {
 		this.fAngle = fAngle;
 	}
 	
-	public void inverseAngel(){
+	public void reflectionByHorizontalMirror(){
+		speedX = vx;
+		speedY = -vy;
 		genAngle();
 		if(fAngle >= 0 && fAngle<90){
 			fAngle = 0 - fAngle + 180; 
@@ -304,52 +312,55 @@ public class MathUtil {
 			fAngle = 360 - fAngle + 180;
 		}
 //		genSpeed();
-		ay = - ay;	
+//		ay = - ay;	
 	}
 	
 	public void cyclePath(){
+		speedX = -speedX;
+		speedY = -speedY;
 		ay = - ay;			
 	}
 	
 	public void inversePath(){
-		float ovy = vy;
-		speedX = -speedX;
-		speedY = -speedY;
+//		float ovy = vy;
+		speedX = -vx;
+		speedY = -vy;
 		genAngle();
 //		fAngle += 180;
 //		fAngle %= 360;
 //		genSpeedXY();
-		vy = ovy;
-		vy = -vy;
+//		vy = ovy;
+//		vx = -vy
+//		vy = -vy;
 	}
 	
 	public void wavePath(){
-		float ovy = vy;
-		if(fAngle >= 0 && fAngle<90){
-			fAngle = 0 - fAngle + 360; 
-		}else if(fAngle >= 90 && fAngle<180){
-			fAngle = 360 - fAngle + 0;
-		}else if(fAngle >= 180 && fAngle<270){
-			fAngle = (180 - fAngle) + 180;
-		}else if(fAngle >= 270 && fAngle<360){
-			fAngle = 360 - fAngle + 0;
-		}
+//		speedX = -vx;
+		speedY = -speedY;
+//		if(fAngle >= 0 && fAngle<90){
+//			fAngle = 0 - fAngle + 360; 
+//		}else if(fAngle >= 90 && fAngle<180){
+//			fAngle = 360 - fAngle + 0;
+//		}else if(fAngle >= 180 && fAngle<270){
+//			fAngle = (180 - fAngle) + 180;
+//		}else if(fAngle >= 270 && fAngle<360){
+//			fAngle = 360 - fAngle + 0;
+//		}
 		ay = - ay;	
-		vy = ovy;
 	}
 	
 	public void slopeWavePath(){
-		float ovy = vy;
+		speedX = vx;
+		speedY = vy;
 		genAngle();
 		ay = - ay;	
-		vy = ovy;
 	}
 
 	public void reset(){
 		ay = 9.8f;
 	}
 	
-	public void genJumpVx(float totalDistanceX){
+	public void genJumpSpeedX(float totalDistanceX){
 //		int time = 0;
 //		time = (int)Math.ceil(vy*2/-ay);
 //		if(time==0)
@@ -360,11 +371,11 @@ public class MathUtil {
 //		return newVx;
 		
 		float secondtime = 0;
-		secondtime = vy*2/-ay;
+		secondtime = speedY*2/-ay;
 		if(secondtime==0f)
-			vx = 0;
+			speedX = 0;
 		else
-			vx = totalDistanceX/secondtime;
+			speedX = totalDistanceX/secondtime;
 	}
 
 	public float getAy() {
@@ -375,7 +386,11 @@ public class MathUtil {
 		this.ay = ay;
 	}
 	
-	
+	@Override
+	public Object clone() throws CloneNotSupportedException {
+		// TODO Auto-generated method stub
+		return super.clone();
+	}
 	
 //	public void genJumpVxVy(float totalDistanceX, float totalDistanceY, float secondtime){
 ////		secondtime = vy*2/-ay;

@@ -31,15 +31,9 @@ public class JumpController implements IGravityController {
 //			origineDx = info.getDx();
 //			origineDy = info.getDy();
 //
-//			if (isInverseAngel) {
-//				mathUtil.inverseAngel();
-//			}
-//
-//			else if (isCyclePath) {
-//				mathUtil.setXY(dx, dy);
-//				mathUtil.genAngle();
-//				mathUtil.cyclePath();
-//			}
+			
+
+			
 //
 //			else if (isInversePath) {
 //				mathUtil.inversePath();
@@ -121,30 +115,53 @@ public class JumpController implements IGravityController {
 	public void isInverseAngel() {
 		// TODO Auto-generated method stub
 		isInverseAngel = true;
+		if (isInverseAngel) {
+//			height = -distanceY + height;
+			distanceY = -distanceY;
+		}
 	}
 
 	@Override
 	public void isCyclePath() {
 		// TODO Auto-generated method stub
 		this.isCyclePath = true;
+		if (isCyclePath) {
+			height = -height;
+			distanceX = -distanceX;
+			distanceY = -distanceY;
+		}
 	}
 
 	@Override
 	public void isInversePath() {
 		// TODO Auto-generated method stub
 		isInversePath = true;
+		if (isInversePath) {
+//			height = -distanceY + height;
+			distanceX = -distanceX;
+			distanceY = -distanceY;
+		}
 	}
 
 	@Override
 	public void isWavePath() {
 		// TODO Auto-generated method stub
 		isWavePath = true;
+		if (isWavePath) {
+			height = -height;
+			distanceY = -distanceY;
+		}
 	}
 
 	@Override
 	public void isSlopeWavePath() {
 		// TODO Auto-generated method stub
 		isSlopeWavePath = true;
+		if (isSlopeWavePath) {
+//			height = -distanceY + height;
+			height = -height;
+//			distanceY = -distanceY;
+		}
 	}
 
 	@Override

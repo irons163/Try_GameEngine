@@ -260,6 +260,22 @@ public class MovementActionItemMoveByGravity extends MovementActionItemUpdate im
 		gravityController.isCyclePath();
 	}
 	
+	public void isInversePath(){
+		gravityController.isInversePath();
+	}
+	
+	public void isInverseAngel(){
+		gravityController.isInverseAngel();
+	}
+	
+	public void isWavePath(){
+		gravityController.isWavePath();
+	}
+	
+	public void isSlopeWavePath(){
+		gravityController.isSlopeWavePath();
+	}
+	
 //	public IMovementActionMemento createMovementActionMemento(){
 //		movementActionMemento = new MovementActionItemAlphaMementoImpl(actions, thread, timerOnTickListener, name, copyMovementActionList, currentInfoList, movementItemList, totalCopyMovementActionList, isCycleFinish, isCycleFinish, isCycleFinish, isCycleFinish, name, cancelAction, millisTotal, millisDelay, info, resumeTotal, resetTotal, name, updateTime, frameIdx, isStop, isCycleFinish, triggerEnable, frameTimes, resumeFrameIndex, resumeFrameCount, numberOfPauseFrames, pauseFrameCounter, nextframeTrigger, numberOfFramesAfterLastTrigger);
 //		if(this.info!=null){
