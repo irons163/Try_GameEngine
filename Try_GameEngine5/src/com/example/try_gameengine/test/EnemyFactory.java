@@ -8,6 +8,8 @@ import android.graphics.Bitmap;
 import com.example.try_gameengine.action.MovementAction;
 import com.example.try_gameengine.action.MovementActionFactory;
 import com.example.try_gameengine.action.MovementActionInfo;
+import com.example.try_gameengine.action.MovementActionSetWithOutThread;
+import com.example.try_gameengine.action.MovementActionSetWithThread;
 import com.example.try_gameengine.action.MovementDecorator;
 
 public class EnemyFactory {
@@ -103,8 +105,9 @@ public class EnemyFactory {
 		MovementAction action = null;
 		try {
 			if(actionFactoryClass!=null)
-				action = actionFactoryClass.newInstance().createMovementAction(infos, decoratorClassList).initMovementAction();
-			enemy = enemyClass.getConstructor(int.class, int.class, MovementAction.class).newInstance(enemyInfo[0], enemyInfo[1], action);
+				action = actionFactoryClass.newInstance().createMovementAction(infos, decoratorClassList);
+			MovementAction set = new MovementActionSetWithOutThread();
+			enemy = enemyClass.getConstructor(int.class, int.class, MovementAction.class).newInstance(enemyInfo[0], enemyInfo[1], set.addMovementAction(action).initMovementAction());
 		} catch (InstantiationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -129,8 +132,9 @@ public class EnemyFactory {
 		MovementAction action = null;
 		try {
 			if(actionFactoryClass!=null)
-				action = actionFactoryClass.newInstance().createMovementActionByDecorator(decoratorClassList).initMovementAction();
-			enemy = enemyClass.getConstructor(int.class, int.class, MovementAction.class).newInstance(enemyInfo[0], enemyInfo[1], action);
+				action = actionFactoryClass.newInstance().createMovementActionByDecorator(decoratorClassList);
+			MovementAction set = new MovementActionSetWithOutThread();
+			enemy = enemyClass.getConstructor(int.class, int.class, MovementAction.class).newInstance(enemyInfo[0], enemyInfo[1], set.addMovementAction(action).initMovementAction());
 		} catch (InstantiationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -153,7 +157,7 @@ public class EnemyFactory {
 	public Enemy createSpecialEnemy5(Class<? extends Enemy> enemyClass, int[] enemyInfo, MovementAction action){
 		Enemy enemy = null;
 		try {
-			enemy = enemyClass.getConstructor(int.class, int.class, MovementAction.class).newInstance(enemyInfo[0], enemyInfo[1], action.initMovementAction());
+			enemy = enemyClass.getConstructor(int.class, int.class, MovementAction.class).newInstance(enemyInfo[0], enemyInfo[1], new MovementActionSetWithThread().addMovementAction(action).initMovementAction());
 		} catch (InstantiationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

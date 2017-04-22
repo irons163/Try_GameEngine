@@ -133,6 +133,11 @@ public class MovementActionItemCountDownTimer extends MovementActionItemForMilli
 		dx = info.getDx();
 		dy = info.getDy();
 
+		initCountDownTimer();
+		return this;
+	}
+
+	private void initCountDownTimer() {
 		countDownTimer = new CountDownTimer(millisTotal, millisDelay) {
 
 			@Override
@@ -161,7 +166,6 @@ public class MovementActionItemCountDownTimer extends MovementActionItemForMilli
 				}
 			}
 		};
-		return this;
 	}
 
 	/**
@@ -171,8 +175,9 @@ public class MovementActionItemCountDownTimer extends MovementActionItemForMilli
 		millisTotal = info.getTotal();
 		millisDelay = info.getDelay();
 		dx = info.getDx();
-		dy = info.getDy();
-		initTimer();
+		dy = info.getDy(); 
+//		initTimer();
+		initCountDownTimer();
 	}
 
 	@Override

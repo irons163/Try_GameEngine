@@ -16,17 +16,17 @@ public class EaseRateDecorator extends MovementDecorator {
 	public EaseRateDecorator(MovementAction action, float rate) {
 		this.action = action;
 		this.rate = rate;
-		this.copyMovementActionList = action.copyMovementActionList;
+//		this.copyMovementActionList = action.copyMovementActionList;
 	}
 
 	/**
-	 * @param info
+	 * @param action
 	 * @return
 	 */
-	private MovementActionInfo coreCalculationMovementActionInfo(
-			MovementActionInfo info) {
-		doinin(info);
-		return info;
+	protected MovementAction coreCalculationMovementActionInfo(
+			MovementAction action) {
+		doinin(action.getInfo());
+		return action;
 	}
 
 	@Override
@@ -45,11 +45,6 @@ public class EaseRateDecorator extends MovementDecorator {
 	}
 
 	@Override
-	public MovementAction initMovementAction() {
-		return initTimer();
-	}
-
-	@Override
 	protected MovementAction initTimer(){ super.initTimer();
 
 		if (this.getAction().getActions().size() == 0) {
@@ -57,7 +52,7 @@ public class EaseRateDecorator extends MovementDecorator {
 			action.getAction().initTimer();
 		} else {
 			this.getAction().initTimer();
-			doIn();
+//			doIn(null);
 		}
 		
 		return this;
@@ -75,11 +70,6 @@ public class EaseRateDecorator extends MovementDecorator {
 	}
 
 	@Override
-	public MovementActionInfo getInfo() {
-		return coreCalculationMovementActionInfo(action.getInfo());
-	}
-
-	@Override
 	public List<MovementAction> getCurrentActionList() {
 		// TODO Auto-generated method stub
 		return action.getCurrentActionList();
@@ -92,32 +82,10 @@ public class EaseRateDecorator extends MovementDecorator {
 	}
 
 	@Override
-	public List<MovementAction> getMovementItemList() {
-		return action.getMovementItemList();
-	}
-
-	@Override
 	public List<MovementActionInfo> getMovementInfoList() {
 		return action.getMovementInfoList();
 	}
 
-	@Override
-	public void doIn() {
-		action.doIn();
-		int i = 0;
-		for (MovementActionInfo info : this.getAction().currentInfoList) {
-			Log.e("count", ++i + "");
-			Log.e("info", info.getDx() + "");
-			this.getAction().setInfo(info);
-			
-			coreCalculationMovementActionInfo(this.getAction().getInfo());
-		}
-
-		for (MovementAction movementItem : this.getAction().movementItemList) {
-			movementItem.initTimer();
-		}
-	}
-	
 	void doinin(final MovementActionInfo info){
 		info.getData().setMovementActionItemUpdateTimeDataDelegate(new MovementActionItemTrigger.DataDelegate() {
 			@Override

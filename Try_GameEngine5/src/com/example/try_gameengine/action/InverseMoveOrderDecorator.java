@@ -9,12 +9,12 @@ public class InverseMoveOrderDecorator extends MovementDecorator {
 
 	public InverseMoveOrderDecorator(MovementAction action) {
 		this.action = action;
-		this.copyMovementActionList = action.copyMovementActionList;
+//		this.copyMovementActionList = action.copyMovementActionList;
 	}
 
-	private MovementActionInfo coreCalculationMovementActionInfo(
-			MovementActionInfo info) {
-		return info;
+	protected MovementAction coreCalculationMovementActionInfo(
+			MovementAction action) {
+		return action;
 	}
 
 	@Override
@@ -33,11 +33,6 @@ public class InverseMoveOrderDecorator extends MovementDecorator {
 	}
 
 	@Override
-	public MovementAction initMovementAction() {
-		return initTimer();
-	}
-
-	@Override
 	protected MovementAction initTimer(){ super.initTimer();
 
 		if (this.getAction().getActions().size() == 0) {
@@ -45,7 +40,7 @@ public class InverseMoveOrderDecorator extends MovementDecorator {
 			action.getAction().initTimer();
 		} else {
 			this.getAction().initTimer();
-			doIn();
+//			doIn(null);
 		}
 		return this;
 	}
@@ -62,11 +57,6 @@ public class InverseMoveOrderDecorator extends MovementDecorator {
 	}
 
 	@Override
-	public MovementActionInfo getInfo() {
-		return coreCalculationMovementActionInfo(action.getInfo());
-	}
-
-	@Override
 	public List<MovementAction> getCurrentActionList() {
 		// TODO Auto-generated method stub
 		return action.getCurrentActionList();
@@ -79,32 +69,30 @@ public class InverseMoveOrderDecorator extends MovementDecorator {
 	}
 
 	@Override
-	public List<MovementAction> getMovementItemList() {
-		return action.getMovementItemList();
-	}
-
-	@Override
 	public List<MovementActionInfo> getMovementInfoList() {
 		return action.getMovementInfoList();
 	}
 
 	@Override
-	public void doIn() {
-		action.doIn();
-		this.getAction().getCurrentInfoList();
-		int i = 0;
-		for (MovementActionInfo info : this.getAction().currentInfoList) {
-			Log.e("count", ++i + "");
-			Log.e("info", info.getDx() + "");
-			this.getAction().setInfo(info);
-			coreCalculationMovementActionInfo(this.getAction().getInfo());
-		}
+	protected List<MovementAction> doIn(MovementActionSet actionSet) {
+		List<MovementAction> actions = super.doIn(actionSet);
+//		this.getAction().getCurrentInfoList();
+//		int i = 0;
+//		for (MovementActionInfo info : this.getAction().currentInfoList) {
+//			Log.e("count", ++i + "");
+//			Log.e("info", info.getDx() + "");
+//			this.getAction().setInfo(info);
+////			coreCalculationMovementActionInfo(this.getAction().getInfo());
+//			coreCalculationMovementActionInfo(this.getAction());
+//		}
 
 		inverseOrder(this);
+		
+		return actions;
 
-		for (MovementAction movementItem : this.getAction().movementItemList) {
-			movementItem.initTimer();
-		}
+//		for (MovementAction movementItem : this.getAction().movementItemList) {
+//			movementItem.initTimer();
+//		}
 	}
 
 	private void inverseOrder(MovementAction targetAction) {

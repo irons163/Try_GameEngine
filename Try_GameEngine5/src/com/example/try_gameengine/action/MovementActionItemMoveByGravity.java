@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.util.Log;
+
+import com.example.try_gameengine.action.IGravityController.PathType;
 import com.example.try_gameengine.action.MovementActionItemTrigger.MovementActionItemUpdateTimeDataDelegate;
 import com.example.try_gameengine.action.listener.IActionListener;
 import com.example.try_gameengine.action.visitor.IMovementActionVisitor;
@@ -13,9 +15,9 @@ import com.example.try_gameengine.action.visitor.IMovementActionVisitor;
  * @author irons
  *
  */
-public class MovementActionItemMoveByCurve extends MovementActionItemUpdate implements Cloneable{ 
+public class MovementActionItemMoveByGravity extends MovementActionItemUpdate implements Cloneable{ 
 	MovementActionItemTrigger data;
-	IRotationController rotationController;
+	IGravityController gravityController;
 	float dx, dy;
 	FrameTrigger myTrigger = new FrameTrigger() {
 		
@@ -30,8 +32,8 @@ public class MovementActionItemMoveByCurve extends MovementActionItemUpdate impl
 	 * @param millisTotal
 	 * @param alpha
 	 */
-	public MovementActionItemMoveByCurve(long millisTotal, IRotationController rotationController){
-		this(millisTotal, 1, rotationController, "MovementActionItemAlpha");
+	public MovementActionItemMoveByGravity(long millisTotal, IGravityController gravityController){
+		this(millisTotal, 1, gravityController, "MovementActionItemAlpha");
 	}
 	
 	/**
@@ -39,8 +41,8 @@ public class MovementActionItemMoveByCurve extends MovementActionItemUpdate impl
 	 * @param triggerInterval
 	 * @param alpha
 	 */
-	public MovementActionItemMoveByCurve(long triggerTotal, long triggerInterval, IRotationController rotationController){
-		this(triggerTotal, triggerTotal, rotationController, "MovementActionItemAlpha");
+	public MovementActionItemMoveByGravity(long triggerTotal, long triggerInterval, IGravityController gravityController){
+		this(triggerTotal, triggerTotal, gravityController, "MovementActionItemAlpha");
 	}
 	
 	/**
@@ -50,15 +52,15 @@ public class MovementActionItemMoveByCurve extends MovementActionItemUpdate impl
 	 * @param alpha
 	 * @param description
 	 */
-	public MovementActionItemMoveByCurve(long millisTotal, long millisDelay, IRotationController rotationController, String description){
-		this(new MovementActionInfo(millisTotal, millisDelay, 0, 0, ""), rotationController, description);
+	public MovementActionItemMoveByGravity(long millisTotal, long millisDelay, IGravityController gravityController, String description){
+		this(new MovementActionInfo(millisTotal, millisDelay, 0, 0, ""), gravityController, description);
 	}
 	
-	public MovementActionItemMoveByCurve(MovementActionInfo info, IRotationController rotationController, String description){
+	public MovementActionItemMoveByGravity(MovementActionInfo info, IGravityController gravityController, String description){
 		super(info);
 		
 		this.description = description + ",";
-		this.rotationController = rotationController;
+		this.gravityController = gravityController;
 	}
 	
 	@Override
@@ -71,7 +73,7 @@ public class MovementActionItemMoveByCurve extends MovementActionItemUpdate impl
 	public void start() {
 		// TODO Auto-generated method stub	
 //		resumeFrameIndex = 0;
-		rotationController.start(info);
+		gravityController.start(info);
 		data.setValueOfActivedCounter(0);
 		data.setShouldPauseValue(0);
 		data.setValueOfPausedCounter(0);
@@ -108,7 +110,7 @@ public class MovementActionItemMoveByCurve extends MovementActionItemUpdate impl
 
 	private void frameTriggerFPSStart(){
 		if (!isStop) {
-			synchronized (MovementActionItemMoveByCurve.this) {
+			synchronized (MovementActionItemMoveByGravity.this) {
 			data.dodo();
 			
 			if(!isLoop && data.isCycleFinish()){
@@ -127,14 +129,14 @@ public class MovementActionItemMoveByCurve extends MovementActionItemUpdate impl
 					if(actionListener!=null)
 						actionListener.actionFinish();
 					
-					MovementActionItemMoveByCurve.this.notifyAll();
+					MovementActionItemMoveByGravity.this.notifyAll();
 				}
 			}
 			
 			}
 		}else{
-			synchronized (MovementActionItemMoveByCurve.this) {
-				MovementActionItemMoveByCurve.this.notifyAll();
+			synchronized (MovementActionItemMoveByGravity.this) {
+				MovementActionItemMoveByGravity.this.notifyAll();
 			}
 		}
 	}
@@ -149,7 +151,7 @@ public class MovementActionItemMoveByCurve extends MovementActionItemUpdate impl
 				// TODO Auto-generated method stub
 //				doRotation();
 //				doGravity();
-				rotationController.execute(info);
+				gravityController.execute(info);
 				dx = info.getDx();
 				dy = info.getDy();
 				if (timerOnTickListener != null)
@@ -161,7 +163,7 @@ public class MovementActionItemMoveByCurve extends MovementActionItemUpdate impl
 				// TODO Auto-generated method stub
 //				doRotation();
 //				doGravity();
-				rotationController.execute(info, t);
+				gravityController.execute(info, t);
 				dx = info.getDx();
 				dy = info.getDy();
 //				float newDx = (float) (dx*t);
@@ -233,8 +235,8 @@ public class MovementActionItemMoveByCurve extends MovementActionItemUpdate impl
 	@Override
 	public void cancelMove(){
 		isStop = true;
-		synchronized (MovementActionItemMoveByCurve.this) {
-			MovementActionItemMoveByCurve.this.notifyAll();
+		synchronized (MovementActionItemMoveByGravity.this) {
+			MovementActionItemMoveByGravity.this.notifyAll();
 		}
 	}
 	
@@ -249,15 +251,16 @@ public class MovementActionItemMoveByCurve extends MovementActionItemUpdate impl
 	}
 	
 	void setMathUtil(MathUtil mathUtil){
-		rotationController.setMathUtil(mathUtil);
+		gravityController.setMathUtil(mathUtil);
 	}
 	
 	MathUtil getMathUtil(){
-		return rotationController.getMathUtil();
+		return gravityController.getMathUtil();
 	}
 	
-	public void isCyclePath(){
-		rotationController.isCyclePath();
+	public void setPathType(PathType pathType) {
+		// TODO Auto-generated method stub
+		gravityController.setPathType(pathType);
 	}
 	
 //	public IMovementActionMemento createMovementActionMemento(){
@@ -371,11 +374,11 @@ public class MovementActionItemMoveByCurve extends MovementActionItemUpdate impl
 	}
 	
 	@Override
-	protected MovementActionItemMoveByCurve clone() throws CloneNotSupportedException {
+	protected MovementActionItemMoveByGravity clone() throws CloneNotSupportedException {
 		// TODO Auto-generated method stub
 		MovementActionInfo info = getInfo().clone();
-		IRotationController newRotationController = rotationController.copyNewRotationController();
-		MovementActionItemMoveByCurve movementActionItemMoveByCurve = new MovementActionItemMoveByCurve(info, newRotationController, description);
-		return movementActionItemMoveByCurve;
+		IGravityController newGravityController = gravityController.copyNewGravityController();
+		MovementActionItemMoveByGravity movementActionItemMoveByGravity = new MovementActionItemMoveByGravity(info, newGravityController, description);
+		return movementActionItemMoveByGravity;
 	}
 }

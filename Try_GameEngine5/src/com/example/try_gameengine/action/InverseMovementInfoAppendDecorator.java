@@ -8,26 +8,28 @@ public class InverseMovementInfoAppendDecorator extends MovementDecorator {
 
 	public InverseMovementInfoAppendDecorator(MovementAction action) {
 		this.action = action;
-		this.copyMovementActionList = action.copyMovementActionList;
+//		this.copyMovementActionList = action.copyMovementActionList;
 	}
 
-	private MovementActionInfo coreCalculationMovementActionInfo(
-			MovementActionInfo info) {
+	protected MovementAction coreCalculationMovementActionInfo(
+			MovementAction action) {
 
-		MovementActionInfo newInfo = new MovementActionInfo(info.getTotal(),
-				info.getDelay(), info.getDx(), info.getDy(),
-				info.getDescription());
-		if (this.getAction().getActions().size() != 0) {
-			MovementAction action = new MovementActionItemCountDownTimer(newInfo);
-			copyMovementActionList.add(action);
-			this.getAction().totalCopyMovementActionList.add(action);
-		}
+//		MovementActionInfo newInfo = new MovementActionInfo(action.getTotal(),
+//				action.getDelay(), action.getDx(), action.getDy(),
+//				action.getDescription());
+//		if (this.getAction().getActions().size() != 0) {
+//			MovementAction action = new MovementActionItemCountDownTimer(newInfo);
+////			copyMovementActionList.add(action);
+////			this.getAction().totalCopyMovementActionList.add(action);
+//		}
 
+		MovementActionInfo info = action.getInfo();
+		MovementActionInfo newInfo = info.clone();
 		newInfo.setTotal(info.getTotal());
 		newInfo.setDelay(info.getDelay());
 		newInfo.setDx(-info.getDx());
 		newInfo.setDy(-info.getDy());
-		return info;
+		return action;
 	}
 
 	@Override
@@ -46,11 +48,6 @@ public class InverseMovementInfoAppendDecorator extends MovementDecorator {
 	}
 
 	@Override
-	public MovementAction initMovementAction() {
-		return initTimer();
-	}
-
-	@Override
 	protected MovementAction initTimer(){ super.initTimer();
 
 		if (this.getAction().getActions().size() == 0) {
@@ -60,7 +57,7 @@ public class InverseMovementInfoAppendDecorator extends MovementDecorator {
 
 		} else {
 			this.getAction().initTimer();
-			doIn();
+			doIn(null);
 		}
 		return this;
 	}
@@ -77,11 +74,6 @@ public class InverseMovementInfoAppendDecorator extends MovementDecorator {
 	}
 
 	@Override
-	public MovementActionInfo getInfo() {
-		return coreCalculationMovementActionInfo(action.getInfo());
-	}
-
-	@Override
 	public List<MovementAction> getCurrentActionList() {
 		// TODO Auto-generated method stub
 		return action.getCurrentActionList();
@@ -94,41 +86,7 @@ public class InverseMovementInfoAppendDecorator extends MovementDecorator {
 	}
 
 	@Override
-	public List<MovementAction> getMovementItemList() {
-		return action.getMovementItemList();
-	}
-
-	@Override
 	public List<MovementActionInfo> getMovementInfoList() {
 		return action.getMovementInfoList();
-	}
-
-	@Override
-	public void doIn() {
-		action.doIn();
-		copyMovementActionList.clear();
-		this.getAction().getCurrentInfoList();
-		int i = 0;
-
-		for (int j = 0; j < this.getAction().currentInfoList.size(); j++) {
-			MovementActionInfo info = this.getAction().currentInfoList.get(j);
-			Log.e("count", ++i + "");
-			Log.e("info", info.getDx() + "");
-			this.getAction().setInfo(info);
-
-			coreCalculationMovementActionInfo(this.getAction().getInfo());
-		}
-
-		for (MovementAction action : copyMovementActionList) {
-			this.getAction().addMovementAction(action);
-			this.getAction().movementItemList.add(action);
-			action.description = "inverseAppend";
-			action.initTimer();
-		}
-
-		for (MovementAction movementItem : this.getAction().movementItemList) {
-			movementItem.initTimer();
-		}
-
 	}
 }

@@ -1,18 +1,17 @@
 package com.example.try_gameengine.action;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.example.try_gameengine.action.visitor.IMovementActionVisitor;
 
-/**
- * MovementActionSet is a set of MovementAcion.
- * @author irons
- *
- */
-public class MovementActionSet extends MovementAction {
-	private boolean isActionFinish = true;
-	private MovementActionInfo info;
-	
+public abstract class MovementActionSet extends MovementAction {
+	protected boolean isActionFinish = true;
+
+	public MovementActionSet() {
+		super();
+	}
+
 	@Override
 	public MovementAction addMovementAction(MovementAction action) {
 		// TODO Auto-generated method stub
@@ -23,6 +22,16 @@ public class MovementActionSet extends MovementAction {
 		
 		return this;
 	}
+	
+	@Override
+	protected List<MovementAction> doIn(MovementActionSet actionSet) {
+		// TODO Auto-generated method stub
+		List<MovementAction> actions = super.doIn(this);
+//		for(MovementAction action : actions){
+//			addMovementAction(action);
+//		}
+		return new ArrayList<MovementAction>();
+	}
 
 	@Override
 	protected void setActionsTheSameTimerOnTickListener() {
@@ -31,135 +40,26 @@ public class MovementActionSet extends MovementAction {
 		}
 	}
 
-	private void frameStart(){
-		for(MovementAction action : actions){
-			cancelAction = action;
-			
-			action.start();
-			
-		}
-	}
-	
-	@Override
-	public void start() {
-		// TODO Auto-generated method stub
-
-		if (isActionFinish) {
-			isActionFinish = false;
-
-			thread = new Thread(new Runnable() {
-
-				@Override
-				public void run() {
-					// TODO Auto-generated method stub
-					List<MovementAction> actionss = actions;
-					actionListener.actionStart();
-					do{
-						for(MovementAction action : actions){
-							cancelAction = action;
-							action.start();
-							synchronized (action.getAction()) {
-								try {
-									action.getAction().wait();
-								} catch (InterruptedException e) {
-									// TODO Auto-generated catch block
-									e.printStackTrace();
-//									throw new RuntimeException();
-									Thread.currentThread().interrupt();
-								}
-							}
-	
-						} 
-						actionListener.actionCycleFinish();
-					}while(isLoop);
-					
-					synchronized (MovementActionSet.this) {
-						MovementActionSet.this.notifyAll();
-					}
-					isActionFinish = true;
-					actionListener.actionFinish();
-				}
-			});
-
-			thread.start();
-		}
-	}
-	
-	@Override
-	public MovementAction initMovementAction(){		
-		return initTimer();
-	}
-	
-	@Override
-	protected MovementAction initTimer(){ super.initTimer();
-	
-		for (MovementAction action : this.actions) {
-			
-			if(action.getAction().getActions().size()==0){
-				action.initTimer();
-			}else{
-				action.initTimer();
-			}
-			for(MovementAction movementAction : action.getAction().totalCopyMovementActionList){
-				this.getAction().movementItemList.add(movementAction);
-			}
-			
-//			action.getAction().setCancelFocusAppendPart(true);
-		}
-		this.getAction().getCurrentInfoList();
-
-		return this;
-	}	
-	
-	@Override
-	public MovementAction getAction(){
-		return this;
-	}
-	
-	public List<MovementAction> getActions(){
-		return actions;
-	}
-
-	@Override
-	public MovementActionInfo getInfo() {
-		// TODO Auto-generated method stub
-		return info;
-	}
-	
-	@Override
-	public void setInfo(MovementActionInfo info){
-		this.info = info;
-	}
-
-	@Override
-	public String getDescription() {
-		// TODO Auto-generated method stub
-		description = "Set[";
-		for (MovementAction action : actions) {
-			description += action.getDescription();
-		}
-		description += "]";
-		return description;
-	}
-	
 	@Override
 	public List<MovementAction> getCurrentActionList() {
-		// TODO Auto-generated method stub
-		
-		movementItemList.clear();
-		for(MovementAction action : actions){
-			for(MovementAction actionItem : action.getCurrentActionList()){
-				movementItemList.add(actionItem);
-			}
+			// TODO Auto-generated method stub
+			
+	//		movementItemList.clear();
+	//		for(MovementAction action : actions){
+	//			for(MovementAction actionItem : action.getCurrentActionList()){
+	//				movementItemList.add(actionItem);
+	//			}
+	//		}
+	//		
+	//		return movementItemList;
+			
+			return null;
 		}
-		
-		return movementItemList;
-	}
-	
+
 	@Override
 	public List<MovementActionInfo> getCurrentInfoList() {
 		// TODO Auto-generated method stub
-
+	
 		currentInfoList.clear();
 		for(MovementAction action : actions){
 			for(MovementActionInfo actionItem : action.getCurrentInfoList()){
@@ -169,32 +69,25 @@ public class MovementActionSet extends MovementAction {
 		
 		return currentInfoList;
 	}
-	
+
 	@Override
-	public boolean isFinish(){
+	public boolean isFinish() {
 		return isActionFinish;
 	}
-	
+
 	@Override
-	public void trigger() {
-		// TODO Auto-generated method stub
-		for (MovementAction action : this.actions) {
-			action.trigger();
-		}
-	}
-	
-	@Override
-	void cancelAllMove() {
+	protected void cancelAllMove() {
 		// TODO Auto-generated method stub
 		isLoop = false;
 		super.cancelAllMove();
 	}
-	
+
 	@Override
-	public void accept(IMovementActionVisitor movementActionVisitor){
+	public void accept(IMovementActionVisitor movementActionVisitor) {
 		movementActionVisitor.visitComposite(this);
 		for(MovementAction movementAction : actions){
 			movementAction.accept(movementActionVisitor);
 		}
 	}
+
 }

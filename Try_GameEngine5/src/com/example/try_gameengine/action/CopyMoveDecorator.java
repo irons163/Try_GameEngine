@@ -1,32 +1,39 @@
 package com.example.try_gameengine.action;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import android.util.Log;
+import com.example.try_gameengine.action.visitor.IMovementActionVisitor;
+import com.example.try_gameengine.action.visitor.MovementActionObjectStructure;
 
 public class CopyMoveDecorator extends MovementDecorator {
-	private MovementAction action;
 //	boolean doing = false;
+//	MovementActionSet actionSet;
 
 	public CopyMoveDecorator(MovementAction action) {
 		this.action = action;
-		this.copyMovementActionList = action.copyMovementActionList;
+//		this.actionSet = actionSet;
+//		this.copyMovementActionList = action.copyMovementActionList;
 	}
 
-	private MovementActionInfo coreCalculationMovementActionInfo(
-			MovementActionInfo info) {
-
-//		MovementActionInfo newInfo = new MovementActionInfo(info.getTotal(),
-//				info.getDelay(), info.getDx(), info.getDy(),
-//				info.getDescription(), info.getRotationController(),
-//				info.isEnableGravity());
-		MovementActionInfo newInfo = info.clone();
-		if (this.getAction().getActions().size() != 0) {
-			MovementAction action = new MovementActionItemCountDownTimer(newInfo);
-			copyMovementActionList.add(action);
-			this.getAction().totalCopyMovementActionList.add(action);
+	protected MovementAction coreCalculationMovementActionInfo(
+			MovementAction action) {
+		MovementAction newAction = null;
+		try {
+			newAction = (MovementAction) action.clone();
+		} catch (CloneNotSupportedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		return newInfo;
+//		if (this.getAction().getActions().size() != 0) {
+//			MovementAction action = new MovementActionItemCountDownTimer(newInfo);
+//			copyMovementActionList.add(action);
+//			this.getAction().totalCopyMovementActionList.add(action);
+//		}
+		
+//		this.action.addMovementAction(newAction);
+		
+		return newAction;
 	}
 
 	@Override
@@ -54,7 +61,7 @@ public class CopyMoveDecorator extends MovementDecorator {
 
 		} else {
 			this.getAction().initTimer();
-			doIn();
+//			doIn(null);
 		}
 		return this;
 	}
@@ -71,11 +78,6 @@ public class CopyMoveDecorator extends MovementDecorator {
 	}
 
 	@Override
-	public MovementActionInfo getInfo() {
-		return coreCalculationMovementActionInfo(action.getInfo());
-	}
-
-	@Override
 	public List<MovementAction> getCurrentActionList() {
 		// TODO Auto-generated method stub
 		return action.getCurrentActionList();
@@ -88,41 +90,31 @@ public class CopyMoveDecorator extends MovementDecorator {
 	}
 
 	@Override
-	public List<MovementAction> getMovementItemList() {
-		return action.getMovementItemList();
-	}
-
-	@Override
 	public List<MovementActionInfo> getMovementInfoList() {
 		return action.getMovementInfoList();
 	}
-
-	@Override
-	public void doIn() {
-		action.doIn();
-//		doing = true;
-		copyMovementActionList.clear();
-
-		int i = 0;
-		for (MovementActionInfo info : this.getAction().currentInfoList) {
-			Log.e("count", ++i + "");
-			Log.e("info", info.getDx() + "");
-			this.getAction().setInfo(info);
-			coreCalculationMovementActionInfo(this.getAction().getInfo());
-		}
-
-		for (MovementAction action : copyMovementActionList) {
-			this.getAction().addMovementAction(action);
-			this.getAction().movementItemList.add(action);
-			action.description = "copyAppend";
-			action.initTimer();
-		}
-
-		for (MovementAction movementItem : this.getAction().movementItemList) {
-			movementItem.initTimer();
-		}
-	}
 	
+	@Override
+	protected List<MovementAction> doIn(MovementActionSet actionSet) {
+		List<MovementAction> actions = action.doIn(actionSet);
+		
+		List<MovementAction> newactions = new ArrayList<MovementAction>(actions); 
+		if(actionSet!=null){
+//			actionSet.addMovementAction(coreCalculationMovementActionInfo(action));
+			newactions.add(coreCalculationMovementActionInfo(action));
+		}
+		
+		for(MovementAction action : actions){
+			newactions.add(coreCalculationMovementActionInfo(action));
+		}
+//		for(MovementAction action : this.getAction().getActions()){
+//			coreCalculationMovementActionInfo(action);
+//		}
+		return newactions;
+		
+
+	}
+
 //	public IMovementActionMemento createMovementActionMemento(){
 //		movementActionMemento = new CopyMoveDecoratorMementoImpl(actions, thread, timerOnTickListener, description, copyMovementActionList, currentInfoList, movementItemList, totalCopyMovementActionList, isCancelFocusAppendPart, isFinish, isLoop, isSigleThread, name, cancelAction, action, isRepeatSpriteActionIfMovementActionRepeat);
 //		return movementActionMemento;
@@ -162,4 +154,19 @@ public class CopyMoveDecorator extends MovementDecorator {
 //			this.action = action;
 //		}			
 //	}
+	
+	@Override
+	protected CopyMoveDecorator clone() throws CloneNotSupportedException {
+		CopyMoveDecorator copy = new CopyMoveDecorator((MovementActionSet) this.action.clone());
+		copy.actionListener = this.actionListener;
+		copy.timerOnTickListener = this.timerOnTickListener;
+		copy.controller = this.controller;
+		copy.timerOnTickListener = this.timerOnTickListener;
+		for(MovementAction action : this.actions){
+			MovementAction subCopy = (MovementAction) action.clone();
+			copy.addMovementAction(subCopy);
+		}
+		copy.name = name;
+		return copy;
+	}
 }

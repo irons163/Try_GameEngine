@@ -138,4 +138,19 @@ public class MovementActionItemForMilliseconds extends MovementActionItem {
 	public boolean isFinish() {
 		return isActionFinish;
 	}
+	
+	@Override
+	protected MovementActionItemForMilliseconds clone() throws CloneNotSupportedException {
+		MovementActionItemForMilliseconds copy = new MovementActionItemForMilliseconds(this.info.clone());
+		copy.actionListener = this.actionListener;
+		copy.timerOnTickListener = this.timerOnTickListener;
+		copy.controller = this.controller;
+		copy.timerOnTickListener = this.timerOnTickListener;
+		for(MovementAction action : this.actions){
+			MovementAction subCopy = (MovementAction) action.clone();
+			copy.addMovementAction(subCopy);
+		}
+		copy.name = name;
+		return copy;
+	}
 }

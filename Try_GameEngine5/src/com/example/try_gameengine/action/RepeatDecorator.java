@@ -29,7 +29,7 @@ public class RepeatDecorator extends MovementDecorator {
 	public RepeatDecorator(MovementAction action, long count) {
 		this.action = action;
 		this.count = count;
-		this.copyMovementActionList = action.copyMovementActionList;
+//		this.copyMovementActionList = action.copyMovementActionList;
 		
 		List<MovementAction> actions = new ArrayList<MovementAction>(); // add 105/09/01
 		actions.add(this.action);
@@ -38,13 +38,13 @@ public class RepeatDecorator extends MovementDecorator {
 
 	/**
 	 * coreCalculationMovementActionInfo for calculate.
-	 * @param info
+	 * @param action
 	 * 			info for calculate.
 	 * @return
 	 */
-	private MovementActionInfo coreCalculationMovementActionInfo(
-			MovementActionInfo info) {
-		return info;
+	protected MovementAction coreCalculationMovementActionInfo(
+			MovementAction action) {
+		return action;
 	}
 
 	@Override
@@ -126,7 +126,7 @@ public class RepeatDecorator extends MovementDecorator {
 
 	@Override
 	public MovementAction initMovementAction() {
-		MovementAction movementAction = initTimer();
+		MovementAction movementAction = super.initMovementAction();
 		isTheOuterActionForInitMovementAction = true;
 		return movementAction;
 	}
@@ -140,7 +140,7 @@ public class RepeatDecorator extends MovementDecorator {
 			action.getAction().initTimer();
 		} else {
 			this.action.initTimer();
-			doIn();
+			doIn(null);
 		}
 		
 //		for(MovementAction movementAction : getCurrentActionList()){
@@ -173,20 +173,17 @@ public class RepeatDecorator extends MovementDecorator {
 	}
 
 	@Override
-	public MovementActionInfo getInfo() {
-		return coreCalculationMovementActionInfo(action.getInfo());
-	}
-
-	@Override
 	public List<MovementAction> getCurrentActionList() {
 		// TODO Auto-generated method stub
 		
-		movementItemList.clear();
-		for(MovementAction actionItem : action.getCurrentActionList()){
-			movementItemList.add(actionItem);
-		}
+//		movementItemList.clear();
+//		for(MovementAction actionItem : action.getCurrentActionList()){
+//			movementItemList.add(actionItem);
+//		}
+//		
+//		return movementItemList;
 		
-		return movementItemList;
+		return null;
 	}
 
 	@Override
@@ -196,17 +193,12 @@ public class RepeatDecorator extends MovementDecorator {
 	}
 
 	@Override
-	public List<MovementAction> getMovementItemList() {
-		return action.getMovementItemList();
-	}
-
-	@Override
 	public List<MovementActionInfo> getMovementInfoList() {
 		return action.getMovementInfoList();
 	}
 
 	@Override
-	public void doIn() {
+	protected List<MovementAction> doIn(MovementActionSet actionSet) {
 //		for (MovementActionInfo info : this.getAction().currentInfoList) {
 //			this.getAction().setInfo(info);
 //			coreCalculationMovementActionInfo(this.getAction().getInfo());
@@ -216,7 +208,7 @@ public class RepeatDecorator extends MovementDecorator {
 //			movementItem.initTimer();
 //		}
 		
-		
+		return super.doIn(actionSet);
 	}
 	
 	@Override

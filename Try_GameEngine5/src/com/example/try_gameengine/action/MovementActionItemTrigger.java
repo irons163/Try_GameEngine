@@ -80,6 +80,8 @@ public interface MovementActionItemTrigger {
 
 	public abstract void setEnableSetSpriteAction(
 			boolean isEnableSetSpriteAction);
+	
+	public abstract double getValueOfFactorByUpdate();
 
 	public abstract MovementActionItemUpdateTimeDataDelegate getMovementActionItemUpdateTimeDataDelegate();
 
