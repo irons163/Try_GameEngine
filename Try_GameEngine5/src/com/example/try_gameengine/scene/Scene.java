@@ -148,22 +148,27 @@ public abstract class Scene extends Sprite{
 //		layer.setAutoAdd(true);
 	}
 	
+	//Maybe change the gameModel to gameController is better.
 	public int getViewBackgroundColor() {
 		return gameModel.getBackgroundColor();
 	}
 
+	//Maybe change the gameModel to gameController is better.
 	public void setViewBackgroundColor(int backgroundColor) {
 		gameModel.setBackgroundColor(backgroundColor);
 	}
 	
+	//Maybe change the gameModel to gameController is better.
 	public Camera getCamera(){
 		return gameModel.getCamera();
 	}
 	
+	//Maybe change the gameModel to gameController is better.
 	public void setCamera(Camera camera){
 		gameModel.setCamera(camera);
 	}
 	
+	//Maybe change the gameModel to gameController is better.
 	public void addPreProcessBlock(ProcessBlock processBlock){
 		gameModel.addPreProcessBlock(processBlock);
 	}

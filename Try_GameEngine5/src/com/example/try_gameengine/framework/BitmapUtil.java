@@ -47,7 +47,7 @@ public class BitmapUtil {
 	}
 	
 	private static void initBitmap(){
-		redPoint = BitmapFactory.decodeResource(context.getResources(), R.drawable.red_point, null);
+		redPoint = BitmapFactory.decodeResource(context.getResources(), R.drawable.red_point);
 		greenPoint = BitmapFactory.decodeResource(context.getResources(), 
 				R.drawable.green_point);
 		blackPoint = BitmapFactory.decodeResource(context.getResources(), 
