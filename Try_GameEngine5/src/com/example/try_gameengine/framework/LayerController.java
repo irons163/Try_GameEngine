@@ -7,11 +7,8 @@ import java.util.concurrent.ConcurrentSkipListMap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.view.MotionEvent;
-import android.view.animation.ScaleAnimation;
 
-import com.example.try_gameengine.action.Time;
 import com.example.try_gameengine.framework.LayerManager.IterateLayersListener;
-import com.example.try_gameengine.scene.SceneManager;
 
 public class LayerController {
 	/**
@@ -36,13 +33,6 @@ public class LayerController {
 
 	void setLayerLevelList(List<List<ILayer>> layerLevelList) {
 		this.layerLevelList = sceneLayerLevelList = layerLevelList;
-		
-//		Time t = SceneManager.getInstance().getSceneAt(sceneLayerLevelByRecentlySet).getTime();
-//		if(t!=null){
-//			time = t;
-//		}else{
-//			throw new RuntimeException("gameModel time is null");
-//		}
 	}
 	
 	void changeToGameModel(){
@@ -62,12 +52,10 @@ public class LayerController {
 //		this.scenesLayerLevelList = sceneLayerLevelList;
 //	}
 
-	//not use in LayerController, use in LayerZpositionController
 	int getSceneLayerLevelByRecentlySet() {
 		return sceneLayerLevelByRecentlySet;
 	}
 
-	//not use in LayerController, use in LayerZpositionController
 	void setSceneLayerLevelByRecentlySet(int sceneLayerLevelByRecentlySet) {
 		this.sceneLayerLevelByRecentlySet = sceneLayerLevelByRecentlySet;
 	}

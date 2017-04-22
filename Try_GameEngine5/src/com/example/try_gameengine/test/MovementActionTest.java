@@ -8,21 +8,25 @@ import android.test.suitebuilder.annotation.LargeTest;
 
 import com.example.try_gameengine.action.CopyMoveDecorator;
 import com.example.try_gameengine.action.DoubleDecorator;
+import com.example.try_gameengine.action.GravityWaveSlopePathAppendDecorator;
 import com.example.try_gameengine.action.InverseMoveOrderDecorator;
 import com.example.try_gameengine.action.InverseMovementInfoAppendDecorator;
 import com.example.try_gameengine.action.InverseMovementInfoDecorator;
+import com.example.try_gameengine.action.JumpController;
 import com.example.try_gameengine.action.MAction;
 import com.example.try_gameengine.action.MAction2;
 import com.example.try_gameengine.action.MovementAction;
 import com.example.try_gameengine.action.MovementActionInfo;
 import com.example.try_gameengine.action.MovementActionItemCountDownTimer;
 import com.example.try_gameengine.action.MovementActionItemBaseReugularFPS;
+import com.example.try_gameengine.action.MovementActionItemMoveByGravity;
 import com.example.try_gameengine.action.MovementActionSet;
 import com.example.try_gameengine.action.MovementActionSetWithThread;
 import com.example.try_gameengine.action.MovementActionSetWithThreadPool;
 import com.example.try_gameengine.action.MovementAtionController;
 import com.example.try_gameengine.action.MovementInfoFactory;
 import com.example.try_gameengine.action.SpecialMovementActionFactory;
+import com.example.try_gameengine.action.Time;
 import com.example.try_gameengine.framework.Config;
 import com.example.try_gameengine.framework.Sprite;
 
@@ -321,6 +325,34 @@ public class MovementActionTest extends AndroidTestCase{
 		
 		assertEquals(true, correctInfoList.equals(currentInfoList));
 
+		
+		correctInfoList.clear();
+		correctInfoList.add(new MovementActionInfo(1000, 200, 10f, 0f));
+		correctInfoList.add(new MovementActionInfo(1000, 200, 0f, -10f));
+		correctInfoList.add(new MovementActionInfo(1000, 200, -10f, 0f));
+		correctInfoList.add(new MovementActionInfo(1000, 200, 0f, 10f));
+		correctInfoList.add(new MovementActionInfo(1000, 200, 30, 0));
+		
+		MovementAction newaction5;
+		newaction5 = new InverseMovementInfoDecorator(new MovementActionSetWithThread());
+		newaction5.addMovementAction(new GravityWaveSlopePathAppendDecorator(new MovementActionItemMoveByGravity(new MovementActionInfo(1000, 200, 30, 0, "R"), new JumpController(-50, 200, 100), "")));
+		newaction5 = new MovementActionSetWithThread().addMovementAction(newaction5);
+		enemy = enemyFactory.createSpecialEnemy5(RedEnemy.class, new int[]{100, 500}, newaction5);
+		
+		action = enemy.getAction();
+		currentInfoList.clear();
+		
+		for(MovementActionInfo movementActionInfo : action.getStartMovementInfoList()){
+			currentInfoList.add(movementActionInfo); 
+		}
+		
+		Time.DeltaTime = 200;
+		action.trigger();
+		assertEquals(true, correctInfoList.get(0).equals(currentInfoList.get(0)));
+		action.trigger();
+		assertEquals(true, correctInfoList.get(1).equals(currentInfoList.get(1)));
+		action.trigger();
+		assertEquals(true, correctInfoList.get(2).equals(currentInfoList.get(2)));
 		
 		
 		correctInfoList.clear();
@@ -1509,6 +1541,9 @@ public class MovementActionTest extends AndroidTestCase{
 			currentInfoList.add(movementActionInfo); 
 		}	
 		assertEquals(true, correctInfoList.equals(currentInfoList));
+		
+		
+		
 	}
 	
 	@LargeTest
