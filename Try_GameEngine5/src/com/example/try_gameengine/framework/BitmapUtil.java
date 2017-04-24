@@ -54,7 +54,7 @@ public class BitmapUtil {
 				R.drawable.black_point);
 		whitePoint = BitmapFactory.decodeResource(context.getResources(), 
 				R.drawable.white_point);
-		bluePoint = createSpecificSizeBitmap(context.getResources().getDrawable(R.drawable.blue_point), 200, 200);
+//		bluePoint = createSpecificSizeBitmap(context.getResources().getDrawable(R.drawable.blue_point, context.getTheme()), 200, 200);
 		leftKey = BitmapFactory.decodeResource(context.getResources(), 
 				R.drawable.left_keyboard_btn);
 		rightKey = BitmapFactory.decodeResource(context.getResources(), 

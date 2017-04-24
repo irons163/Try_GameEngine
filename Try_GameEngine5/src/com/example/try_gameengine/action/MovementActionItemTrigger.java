@@ -47,6 +47,8 @@ public interface MovementActionItemTrigger {
 		}
 		
 	}
+
+	MovementActionItemAlpha2Data2 data2 = new MovementActionItemAlpha2Data2();
 	
 	public abstract boolean isCycleFinish();
 
@@ -89,5 +91,4 @@ public interface MovementActionItemTrigger {
 			MovementActionItemUpdateTimeDataDelegate movementActionItemUpdateTimeDataDelegate);
 
 	public abstract void dodo();
-
 }

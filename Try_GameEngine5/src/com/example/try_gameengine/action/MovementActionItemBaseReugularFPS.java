@@ -3,10 +3,12 @@ package com.example.try_gameengine.action;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.example.try_gameengine.action.MovementActionItemTrigger.MovementActionItemUpdateTimeDataDelegate;
 import com.example.try_gameengine.action.listener.IActionListener;
 import com.example.try_gameengine.action.visitor.IMovementActionVisitor;
 
 public class MovementActionItemBaseReugularFPS extends MovementActionItem{ 
+	MovementActionItemTrigger data;
 	long numberOfFramesTotal;
 	long numberOfFramesInterval;
 	float dx;
@@ -40,6 +42,10 @@ public class MovementActionItemBaseReugularFPS extends MovementActionItem{
 		this.numberOfFramesInterval = frameTimesInterval;
 		this.dx = dx;
 		this.dy = dy;
+		
+		data = info.getData();
+		data.setShouldActiveTotalValue(numberOfFramesTotal);
+		data.setShouldActiveIntervalValue(numberOfFramesInterval);
 	}
 	
 	public MovementActionItemBaseReugularFPS(MovementActionInfo info){
@@ -48,6 +54,12 @@ public class MovementActionItemBaseReugularFPS extends MovementActionItem{
 		numberOfFramesInterval = info.getDelay();
 		dx = info.getDx();
 		dy = info.getDy();
+		
+		info.setData(new MovementActionItemAlpha2Data());
+		data = info.getData();
+		data.setShouldActiveTotalValue(numberOfFramesTotal);
+		data.setShouldActiveIntervalValue(numberOfFramesInterval);
+		
 		if(info.getDescription()!=null)
 			this.description = info.getDescription() + ",";
 		this.info = info;
@@ -55,19 +67,51 @@ public class MovementActionItemBaseReugularFPS extends MovementActionItem{
 	
 	@Override
 	public void start() {
-//		resumeFrameIndex = 0;
-		resumeFrameCount = 0;
-		numberOfPauseFrames = 0;
-		pauseFrameCounter = 0;
+////		resumeFrameIndex = 0;
+//		resumeFrameCount = 0;
+//		numberOfPauseFrames = 0;
+//		pauseFrameCounter = 0;
+//		isStop = false;
+//		isCycleFinish = false;
+//		if(!isEnableSetSpriteAction)
+//			isEnableSetSpriteAction = isRepeatSpriteActionIfMovementActionRepeat;
+//		if(info.getSprite()!=null && isEnableSetSpriteAction)
+//			info.getSprite().setAction(info.getSpriteActionName());
+//		
+//		triggerEnable = true;
+//		isEnableSetSpriteAction = isRepeatSpriteActionIfMovementActionRepeat;
+//		
+//		actionListener.actionStart();
+		
+		
+		data.setMovementActionItemUpdateTimeDataDelegate(new MovementActionItemUpdateTimeDataDelegate() {
+			
+			@Override
+			public void update() {
+				// TODO Auto-generated method stub
+				if (timerOnTickListener != null)
+					timerOnTickListener.onTick(info.getDx(), info.getDy());
+			}
+
+			@Override
+			public void update(float t) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
+		
+		data.setValueOfActivedCounter(0);
+		data.setShouldPauseValue(0);
+		data.setValueOfPausedCounter(0);
 		isStop = false;
-		isCycleFinish = false;
-		if(!isEnableSetSpriteAction)
-			isEnableSetSpriteAction = isRepeatSpriteActionIfMovementActionRepeat;
-		if(info.getSprite()!=null && isEnableSetSpriteAction)
+		data.setCycleFinish(false);
+		if(!data.isEnableSetSpriteAction())
+			data.setEnableSetSpriteAction(isRepeatSpriteActionIfMovementActionRepeat);
+		if(info.getSprite()!=null && data.isEnableSetSpriteAction())
 			info.getSprite().setAction(info.getSpriteActionName());
 		
 		triggerEnable = true;
-		isEnableSetSpriteAction = isRepeatSpriteActionIfMovementActionRepeat;
+		data.setEnableSetSpriteAction(isRepeatSpriteActionIfMovementActionRepeat);
 		
 		actionListener.actionStart();
 	}
@@ -82,15 +126,27 @@ public class MovementActionItemBaseReugularFPS extends MovementActionItem{
 	
 	@Override
 	public void trigger(){
-		if(triggerEnable && pauseFrameCounter==numberOfPauseFrames){
-			numberOfPauseFrames = 0;
-			pauseFrameCounter = 0;
+//		if(triggerEnable && pauseFrameCounter==numberOfPauseFrames){
+//			numberOfPauseFrames = 0;
+//			pauseFrameCounter = 0;
+//			myTrigger.trigger();
+//		}else if(triggerEnable){
+//			pauseFrameCounter++;
+//		}else{
+//			numberOfPauseFrames = 0;
+//			pauseFrameCounter = 0;
+//		}
+		
+		if(triggerEnable && data.getValueOfPausedCounter()==data.getShouldPauseValue()){
+			
+			data.setShouldPauseValue(0);
+			data.setValueOfPausedCounter(0);
 			myTrigger.trigger();
 		}else if(triggerEnable){
-			pauseFrameCounter++;
+			data.setValueOfPausedCounter(data.getValueOfPausedCounter() + 1);
 		}else{
-			numberOfPauseFrames = 0;
-			pauseFrameCounter = 0;
+			data.setShouldPauseValue(0);
+			data.setValueOfPausedCounter(0);
 		}
 	}
 	
@@ -114,61 +170,35 @@ public class MovementActionItemBaseReugularFPS extends MovementActionItem{
 		this.actionListener = actionListener;
 	}
 	
-	
-	
 	private void frameTriggerFPSStart(){
 		if (!isStop) {
 			synchronized (MovementActionItemBaseReugularFPS.this) {
-				if(isCycleFinish)
-					isCycleFinish = false;
+			data.dodo();
 			
-			resumeFrameCount++;
-			
-			if(resumeFrameCount==numberOfFramesAfterLastTrigger+info.getDelay()){
-				if(timerOnTickListener!=null)
-					timerOnTickListener.onTick(dx, dy);		
-				numberOfFramesAfterLastTrigger += info.getDelay();
-				
-			// add by 150228. if the delay change by main app, the function: else if(resumeFrameCount==lastTriggerFrameNum+info.getDelay() maybe make problem.
-			}else if(resumeFrameCount>numberOfFramesAfterLastTrigger+info.getDelay()){ 
-//				resumeFrameCount--;
-//				lastTriggerFrameNum++;
-				numberOfFramesAfterLastTrigger = resumeFrameCount+1-info.getDelay();
-			}
-			
-			if(resumeFrameCount>=info.getDelay()){	
-				if(resumeFrameCount==info.getTotal())
-					isCycleFinish = true;
-			}
-			
-			if(isCycleFinish){
-				resumeFrameCount = 0;
-				numberOfFramesAfterLastTrigger = 0;
-			}
-			
-			if(!isLoop && isCycleFinish){
+			if(!isLoop && data.isCycleFinish()){
 				isStop = true;
-				doReset();	
+				doReset();
 				triggerEnable = false;
 			}
 			
-			if(isCycleFinish){
+			if(data.isCycleFinish()){
+//				info.getSprite().setPosition(info.getSprite().getPosition().x + dx, info.getSprite().getPosition().y + dy);
+				if(timerOnTickListener!=null)
+					timerOnTickListener.onTick(dx, dy);
+				
 				if(actionListener!=null)
 					actionListener.actionCycleFinish();
-			}
-			
-			if(isStop){
-				if(actionListener!=null)
-					actionListener.actionFinish();
 				
-				MovementActionItemBaseReugularFPS.this.notifyAll();
+				if(!isLoop){
+					if(actionListener!=null)
+						actionListener.actionFinish();
+					
+					MovementActionItemBaseReugularFPS.this.notifyAll();
+				}
 			}
 			
 			}
 		}else{
-			if(actionListener!=null)
-				actionListener.actionFinish();
-			
 			synchronized (MovementActionItemBaseReugularFPS.this) {
 				MovementActionItemBaseReugularFPS.this.notifyAll();
 			}
@@ -177,10 +207,10 @@ public class MovementActionItemBaseReugularFPS extends MovementActionItem{
 	
 	@Override
 	protected MovementAction initTimer(){ super.initTimer();
-		numberOfFramesTotal = info.getTotal();
-		numberOfFramesInterval = info.getDelay();
-		dx = info.getDx();
-		dy = info.getDy();
+//		numberOfFramesTotal = info.getTotal();
+//		numberOfFramesInterval = info.getDelay();
+//		dx = info.getDx();
+//		dy = info.getDy();
 		
 //		resumeFrameIndex = 0;
 		initLastTriggerFrameNum();
@@ -200,11 +230,11 @@ public class MovementActionItemBaseReugularFPS extends MovementActionItem{
 	}
 	
 	private void doReset(){
-		numberOfFramesTotal = info.getTotal();
-		numberOfFramesInterval = info.getDelay();
-		dx = info.getDx();
-		dy = info.getDy();
-		initLastTriggerFrameNum();
+//		numberOfFramesTotal = info.getTotal();
+//		numberOfFramesInterval = info.getDelay();
+//		dx = info.getDx();
+//		dy = info.getDy();
+//		initLastTriggerFrameNum();
 	}
 	
 	public FrameTimesType getFrameTimesType() {
