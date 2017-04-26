@@ -2,6 +2,7 @@ package com.example.try_gameengine.action;
 
 import android.util.Log;
 
+import com.example.try_gameengine.action.MovementAction.TimerOnTickListener;
 import com.example.try_gameengine.action.MovementActionItemTrigger.MovementActionItemUpdateTimeDataDelegate;
 import com.example.try_gameengine.framework.Config;
 import com.example.try_gameengine.framework.Sprite;
@@ -14,7 +15,13 @@ import com.example.try_gameengine.framework.Sprite;
  * @author irons
  *
  */
-public class MovementActionInfo implements MovementActionItemUpdateTimeDataDelegate{
+
+interface MovementActionInfoUpdateDelegate{
+	public void update(TimerOnTickListener timerOnTickListener);
+	public void update(float t, TimerOnTickListener timerOnTickListener);
+}
+
+public class MovementActionInfo implements MovementActionInfoUpdateDelegate{
 	protected long total;
 	protected long delay;
 	protected float dx, dy;
@@ -371,13 +378,17 @@ public class MovementActionInfo implements MovementActionItemUpdateTimeDataDeleg
 	IMovementActionInfoMemento movementActionInfoMemento;
 
 	@Override
-	public void update() {
+	public void update(TimerOnTickListener timerOnTickListener) {
 		// TODO Auto-generated method stub
-		getSprite().setAlpha(originalAlpha + (int)offsetAlphaByOnceTrigger);
+//		if(timerOnTickListener!=null){
+//			timerOnTickListener.onTick(dx, dy);
+//		}else{
+			getSprite().setAlpha(originalAlpha + (int)offsetAlphaByOnceTrigger);
+//		}
 	}
 
 	@Override
-	public void update(float t) {
+	public void update(float t, TimerOnTickListener timerOnTickListener) {
 		// TODO Auto-generated method stub
 //		double percent = ((double)t)/data.getShouldActiveTotalValue();
 //		int offsetAlpha= alpha - originalAlpha;
@@ -386,7 +397,17 @@ public class MovementActionInfo implements MovementActionItemUpdateTimeDataDeleg
 		int offsetAlpha= alpha - originalAlpha;
 		offsetAlphaByOnceTrigger = (float) (offsetAlpha*t);
 		Log.e("offsetAlpha", offsetAlpha+" "+ t);
-		getSprite().setAlpha(originalAlpha + (int)offsetAlphaByOnceTrigger);
+		
+//		if(timerOnTickListener!=null){
+//			timerOnTickListener.onTick(dx, dy);
+//		}else{
+			getSprite().setAlpha(originalAlpha + (int)offsetAlphaByOnceTrigger);
+//		}
+
+	}
+	
+	public float getOffsetAlpha(){
+		return offsetAlphaByOnceTrigger;
 	}
 
 //	/**

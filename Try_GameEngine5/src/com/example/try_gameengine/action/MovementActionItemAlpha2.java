@@ -171,12 +171,12 @@ public class MovementActionItemAlpha2 extends MovementActionItemUpdate{
 			public void update() {
 				// TODO Auto-generated method stub
 //				timerOnTickListener.onTick(dx, dy);	
-				info.update();
+				info.update(timerOnTickListener);
 			}
 
 			@Override
 			public void update(float t) {
-				info.update(t);
+				info.update(t, timerOnTickListener);
 			}
 		});
 		

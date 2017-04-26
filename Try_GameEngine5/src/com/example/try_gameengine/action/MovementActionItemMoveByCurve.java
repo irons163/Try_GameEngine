@@ -78,6 +78,8 @@ public class MovementActionItemMoveByCurve extends MovementActionItemUpdate impl
 		isStop = false;
 		data.setCycleFinish(false);
 		
+		info.ggg();
+		
 		if(!data.isEnableSetSpriteAction())
 			data.setEnableSetSpriteAction(isRepeatSpriteActionIfMovementActionRepeat);
 		if(info.getSprite()!=null && data.isEnableSetSpriteAction())
@@ -119,6 +121,7 @@ public class MovementActionItemMoveByCurve extends MovementActionItemUpdate impl
 			
 			if(data.isCycleFinish()){
 //				info.getSprite().setAlpha(alpha);
+				info.didCycleFinish();
 				
 				if(actionListener!=null)
 					actionListener.actionCycleFinish();
@@ -146,30 +149,17 @@ public class MovementActionItemMoveByCurve extends MovementActionItemUpdate impl
 			
 			@Override
 			public void update() {
-				// TODO Auto-generated method stub
-//				doRotation();
-//				doGravity();
-				rotationController.execute(info);
-				dx = info.getDx();
-				dy = info.getDy();
-				if (timerOnTickListener != null)
-					timerOnTickListener.onTick(dx, dy);
+				info.update(timerOnTickListener);
+//				if (timerOnTickListener != null)
+//					timerOnTickListener.onTick(dx, dy);
 			}
 
 			@Override
 			public void update(float t) {
-				// TODO Auto-generated method stub
-//				doRotation();
-//				doGravity();
-				rotationController.execute(info, t);
-				dx = info.getDx();
-				dy = info.getDy();
-//				float newDx = (float) (dx*t);
-//				float newDy = (float) (dy*t);
-				float newDx = (float) (dx);
-				float newDy = (float) (dy);
-				if (timerOnTickListener != null)
-					timerOnTickListener.onTick(newDx, newDy);
+				info.update(t, timerOnTickListener);
+				
+//				if (timerOnTickListener != null)
+//					timerOnTickListener.onTick(info.get, newDy);
 			}
 		});
 		

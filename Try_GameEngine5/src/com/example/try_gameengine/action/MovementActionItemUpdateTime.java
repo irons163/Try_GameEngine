@@ -158,20 +158,20 @@ public class MovementActionItemUpdateTime extends MovementActionItemForMilliseco
 		@Override
 		public void update() {
 			// TODO Auto-generated method stub
-			info.update();
-			if (timerOnTickListener != null)
-				timerOnTickListener.onTick(dx, dy);
+			info.update(timerOnTickListener);
+//			if (timerOnTickListener != null)
+//				timerOnTickListener.onTick(dx, dy);
 		}
 
 		@Override
 		public void update(float t) {
 			// TODO Auto-generated method stub
-			info.update(t);
+			info.update(t, timerOnTickListener);
 			
-			float newDx = (float) (dx*t);
-			float newDy = (float) (dy*t);
-			if (timerOnTickListener != null)
-				timerOnTickListener.onTick(newDx, newDy);
+//			float newDx = (float) (dx*t);
+//			float newDy = (float) (dy*t);
+//			if (timerOnTickListener != null)
+//				timerOnTickListener.onTick(newDx, newDy);
 		}
 	});
 	
@@ -191,6 +191,9 @@ public class MovementActionItemUpdateTime extends MovementActionItemForMilliseco
 		millisDelay = info.getDelay();
 		dx = info.getDx();
 		dy = info.getDy();
+		
+		data.setShouldActiveTotalValue(info.getTotal());
+		data.setShouldActiveIntervalValue(info.getDelay());
 	}
 
 	@Override
@@ -248,7 +251,7 @@ public class MovementActionItemUpdateTime extends MovementActionItemForMilliseco
 	
 	@Override
 	void pause(){	
-		data.setShouldPauseValue(millisDelay);
+		data.setShouldPauseValue(data.getShouldActiveIntervalValue());
 	}
 	
 	@Override
