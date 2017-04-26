@@ -24,36 +24,37 @@ public class MovementActionItemAlpha2 extends MovementActionItemUpdate{
 		}
 	};
 	
-	private static final int NO_ORGINAL_ALPHA = -1;
-	private int originalAlpha;
-	private int alpha;
-	private float offsetAlphaByOnceTrigger;
+//	static final int NO_ORGINAL_ALPHA = -1;
+//	private int originalAlpha;
+//	private int alpha;
+//	private float offsetAlphaByOnceTrigger;
+//	MovementActionItemAlpha2Data2 data2;
 	
-	/**
-	 * @param millisTotal
-	 * @param alpha
-	 */
-	public MovementActionItemAlpha2(long millisTotal, int alpha){
-		this(millisTotal, 1, NO_ORGINAL_ALPHA, alpha, "MovementActionItemAlpha");
-	}
-	
-	/**
-	 * @param millisTotal
-	 * @param originalAlpha
-	 * @param alpha
-	 */
-	public MovementActionItemAlpha2(long millisTotal, int originalAlpha, int alpha){
-		this(millisTotal, 1, originalAlpha, alpha, "MovementActionItemAlpha");
-	}
-	
-	/**
-	 * @param triggerTotal
-	 * @param triggerInterval
-	 * @param alpha
-	 */
-	public MovementActionItemAlpha2(long triggerTotal, long triggerInterval, int alpha){
-		this(triggerTotal, triggerTotal, NO_ORGINAL_ALPHA, alpha, "MovementActionItemAlpha");
-	}
+//	/**
+//	 * @param millisTotal
+//	 * @param alpha
+//	 */
+//	public MovementActionItemAlpha2(long millisTotal, int alpha){
+//		this(millisTotal, 1, NO_ORGINAL_ALPHA, alpha, "MovementActionItemAlpha");
+//	}
+//	
+//	/**
+//	 * @param millisTotal
+//	 * @param originalAlpha
+//	 * @param alpha
+//	 */
+//	public MovementActionItemAlpha2(long millisTotal, int originalAlpha, int alpha){
+//		this(millisTotal, 1, originalAlpha, alpha, "MovementActionItemAlpha");
+//	}
+//	
+//	/**
+//	 * @param triggerTotal
+//	 * @param triggerInterval
+//	 * @param alpha
+//	 */
+//	public MovementActionItemAlpha2(long triggerTotal, long triggerInterval, int alpha){
+//		this(triggerTotal, triggerTotal, NO_ORGINAL_ALPHA, alpha, "MovementActionItemAlpha");
+//	}
 	
 	/**
 	 * @param triggerTotal
@@ -76,8 +77,10 @@ public class MovementActionItemAlpha2 extends MovementActionItemUpdate{
 		super(new MovementActionInfo(millisTotal, millisDelay, 0, 0));
 		
 		this.description = description + ",";
-		this.originalAlpha = originalAlpha;
-		this.alpha = alpha;
+//		this.originalAlpha = originalAlpha;
+//		this.alpha = alpha;
+		info.setOriginalAlpha(originalAlpha);
+		info.setAlpha(alpha);
 	}
 	
 	@Override
@@ -96,13 +99,8 @@ public class MovementActionItemAlpha2 extends MovementActionItemUpdate{
 		data.setValueOfPausedCounter(0);
 		isStop = false;
 		data.setCycleFinish(false);
-		if(originalAlpha==NO_ORGINAL_ALPHA)
-			originalAlpha = info.getSprite().getAlpha();
-		else
-			info.getSprite().setAlpha(originalAlpha);
 		
-		int offsetAlpha= alpha - originalAlpha;
-		offsetAlphaByOnceTrigger = (int) (offsetAlpha/(info.getTotal()/info.getDelay()));
+		info.ggg();
 		
 		if(!data.isEnableSetSpriteAction())
 			data.setEnableSetSpriteAction(isRepeatSpriteActionIfMovementActionRepeat);
@@ -135,28 +133,27 @@ public class MovementActionItemAlpha2 extends MovementActionItemUpdate{
 	private void frameTriggerFPSStart(){
 		if (!isStop) {
 			synchronized (MovementActionItemAlpha2.this) {
-			data.dodo();
-			
-			if(!isLoop && data.isCycleFinish()){
-				isStop = true;
-				doReset();
-				triggerEnable = false;
-			}
-			
-			if(data.isCycleFinish()){
-				info.getSprite().setAlpha(alpha);
-				
-				if(actionListener!=null)
-					actionListener.actionCycleFinish();
-				
-				if(!isLoop){
-					if(actionListener!=null)
-						actionListener.actionFinish();
-					
-					MovementActionItemAlpha2.this.notifyAll();
+				data.dodo();
+
+				if (!isLoop && data.isCycleFinish()) {
+					isStop = true;
+					doReset();
+					triggerEnable = false;
 				}
-			}
-			
+
+				if (data.isCycleFinish()) {
+					info.didCycleFinish();
+
+					if (actionListener != null)
+						actionListener.actionCycleFinish();
+
+					if (!isLoop) {
+						if (actionListener != null)
+							actionListener.actionFinish();
+
+						MovementActionItemAlpha2.this.notifyAll();
+					}
+				}
 			}
 		}else{
 			synchronized (MovementActionItemAlpha2.this) {
@@ -173,22 +170,13 @@ public class MovementActionItemAlpha2 extends MovementActionItemUpdate{
 			@Override
 			public void update() {
 				// TODO Auto-generated method stub
-//				timerOnTickListener.onTick(dx, dy);		
-				info.getSprite().setAlpha(originalAlpha + (int)offsetAlphaByOnceTrigger);
+//				timerOnTickListener.onTick(dx, dy);	
+				info.update();
 			}
 
 			@Override
 			public void update(float t) {
-				Log.e("interval", t+"");
-				Log.e("totle", data.getShouldActiveTotalValue()+"");
-//				double percent = ((double)t)/data.getShouldActiveTotalValue();
-//				int offsetAlpha= alpha - originalAlpha;
-//				offsetAlphaByOnceTrigger += (float) (offsetAlpha*percent);
-				
-				int offsetAlpha= alpha - originalAlpha;
-				offsetAlphaByOnceTrigger = (float) (offsetAlpha*t);
-				Log.e("offsetAlpha", offsetAlpha+" "+ t);
-				info.getSprite().setAlpha(originalAlpha + (int)offsetAlphaByOnceTrigger);
+				info.update(t);
 			}
 		});
 		

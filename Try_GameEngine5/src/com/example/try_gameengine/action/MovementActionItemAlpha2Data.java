@@ -1,10 +1,5 @@
 package com.example.try_gameengine.action;
 
-import java.security.acl.LastOwnerException;
-
-import com.example.try_gameengine.action.MovementActionItemTrigger.MovementActionItemUpdateTimeDataDelegate;
-import com.example.try_gameengine.action.MovementActionItemUpdate.FrameTrigger;
-
 public class MovementActionItemAlpha2Data implements MovementActionItemTrigger{
 	private long numberOfFramesTotal;
 	private long numberOfFramesInterval;

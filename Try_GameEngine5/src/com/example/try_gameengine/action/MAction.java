@@ -233,7 +233,8 @@ public class MAction { //MAction use threadPool it would delay during action by 
 	}
 	
 	public static MovementAction alphaAction2(long millisTotal, int alpha){
-		return new MovementActionItemAlpha2(millisTotal, alpha);	
+//		return new MovementActionItemAlpha2(millisTotal, alpha);
+		return new MovementActionItemUpdateTime(new MovementActionInfo(millisTotal, alpha));
 	}
 	
 	/**

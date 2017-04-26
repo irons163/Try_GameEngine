@@ -1,5 +1,8 @@
 package com.example.try_gameengine.action;
 
+import android.util.Log;
+
+import com.example.try_gameengine.action.MovementActionItemTrigger.MovementActionItemUpdateTimeDataDelegate;
 import com.example.try_gameengine.framework.Config;
 import com.example.try_gameengine.framework.Sprite;
 
@@ -11,7 +14,7 @@ import com.example.try_gameengine.framework.Sprite;
  * @author irons
  *
  */
-public class MovementActionInfo {
+public class MovementActionInfo implements MovementActionItemUpdateTimeDataDelegate{
 	protected long total;
 	protected long delay;
 	protected float dx, dy;
@@ -22,7 +25,7 @@ public class MovementActionInfo {
 	protected boolean isSettingTargetXY = false;
 	protected float targetX, targetY;
 	MovementActionItemTrigger data;
-
+	
 	/**
 	 * @param total
 	 * @param delay
@@ -229,7 +232,103 @@ public class MovementActionInfo {
 //			dy = perMoveY;
 		}
 	}
+	
+	static final int NO_ORGINAL_ALPHA = -1;
+	private int originalAlpha;
+	private int alpha;
+	private float offsetAlphaByOnceTrigger;
+	
+	/**
+	 * @param millisTotal
+	 * @param alpha
+	 */
+	public MovementActionInfo(long millisTotal, int alpha){
+		this(millisTotal, 1, NO_ORGINAL_ALPHA, alpha, "MovementActionItemAlpha");
+	}
+	
+	/**
+	 * @param millisTotal
+	 * @param originalAlpha
+	 * @param alpha
+	 */
+	public MovementActionInfo(long millisTotal, int originalAlpha, int alpha){
+		this(millisTotal, 1, originalAlpha, alpha, "MovementActionItemAlpha");
+	}
+	
+	/**
+	 * @param triggerTotal
+	 * @param triggerInterval
+	 * @param alpha
+	 */
+	public MovementActionInfo(long triggerTotal, long triggerInterval, int alpha){
+		this(triggerTotal, triggerTotal, NO_ORGINAL_ALPHA, alpha, "MovementActionItemAlpha");
+	}
+	
+	/**
+	 * @param triggerTotal
+	 * @param triggerInterval
+	 * @param originalAlpha
+	 * @param alpha
+	 */
+	public MovementActionInfo(long triggerTotal, long triggerInterval, int originalAlpha, int alpha){
+		this(triggerTotal, triggerInterval, originalAlpha, alpha, "MovementActionItemAlpha");
+	}
 
+	/**
+	 * @param millisTotal
+	 * @param millisDelay
+	 * @param originalAlpha
+	 * @param alpha
+	 * @param description
+	 */
+	public MovementActionInfo(long millisTotal, long millisDelay, int originalAlpha, int alpha, String description){
+		this(millisTotal, millisDelay, 0f, 0f);
+		
+		this.description = description + ",";
+//		this.originalAlpha = originalAlpha;
+//		this.alpha = alpha;
+		setOriginalAlpha(originalAlpha);
+		setAlpha(alpha);
+	}
+	
+	public int getOriginalAlpha() {
+		return originalAlpha;
+	}
+
+	public void setOriginalAlpha(int originalAlpha) {
+		this.originalAlpha = originalAlpha;
+	}
+
+	public int getAlpha() {
+		return alpha;
+	}
+
+	public void setAlpha(int alpha) {
+		this.alpha = alpha;
+	}
+
+	public float getOffsetAlphaByOnceTrigger() {
+		return offsetAlphaByOnceTrigger;
+	}
+
+	public void setOffsetAlphaByOnceTrigger(float offsetAlphaByOnceTrigger) {
+		this.offsetAlphaByOnceTrigger = offsetAlphaByOnceTrigger;
+	}
+
+	public void ggg() {
+		if(originalAlpha==NO_ORGINAL_ALPHA)
+			originalAlpha = getSprite().getAlpha();
+		else
+			getSprite().setAlpha(originalAlpha);
+		
+		int offsetAlpha= alpha - originalAlpha;
+		offsetAlphaByOnceTrigger = (float) (offsetAlpha/((double)getTotal()/getDelay()));
+	}
+	
+	public void didCycleFinish(){
+		getSprite().setAlpha(alpha);
+	}
+	
 	@Override
 	public boolean equals(Object obj) {
 		if (obj == null)
@@ -270,6 +369,25 @@ public class MovementActionInfo {
 	 * MovementActionInfoMemento of this movement action info.
 	 */
 	IMovementActionInfoMemento movementActionInfoMemento;
+
+	@Override
+	public void update() {
+		// TODO Auto-generated method stub
+		getSprite().setAlpha(originalAlpha + (int)offsetAlphaByOnceTrigger);
+	}
+
+	@Override
+	public void update(float t) {
+		// TODO Auto-generated method stub
+//		double percent = ((double)t)/data.getShouldActiveTotalValue();
+//		int offsetAlpha= alpha - originalAlpha;
+//		offsetAlphaByOnceTrigger += (float) (offsetAlpha*percent);
+		
+		int offsetAlpha= alpha - originalAlpha;
+		offsetAlphaByOnceTrigger = (float) (offsetAlpha*t);
+		Log.e("offsetAlpha", offsetAlpha+" "+ t);
+		getSprite().setAlpha(originalAlpha + (int)offsetAlphaByOnceTrigger);
+	}
 
 //	/**
 //	 * create MovementActionInfoMemento.

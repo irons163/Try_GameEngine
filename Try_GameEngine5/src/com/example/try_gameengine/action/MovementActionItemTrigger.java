@@ -48,8 +48,6 @@ public interface MovementActionItemTrigger {
 		
 	}
 
-	MovementActionItemAlpha2Data2 data2 = new MovementActionItemAlpha2Data2();
-	
 	public abstract boolean isCycleFinish();
 
 	public abstract void setCycleFinish(boolean isCycleFinish);

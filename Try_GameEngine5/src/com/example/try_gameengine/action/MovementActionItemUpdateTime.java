@@ -45,30 +45,16 @@ public class MovementActionItemUpdateTime extends MovementActionItemForMilliseco
 	
 	@Override
 	public void start() {
-		data.setMovementActionItemUpdateTimeDataDelegate(new MovementActionItemUpdateTimeDataDelegate() {
-			
-			@Override
-			public void update() {
-				// TODO Auto-generated method stub
-				if (timerOnTickListener != null)
-					timerOnTickListener.onTick(dx, dy);
-			}
 
-			@Override
-			public void update(float t) {
-				// TODO Auto-generated method stub
-				float newDx = (float) (dx*t);
-				float newDy = (float) (dy*t);
-				if (timerOnTickListener != null)
-					timerOnTickListener.onTick(newDx, newDy);
-			}
-		});
 		
 		data.setValueOfActivedCounter(0);
 		data.setShouldPauseValue(0);
 		data.setValueOfPausedCounter(0);
 		isStop = false;
 		data.setCycleFinish(false);
+		
+		info.ggg();
+		
 		if(!data.isEnableSetSpriteAction())
 			data.setEnableSetSpriteAction(isRepeatSpriteActionIfMovementActionRepeat);
 		if(info.getSprite()!=null && data.isEnableSetSpriteAction())
@@ -116,65 +102,46 @@ public class MovementActionItemUpdateTime extends MovementActionItemForMilliseco
 			synchronized (MovementActionItemUpdateTime.this) {
 				data.dodo();
 			
-			if(data.isCycleFinish()){
-				if(actionListener!=null)
-					actionListener.actionCycleFinish();
-			}
-			
-			if(!isLoop && data.isCycleFinish()){
-				isStop = true;
-				doReset();	
-				triggerEnable = false;
-			} 
-			
-			if(isStop){
-				if(actionListener!=null)
-					actionListener.actionFinish();
+				if (data.isCycleFinish()) {
+					info.didCycleFinish();
+
+					if (actionListener != null)
+						actionListener.actionCycleFinish();
+				}
+
+				if (!isLoop && data.isCycleFinish()) {
+					isStop = true;
+					doReset();
+					triggerEnable = false;
+				}
+
+				if (isStop) {
+					if (actionListener != null)
+						actionListener.actionFinish();
+
+					MovementActionItemUpdateTime.this.notifyAll();
+				}
 				
-				MovementActionItemUpdateTime.this.notifyAll();
-			}
-			
-			/*
-			if(resumeFrameCount>=info.getDelay()){	
-				if(resumeFrameCount==info.getTotal())
-					isCycleFinish = true;
-			}
-			
-			if(isCycleFinish){
-				resumeFrameCount = 0;
-				lastTriggerFrameNum = 0;
-			}
-			
-			resumeFrameCount++;
-			
-			if(!isLoop && isCycleFinish){
-				isStop = true;
-				doReset();	
-				triggerEnable = false;
-				if(actionListener!=null)
-					actionListener.actionFinish();
-				
-				MovementActionItem2.this.notifyAll();
-			}else if(resumeFrameCount==lastTriggerFrameNum+info.getDelay()){
-				doRotation();
-				doGravity();
-				if(timerOnTickListener!=null)
-					timerOnTickListener.onTick(dx, dy);		
-				lastTriggerFrameNum += info.getDelay();
-				
-			// add by 150228. if the delay change by main app, the function: else if(resumeFrameCount==lastTriggerFrameNum+info.getDelay() maybe make problem.
-			}else if(resumeFrameCount>lastTriggerFrameNum+info.getDelay()){ 
-//				resumeFrameCount--;
-//				lastTriggerFrameNum++;
-				lastTriggerFrameNum = resumeFrameCount+1-info.getDelay();
-			}
-			
-			if(isCycleFinish){
-				if(actionListener!=null)
-					actionListener.actionCycleFinish();
-				isCycleFinish = false;
-			}
-			*/
+				/*// need consider between above code and below code.
+				if (!isLoop && data.isCycleFinish()) {
+					isStop = true;
+					doReset();
+					triggerEnable = false;
+				}
+
+				if (data.isCycleFinish()) {
+					info.didCycleFinish();
+
+					if (actionListener != null)
+						actionListener.actionCycleFinish();
+
+					if (!isLoop) {
+						if (actionListener != null)
+							actionListener.actionFinish();
+
+						MovementActionItemAlpha2.this.notifyAll();
+					}
+				}*/
 			}
 		}else{
 			synchronized (MovementActionItemUpdateTime.this) {
@@ -185,10 +152,36 @@ public class MovementActionItemUpdateTime extends MovementActionItemForMilliseco
 	
 	@Override
 	protected MovementAction initTimer(){ super.initTimer();
-		millisTotal = info.getTotal();
-		millisDelay = info.getDelay();
-		dx = info.getDx();
-		dy = info.getDy();
+	data = info.getData();
+	data.setMovementActionItemUpdateTimeDataDelegate(new MovementActionItemUpdateTimeDataDelegate() {
+		
+		@Override
+		public void update() {
+			// TODO Auto-generated method stub
+			info.update();
+			if (timerOnTickListener != null)
+				timerOnTickListener.onTick(dx, dy);
+		}
+
+		@Override
+		public void update(float t) {
+			// TODO Auto-generated method stub
+			info.update(t);
+			
+			float newDx = (float) (dx*t);
+			float newDy = (float) (dy*t);
+			if (timerOnTickListener != null)
+				timerOnTickListener.onTick(newDx, newDy);
+		}
+	});
+	
+	data.setShouldActiveTotalValue(info.getTotal());
+	data.setShouldActiveIntervalValue(info.getDelay());
+	
+//		millisTotal = info.getTotal();
+//		millisDelay = info.getDelay();
+//		dx = info.getDx();
+//		dy = info.getDy();
 		
 		return this;
 	}
