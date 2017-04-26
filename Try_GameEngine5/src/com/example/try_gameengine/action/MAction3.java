@@ -56,19 +56,19 @@ public class MAction3 {
 		return movementActionSetWithOutThread;
 	}
 	
-	public static MovementAction gravityCyclePathMovement(MovementActionItemMoveByCurve moveByCurve){
-		MovementAction action = new MovementActionSetWithOutThread();
-		MovementActionItemMoveByCurve newMoveByCurve = null;
-		try {
-			newMoveByCurve = (MovementActionItemMoveByCurve) moveByCurve.clone();
-		} catch (CloneNotSupportedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		newMoveByCurve.setMathUtil(moveByCurve.getMathUtil());
-		newMoveByCurve.isCyclePath();
-		action.addMovementAction(moveByCurve);
-		action.addMovementAction(newMoveByCurve);
-		return action;
-	}
+//	public static MovementAction cyclePathMovement(MovementActionItemMoveByCurve moveByCurve){
+//		MovementAction action = new MovementActionSetWithOutThread();
+//		MovementActionItemMoveByCurve newMoveByCurve = null;
+//		try {
+//			newMoveByCurve = (MovementActionItemMoveByCurve) moveByCurve.clone();
+//		} catch (CloneNotSupportedException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		newMoveByCurve.setMathUtil(moveByCurve.getMathUtil());
+//		newMoveByCurve.isCyclePath();
+//		action.addMovementAction(moveByCurve);
+//		action.addMovementAction(newMoveByCurve);
+//		return action;
+//	}
 }

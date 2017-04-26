@@ -3,7 +3,6 @@ package com.example.try_gameengine.action;
 import android.util.Log;
 
 import com.example.try_gameengine.action.MovementAction.TimerOnTickListener;
-import com.example.try_gameengine.action.MovementActionItemTrigger.MovementActionItemUpdateTimeDataDelegate;
 import com.example.try_gameengine.framework.Config;
 import com.example.try_gameengine.framework.Sprite;
 
@@ -21,7 +20,7 @@ interface MovementActionInfoUpdateDelegate{
 	public void update(float t, TimerOnTickListener timerOnTickListener);
 }
 
-public class MovementActionInfo implements MovementActionInfoUpdateDelegate{
+public class MovementActionInfo implements MovementActionInfoUpdateDelegate, Cloneable{
 	protected long total;
 	protected long delay;
 	protected float dx, dy;
@@ -409,6 +408,7 @@ public class MovementActionInfo implements MovementActionInfoUpdateDelegate{
 	public float getOffsetAlpha(){
 		return offsetAlphaByOnceTrigger;
 	}
+	
 
 //	/**
 //	 * create MovementActionInfoMemento.

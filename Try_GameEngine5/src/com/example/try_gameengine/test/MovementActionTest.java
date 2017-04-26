@@ -326,25 +326,25 @@ public class MovementActionTest extends AndroidTestCase{
 		assertEquals(true, correctInfoList.equals(currentInfoList));
 
 		
-		correctInfoList.clear();
-		correctInfoList.add(new MovementActionInfo(1000, 200, 10f, 0f));
-		correctInfoList.add(new MovementActionInfo(1000, 200, 0f, -10f));
-		correctInfoList.add(new MovementActionInfo(1000, 200, -10f, 0f));
-		correctInfoList.add(new MovementActionInfo(1000, 200, 0f, 10f));
-		correctInfoList.add(new MovementActionInfo(1000, 200, 30, 0));
-		
-		MovementAction newaction5;
-		newaction5 = new InverseMovementInfoDecorator(new MovementActionSetWithThread());
-		newaction5.addMovementAction(new GravityWaveSlopePathAppendDecorator(new MovementActionItemMoveByGravity(new MovementActionInfo(1000, 200, 30, 0, "R"), new JumpController(-50, 200, 100), "")));
-		newaction5 = new MovementActionSetWithThread().addMovementAction(newaction5);
-		enemy = enemyFactory.createSpecialEnemy5(RedEnemy.class, new int[]{100, 500}, newaction5);
-		
-		action = enemy.getAction();
-		currentInfoList.clear();
-		
-		for(MovementActionInfo movementActionInfo : action.getStartMovementInfoList()){
-			currentInfoList.add(movementActionInfo); 
-		}
+//		correctInfoList.clear();
+//		correctInfoList.add(new MovementActionInfo(1000, 200, 10f, 0f));
+//		correctInfoList.add(new MovementActionInfo(1000, 200, 0f, -10f));
+//		correctInfoList.add(new MovementActionInfo(1000, 200, -10f, 0f));
+//		correctInfoList.add(new MovementActionInfo(1000, 200, 0f, 10f));
+//		correctInfoList.add(new MovementActionInfo(1000, 200, 30, 0));
+//		
+//		MovementAction newaction5;
+//		newaction5 = new InverseMovementInfoDecorator(new MovementActionSetWithThread());
+//		newaction5.addMovementAction(new GravityWaveSlopePathAppendDecorator(new MovementActionItemMoveByGravity(new MovementActionInfo(1000, 200, 30, 0, "R"), new JumpController(-50, 200, 100), "")));
+//		newaction5 = new MovementActionSetWithThread().addMovementAction(newaction5);
+//		enemy = enemyFactory.createSpecialEnemy5(RedEnemy.class, new int[]{100, 500}, newaction5);
+//		
+//		action = enemy.getAction();
+//		currentInfoList.clear();
+//		
+//		for(MovementActionInfo movementActionInfo : action.getStartMovementInfoList()){
+//			currentInfoList.add(movementActionInfo); 
+//		}
 		
 		Time.DeltaTime = 200;
 		action.trigger();
