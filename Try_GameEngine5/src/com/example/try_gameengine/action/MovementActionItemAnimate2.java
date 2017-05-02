@@ -36,60 +36,217 @@ public class MovementActionItemAnimate2 extends MovementActionItemUpdate{
 		}
 	};
 	
-	private static final int NO_ORGINAL_ALPHA = -1;
-	private int originalAlpha;
-	private int alpha;
-	private float offsetAlphaByOnceTrigger;
-	
 	/**
-	 * @param millisTotal
-	 * @param alpha
+	 * constructor.
+	 * @param bitmapFrames
+	 * 			bitmapFrames for animate.
+	 * @param secondPerOneTime
+	 * 			secondPerOneTime is one game loop process interval how much seconds.
 	 */
-	public MovementActionItemAnimate2(long millisTotal, int alpha){
-		this(millisTotal, 1, NO_ORGINAL_ALPHA, alpha, "MovementActionItemAlpha");
+	public MovementActionItemAnimate2(Bitmap[] bitmapFrames, float secondPerOneTime){
+		this((long) (secondPerOneTime*1000/(1000.0f/Config.fps))*bitmapFrames.length, (long) (secondPerOneTime*1000/(1000.0f/Config.fps)), bitmapFrames, null, 1.0f, "MovementActionItemAnimate");
 	}
 	
 	/**
+	 * constructor.
 	 * @param millisTotal
-	 * @param originalAlpha
-	 * @param alpha
+	 * 			milliseconds for whole action running.
+	 * @param bitmapFrames
+	 * 			bitmapFrames for animate.
+	 * @param frameTriggerTimes
+	 * 			an array of frames display process times, when trigger enough times, go next frame.
+	 * 			
 	 */
-	public MovementActionItemAnimate2(long millisTotal, int originalAlpha, int alpha){
-		this(millisTotal, 1, originalAlpha, alpha, "MovementActionItemAlpha");
+	public MovementActionItemAnimate2(long millisTotal, Bitmap[] bitmapFrames, int[] frameTriggerTimes){
+		this((long) (millisTotal/(1000.0f/Config.fps)), 1, bitmapFrames, frameTriggerTimes, 1.0f, "MovementActionItemAnimate");
 	}
 	
 	/**
+	 * constructor.
+	 * @param millisTotal
+	 * 			milliseconds for whole action running.
+	 * @param bitmapFrames
+	 * 			bitmapFrames for animate.
+	 * @param frameTriggerTimes
+	 * 			an array of frames display by process times, when trigger enough times, go next frame.
+	 * @param scale
+	 * 			scale.
+	 * 			
+	 */
+	public MovementActionItemAnimate2(long millisTotal, Bitmap[] bitmapFrames, int[] frameTriggerTimes, float scale){
+		this((long) (millisTotal/(1000.0f/Config.fps)), 1, bitmapFrames, frameTriggerTimes, scale, "MovementActionItemAnimate");
+	}
+	
+	/**
+	 * constructor.
 	 * @param triggerTotal
+	 * 			trigger(process) times for whole action running.
 	 * @param triggerInterval
-	 * @param alpha
+	 * 			frames display process times, when trigger enough times, go next frame.
+	 * @param bitmapFrames
+	 * 			bitmapFrames for animate.
+	 * @param frameTriggerTimes
+	 * 			an array of frames display by process times, when trigger enough times, go next frame.
 	 */
-	public MovementActionItemAnimate2(long triggerTotal, long triggerInterval, int alpha){
-		this(triggerTotal, triggerTotal, NO_ORGINAL_ALPHA, alpha, "MovementActionItemAlpha");
+	public MovementActionItemAnimate2(long triggerTotal, long triggerInterval, Bitmap[] bitmapFrames, int[] frameTriggerTimes){
+		this(triggerTotal, triggerTotal, bitmapFrames, frameTriggerTimes, 1.0f, "MovementActionItemAnimate");
 	}
 	
 	/**
+	 * constructor.
 	 * @param triggerTotal
+	 * 			trigger(process) times for whole action running.
 	 * @param triggerInterval
-	 * @param originalAlpha
-	 * @param alpha
+	 * 			frames display process times, when trigger enough times, go next frame.
+	 * @param bitmapFrames
+	 * 			bitmapFrames for animate.
+	 * @param frameTriggerTimes
+	 * 			an array of frames display by process times, when trigger enough times, go next frame.
+	 * @param scale
+	 * 			scale
 	 */
-	public MovementActionItemAnimate2(long triggerTotal, long triggerInterval, int originalAlpha, int alpha){
-		this(triggerTotal, triggerInterval, originalAlpha, alpha, "MovementActionItemAlpha");
+	public MovementActionItemAnimate2(long triggerTotal, long triggerInterval, Bitmap[] bitmapFrames, int[] frameTriggerTimes, float scale){
+		this(triggerTotal, triggerInterval, bitmapFrames, frameTriggerTimes, scale, "MovementActionItemAnimate");
 	}
 	
 	/**
-	 * @param millisTotal
-	 * @param millisDelay
-	 * @param originalAlpha
-	 * @param alpha
+	 * constructor.
+	 * @param triggerTotal
+	 * 			trigger(process) times for whole action running.
+	 * @param triggerInterval
+	 * 			frames display process times, when trigger enough times, go next frame.
+	 * @param bitmapFrames
+	 * 			bitmapFrames for animate.
+	 * @param frameTriggerTimes
+	 * 			an array of frames display by process times, when trigger enough times, go next frame.
+	 * @param scale
+	 * 			scale
 	 * @param description
+	 * 			description for this movement action.
 	 */
-	public MovementActionItemAnimate2(long millisTotal, long millisDelay, int originalAlpha, int alpha, String description){
-		super(new MovementActionInfo(millisTotal, millisDelay, 0, 0));
+	public MovementActionItemAnimate2(long triggerTotal, long triggerInterval, Bitmap[] bitmapFrames, int[] frameTriggerTimes, float scale, String description){
+		super(new MovementActionInfo(triggerTotal, triggerInterval, 0, 0, description, null, description));
 		
 		this.description = description + ",";
-		this.originalAlpha = originalAlpha;
-		this.alpha = alpha;
+		this.bitmapFrames = bitmapFrames;
+		if(frameTriggerTimes == null){
+			frameTriggerTimes = new int[bitmapFrames.length];
+			Arrays.fill(frameTriggerTimes, (int) triggerInterval);
+		}
+		this.frameTriggerTimes = frameTriggerTimes;
+		this.scale = scale;
+//		movementItemList.add(this);
+		info = new MovementActionInfo(0, 0, 0, 0);
+		info.setSpriteActionName(description);
+	}
+	
+	/**
+	 * constructor.
+	 * @param lightImageFrames
+	 * 			images of {@link LightImage}.
+	 * @param secondPerOneTime
+	 * 			secondPerOneTime is one game loop process interval how much seconds.
+	 */
+	public MovementActionItemAnimate2(LightImage[] lightImageFrames, float secondPerOneTime){
+		this((long) (secondPerOneTime*1000/(1000.0f/Config.fps))*lightImageFrames.length, (long) (secondPerOneTime*1000/(1000.0f/Config.fps)), lightImageFrames, null, 1.0f, "MovementActionItemAnimate");
+	}
+	
+	/**
+	 * constructor.
+	 * @param millisTotal
+	 * 			milliseconds for whole action running.
+	 * @param lightImageFrames
+	 * 			images of {@link LightImage}.
+	 * @param frameTriggerTimes
+	 * 			an array of frames display by process times, when trigger enough times, go next frame.
+	 */
+	public MovementActionItemAnimate2(long millisTotal, LightImage[] lightImageFrames, int[] frameTriggerTimes){
+		this((long) (millisTotal/(1000.0f/Config.fps)), 1, lightImageFrames, frameTriggerTimes, 1.0f, "MovementActionItemAnimate");
+	}
+	
+	/**
+	 * constructor.
+	 * @param millisTotal
+	 * 			milliseconds for whole action running.
+	 * @param lightImageFrames
+	 * 			images of {@link LightImage}.
+	 * @param frameTriggerTimes
+	 * 			an array of frames display by process times, when trigger enough times, go next frame.
+	 * @param scale
+	 * 			scale.
+	 */
+	public MovementActionItemAnimate2(long millisTotal, LightImage[] lightImageFrames, int[] frameTriggerTimes, float scale){
+		this((long) (millisTotal/(1000.0f/Config.fps)), 1, lightImageFrames, frameTriggerTimes, scale, "MovementActionItemAnimate");
+	}
+	
+	/**
+	 * constructor.
+	 * @param triggerTotal
+	 * 			trigger(process) times for whole action running.
+	 * @param triggerInterval
+	 * 			frames display process times, when trigger enough times, go next frame.
+	 * @param lightImageFrames
+	 * 			images of {@link LightImage}.
+	 * @param frameTriggerTimes
+	 * 			an array of frames display by process times, when trigger enough times, go next frame.
+	 */
+	public MovementActionItemAnimate2(long triggerTotal, long triggerInterval, LightImage[] lightImageFrames, int[] frameTriggerTimes){
+		this(triggerTotal, triggerTotal, lightImageFrames, frameTriggerTimes, 1.0f, "MovementActionItemAnimate");
+	}
+	
+	/**
+	 * constructor.
+	 * @param triggerTotal
+	 * 			trigger(process) times for whole action running.
+	 * @param triggerInterval
+	 * 			frames display process times, when trigger enough times, go next frame.
+	 * @param lightImageFrames
+	 * 			images of {@link LightImage}.
+	 * @param frameTriggerTimes
+	 * 			an array of frames display by process times, when trigger enough times, go next frame.
+	 * @param scale
+	 * 			scale.
+	 * 			
+	 */
+	public MovementActionItemAnimate2(long triggerTotal, long triggerInterval, LightImage[] lightImageFrames, int[] frameTriggerTimes, float scale){
+		this(triggerTotal, triggerInterval, lightImageFrames, frameTriggerTimes, scale, "MovementActionItemAnimate");
+	}
+	
+	/**
+	 * constructor.
+	 * @param triggerTotal
+	 * 			trigger(process) times for whole action running.
+	 * @param triggerInterval
+	 * 			trigger(process) times for whole action running.
+	 * @param lightImageFrames
+	 * 			images of {@link LightImage}.
+	 * @param frameTriggerTimes
+	 * 			an array of frames display by process times, when trigger enough times, go next frame.
+	 * @param scale
+	 * 			scale.
+	 * @param description
+	 * 			description of this movement action.
+	 */
+	public MovementActionItemAnimate2(long triggerTotal, long triggerInterval, LightImage[] lightImageFrames, int[] frameTriggerTimes, float scale, String description){
+		this(new MovementActionInfo(triggerTotal, triggerInterval, 0, 0, description, null, description), lightImageFrames, frameTriggerTimes, scale, description);
+	}
+	
+	public MovementActionItemAnimate2(MovementActionInfo info, LightImage[] lightImageFrames, int[] frameTriggerTimes, float scale, String description){
+		super(info);
+		
+		this.description = description + ",";
+		this.lightImageFrames = lightImageFrames;
+		this.bitmapFrames = new Bitmap[lightImageFrames.length];
+		
+		if(frameTriggerTimes == null){
+			frameTriggerTimes = new int[lightImageFrames.length];
+//			Arrays.fill(frameTriggerTimes, (int) triggerInterval);
+			Arrays.fill(frameTriggerTimes, (int) info.getDelay());
+		}
+		
+		this.frameTriggerTimes = frameTriggerTimes;
+		
+		this.scale = scale;
 	}
 	
 	@Override
@@ -101,22 +258,8 @@ public class MovementActionItemAnimate2 extends MovementActionItemUpdate{
 		data.setValueOfPausedCounter(0);
 		isStop = false;
 		data.setCycleFinish(false);
-		if(originalAlpha==NO_ORGINAL_ALPHA)
-			originalAlpha = info.getSprite().getAlpha();
-		else
-			info.getSprite().setAlpha(originalAlpha);
 		
-		int offsetAlpha= alpha - originalAlpha;
-		offsetAlphaByOnceTrigger = (int) (offsetAlpha/(info.getTotal()/info.getDelay()));
-		
-		if(!data.isEnableSetSpriteAction())
-			data.setEnableSetSpriteAction(isRepeatSpriteActionIfMovementActionRepeat);
-		if(info.getSprite()!=null && data.isEnableSetSpriteAction())
-			info.getSprite().setAction(info.getSpriteActionName());
-		
-		triggerEnable = true;
-		data.setEnableSetSpriteAction(isRepeatSpriteActionIfMovementActionRepeat);
-		
+//		resumeFrameIndex = 0;
 		info.getSprite().addActionFPS(info.getSpriteActionName(), bitmapFrames, frameTriggerTimes, scale, isLoop, new com.example.try_gameengine.framework.IActionListener() {
 			
 			@Override
@@ -144,6 +287,14 @@ public class MovementActionItemAnimate2 extends MovementActionItemUpdate{
 				}
 			}
 		});
+		
+		if(!data.isEnableSetSpriteAction())
+			data.setEnableSetSpriteAction(isRepeatSpriteActionIfMovementActionRepeat);
+		if(info.getSprite()!=null && data.isEnableSetSpriteAction())
+			info.getSprite().setAction(info.getSpriteActionName());
+		
+		triggerEnable = true;
+		data.setEnableSetSpriteAction(isRepeatSpriteActionIfMovementActionRepeat);
 		
 		if(!isEnableSetSpriteAction)
 			isEnableSetSpriteAction = isRepeatSpriteActionIfMovementActionRepeat;
@@ -196,18 +347,14 @@ public class MovementActionItemAnimate2 extends MovementActionItemUpdate{
 		public void update() {
 			// TODO Auto-generated method stub
 //			timerOnTickListener.onTick(dx, dy);		
-			info.getSprite().setAlpha(originalAlpha + (int)offsetAlphaByOnceTrigger);
+			if(info.getSprite().currentAction!=null && info.getSprite().currentAction == info.getSprite().actions.get(info.getSpriteActionName()));
+				info.getSprite().currentAction.trigger();
 		}
 
 		@Override
 		public void update(float t) {
-			Log.e("interval", t+"");
-			Log.e("totle", data.getShouldActiveTotalValue()+"");
-			double percent = ((double)t)/data.getShouldActiveTotalValue();
-			int offsetAlpha= alpha - originalAlpha;
-			offsetAlphaByOnceTrigger += (float) (offsetAlpha*percent);
-			Log.e("offsetAlpha", offsetAlpha+" "+percent);
-			info.getSprite().setAlpha(originalAlpha + (int)offsetAlphaByOnceTrigger);
+			if(info.getSprite().currentAction!=null && info.getSprite().currentAction == info.getSprite().actions.get(info.getSpriteActionName()));
+				info.getSprite().currentAction.trigger(t);
 		}
 	});
 	

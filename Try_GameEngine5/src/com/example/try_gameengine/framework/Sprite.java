@@ -1670,7 +1670,8 @@ public class Sprite extends Layer {
 		protected long updateTime;
 		public float scale;
 		public IActionListener actionListener = new DefaultActionListener();
-		
+		private long allTime;
+		private long initTime;
 		/**
 		 * 
 		 */
@@ -1678,6 +1679,13 @@ public class Sprite extends Layer {
 			if (System.currentTimeMillis() > updateTime) {
 				nextFrameBySequence();
 				updateTime = System.currentTimeMillis() + frameTime[frameIdx];
+			}
+		}
+		
+		public void nextFrame(float t) {
+			if (initTime + allTime*t >= updateTime) {
+				nextFrameBySequence();
+				updateTime += frameTime[frameIdx];
 			}
 		}
 		
@@ -1700,8 +1708,28 @@ public class Sprite extends Layer {
 					
 					updateTime = System.currentTimeMillis() + frameTime[frameIdx];
 					
-					int w = getBitmap().getWidth();
-					int h = getBitmap().getHeight();
+					setWidth(getBitmap().getWidth());
+					setHeight(getBitmap().getHeight());
+					actionListener.afterChangeFrame(frameIdx);
+				}
+			}
+		}
+		
+		public void nextBitmap(float t){			
+			if (initTime + allTime*t >= updateTime && !isStop) {
+				actionListener.beforeChangeFrame(frameIdx);
+				
+				if(!isLoop && frameIdx==bitmapFrames.length-1){
+					setBitmap(bitmapFrames[frameIdx]);
+					isStop = true;
+					actionListener.actionFinish();
+				}else{
+					setBitmap(bitmapFrames[frameIdx]);
+					
+					frameIdx++;
+					frameIdx %= bitmapFrames.length;
+					
+					updateTime += frameTime[frameIdx];
 					
 					setWidth(getBitmap().getWidth());
 					setHeight(getBitmap().getHeight());
@@ -1739,11 +1767,28 @@ public class Sprite extends Layer {
 			process();
 		}
 		
+		public void trigger(float t){
+			if (currentAction != null) {
+				if(currentAction.frames!=null){
+					currentAction.nextFrame(t);
+				}else{
+					currentAction.nextBitmap(t);
+				}		
+			}
+		}
+		
 		/**
 		 * init the update time.
 		 */
 		public void initUpdateTime(){
-			updateTime = System.currentTimeMillis() + frameTime[frameIdx];
+			initTime = System.currentTimeMillis();
+			
+			allTime = 0;
+			for(int time : frameTime){
+				allTime += time;
+			}
+			
+			updateTime = initTime + frameTime[frameIdx];
 		}
 		
 		/**

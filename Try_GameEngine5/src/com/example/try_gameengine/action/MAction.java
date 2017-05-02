@@ -290,7 +290,7 @@ public class MAction { //MAction use threadPool it would delay during action by 
 	 * @return MovementActionItemAnimate.
 	 */
 	public static MovementAction animateAction(Bitmap[] bitmapFrames, float secondPerOneTime){
-		return new MovementActionItemAnimate(bitmapFrames, secondPerOneTime);
+		return new MovementActionItemAnimate2(bitmapFrames, secondPerOneTime);
 	}
 	
 	/**
@@ -302,7 +302,7 @@ public class MAction { //MAction use threadPool it would delay during action by 
 	 * @return MovementActionItemAnimate.
 	 */
 	public static MovementAction animateAction(long millisTotal, Bitmap[] bitmapFrames, int[] frameTriggerTimes){
-		return new MovementActionItemAnimate(millisTotal, bitmapFrames, frameTriggerTimes);	
+		return new MovementActionItemAnimate2(millisTotal, bitmapFrames, frameTriggerTimes);	
 	}
 	
 	/**
@@ -318,7 +318,7 @@ public class MAction { //MAction use threadPool it would delay during action by 
 	 * @return
 	 */
 	public static MovementAction animateAction(long millisTotal, Bitmap[] bitmapFrames, int[] frameTriggerTimes, float scale){
-		return new MovementActionItemAnimate(millisTotal, bitmapFrames, frameTriggerTimes, scale);	
+		return new MovementActionItemAnimate2(millisTotal, bitmapFrames, frameTriggerTimes, scale);	
 	}
 	
 	/**
@@ -333,7 +333,7 @@ public class MAction { //MAction use threadPool it would delay during action by 
 	 * @return
 	 */
 	public static MovementAction animateAction(long triggerTotal, long triggerInterval, Bitmap[] bitmapFrames, int[] frameTriggerTimes){
-		return new MovementActionItemAnimate(triggerTotal, triggerInterval, bitmapFrames, frameTriggerTimes);	
+		return new MovementActionItemAnimate2(triggerTotal, triggerInterval, bitmapFrames, frameTriggerTimes);	
 	}
 	
 	/**
@@ -351,7 +351,7 @@ public class MAction { //MAction use threadPool it would delay during action by 
 	 * @return
 	 */
 	public static MovementAction animateAction(long triggerTotal, long triggerInterval, Bitmap[] bitmapFrames, int[] frameTriggerTimes, float scale){
-		return new MovementActionItemAnimate(triggerTotal, triggerInterval, bitmapFrames, frameTriggerTimes, scale);	
+		return new MovementActionItemAnimate2(triggerTotal, triggerInterval, bitmapFrames, frameTriggerTimes, scale);	
 	}
 	
 	/**
@@ -363,7 +363,7 @@ public class MAction { //MAction use threadPool it would delay during action by 
 	 * @return MovementAction
 	 */
 	public static MovementAction animateAction(LightImage[] lightImageFrames, float secondPerOneTime){
-		return new MovementActionItemAnimate(lightImageFrames, secondPerOneTime);
+		return new MovementActionItemAnimate2(lightImageFrames, secondPerOneTime);
 	}
 	
 	/**
@@ -377,7 +377,7 @@ public class MAction { //MAction use threadPool it would delay during action by 
 	 * @return
 	 */
 	public static MovementAction animateAction(long millisTotal, LightImage[] lightImageFrames, int[] frameTriggerTimes){
-		return new MovementActionItemAnimate(millisTotal, lightImageFrames, frameTriggerTimes);	
+		return new MovementActionItemAnimate2(millisTotal, lightImageFrames, frameTriggerTimes);	
 	}
 	
 	/**
@@ -393,7 +393,7 @@ public class MAction { //MAction use threadPool it would delay during action by 
 	 * @return
 	 */
 	public static MovementAction animateAction(long millisTotal, LightImage[] lightImageFrames, int[] frameTriggerTimes, float scale){
-		return new MovementActionItemAnimate(millisTotal, lightImageFrames, frameTriggerTimes, scale);	
+		return new MovementActionItemAnimate2(millisTotal, lightImageFrames, frameTriggerTimes, scale);	
 	}
 	
 	/**
@@ -409,7 +409,7 @@ public class MAction { //MAction use threadPool it would delay during action by 
 	 * @return
 	 */
 	public static MovementAction animateAction(long triggerTotal, long triggerInterval, LightImage[] lightImageFrames, int[] frameTriggerTimes){
-		return new MovementActionItemAnimate(triggerTotal, triggerInterval, lightImageFrames, frameTriggerTimes);	
+		return new MovementActionItemAnimate2(triggerTotal, triggerInterval, lightImageFrames, frameTriggerTimes);	
 	}
 	
 	/**
@@ -426,7 +426,7 @@ public class MAction { //MAction use threadPool it would delay during action by 
 	 * @return
 	 */
 	public static MovementAction animateAction(long triggerTotal, long triggerInterval, LightImage[] lightImageFrames, int[] frameTriggerTimes, float scale){
-		return new MovementActionItemAnimate(triggerTotal, triggerInterval, lightImageFrames, frameTriggerTimes, scale);	
+		return new MovementActionItemAnimate2(triggerTotal, triggerInterval, lightImageFrames, frameTriggerTimes, scale);	
 	}
 	
 	/**
