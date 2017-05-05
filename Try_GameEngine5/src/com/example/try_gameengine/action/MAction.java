@@ -234,7 +234,7 @@ public class MAction { //MAction use threadPool it would delay during action by 
 	
 	public static MovementAction alphaAction2(long millisTotal, int alpha){
 //		return new MovementActionItemAlpha2(millisTotal, alpha);
-		return new MovementActionItemUpdateTime(new MovementActionInfo(millisTotal, alpha));
+		return new MovementActionItemUpdateTime(new MovementActionAlphaInfo(millisTotal, alpha));
 	}
 	
 	/**
@@ -290,7 +290,10 @@ public class MAction { //MAction use threadPool it would delay during action by 
 	 * @return MovementActionItemAnimate.
 	 */
 	public static MovementAction animateAction(Bitmap[] bitmapFrames, float secondPerOneTime){
-		return new MovementActionItemAnimate2(bitmapFrames, secondPerOneTime);
+//		return new MovementActionItemAnimate2(bitmapFrames, secondPerOneTime);
+		MovementActionAnimationInfo info = new MovementActionAnimationInfo((long)(secondPerOneTime*1000*bitmapFrames.length), (long)(secondPerOneTime*1000), bitmapFrames, null);
+		MovementActionItemUpdateTime actionItemUpdateTime = new MovementActionItemUpdateTime(info);
+		return actionItemUpdateTime;
 	}
 	
 	/**
@@ -302,23 +305,10 @@ public class MAction { //MAction use threadPool it would delay during action by 
 	 * @return MovementActionItemAnimate.
 	 */
 	public static MovementAction animateAction(long millisTotal, Bitmap[] bitmapFrames, int[] frameTriggerTimes){
-		return new MovementActionItemAnimate2(millisTotal, bitmapFrames, frameTriggerTimes);	
-	}
-	
-	/**
-	 * {@code animateAction} is a MovementAction to control animating with bitmaps, each bitmap frame be show during {@code secondPerOneTime}.
-	 * @param millisTotal
-	 * 			like duration milliseconds.
-	 * @param bitmapFrames
-	 * 			bitmaps for animate.
-	 * @param frameTriggerTimes
-	 * 			trigger interval count for action.
-	 * @param scale
-	 * 			not work now.
-	 * @return
-	 */
-	public static MovementAction animateAction(long millisTotal, Bitmap[] bitmapFrames, int[] frameTriggerTimes, float scale){
-		return new MovementActionItemAnimate2(millisTotal, bitmapFrames, frameTriggerTimes, scale);	
+//		return new MovementActionItemAnimate2(millisTotal, bitmapFrames, frameTriggerTimes);	
+		MovementActionAnimationInfo info = new MovementActionAnimationInfo(millisTotal, 1, bitmapFrames, frameTriggerTimes);
+		MovementActionItemUpdateTime actionItemUpdateTime = new MovementActionItemUpdateTime(info);
+		return actionItemUpdateTime;
 	}
 	
 	/**
@@ -333,25 +323,10 @@ public class MAction { //MAction use threadPool it would delay during action by 
 	 * @return
 	 */
 	public static MovementAction animateAction(long triggerTotal, long triggerInterval, Bitmap[] bitmapFrames, int[] frameTriggerTimes){
-		return new MovementActionItemAnimate2(triggerTotal, triggerInterval, bitmapFrames, frameTriggerTimes);	
-	}
-	
-	/**
-	 * {@code animateAction} is a MovementAction to control animating with bitmaps, each bitmap frame be show during {@code secondPerOneTime}.
-	 * @param triggerTotal
-	 * 			total trigger count for action.
-	 * @param triggerInterval
-	 * 			trigger interval count for action.
-	 * @param bitmapFrames
-	 * 			Bitmaps.
-	 * @param frameTriggerTimes
-	 * 			trigger interval count for action.
-	 * @param scale
-	 * 			not work now.
-	 * @return
-	 */
-	public static MovementAction animateAction(long triggerTotal, long triggerInterval, Bitmap[] bitmapFrames, int[] frameTriggerTimes, float scale){
-		return new MovementActionItemAnimate2(triggerTotal, triggerInterval, bitmapFrames, frameTriggerTimes, scale);	
+//		return new MovementActionItemAnimate2(triggerTotal, triggerInterval, bitmapFrames, frameTriggerTimes);	
+		MovementActionAnimationInfo info = new MovementActionAnimationInfo(triggerTotal, triggerInterval, bitmapFrames, frameTriggerTimes);
+		MovementActionItemBaseReugularFPS actionItemBaseReugularFPS = new MovementActionItemBaseReugularFPS(info);
+		return actionItemBaseReugularFPS;
 	}
 	
 	/**
@@ -363,7 +338,10 @@ public class MAction { //MAction use threadPool it would delay during action by 
 	 * @return MovementAction
 	 */
 	public static MovementAction animateAction(LightImage[] lightImageFrames, float secondPerOneTime){
-		return new MovementActionItemAnimate2(lightImageFrames, secondPerOneTime);
+//		return new MovementActionItemAnimate2(lightImageFrames, secondPerOneTime);
+		MovementActionAnimationInfo info = new MovementActionAnimationInfo((long)(secondPerOneTime*1000*lightImageFrames.length), (long)(secondPerOneTime*1000), lightImageFrames, null);
+		MovementActionItemUpdateTime actionItemUpdateTime = new MovementActionItemUpdateTime(info);
+		return actionItemUpdateTime;
 	}
 	
 	/**
@@ -377,23 +355,10 @@ public class MAction { //MAction use threadPool it would delay during action by 
 	 * @return
 	 */
 	public static MovementAction animateAction(long millisTotal, LightImage[] lightImageFrames, int[] frameTriggerTimes){
-		return new MovementActionItemAnimate2(millisTotal, lightImageFrames, frameTriggerTimes);	
-	}
-	
-	/**
-	 * {@code animateAction} is a MovementAction to control animating with bitmaps, each bitmap frame be show during {@code secondPerOneTime}.
-	 * @param millisTotal
-	 * 			like duration milliseconds.
-	 * @param lightImageFrames
-	 * 			images of {@link LightImage}.
-	 * @param frameTriggerTimes
-	 * 			total trigger count for action.
-	 * @param scale
-	 * 			not work now.
-	 * @return
-	 */
-	public static MovementAction animateAction(long millisTotal, LightImage[] lightImageFrames, int[] frameTriggerTimes, float scale){
-		return new MovementActionItemAnimate2(millisTotal, lightImageFrames, frameTriggerTimes, scale);	
+//		return new MovementActionItemAnimate2(millisTotal, lightImageFrames, frameTriggerTimes);	
+		MovementActionAnimationInfo info = new MovementActionAnimationInfo(millisTotal, 1, lightImageFrames, frameTriggerTimes);
+		MovementActionItemUpdateTime actionItemUpdateTime = new MovementActionItemUpdateTime(info);
+		return actionItemUpdateTime;
 	}
 	
 	/**
@@ -409,24 +374,10 @@ public class MAction { //MAction use threadPool it would delay during action by 
 	 * @return
 	 */
 	public static MovementAction animateAction(long triggerTotal, long triggerInterval, LightImage[] lightImageFrames, int[] frameTriggerTimes){
-		return new MovementActionItemAnimate2(triggerTotal, triggerInterval, lightImageFrames, frameTriggerTimes);	
-	}
-	
-	/**
-	 * {@code animateAction} is a MovementAction to control animating with bitmaps, each bitmap frame be show during {@code secondPerOneTime}.
-	 * @param triggerTotal
-	 * 			total trigger count for action.
-	 * @param triggerInterval
-	 * 			trigger interval count for action.
-	 * @param lightImageFrames
-	 * 			images of {@link LightImage}.
-	 * @param frameTriggerTimes
-	 * @param scale
-	 * 			not work now.
-	 * @return
-	 */
-	public static MovementAction animateAction(long triggerTotal, long triggerInterval, LightImage[] lightImageFrames, int[] frameTriggerTimes, float scale){
-		return new MovementActionItemAnimate2(triggerTotal, triggerInterval, lightImageFrames, frameTriggerTimes, scale);	
+//		return new MovementActionItemAnimate2(triggerTotal, triggerInterval, lightImageFrames, frameTriggerTimes);	
+		MovementActionAnimationInfo info = new MovementActionAnimationInfo(triggerTotal, triggerInterval, lightImageFrames, frameTriggerTimes);
+		MovementActionItemBaseReugularFPS actionItemBaseReugularFPS = new MovementActionItemBaseReugularFPS(info);
+		return actionItemBaseReugularFPS;
 	}
 	
 	/**

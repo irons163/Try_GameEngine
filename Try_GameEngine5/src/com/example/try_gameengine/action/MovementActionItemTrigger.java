@@ -6,6 +6,11 @@ public interface MovementActionItemTrigger {
 		public void update();
 		public void update(float t);
 	}
+	
+	public interface MovementActionItemTriggerInitDelegate{
+		public void initForUpdateTime();
+		public void initForFrameTrigger();
+	}
 
 	public abstract class DataDelegate implements MovementActionItemUpdateTimeDataDelegate{
 		private MovementActionItemUpdateTimeDataDelegate other;
@@ -47,6 +52,8 @@ public interface MovementActionItemTrigger {
 		}
 		
 	}
+	
+	public abstract void initWithInitDelegate(MovementActionItemTriggerInitDelegate initDelegate);
 
 	public abstract boolean isCycleFinish();
 

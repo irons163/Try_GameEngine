@@ -17,13 +17,13 @@ public class MovementActionItemUpdateTime extends MovementActionItemForMilliseco
 		}
 	};
 	
-	public MovementActionItemUpdateTime(long millisTotal, long millisDelay, final int dx, final int dy){
-		this(millisTotal, millisDelay, dx, dy, "MovementItem");
-	}
-	
-	public MovementActionItemUpdateTime(long millisTotal, long millisDelay, final int dx, final int dy, String description){
-		super(millisTotal, millisDelay, dx, dy, description);
-	}
+//	public MovementActionItemUpdateTime(long millisTotal, long millisDelay, final int dx, final int dy){
+//		this(millisTotal, millisDelay, dx, dy, "MovementItem");
+//	}
+//	
+//	public MovementActionItemUpdateTime(long millisTotal, long millisDelay, final int dx, final int dy, String description){
+//		super(millisTotal, millisDelay, dx, dy, description);
+//	}
 	
 	public MovementActionItemUpdateTime(MovementActionInfo info){
 		super(info);
@@ -35,6 +35,7 @@ public class MovementActionItemUpdateTime extends MovementActionItemForMilliseco
 			this.description = info.getDescription() + ",";
 		this.info = info;
 //		movementItemList.add(this);
+		info.createUpdateByEverytimeData();
 	}
 	
 	@Override
@@ -152,6 +153,7 @@ public class MovementActionItemUpdateTime extends MovementActionItemForMilliseco
 	
 	@Override
 	protected MovementAction initTimer(){ super.initTimer();
+	
 	data = info.getData();
 	data.setMovementActionItemUpdateTimeDataDelegate(new MovementActionItemUpdateTimeDataDelegate() {
 		

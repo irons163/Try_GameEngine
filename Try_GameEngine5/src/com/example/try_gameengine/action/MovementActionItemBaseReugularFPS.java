@@ -31,22 +31,13 @@ public class MovementActionItemBaseReugularFPS extends MovementActionItem{
 		FrameTimesIntervalAfterAction //Action->wait interval->Action->wait interval->end
 	};
 	
-	public MovementActionItemBaseReugularFPS(long frameTimesTotal, long frameTimesInterval, final int dx, final int dy){
-		this(frameTimesTotal, frameTimesInterval, dx, dy, "MovementItem");
-	}
-	
-	public MovementActionItemBaseReugularFPS(long frameTimesTotal, long frameTimesInterval, final int dx, final int dy, String description){
-		super(new MovementActionInfo(frameTimesTotal, frameTimesInterval, dx, dy), description);
-		
-		this.numberOfFramesTotal = frameTimesTotal;
-		this.numberOfFramesInterval = frameTimesInterval;
-		this.dx = dx;
-		this.dy = dy;
-		
-		data = info.getData();
-		data.setShouldActiveTotalValue(numberOfFramesTotal);
-		data.setShouldActiveIntervalValue(numberOfFramesInterval);
-	}
+//	public MovementActionItemBaseReugularFPS(long frameTimesTotal, long frameTimesInterval, final int dx, final int dy){
+//		this(frameTimesTotal, frameTimesInterval, dx, dy, "MovementItem");
+//	}
+//	
+//	public MovementActionItemBaseReugularFPS(long frameTimesTotal, long frameTimesInterval, final int dx, final int dy, String description){
+//		this(new MovementActionInfo(frameTimesTotal, frameTimesInterval, dx, dy));
+//	}
 	
 	public MovementActionItemBaseReugularFPS(MovementActionInfo info){
 		super(info);
@@ -55,7 +46,7 @@ public class MovementActionItemBaseReugularFPS extends MovementActionItem{
 		dx = info.getDx();
 		dy = info.getDy();
 		
-		info.setData(new MovementActionItemAlpha2Data());
+		info.createUpdateByTriggerData();
 		data = info.getData();
 		data.setShouldActiveTotalValue(numberOfFramesTotal);
 		data.setShouldActiveIntervalValue(numberOfFramesInterval);
@@ -105,6 +96,9 @@ public class MovementActionItemBaseReugularFPS extends MovementActionItem{
 		data.setValueOfPausedCounter(0);
 		isStop = false;
 		data.setCycleFinish(false);
+		
+		info.ggg();
+		
 		if(!data.isEnableSetSpriteAction())
 			data.setEnableSetSpriteAction(isRepeatSpriteActionIfMovementActionRepeat);
 		if(info.getSprite()!=null && data.isEnableSetSpriteAction())

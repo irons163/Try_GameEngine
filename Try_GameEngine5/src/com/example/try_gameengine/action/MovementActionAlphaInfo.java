@@ -1,5 +1,7 @@
 package com.example.try_gameengine.action;
 
+import android.util.Log;
+
 import com.example.try_gameengine.action.MovementAction.TimerOnTickListener;
 import com.example.try_gameengine.action.MovementActionItemUpdateTimeData.UpdateType;
 import com.example.try_gameengine.framework.Config;
@@ -9,27 +11,12 @@ import com.example.try_gameengine.framework.Sprite;
  * @author irons
  *
  */
-/**
- * @author irons
- *
- */
 
-interface MovementActionInfoUpdateDelegate{
-	public void update(TimerOnTickListener timerOnTickListener);
-	public void update(float t, TimerOnTickListener timerOnTickListener);
-}
-
-public class MovementActionInfo implements MovementActionInfoUpdateDelegate, Cloneable{
-	protected long total;
-	protected long delay;
-	protected float dx, dy;
-	protected String description;
-	protected Sprite sprite;
-	protected String spriteActionName;
-	protected boolean isLoop = false;
-	protected boolean isSettingTargetXY = false;
-	protected float targetX, targetY;
-	MovementActionItemTrigger data;
+public class MovementActionAlphaInfo extends MovementActionInfo{
+	static final int NO_ORGINAL_ALPHA = -1;
+	private int originalAlpha;
+	private int alpha;
+	private float offsetAlphaByOnceTrigger;
 	
 	/**
 	 * @param total
@@ -37,7 +24,7 @@ public class MovementActionInfo implements MovementActionInfoUpdateDelegate, Clo
 	 * @param dx
 	 * @param dy
 	 */
-	public MovementActionInfo(long total, long delay, float dx, float dy) {
+	public MovementActionAlphaInfo(long total, long delay, float dx, float dy) {
 		this(total, delay, dx, dy, null);
 	}
 
@@ -48,7 +35,7 @@ public class MovementActionInfo implements MovementActionInfoUpdateDelegate, Clo
 	 * @param dy
 	 * @param description
 	 */
-	public MovementActionInfo(long total, long delay, float dx, float dy,
+	public MovementActionAlphaInfo(long total, long delay, float dx, float dy,
 			String description) {
 		this(total, delay, dx, dy, description, null, null);
 	}
@@ -64,15 +51,9 @@ public class MovementActionInfo implements MovementActionInfoUpdateDelegate, Clo
 	 * @param sprite
 	 * @param spriteActionName
 	 */
-	public MovementActionInfo(long total, long delay, float dx, float dy,
+	public MovementActionAlphaInfo(long total, long delay, float dx, float dy,
 			String description, Sprite sprite, String spriteActionName) {
-		this.total = total;
-		this.delay = delay;
-		this.dx = dx;
-		this.dy = dy;
-		this.description = description;
-		this.sprite = sprite;
-		this.spriteActionName = spriteActionName;
+		super(total, delay, dx, dy, description, sprite, spriteActionName);
 	}
 	
 	public void createUpdateByIntervalTimeData(){
@@ -253,21 +234,104 @@ public class MovementActionInfo implements MovementActionInfoUpdateDelegate, Clo
 		}
 	}
 	
-	public void ggg() {
+	/**
+	 * @param millisTotal
+	 * @param alpha
+	 */
+	public MovementActionAlphaInfo(long millisTotal, int alpha){
+		this(millisTotal, 1, NO_ORGINAL_ALPHA, alpha, "MovementActionItemAlpha");
+	}
+	
+	/**
+	 * @param millisTotal
+	 * @param originalAlpha
+	 * @param alpha
+	 */
+	public MovementActionAlphaInfo(long millisTotal, int originalAlpha, int alpha){
+		this(millisTotal, 1, originalAlpha, alpha, "MovementActionItemAlpha");
+	}
+	
+	/**
+	 * @param triggerTotal
+	 * @param triggerInterval
+	 * @param alpha
+	 */
+	public MovementActionAlphaInfo(long triggerTotal, long triggerInterval, int alpha){
+		this(triggerTotal, triggerTotal, NO_ORGINAL_ALPHA, alpha, "MovementActionItemAlpha");
+	}
+	
+	/**
+	 * @param triggerTotal
+	 * @param triggerInterval
+	 * @param originalAlpha
+	 * @param alpha
+	 */
+	public MovementActionAlphaInfo(long triggerTotal, long triggerInterval, int originalAlpha, int alpha){
+		this(triggerTotal, triggerInterval, originalAlpha, alpha, "MovementActionItemAlpha");
+	}
+
+	/**
+	 * @param millisTotal
+	 * @param millisDelay
+	 * @param originalAlpha
+	 * @param alpha
+	 * @param description
+	 */
+	public MovementActionAlphaInfo(long millisTotal, long millisDelay, int originalAlpha, int alpha, String description){
+		this(millisTotal, millisDelay, 0f, 0f);
 		
+		this.description = description + ",";
+//		this.originalAlpha = originalAlpha;
+//		this.alpha = alpha;
+		setOriginalAlpha(originalAlpha);
+		setAlpha(alpha);
+	}
+	
+	public int getOriginalAlpha() {
+		return originalAlpha;
+	}
+
+	public void setOriginalAlpha(int originalAlpha) {
+		this.originalAlpha = originalAlpha;
+	}
+
+	public int getAlpha() {
+		return alpha;
+	}
+
+	public void setAlpha(int alpha) {
+		this.alpha = alpha;
+	}
+
+	public float getOffsetAlphaByOnceTrigger() {
+		return offsetAlphaByOnceTrigger;
+	}
+
+	public void setOffsetAlphaByOnceTrigger(float offsetAlphaByOnceTrigger) {
+		this.offsetAlphaByOnceTrigger = offsetAlphaByOnceTrigger;
+	}
+
+	public void ggg() {
+		if(originalAlpha==NO_ORGINAL_ALPHA)
+			originalAlpha = getSprite().getAlpha();
+		else
+			getSprite().setAlpha(originalAlpha);
+		
+		int offsetAlpha= alpha - originalAlpha;
+		offsetAlphaByOnceTrigger = (float) (offsetAlpha/((double)getTotal()/getDelay()));
 	}
 	
 	public void didCycleFinish(){
-		
+		getSprite().setAlpha(alpha);
 	}
 	
 	@Override
 	public boolean equals(Object obj) {
 		if (obj == null)
 			return false;
-		if (!(obj instanceof MovementActionInfo))
+		if (!(obj instanceof MovementActionAlphaInfo))
 			return false;
-		MovementActionInfo info = (MovementActionInfo) obj;
+		MovementActionAlphaInfo info = (MovementActionAlphaInfo) obj;
 		return (this.total == info.getTotal() && this.delay == info.getDelay()
 				&& this.dx == info.getDx() && this.dy == info.getDy());
 	}
@@ -281,8 +345,8 @@ public class MovementActionInfo implements MovementActionInfoUpdateDelegate, Clo
 //	}
 
 	@Override
-	public MovementActionInfo clone() {
-		MovementActionInfo info = new MovementActionInfo(total, delay, dx, dy,
+	public MovementActionAlphaInfo clone() {
+		MovementActionAlphaInfo info = new MovementActionAlphaInfo(total, delay, dx, dy,
 				description, sprite,
 				spriteActionName);
 		return info;
@@ -304,13 +368,37 @@ public class MovementActionInfo implements MovementActionInfoUpdateDelegate, Clo
 
 	@Override
 	public void update(TimerOnTickListener timerOnTickListener) {
-		
+		// TODO Auto-generated method stub
+//		if(timerOnTickListener!=null){
+//			timerOnTickListener.onTick(dx, dy);
+//		}else{
+			getSprite().setAlpha(originalAlpha + (int)offsetAlphaByOnceTrigger);
+//		}
 	}
 
 	@Override
 	public void update(float t, TimerOnTickListener timerOnTickListener) {
+		// TODO Auto-generated method stub
+//		double percent = ((double)t)/data.getShouldActiveTotalValue();
+//		int offsetAlpha= alpha - originalAlpha;
+//		offsetAlphaByOnceTrigger += (float) (offsetAlpha*percent);
+		
+		int offsetAlpha= alpha - originalAlpha;
+		offsetAlphaByOnceTrigger = (float) (offsetAlpha*t);
+		Log.e("offsetAlpha", offsetAlpha+" "+ t);
+		
+//		if(timerOnTickListener!=null){
+//			timerOnTickListener.onTick(dx, dy);
+//		}else{
+			getSprite().setAlpha(originalAlpha + (int)offsetAlphaByOnceTrigger);
+//		}
 
 	}
+	
+	public float getOffsetAlpha(){
+		return offsetAlphaByOnceTrigger;
+	}
+	
 
 //	/**
 //	 * create MovementActionInfoMemento.

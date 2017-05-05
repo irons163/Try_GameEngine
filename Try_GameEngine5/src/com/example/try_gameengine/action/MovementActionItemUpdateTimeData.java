@@ -71,7 +71,6 @@ public class MovementActionItemUpdateTimeData implements MovementActionItemTrigg
 //		this.myTrigger = myTrigger;
 //	}
 
-
 	/* (non-Javadoc)
 	 * @see com.example.try_gameengine.action.MovementActionItemTrigger#isCycleFinish()
 	 */
@@ -273,5 +272,13 @@ public class MovementActionItemUpdateTimeData implements MovementActionItemTrigg
 			return 1;
 		else
 			return (double)getShouldActiveIntervalValue()/getShouldActiveTotalValue();
+	}
+
+	@Override
+	public void initWithInitDelegate(
+			MovementActionItemTriggerInitDelegate initDelegate) {
+		if(initDelegate!=null){
+			initDelegate.initForUpdateTime();
+		}
 	}
 }

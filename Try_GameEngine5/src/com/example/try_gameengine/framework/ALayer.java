@@ -1105,6 +1105,12 @@ public abstract class ALayer implements ILayer, ILayerDelegate, ITouchable{
 		if(paint==null)
 			paint = new Paint();
 		paint.setAlpha(alpha);
+		
+		for(ILayer child : getLayers()){
+			if(child.isComposite()){
+				child.setAlpha(alpha);
+			}
+		}
 	}
 
 	public Paint getPaint() {

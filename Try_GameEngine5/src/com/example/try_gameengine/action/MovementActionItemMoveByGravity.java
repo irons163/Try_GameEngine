@@ -17,13 +17,13 @@ import com.example.try_gameengine.action.visitor.IMovementActionVisitor;
  */
 public class MovementActionItemMoveByGravity extends MovementActionItemUpdateTime implements Cloneable{ 
 	
-	public MovementActionItemMoveByGravity(long millisTotal, long millisDelay, final int dx, final int dy){
-		this(millisTotal, millisDelay, dx, dy, "MovementItem");
-	}
-	
-	public MovementActionItemMoveByGravity(long millisTotal, long millisDelay, final int dx, final int dy, String description){
-		super(millisTotal, millisDelay, dx, dy, description);
-	}
+//	public MovementActionItemMoveByGravity(long millisTotal, long millisDelay, final int dx, final int dy){
+//		this(millisTotal, millisDelay, dx, dy, "MovementItem");
+//	}
+//	
+//	public MovementActionItemMoveByGravity(long millisTotal, long millisDelay, final int dx, final int dy, String description){
+//		super(millisTotal, millisDelay, dx, dy, description);
+//	}
 	
 	public MovementActionItemMoveByGravity(MovementActionMoveByGravityInfo info){
 		super(info);

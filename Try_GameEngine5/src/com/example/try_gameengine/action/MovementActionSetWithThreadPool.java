@@ -38,15 +38,6 @@ public class MovementActionSetWithThreadPool extends MovementActionSet {
 		}
 	}
 
-	private void frameStart(){
-		for(MovementAction action : actions){
-			cancelAction = action;
-			
-			action.start();
-			
-		}
-	}
-	
 	@Override
 	public void start() {
 		// TODO Auto-generated method stub

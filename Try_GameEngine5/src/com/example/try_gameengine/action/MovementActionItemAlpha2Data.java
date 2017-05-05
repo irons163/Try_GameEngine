@@ -152,4 +152,12 @@ public class MovementActionItemAlpha2Data implements MovementActionItemTrigger{
 		// TODO Auto-generated method stub
 		return (double)getShouldActiveIntervalValue()/getShouldActiveTotalValue();
 	}
+
+	@Override
+	public void initWithInitDelegate(
+			MovementActionItemTriggerInitDelegate initDelegate) {
+		if(initDelegate!=null){
+			initDelegate.initForFrameTrigger();
+		}		
+	}
 }

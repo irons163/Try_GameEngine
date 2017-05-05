@@ -11,6 +11,8 @@ import android.graphics.PointF;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Paint.Style;
+import android.util.Log;
+
 import com.example.try_gameengine.action.MAction;
 import com.example.try_gameengine.action.MovementAction;
 import com.example.try_gameengine.action.MovementAtionController;
@@ -719,12 +721,13 @@ public class Sprite extends Layer {
 	 * @param frameTime
 	 * 			frameTime of sprite action.
 	 */
-	public void addAction(String name, int[] frames, int[] frameTime) {
+	public SpriteAction addAction(String name, int[] frames, int[] frameTime) {
 		SpriteAction sp = new SpriteAction();
 		sp.frames = frames;//幀的數量
 		sp.frameTime = frameTime;//每一幀切換的時間
 		sp.name = name;
 		actions.put(name, sp);
+		return sp;
 	}
 	
 	/**
@@ -736,8 +739,8 @@ public class Sprite extends Layer {
 	 * @param frameTime
 	 * 			frameTime of sprite action.
 	 */
-	public void addAction(String name, Bitmap[] bitmapFrames, int[] frameTime) {
-		addAction(name, bitmapFrames, frameTime, 1.0f, true, new DefaultActionListener());
+	public SpriteAction addAction(String name, Bitmap[] bitmapFrames, int[] frameTime) {
+		return addAction(name, bitmapFrames, frameTime, 1.0f, true, new DefaultActionListener());
 	}
 	
 	/**
@@ -751,8 +754,8 @@ public class Sprite extends Layer {
 	 * @param isLoop
 	 * 			
 	 */
-	public void addAction(String name, Bitmap[] bitmapFrames, int[] frameTime, boolean isLoop) {
-		addAction(name, bitmapFrames, frameTime, 1.0f, isLoop, new DefaultActionListener());
+	public SpriteAction addAction(String name, Bitmap[] bitmapFrames, int[] frameTime, boolean isLoop) {
+		return addAction(name, bitmapFrames, frameTime, 1.0f, isLoop, new DefaultActionListener());
 	}
 	
 	/**
@@ -768,8 +771,8 @@ public class Sprite extends Layer {
 	 * @param actionListener
 	 * 			
 	 */
-	public void addAction(String name, Bitmap[] bitmapFrames, int[] frameTime, boolean isLoop, IActionListener actionListener) {
-		addAction(name, bitmapFrames, frameTime, 1.0f, isLoop, actionListener);
+	public SpriteAction addAction(String name, Bitmap[] bitmapFrames, int[] frameTime, boolean isLoop, IActionListener actionListener) {
+		return addAction(name, bitmapFrames, frameTime, 1.0f, isLoop, actionListener);
 	}
 	
 	/**
@@ -782,7 +785,7 @@ public class Sprite extends Layer {
 	 * @param isLoop
 	 * @param actionListener
 	 */
-	public void addAction(String name, Bitmap[] bitmapFrames, int[] frameTime, float scale, boolean isLoop, IActionListener actionListener) {
+	public SpriteAction addAction(String name, Bitmap[] bitmapFrames, int[] frameTime, float scale, boolean isLoop, IActionListener actionListener) {
 		SpriteAction sp = new SpriteAction();
 		sp.bitmapFrames = bitmapFrames;// 幀圖片集合
 		sp.frameTime = frameTime;//每一幀切換的時間
@@ -791,6 +794,7 @@ public class Sprite extends Layer {
 		sp.scale = scale;
 		sp.actionListener = actionListener;
 		actions.put(name, sp);
+		return sp;
 	}
 	
 	/**
@@ -800,8 +804,8 @@ public class Sprite extends Layer {
 	 * @param frameTriggerTimes
 	 * 			frames of sprite action.
 	 */
-	public void addActionFPS(String name, Bitmap[] bitmapFrames, int[] frameTriggerTimes) {
-		addActionFPS(name, bitmapFrames, frameTriggerTimes, 1.0f, true, new DefaultActionListener());
+	public SpriteAction addActionFPS(String name, Bitmap[] bitmapFrames, int[] frameTriggerTimes) {
+		return addActionFPS(name, bitmapFrames, frameTriggerTimes, 1.0f, true, new DefaultActionListener());
 	}
 	
 	/**
@@ -811,8 +815,8 @@ public class Sprite extends Layer {
 	 * @param frameTriggerTimes
 	 * @param isLoop
 	 */
-	public void addActionFPS(String name, Bitmap[] bitmapFrames, int[] frameTriggerTimes, boolean isLoop) {
-		addActionFPS(name, bitmapFrames, frameTriggerTimes, 1.0f, isLoop, new DefaultActionListener());
+	public SpriteAction addActionFPS(String name, Bitmap[] bitmapFrames, int[] frameTriggerTimes, boolean isLoop) {
+		return addActionFPS(name, bitmapFrames, frameTriggerTimes, 1.0f, isLoop, new DefaultActionListener());
 	}
 	
 	/**
@@ -823,8 +827,8 @@ public class Sprite extends Layer {
 	 * @param isLoop
 	 * @param actionListener
 	 */
-	public void addActionFPS(String name, Bitmap[] bitmapFrames, int[] frameTriggerTimes, boolean isLoop, IActionListener actionListener) {
-		addActionFPS(name, bitmapFrames, frameTriggerTimes, 1.0f, isLoop, actionListener);
+	public SpriteAction addActionFPS(String name, Bitmap[] bitmapFrames, int[] frameTriggerTimes, boolean isLoop, IActionListener actionListener) {
+		return addActionFPS(name, bitmapFrames, frameTriggerTimes, 1.0f, isLoop, actionListener);
 	}
 	
 	/**
@@ -836,7 +840,7 @@ public class Sprite extends Layer {
 	 * @param isLoop
 	 * @param actionListener
 	 */
-	public void addActionFPS(String name, Bitmap[] bitmapFrames, int[] frameTriggerTimes, float scale, boolean isLoop, IActionListener actionListener) {
+	public SpriteAction addActionFPS(String name, Bitmap[] bitmapFrames, int[] frameTriggerTimes, float scale, boolean isLoop, IActionListener actionListener) {
 		SpriteAction sp = new SpriteActionBaseFPS();
 		sp.bitmapFrames = bitmapFrames;// 幀圖片集合
 		sp.frameTime = frameTriggerTimes;//每一幀切換的時間
@@ -845,6 +849,7 @@ public class Sprite extends Layer {
 		sp.scale = scale;
 		sp.actionListener = actionListener;
 		actions.put(name, sp);
+		return sp;
 	}
 	
 	/**
@@ -1058,8 +1063,11 @@ public class Sprite extends Layer {
 	@Override
 	public void frameTrig(){
 		//SpriteAction run before MovementAction because of MovementActionItemAnimate.
-		if(currentAction!=null)
+		if(currentAction!=null && !currentAction.updateByMovement)
 			currentAction.trigger();
+		else if(currentAction!=null){
+			Log.e("", "");
+		}
 		
 		for(MovementAction action : movementActions){
 			action.trigger();
@@ -1672,6 +1680,7 @@ public class Sprite extends Layer {
 		public IActionListener actionListener = new DefaultActionListener();
 		private long allTime;
 		private long initTime;
+		public boolean updateByMovement;
 		/**
 		 * 
 		 */
@@ -1716,7 +1725,7 @@ public class Sprite extends Layer {
 		}
 		
 		public void nextBitmap(float t){			
-			if (initTime + allTime*t >= updateTime && !isStop) {
+			if (initTime + allTime*(double)t >= updateTime && !isStop) {
 				actionListener.beforeChangeFrame(frameIdx);
 				
 				if(!isLoop && frameIdx==bitmapFrames.length-1){
