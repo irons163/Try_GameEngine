@@ -1,5 +1,6 @@
 package com.example.try_gameengine.action;
 
+
 public class RotationCurveController implements IRotationController{
 	float rotation;
 	float origineDx;

@@ -25,7 +25,6 @@ public class MovementActionItemScale extends MovementAction{
 	long resumeTotal;
 	long resetTotal;	
 	public String name;	
-	private long updateTime;	
 	public int frameIdx;	
 	public boolean isStop = false;
 	public boolean isCycleFinish = false;	
@@ -57,12 +56,6 @@ public class MovementActionItemScale extends MovementAction{
 		ScaleTo, ScaleBy, ScaleToWith
 	}
 	
-	private static float doubelToFloat(float scale, double pow){
-		BigDecimal bigDecimal = new BigDecimal(Math.pow(scale, pow));
-
-		return bigDecimal.floatValue();
-	}
-	
 	/**
 	 * @param millisTotal
 	 * @param scaleX
@@ -72,14 +65,6 @@ public class MovementActionItemScale extends MovementAction{
 //		this((long) (millisTotal/(1000.0f/Config.fps)), 1, doubelToFloat(scaleX,1/(long) (millisTotal/(1000.0f/Config.fps))), scaleY, "MovementActionItemAlpha");
 		this((long) (millisTotal/(1000.0f/Config.fps)), 1, scaleX, scaleY, "MovementActionItemAlpha");
 	}
-	
-//	public MovementActionItemScale(long millisTotal, int originalAlpha, int alpha){
-//		this((long) (millisTotal/(1000.0f/Config.fps)), 1, originalAlpha, alpha, "MovementActionItemAlpha");
-//	}
-	
-//	public MovementActionItemScale(long triggerTotal, long triggerInterval, int alpha){
-//		this(triggerTotal, triggerTotal, NO_ORGINAL_ALPHA, alpha, "MovementActionItemAlpha");
-//	}
 	
 	/**
 	 * @param triggerTotal

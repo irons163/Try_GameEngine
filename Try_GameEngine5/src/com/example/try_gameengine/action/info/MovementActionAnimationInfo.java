@@ -1,10 +1,13 @@
-package com.example.try_gameengine.action;
+package com.example.try_gameengine.action.info;
 
 import java.util.Arrays;
 import java.util.Collections;
 
 import android.graphics.Bitmap;
 
+import com.example.try_gameengine.action.MovementAction;
+import com.example.try_gameengine.action.MovementActionInfo;
+import com.example.try_gameengine.action.MovementActionItemTrigger;
 import com.example.try_gameengine.action.MovementAction.TimerOnTickListener;
 import com.example.try_gameengine.action.MovementActionItemAnimate2.FrameTrigger;
 import com.example.try_gameengine.action.MovementActionItemTrigger.MovementActionItemTriggerInitDelegate;

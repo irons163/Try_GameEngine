@@ -1,5 +1,6 @@
 package com.example.try_gameengine.action;
 
+
 public interface IRotationController {
 	public void start(MovementActionInfo info);
 	public float getRotation();

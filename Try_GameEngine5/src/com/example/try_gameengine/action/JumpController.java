@@ -1,5 +1,6 @@
 package com.example.try_gameengine.action;
 
+
 import android.graphics.PointF;
 
 public class JumpController implements IGravityController {

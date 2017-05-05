@@ -1,5 +1,12 @@
-package com.example.try_gameengine.action;
+package com.example.try_gameengine.action.info;
 
+import android.util.Log;
+
+import com.example.try_gameengine.action.MovementAction;
+import com.example.try_gameengine.action.MovementActionInfo;
+import com.example.try_gameengine.action.MovementActionItemAlpha2Data;
+import com.example.try_gameengine.action.MovementActionItemTrigger;
+import com.example.try_gameengine.action.MovementActionItemUpdateTimeData;
 import com.example.try_gameengine.action.MovementAction.TimerOnTickListener;
 import com.example.try_gameengine.action.MovementActionItemUpdateTimeData.UpdateType;
 import com.example.try_gameengine.framework.Config;
@@ -9,27 +16,25 @@ import com.example.try_gameengine.framework.Sprite;
  * @author irons
  *
  */
-/**
- * @author irons
- *
- */
 
-interface MovementActionInfoUpdateDelegate{
-	public void update(TimerOnTickListener timerOnTickListener);
-	public void update(float t, TimerOnTickListener timerOnTickListener);
-}
-
-public class MovementActionInfo implements MovementActionInfoUpdateDelegate, Cloneable{
-	protected long total;
-	protected long delay;
-	protected float dx, dy;
-	protected String description;
-	protected Sprite sprite;
-	protected String spriteActionName;
-	protected boolean isLoop = false;
-	protected boolean isSettingTargetXY = false;
-	protected float targetX, targetY;
-	protected MovementActionItemTrigger data;
+public class MovementActionScaleInfo extends MovementActionInfo{
+	private float scaleX, scaleY;
+	private float offsetScaleXByOnceTrigger, offsetScaleYByOnceTrigger;
+	public static final float NO_SCALE = Float.MIN_VALUE;
+	private ScaleType scaleType = ScaleType.ScaleTo;
+	
+	/**
+	 * These are scale types. Like. 
+	 * @author irons
+	 *
+	 */
+	public enum ScaleType{
+		ScaleTo, ScaleBy, ScaleToWith
+	}
+	
+	public void setScaleType(ScaleType scaleType){
+		this.scaleType = scaleType;
+	}
 	
 	/**
 	 * @param total
@@ -37,8 +42,8 @@ public class MovementActionInfo implements MovementActionInfoUpdateDelegate, Clo
 	 * @param dx
 	 * @param dy
 	 */
-	public MovementActionInfo(long total, long delay, float dx, float dy) {
-		this(total, delay, dx, dy, null);
+	public MovementActionScaleInfo(long total, long delay, float scaleX, float scaleY) {
+		this(total, delay, scaleX, scaleY, null);
 	}
 
 	/**
@@ -48,9 +53,12 @@ public class MovementActionInfo implements MovementActionInfoUpdateDelegate, Clo
 	 * @param dy
 	 * @param description
 	 */
-	public MovementActionInfo(long total, long delay, float dx, float dy,
+	public MovementActionScaleInfo(long total, long delay, float scaleX, float scaleY,
 			String description) {
-		this(total, delay, dx, dy, description, null, null);
+		this(total, delay, 0, 0, description, null, null);
+		
+		this.scaleX = scaleX;
+		this.scaleY = scaleY;
 	}
 
 	/**
@@ -64,15 +72,9 @@ public class MovementActionInfo implements MovementActionInfoUpdateDelegate, Clo
 	 * @param sprite
 	 * @param spriteActionName
 	 */
-	public MovementActionInfo(long total, long delay, float dx, float dy,
+	public MovementActionScaleInfo(long total, long delay, float scaleX, float scaleY,
 			String description, Sprite sprite, String spriteActionName) {
-		this.total = total;
-		this.delay = delay;
-		this.dx = dx;
-		this.dy = dy;
-		this.description = description;
-		this.sprite = sprite;
-		this.spriteActionName = spriteActionName;
+		super(total, delay, 0, 0, description, sprite, spriteActionName);
 	}
 	
 	public void createUpdateByIntervalTimeData(){
@@ -253,21 +255,128 @@ public class MovementActionInfo implements MovementActionInfoUpdateDelegate, Clo
 		}
 	}
 	
+//	public int getOriginalAlpha() {
+//		return originalAlpha;
+//	}
+//
+//	public void setOriginalAlpha(int originalAlpha) {
+//		this.originalAlpha = originalAlpha;
+//	}
+//
+//	public int getAlpha() {
+//		return alpha;
+//	}
+//
+//	public void setAlpha(int alpha) {
+//		this.alpha = alpha;
+//	}
+//
+//	public float getOffsetAlphaByOnceTrigger() {
+//		return offsetAlphaByOnceTrigger;
+//	}
+//
+//	public void setOffsetAlphaByOnceTrigger(float offsetAlphaByOnceTrigger) {
+//		this.offsetAlphaByOnceTrigger = offsetAlphaByOnceTrigger;
+//	}
+
 	public void ggg() {
+//		if(originalAlpha==NO_ORGINAL_ALPHA)
+//			originalAlpha = info.getSprite().getAlpha();
+//		else
+//			info.getSprite().setAlpha(originalAlpha);
 		
+		switch (scaleType) {
+		case ScaleTo:
+			if(this.scaleX!=NO_SCALE){
+				float originalScaleX = this.getSprite().getXscale();
+				float offsetScaleX = 0;
+				offsetScaleX = scaleX - originalScaleX;
+				
+				offsetScaleXByOnceTrigger = offsetScaleX/(this.getTotal()/this.getDelay());
+			}
+			if(this.scaleY!=NO_SCALE){
+				float originalScaleY = this.getSprite().getYscale();
+				float offsetScaleY = 0;
+				offsetScaleY = scaleY - originalScaleY;
+
+				offsetScaleYByOnceTrigger = offsetScaleY/(this.getTotal()/this.getDelay());
+			}
+			break;
+		case ScaleBy:
+			if(this.scaleX!=NO_SCALE){
+				float offsetScaleX = 0;
+				offsetScaleX = scaleX;
+				
+				offsetScaleXByOnceTrigger = offsetScaleX/(this.getTotal()/this.getDelay());
+			}
+			if(this.scaleY!=NO_SCALE){
+				float offsetScaleY = 0;
+				offsetScaleY = scaleY;
+
+				offsetScaleYByOnceTrigger = offsetScaleY/(this.getTotal()/this.getDelay());
+			}
+			break;
+		case ScaleToWith:
+			if(this.scaleX!=NO_SCALE){
+				float originalScaleX = this.getSprite().getXscale();
+				float offsetScaleX = 0;
+				if(originalScaleX<0){
+					offsetScaleX = -1*scaleX - originalScaleX;
+				}else{
+					offsetScaleX = scaleX - originalScaleX;
+				}
+				
+				offsetScaleXByOnceTrigger = offsetScaleX/(this.getTotal()/this.getDelay());
+			}
+			if(this.scaleY!=NO_SCALE){
+				float originalScaleY = this.getSprite().getYscale();
+				float offsetScaleY = 0;
+				if(originalScaleY<0){
+					offsetScaleY = -1*scaleY - originalScaleY;
+				}else{
+					offsetScaleY = scaleY - originalScaleY;
+				}
+
+				offsetScaleYByOnceTrigger = offsetScaleY/(this.getTotal()/this.getDelay());
+			}
+			break;
+		}
 	}
 	
 	public void didCycleFinish(){
-		
+		switch (scaleType) {
+		case ScaleTo:
+			if(scaleX!=NO_SCALE)
+				this.getSprite().setXscale(scaleX);
+			if(scaleY!=NO_SCALE)
+				this.getSprite().setYscale(scaleY);
+			break;
+		case ScaleBy:
+			break;
+		case ScaleToWith:
+			if(scaleX!=NO_SCALE)
+				this.getSprite().setXscale(scaleX);
+			if(scaleY!=NO_SCALE)
+				this.getSprite().setYscale(scaleY);
+			if(this.scaleX!=NO_SCALE){
+				float currentScaleX = this.getSprite().getXscale();
+				if(currentScaleX<0){
+					this.getSprite().setXscale(scaleX<0?scaleX:-1*scaleX);
+				}else{
+					this.getSprite().setXscale(scaleX<0?-1*scaleX:scaleX);
+				}
+			}
+			break;
+		}
 	}
 	
 	@Override
 	public boolean equals(Object obj) {
 		if (obj == null)
 			return false;
-		if (!(obj instanceof MovementActionInfo))
+		if (!(obj instanceof MovementActionScaleInfo))
 			return false;
-		MovementActionInfo info = (MovementActionInfo) obj;
+		MovementActionScaleInfo info = (MovementActionScaleInfo) obj;
 		return (this.total == info.getTotal() && this.delay == info.getDelay()
 				&& this.dx == info.getDx() && this.dy == info.getDy());
 	}
@@ -281,8 +390,8 @@ public class MovementActionInfo implements MovementActionInfoUpdateDelegate, Clo
 //	}
 
 	@Override
-	public MovementActionInfo clone() {
-		MovementActionInfo info = new MovementActionInfo(total, delay, dx, dy,
+	public MovementActionScaleInfo clone() {
+		MovementActionScaleInfo info = new MovementActionScaleInfo(total, delay, dx, dy,
 				description, sprite,
 				spriteActionName);
 		return info;
@@ -304,14 +413,29 @@ public class MovementActionInfo implements MovementActionInfoUpdateDelegate, Clo
 
 	@Override
 	public void update(TimerOnTickListener timerOnTickListener) {
-		
+		if(offsetScaleXByOnceTrigger!=0)
+			this.getSprite().setXscale(this.getSprite().getXscale()+offsetScaleXByOnceTrigger);
+		if(offsetScaleYByOnceTrigger!=0)
+			this.getSprite().setYscale(this.getSprite().getYscale()+offsetScaleYByOnceTrigger);
+		Log.e("scale by scale action", "xScale:"+this.getSprite().getXscale() + "yScale:" +this.getSprite().getYscale());
 	}
 
 	@Override
 	public void update(float t, TimerOnTickListener timerOnTickListener) {
+//		int offsetAlpha= alpha - originalAlpha;
+//		offsetAlphaByOnceTrigger = (float) (offsetAlpha*t);
+//		Log.e("offsetAlpha", offsetAlpha+" "+ t);
+//		getSprite().setAlpha(originalAlpha + (int)offsetAlphaByOnceTrigger);
 
+		if (offsetScaleXByOnceTrigger != 0)
+			this.getSprite().setXscale(
+					this.getSprite().getXscale() + offsetScaleXByOnceTrigger);
+		if (offsetScaleYByOnceTrigger != 0)
+			this.getSprite().setYscale(
+					this.getSprite().getYscale() + offsetScaleYByOnceTrigger);
+		Log.e("scale by scale action", "xScale:"+this.getSprite().getXscale() + "yScale:" +this.getSprite().getYscale());	
 	}
-
+	
 //	/**
 //	 * create MovementActionInfoMemento.
 //	 * @return a MovementActionInfoMemento.

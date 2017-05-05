@@ -1,5 +1,8 @@
-package com.example.try_gameengine.action;
+package com.example.try_gameengine.action.info;
 
+import com.example.try_gameengine.action.IGravityController;
+import com.example.try_gameengine.action.MovementAction;
+import com.example.try_gameengine.action.MovementActionInfo;
 import com.example.try_gameengine.action.IGravityController.PathType;
 import com.example.try_gameengine.action.MovementAction.TimerOnTickListener;
 

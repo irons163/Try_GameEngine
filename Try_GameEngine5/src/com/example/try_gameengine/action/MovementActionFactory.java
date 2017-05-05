@@ -3,6 +3,7 @@ package com.example.try_gameengine.action;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
+
 public abstract class MovementActionFactory {
 	protected MovementAction action;
 	

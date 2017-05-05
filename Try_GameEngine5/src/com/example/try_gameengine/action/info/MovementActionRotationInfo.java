@@ -1,7 +1,11 @@
-package com.example.try_gameengine.action;
+package com.example.try_gameengine.action.info;
 
 import android.util.Log;
 
+import com.example.try_gameengine.action.MovementActionInfo;
+import com.example.try_gameengine.action.MovementActionItemAlpha2Data;
+import com.example.try_gameengine.action.MovementActionItemTrigger;
+import com.example.try_gameengine.action.MovementActionItemUpdateTimeData;
 import com.example.try_gameengine.action.MovementAction.TimerOnTickListener;
 import com.example.try_gameengine.action.MovementActionItemUpdateTimeData.UpdateType;
 import com.example.try_gameengine.framework.Config;
@@ -12,7 +16,7 @@ import com.example.try_gameengine.framework.Sprite;
  *
  */
 
-public class MovementActionAlphaInfo extends MovementActionInfo{
+public class MovementActionRotationInfo extends MovementActionInfo{
 	static final int NO_ORGINAL_ALPHA = -1;
 	private int originalAlpha;
 	private int alpha;
@@ -24,7 +28,7 @@ public class MovementActionAlphaInfo extends MovementActionInfo{
 	 * @param dx
 	 * @param dy
 	 */
-	public MovementActionAlphaInfo(long total, long delay, float dx, float dy) {
+	public MovementActionRotationInfo(long total, long delay, float dx, float dy) {
 		this(total, delay, dx, dy, null);
 	}
 
@@ -35,7 +39,7 @@ public class MovementActionAlphaInfo extends MovementActionInfo{
 	 * @param dy
 	 * @param description
 	 */
-	public MovementActionAlphaInfo(long total, long delay, float dx, float dy,
+	public MovementActionRotationInfo(long total, long delay, float dx, float dy,
 			String description) {
 		this(total, delay, dx, dy, description, null, null);
 	}
@@ -51,7 +55,7 @@ public class MovementActionAlphaInfo extends MovementActionInfo{
 	 * @param sprite
 	 * @param spriteActionName
 	 */
-	public MovementActionAlphaInfo(long total, long delay, float dx, float dy,
+	public MovementActionRotationInfo(long total, long delay, float dx, float dy,
 			String description, Sprite sprite, String spriteActionName) {
 		super(total, delay, dx, dy, description, sprite, spriteActionName);
 	}
@@ -238,7 +242,7 @@ public class MovementActionAlphaInfo extends MovementActionInfo{
 	 * @param millisTotal
 	 * @param alpha
 	 */
-	public MovementActionAlphaInfo(long millisTotal, int alpha){
+	public MovementActionRotationInfo(long millisTotal, int alpha){
 		this(millisTotal, 1, NO_ORGINAL_ALPHA, alpha, "MovementActionItemAlpha");
 	}
 	
@@ -247,7 +251,7 @@ public class MovementActionAlphaInfo extends MovementActionInfo{
 	 * @param originalAlpha
 	 * @param alpha
 	 */
-	public MovementActionAlphaInfo(long millisTotal, int originalAlpha, int alpha){
+	public MovementActionRotationInfo(long millisTotal, int originalAlpha, int alpha){
 		this(millisTotal, 1, originalAlpha, alpha, "MovementActionItemAlpha");
 	}
 	
@@ -256,7 +260,7 @@ public class MovementActionAlphaInfo extends MovementActionInfo{
 	 * @param triggerInterval
 	 * @param alpha
 	 */
-	public MovementActionAlphaInfo(long triggerTotal, long triggerInterval, int alpha){
+	public MovementActionRotationInfo(long triggerTotal, long triggerInterval, int alpha){
 		this(triggerTotal, triggerTotal, NO_ORGINAL_ALPHA, alpha, "MovementActionItemAlpha");
 	}
 	
@@ -266,7 +270,7 @@ public class MovementActionAlphaInfo extends MovementActionInfo{
 	 * @param originalAlpha
 	 * @param alpha
 	 */
-	public MovementActionAlphaInfo(long triggerTotal, long triggerInterval, int originalAlpha, int alpha){
+	public MovementActionRotationInfo(long triggerTotal, long triggerInterval, int originalAlpha, int alpha){
 		this(triggerTotal, triggerInterval, originalAlpha, alpha, "MovementActionItemAlpha");
 	}
 
@@ -277,7 +281,7 @@ public class MovementActionAlphaInfo extends MovementActionInfo{
 	 * @param alpha
 	 * @param description
 	 */
-	public MovementActionAlphaInfo(long millisTotal, long millisDelay, int originalAlpha, int alpha, String description){
+	public MovementActionRotationInfo(long millisTotal, long millisDelay, int originalAlpha, int alpha, String description){
 		this(millisTotal, millisDelay, 0f, 0f);
 		
 		this.description = description + ",";
@@ -329,9 +333,9 @@ public class MovementActionAlphaInfo extends MovementActionInfo{
 	public boolean equals(Object obj) {
 		if (obj == null)
 			return false;
-		if (!(obj instanceof MovementActionAlphaInfo))
+		if (!(obj instanceof MovementActionRotationInfo))
 			return false;
-		MovementActionAlphaInfo info = (MovementActionAlphaInfo) obj;
+		MovementActionRotationInfo info = (MovementActionRotationInfo) obj;
 		return (this.total == info.getTotal() && this.delay == info.getDelay()
 				&& this.dx == info.getDx() && this.dy == info.getDy());
 	}
@@ -345,8 +349,8 @@ public class MovementActionAlphaInfo extends MovementActionInfo{
 //	}
 
 	@Override
-	public MovementActionAlphaInfo clone() {
-		MovementActionAlphaInfo info = new MovementActionAlphaInfo(total, delay, dx, dy,
+	public MovementActionRotationInfo clone() {
+		MovementActionRotationInfo info = new MovementActionRotationInfo(total, delay, dx, dy,
 				description, sprite,
 				spriteActionName);
 		return info;

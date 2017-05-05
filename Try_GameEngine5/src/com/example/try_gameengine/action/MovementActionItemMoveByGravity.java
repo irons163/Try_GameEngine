@@ -7,6 +7,7 @@ import android.util.Log;
 
 import com.example.try_gameengine.action.IGravityController.PathType;
 import com.example.try_gameengine.action.MovementActionItemTrigger.MovementActionItemUpdateTimeDataDelegate;
+import com.example.try_gameengine.action.info.MovementActionMoveByGravityInfo;
 import com.example.try_gameengine.action.listener.IActionListener;
 import com.example.try_gameengine.action.visitor.IMovementActionVisitor;
 

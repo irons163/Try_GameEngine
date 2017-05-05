@@ -20,7 +20,6 @@ public class MovementActionItemRotation extends MovementAction{
 	long resumeTotal;
 	long resetTotal;	
 	public String name;	
-	private long updateTime;	
 	public int frameIdx;	
 	public boolean isStop = false;
 	public boolean isCycleFinish = false;	

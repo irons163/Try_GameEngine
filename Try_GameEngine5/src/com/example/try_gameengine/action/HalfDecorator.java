@@ -2,6 +2,7 @@ package com.example.try_gameengine.action;
 
 import java.util.List;
 
+
 public class HalfDecorator extends MovementDecorator{
 	
 	public HalfDecorator(MovementAction action){

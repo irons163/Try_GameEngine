@@ -1,5 +1,6 @@
 package com.example.try_gameengine.action;
 
+
 public interface IGravityController {
 	public enum PathType{
 		NORMAL,

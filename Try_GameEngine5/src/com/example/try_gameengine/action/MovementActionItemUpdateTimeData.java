@@ -57,7 +57,7 @@ public class MovementActionItemUpdateTimeData implements MovementActionItemTrigg
 //		
 //	}
 	
-	enum UpdateType{
+	public enum UpdateType{
 		UpdateEverytime,
 		UpdateByInterval
 	}

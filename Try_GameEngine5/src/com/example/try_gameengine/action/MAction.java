@@ -5,6 +5,8 @@ import java.util.List;
 
 import android.graphics.Bitmap;
 
+import com.example.try_gameengine.action.info.MovementActionAlphaInfo;
+import com.example.try_gameengine.action.info.MovementActionAnimationInfo;
 import com.example.try_gameengine.action.visitor.IMovementActionVisitor;
 import com.example.try_gameengine.action.visitor.MovementActionAttachToTargetSpriteVisitor;
 import com.example.try_gameengine.action.visitor.MovementActionNoRepeatSpriteActionVisitor;

@@ -5,10 +5,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import android.graphics.Bitmap;
-import android.util.Log;
 
 import com.example.try_gameengine.action.MovementActionItemTrigger.MovementActionItemUpdateTimeDataDelegate;
-import com.example.try_gameengine.action.MovementActionItemUpdate.FrameTrigger;
 import com.example.try_gameengine.action.listener.IActionListener;
 import com.example.try_gameengine.action.visitor.IMovementActionVisitor;
 import com.example.try_gameengine.framework.Config;
