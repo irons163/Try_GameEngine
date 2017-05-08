@@ -41,23 +41,12 @@ public class MovementActionItemBaseReugularFPS extends MovementActionItem{
 	
 	public MovementActionItemBaseReugularFPS(MovementActionInfo info){
 		super(info);
-		numberOfFramesTotal = info.getTotal();
-		numberOfFramesInterval = info.getDelay();
-		dx = info.getDx();
-		dy = info.getDy();
-		
-		info.createUpdateByTriggerData();
-		data = info.getData();
-		data.setShouldActiveTotalValue(numberOfFramesTotal);
-		data.setShouldActiveIntervalValue(numberOfFramesInterval);
-		
-		if(info.getDescription()!=null)
-			this.description = info.getDescription() + ",";
-		this.info = info;
 	}
 	
 	@Override
 	public void start() {
+
+		
 ////		resumeFrameIndex = 0;
 //		resumeFrameCount = 0;
 //		numberOfPauseFrames = 0;
@@ -201,6 +190,15 @@ public class MovementActionItemBaseReugularFPS extends MovementActionItem{
 	
 	@Override
 	protected MovementAction initTimer(){ super.initTimer();
+	numberOfFramesTotal = info.getTotal();
+	numberOfFramesInterval = info.getDelay();
+	dx = info.getDx();
+	dy = info.getDy();
+	
+	info.createUpdateByTriggerData();
+	data = info.getData();
+	data.setShouldActiveTotalValue(numberOfFramesTotal);
+	data.setShouldActiveIntervalValue(numberOfFramesInterval);
 //		numberOfFramesTotal = info.getTotal();
 //		numberOfFramesInterval = info.getDelay();
 //		dx = info.getDx();

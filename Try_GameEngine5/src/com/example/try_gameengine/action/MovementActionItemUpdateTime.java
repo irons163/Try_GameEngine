@@ -27,15 +27,7 @@ public class MovementActionItemUpdateTime extends MovementActionItemForMilliseco
 	
 	public MovementActionItemUpdateTime(MovementActionInfo info){
 		super(info);
-		millisTotal = info.getTotal();
-		millisDelay = info.getDelay();
-		dx = info.getDx();
-		dy = info.getDy();
-		if(info.getDescription()!=null)
-			this.description = info.getDescription() + ",";
-		this.info = info;
-//		movementItemList.add(this);
-		info.createUpdateByEverytimeData();
+
 	}
 	
 	@Override
@@ -46,7 +38,6 @@ public class MovementActionItemUpdateTime extends MovementActionItemForMilliseco
 	
 	@Override
 	public void start() {
-
 		
 		data.setValueOfActivedCounter(0);
 		data.setShouldPauseValue(0);
@@ -152,39 +143,45 @@ public class MovementActionItemUpdateTime extends MovementActionItemForMilliseco
 	}
 	
 	@Override
-	protected MovementAction initTimer(){ super.initTimer();
-	
-	data = info.getData();
-	data.setMovementActionItemUpdateTimeDataDelegate(new MovementActionItemUpdateTimeDataDelegate() {
-		
-		@Override
-		public void update() {
-			// TODO Auto-generated method stub
-			info.update(timerOnTickListener);
-//			if (timerOnTickListener != null)
-//				timerOnTickListener.onTick(dx, dy);
-		}
+	protected MovementAction initTimer(){ 
+		super.initTimer();
+		millisTotal = info.getTotal();
+		millisDelay = info.getDelay();
+		dx = info.getDx();
+		dy = info.getDy();
+		info.createUpdateByEverytimeData();
 
-		@Override
-		public void update(float t) {
-			// TODO Auto-generated method stub
-			info.update(t, timerOnTickListener);
-			
-//			float newDx = (float) (dx*t);
-//			float newDy = (float) (dy*t);
-//			if (timerOnTickListener != null)
-//				timerOnTickListener.onTick(newDx, newDy);
-		}
-	});
-	
-	data.setShouldActiveTotalValue(info.getTotal());
-	data.setShouldActiveIntervalValue(info.getDelay());
-	
-//		millisTotal = info.getTotal();
-//		millisDelay = info.getDelay();
-//		dx = info.getDx();
-//		dy = info.getDy();
-		
+		data = info.getData();
+		data.setMovementActionItemUpdateTimeDataDelegate(new MovementActionItemUpdateTimeDataDelegate() {
+
+			@Override
+			public void update() {
+				// TODO Auto-generated method stub
+				info.update(timerOnTickListener);
+				// if (timerOnTickListener != null)
+				// timerOnTickListener.onTick(dx, dy);
+			}
+
+			@Override
+			public void update(float t) {
+				// TODO Auto-generated method stub
+				info.update(t, timerOnTickListener);
+
+				// float newDx = (float) (dx*t);
+				// float newDy = (float) (dy*t);
+				// if (timerOnTickListener != null)
+				// timerOnTickListener.onTick(newDx, newDy);
+			}
+		});
+
+		data.setShouldActiveTotalValue(info.getTotal());
+		data.setShouldActiveIntervalValue(info.getDelay());
+
+		// millisTotal = info.getTotal();
+		// millisDelay = info.getDelay();
+		// dx = info.getDx();
+		// dy = info.getDy();
+
 		return this;
 	}
 	
