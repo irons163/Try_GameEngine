@@ -69,14 +69,13 @@ public class MovementActionItemBaseReugularFPS extends MovementActionItem{
 			@Override
 			public void update() {
 				// TODO Auto-generated method stub
-				if (timerOnTickListener != null)
-					timerOnTickListener.onTick(info.getDx(), info.getDy());
+				info.update(timerOnTickListener);
 			}
 
 			@Override
 			public void update(float t) {
 				// TODO Auto-generated method stub
-				
+				info.update(t, timerOnTickListener);
 			}
 		});
 		

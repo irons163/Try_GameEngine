@@ -66,8 +66,8 @@ public class GameModel implements IGameModel{
 		this.data = data;
 		paint.setTextSize(50);
 		paint.setColor(Config.debugMessageColor);
-		if(android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M)
-			canUseLockHardwareCanvas = true;
+//		if(android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M)
+//			canUseLockHardwareCanvas = true;
 	}
 	
 	/**

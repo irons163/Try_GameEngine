@@ -594,4 +594,13 @@ public class SceneManager {
 	public Scene getCurrentActiveScene(){
 		return currentActiveScene;
 	}
+	
+	public void reset(){
+		scenes.clear();
+		currentActiveScene = null;
+		currentSceneIndex = 0;
+		sceneClassMap.clear();
+		sceneClassMap= null;
+		nextSceneIndexForAdd = currentSceneIndex;
+	}
 }

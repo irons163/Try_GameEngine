@@ -1654,7 +1654,8 @@ public abstract class ALayer implements ILayer, ILayerDelegate, ITouchable{
 		float a[] = new float[]{x, y};
 		boolean isIndentify = true;
 		// Maybe getCamera() null, because touch is in other thread.
-		if(StageManager.getCurrentStage().getSceneManager()!=null && StageManager.getCurrentStage().getSceneManager().getCurrentActiveScene()!=null)
+		if(StageManager.getCurrentStage().getSceneManager()!=null && StageManager.getCurrentStage().getSceneManager().getCurrentActiveScene()!=null
+				&& StageManager.getCurrentStage().getSceneManager().getCurrentActiveScene().getCamera()!=null)
 			isIndentify = StageManager.getCurrentStage().getSceneManager().getCurrentActiveScene().getCamera().getMatrix().isIdentity();
 		
 		if(isIndentify && this instanceof Sprite){
