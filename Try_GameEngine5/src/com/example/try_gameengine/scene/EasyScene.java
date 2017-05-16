@@ -396,6 +396,7 @@ public abstract class EasyScene extends Scene implements ContactListener{
 		public void process() {
 			// TODO Auto-generated method stub
 //			super.process();
+			TouchDispatcher.getInstance().dispatch();
 			EasyScene.this.process();
 			LayerManager.getInstance().processHUDLayers();
 		}
