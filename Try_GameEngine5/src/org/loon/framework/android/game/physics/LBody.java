@@ -151,6 +151,22 @@ public class LBody {
 		}
 	}
 
+	public void removeFromWorld(LWorld world) {
+		World jboxWorld = world.getBox2DWorld();
+		jboxWorld.destroyBody(this.jboxBody);
+	}
+	
+	public void addToWorld(LWorld world) {
+		World jboxWorld = world.getBox2DWorld();
+		this.jboxBody = jboxWorld.createBody(this.jboxBodyDef);
+		this.shape.createInBody(this);
+		if (!this.staticBody) {
+			this.jboxBody.setType(BodyType.StaticBody);
+		} else {
+			this.jboxBody.setType(BodyType.KinematicBody);
+		}
+	}
+
 	public void removeFromWorld(PhysicsWorld world) {
 		World jboxWorld = world.getBox2DWorld();
 		jboxWorld.destroyBody(this.jboxBody);
