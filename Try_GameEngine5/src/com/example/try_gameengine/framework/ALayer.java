@@ -2199,20 +2199,40 @@ public abstract class ALayer implements ILayer, ILayerDelegate, ITouchable{
 	void setCenterY(float centerY) {
 		this.centerY = centerY;
 	}
-//
-//	public int getW() {
-//		return w;
-//	}
-//
-//	public void setW(int w) {
-//		this.w = w;
-//	}
-//
-//	public int getH() {
-//		return h;
-//	}
-//
-//	public void setH(int h) {
-//		this.h = h;
-//	}
+	
+	protected PointF transferSceneXYInLayer(float x, float y){
+		RectF f;
+		float a[] = new float[]{x, y};
+		Matrix matrixForAncester = this.calculateMatrixForAncesterNotIncludeSelf();
+		Scene scene = StageManager.getCurrentStage().getSceneManager().getCurrentActiveScene();
+		Matrix matrix = new Matrix();
+		if(this instanceof Sprite){
+			f = ((Sprite)this).drawRectF;
+			if(scene!=null) // If user not use scene system, scene is null.
+				matrix = new Matrix(scene.getCamera().getMatrix());
+			if(((Sprite)this).spriteMatrix!=null){
+				synchronized (((Sprite)this).spriteMatrix) {
+					Matrix matrix2 =  new Matrix(((Sprite)this).spriteMatrix);
+//					matrix.postConcat(matrixForAncester);
+//					matrix.postConcat(matrix2);
+					matrix.preConcat(matrixForAncester);
+					matrix.preConcat(matrix2);
+				}
+			}
+			matrix.invert(matrix);
+//			matrix = matrix2;
+		}else{
+			f = getFrameInScene();
+			if(scene!=null) // If user not use scene system, scene is null.
+				matrix = new Matrix(scene.getCamera().getMatrix());
+//			if(scene!=null) // If user not use scene system, scene is null.
+//				scene.getCamera().getMatrix().invert(matrix);
+			matrix.preConcat(matrixForAncester);
+			matrix.invert(matrix);
+		}
+		
+		matrix.mapPoints(a);
+		
+		return new PointF(a[0], a[1]);
+	}
 }
