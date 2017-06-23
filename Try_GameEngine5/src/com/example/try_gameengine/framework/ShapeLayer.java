@@ -544,6 +544,20 @@ public class ShapeLayer extends Layer{
 		public void setCenter(float cx, float cy) {
 			// TODO Auto-generated method stub
 			super.setCenter(cx, cy);
+			
+			RectF polygonBounds = new RectF();
+			polygon.computeBounds(polygonBounds, true);
+			float oldCenterX = polygonBounds.centerX();
+			float oldCenterY = polygonBounds.centerY();
+			polygon.offset(cx - oldCenterX, cy - oldCenterY);
+			
+			polygon.computeBounds(polygonBounds, true);
+			Rect rect = new Rect();
+			polygonBounds.roundOut(rect);
+			Region region = new Region();
+			Region clip = new Region(rect);
+			region.setPath(polygon, clip);
+			setPath(region.getBoundaryPath());
 		}
 		
 		@Override
