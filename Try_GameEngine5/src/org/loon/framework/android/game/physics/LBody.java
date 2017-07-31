@@ -5,8 +5,9 @@ import java.util.ArrayList;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
-import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
+import com.badlogic.gdx.physics.box2d.World;
+import com.example.try_gameengine.scene.PhysicsWorld;
 
 /**
  * Copyright 2008 - 2010
@@ -139,7 +140,7 @@ public class LBody {
 		this.shape.setDensity(den);
 	}
 
-	void addToWorld(LWorld world) {
+	public void addToWorld(PhysicsWorld world) {
 		World jboxWorld = world.getBox2DWorld();
 		this.jboxBody = jboxWorld.createBody(this.jboxBodyDef);
 		this.shape.createInBody(this);
@@ -151,6 +152,22 @@ public class LBody {
 	}
 
 	public void removeFromWorld(LWorld world) {
+		World jboxWorld = world.getBox2DWorld();
+		jboxWorld.destroyBody(this.jboxBody);
+	}
+	
+	public void addToWorld(LWorld world) {
+		World jboxWorld = world.getBox2DWorld();
+		this.jboxBody = jboxWorld.createBody(this.jboxBodyDef);
+		this.shape.createInBody(this);
+		if (!this.staticBody) {
+			this.jboxBody.setType(BodyType.StaticBody);
+		} else {
+			this.jboxBody.setType(BodyType.KinematicBody);
+		}
+	}
+
+	public void removeFromWorld(PhysicsWorld world) {
 		World jboxWorld = world.getBox2DWorld();
 		jboxWorld.destroyBody(this.jboxBody);
 	}

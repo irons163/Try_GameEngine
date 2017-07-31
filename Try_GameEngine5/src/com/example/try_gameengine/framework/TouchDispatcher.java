@@ -3,17 +3,24 @@ package com.example.try_gameengine.framework;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import android.R.bool;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View.OnTouchListener;
 
 public class TouchDispatcher implements ISystemTouchDelegate{
-	List<TargetTouchHandler> touchHandlers = new ArrayList<TargetTouchHandler>();
-	List<StandardTouchHandler> standardTouchHandlers = new ArrayList<StandardTouchHandler>();
+	List<TargetTouchHandler> touchHandlers = new CopyOnWriteArrayList<TargetTouchHandler>();
+	List<StandardTouchHandler> standardTouchHandlers = new CopyOnWriteArrayList<StandardTouchHandler>();
 	int touchDispatcherEnableFlag;
 	int touchDispatcherConsumeFlag;
 	boolean hasTouchableObjectConsumed;
+	TouchDispatcherType touchDispatcherType = TouchDispatcherType.DISPATCH_WHEN_GAME_PROCESS;
+	
+	enum TouchDispatcherType{
+		DISPATCH_IMMEDIATE, DISPATCH_WHEN_GAME_PROCESS
+	}
 	
 /////////////////////
 ////	SystemTouchDisPatcher(Android View)
@@ -74,6 +81,8 @@ public class TouchDispatcher implements ISystemTouchDelegate{
 				|TouchDispatcherFlag.CONSUME_TOUCH_EVENT_BY_STANDARD_TOUCH_DISPATCHER
 				|TouchDispatcherFlag.CONSUME_TOUCH_EVENT_BY_STANDARD_ORDER_TOUCH_DISPATCHER
 				, TouchDispatcherFlagType.CONSUME_FALG);
+		
+		setTouchDispatcherType(getTouchDispatcherType());
 	}
 	
 	public static TouchDispatcher getInstance(){
@@ -156,13 +165,61 @@ public class TouchDispatcher implements ISystemTouchDelegate{
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
 		// TODO Auto-generated method stub
+		if(getTouchDispatcherType()==TouchDispatcherType.DISPATCH_IMMEDIATE){
+			return dispatch(event);
+		}else if(getTouchDispatcherType()==TouchDispatcherType.DISPATCH_WHEN_GAME_PROCESS){
+			TouchEventManager.getInstance().addEvent(event);
+		}
+
+		return false;
+	}
+	
+	public boolean onTouchEvent(MotionEvent event, ITouchable eventLisntener) {
+		// TODO Auto-generated method stub
+		if(getTouchDispatcherType()==TouchDispatcherType.DISPATCH_IMMEDIATE){
+			eventLisntener.onTouchEvent(event);
+			return dispatch(event);
+		}else if(getTouchDispatcherType()==TouchDispatcherType.DISPATCH_WHEN_GAME_PROCESS){
+			TouchEventManager.getInstance().addEvent(event);
+		}
+
+		return false;
+	}
+	
+	public void addToFirstTargetTouchDelegate(ITouchable delegate){
+		touchHandlers.add(0, new TargetTouchHandler(delegate, Integer.MIN_VALUE));
+	}
+	
+	public void addToFirstStandardTouchDelegate(ITouchable delegate){
+		standardTouchHandlers.add(0, new StandardTouchHandler(delegate, Integer.MIN_VALUE));
+	}
+	
+//	public void addToLastTargetTouchDelegate(ITouchable delegate){
+//		touchHandlers.add(0, new TargetTouchHandler(delegate, Integer.MIN_VALUE));
+//	}
+//	
+//	public void addToLasttStandardTouchDelegate(ITouchable delegate){
+//		standardTouchHandlers.add(0, new StandardTouchHandler(delegate, Integer.MIN_VALUE));
+//	}
+	
+	public boolean dispatch(){
+		MotionEvent event = TouchEventManager.getInstance().getEvent();
+		if(event != null){
+			Log.e("event", "has");
+			return dispatch(event);
+		}
+		Log.e("event", "no has");
+		return false;
+	}
+	
+	public boolean dispatch(MotionEvent event){
 		hasTouchableObjectConsumed = false;
 		
 		if(!checkIsFlagEnabled(TouchDispatcherFlag.ENABLE_TOUCH_DISPATCHER, TouchDispatcherFlagType.ENABLE_FALG))
 			return false;
 		
-		dispatchTouchEvent(event);
-
+		hasTouchableObjectConsumed = dispatchTouchEvent(event);
+		
 		return hasTouchableObjectConsumed && checkIsFlagEnabled(TouchDispatcherFlag.CONSUME_TOUCH_EVENT_BY_TOUCH_DISPATCHER, TouchDispatcherFlagType.CONSUME_FALG);
 	}
 	
@@ -302,5 +359,17 @@ public class TouchDispatcher implements ISystemTouchDelegate{
 	
 	public boolean isEnabled(){
 		return checkIsFlagEnabled(TouchDispatcherFlag.ENABLE_TOUCH_DISPATCHER, TouchDispatcherFlagType.ENABLE_FALG);
+	}
+
+	public TouchDispatcherType getTouchDispatcherType() {
+		return touchDispatcherType;
+	}
+
+	public void setTouchDispatcherType(TouchDispatcherType touchDispatcherType) {
+		this.touchDispatcherType = touchDispatcherType;
+		
+		if(touchDispatcherType == TouchDispatcherType.DISPATCH_WHEN_GAME_PROCESS){
+			TouchEventManager.getInstance().reset();
+		}
 	}
 }

@@ -2,7 +2,6 @@ package com.example.try_gameengine.action.info;
 
 import android.util.Log;
 
-import com.example.try_gameengine.action.MovementAction;
 import com.example.try_gameengine.action.MovementActionInfo;
 import com.example.try_gameengine.action.MovementActionItemAlpha2Data;
 import com.example.try_gameengine.action.MovementActionItemTrigger;
@@ -22,6 +21,8 @@ public class MovementActionScaleInfo extends MovementActionInfo{
 	private float offsetScaleXByOnceTrigger, offsetScaleYByOnceTrigger;
 	public static final float NO_SCALE = Float.MIN_VALUE;
 	private ScaleType scaleType = ScaleType.ScaleTo;
+	private float offsetScaleX = 0;
+	private float offsetScaleY = 0;
 	
 	/**
 	 * These are scale types. Like. 
@@ -289,14 +290,12 @@ public class MovementActionScaleInfo extends MovementActionInfo{
 		case ScaleTo:
 			if(this.scaleX!=NO_SCALE){
 				float originalScaleX = this.getSprite().getXscale();
-				float offsetScaleX = 0;
 				offsetScaleX = scaleX - originalScaleX;
 				
 				offsetScaleXByOnceTrigger = offsetScaleX/(this.getTotal()/this.getDelay());
 			}
 			if(this.scaleY!=NO_SCALE){
 				float originalScaleY = this.getSprite().getYscale();
-				float offsetScaleY = 0;
 				offsetScaleY = scaleY - originalScaleY;
 
 				offsetScaleYByOnceTrigger = offsetScaleY/(this.getTotal()/this.getDelay());
@@ -304,13 +303,11 @@ public class MovementActionScaleInfo extends MovementActionInfo{
 			break;
 		case ScaleBy:
 			if(this.scaleX!=NO_SCALE){
-				float offsetScaleX = 0;
 				offsetScaleX = scaleX;
 				
 				offsetScaleXByOnceTrigger = offsetScaleX/(this.getTotal()/this.getDelay());
 			}
 			if(this.scaleY!=NO_SCALE){
-				float offsetScaleY = 0;
 				offsetScaleY = scaleY;
 
 				offsetScaleYByOnceTrigger = offsetScaleY/(this.getTotal()/this.getDelay());
@@ -319,7 +316,6 @@ public class MovementActionScaleInfo extends MovementActionInfo{
 		case ScaleToWith:
 			if(this.scaleX!=NO_SCALE){
 				float originalScaleX = this.getSprite().getXscale();
-				float offsetScaleX = 0;
 				if(originalScaleX<0){
 					offsetScaleX = -1*scaleX - originalScaleX;
 				}else{
@@ -330,7 +326,6 @@ public class MovementActionScaleInfo extends MovementActionInfo{
 			}
 			if(this.scaleY!=NO_SCALE){
 				float originalScaleY = this.getSprite().getYscale();
-				float offsetScaleY = 0;
 				if(originalScaleY<0){
 					offsetScaleY = -1*scaleY - originalScaleY;
 				}else{
@@ -381,17 +376,9 @@ public class MovementActionScaleInfo extends MovementActionInfo{
 				&& this.dx == info.getDx() && this.dy == info.getDy());
 	}
 
-//	@Override
-//	public MovementActionItem clone() {
-//		MovementActionInfo info = new MovementActionInfo(total, delay, dx, dy,
-//				description, rotationController, enableGravity, sprite,
-//				spriteActionName);
-//		return new MovementActionItem(info);
-//	}
-
 	@Override
 	public MovementActionScaleInfo clone() {
-		MovementActionScaleInfo info = new MovementActionScaleInfo(total, delay, dx, dy,
+		MovementActionScaleInfo info = new MovementActionScaleInfo(total, delay, scaleX, scaleY,
 				description, sprite,
 				spriteActionName);
 		return info;
@@ -427,6 +414,9 @@ public class MovementActionScaleInfo extends MovementActionInfo{
 //		Log.e("offsetAlpha", offsetAlpha+" "+ t);
 //		getSprite().setAlpha(originalAlpha + (int)offsetAlphaByOnceTrigger);
 
+		offsetScaleXByOnceTrigger = offsetScaleX*t;
+		offsetScaleYByOnceTrigger = offsetScaleY*t;
+		
 		if (offsetScaleXByOnceTrigger != 0)
 			this.getSprite().setXscale(
 					this.getSprite().getXscale() + offsetScaleXByOnceTrigger);

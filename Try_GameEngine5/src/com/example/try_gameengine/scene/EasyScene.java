@@ -50,22 +50,18 @@ public abstract class EasyScene extends Scene implements ContactListener{
 	
 	private int screenW,screenH;
 	
-	/**Bird嚙踝蕭嚙璀嚙諄以繪嚙箴嚙碼嚙緘嚙踝蕭*/
 	protected Bird bird;
 	
-	/**touchEvent嚙踝蕭嚙線嚙複，嚙論免嚙線嚙踝蕭嚙調試殷蕭嚙磕嚙箱嚙稷嚙踝蕭*/
 	byte[] lock = new byte[0];
 	private final int timePause=50;
 	
-	/**嚙踝蕭嚙緲嚙瑾嚙踝蕭嚙緯嚙踝蕭*/
 //	World world;
 	public LWorld world;
-//	AABB aabb;  //嚙編嚙踝蕭嚙踝蕭JBox2D嚙緩嚙篇嚙踝蕭嚙豎要AABB嚙誕堆蕭F
+//	AABB aabb; 
 	Vector2 gravity;
-	public static final float RATE=40.0f; //嚙踝蕭嚙緲嚙瑾嚙褕與嚙衛對蕭嚙踝蕭嚙踝蕭嚙磐嚙踝蕭嚙瘠
+	public static final float RATE=40.0f; 
 	protected float timeStep=1f/60f;	
 	
-	/**嚙編嚙踝蕭JBox2D嚙磕嚙稼嚙踝蕭嚙諉梧蕭嚙踝蕭嚙踝蕭邿B嚙踝蕭A嚙諸數改蕭嚙踝蕭嚙諉官嚙踝蕭manual嚙磕嚙踝蕭嚙諸數設嚙練嚙踝蕭 */
 	protected int velocityIterations = 10;	
 	protected int positionIterations = 8;
 	
@@ -78,6 +74,20 @@ public abstract class EasyScene extends Scene implements ContactListener{
 		wood,
 		glass,
 		stone,
+		
+	}
+	
+	PhysicsWorld physicsWorld;
+	private void initP() {
+		physicsWorld = new PhysicsWorld(this);
+	}
+	
+	private void stepPhysicsAndNavigation(float deltaTime) {
+		if (physicsWorld!=null && physicsWorld.isAutoStep())
+			physicsWorld.update(deltaTime);
+	}
+	
+	private void okok(){
 		
 	}
 	
@@ -396,6 +406,7 @@ public abstract class EasyScene extends Scene implements ContactListener{
 		public void process() {
 			// TODO Auto-generated method stub
 //			super.process();
+			TouchDispatcher.getInstance().dispatch();
 			EasyScene.this.process();
 			LayerManager.getInstance().processHUDLayers();
 		}
@@ -506,7 +517,6 @@ public abstract class EasyScene extends Scene implements ContactListener{
 	public void postSolve(Contact arg0, ContactImpulse arg1) {
 		// TODO Auto-generated method stub
 
-		/**嚙瘢嚙踝蕭嚙複伐蕭嚙誼湛蕭嚙璀嚙諸數是嚙調試出嚙諉迎蕭 */
 		if(arg1.getNormalImpulses()[0]>5)
 		{
 			if ( (arg0.getFixtureA().getBody().getUserData())instanceof MyRect)
@@ -514,7 +524,6 @@ public abstract class EasyScene extends Scene implements ContactListener{
 
 				MyRect rect=(MyRect)(arg0.getFixtureA().getBody().getUserData());
 
-				/**嚙線嚙踝蕭嚙緻嚙碼嚙踝蕭嚙踝蕭嚙踝蕭嚙罵嚙瞋嚙踝蕭嚙踝蕭 */
 				if(rect.getType()==Type.stone
 				||rect.getType()==Type.wood
 				||rect.getType()==Type.pig
