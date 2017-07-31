@@ -29,6 +29,7 @@ import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.example.try_gameengine.R;
 import com.example.try_gameengine.framework.BitmapUtil;
 import com.example.try_gameengine.framework.CommonUtil;
+import com.example.try_gameengine.framework.Config;
 import com.example.try_gameengine.framework.Data;
 import com.example.try_gameengine.framework.GameController;
 import com.example.try_gameengine.framework.GameModel;
@@ -438,6 +439,13 @@ public abstract class EasyScene extends Scene implements ContactListener{
 					}
 	//				body = body.m_next;
 				}
+			}
+			
+			if(Config.SystemCamera.getViewPort()!=null){
+				canvas.save(Canvas.MATRIX_SAVE_FLAG | Canvas.HAS_ALPHA_LAYER_SAVE_FLAG | Canvas.HAS_ALPHA_LAYER_SAVE_FLAG | Canvas.FULL_COLOR_LAYER_SAVE_FLAG | Canvas.CLIP_TO_LAYER_SAVE_FLAG);
+				canvas.setMatrix(Config.SystemCamera.getViewPort().getMatrix());
+				LayerManager.getInstance().drawHUDLayers(canvas, null);
+				canvas.restore();
 			}
 			
 			if(getCamera().getViewPort()!=null){

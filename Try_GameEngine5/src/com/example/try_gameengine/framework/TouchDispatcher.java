@@ -15,7 +15,7 @@ public class TouchDispatcher implements ISystemTouchDelegate{
 	int touchDispatcherEnableFlag;
 	int touchDispatcherConsumeFlag;
 	boolean hasTouchableObjectConsumed;
-	TouchDispatcherType touchDispatcherType = TouchDispatcherType.DISPATCH_WHEN_GAME_PROCESS;
+	TouchDispatcherType touchDispatcherType = TouchDispatcherType.DISPATCH_IMMEDIATE;
 	
 	enum TouchDispatcherType{
 		DISPATCH_IMMEDIATE, DISPATCH_WHEN_GAME_PROCESS

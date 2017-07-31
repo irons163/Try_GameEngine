@@ -150,44 +150,46 @@ public abstract class GameController implements IGameController{
 
 	@Override
 	public void onTouchEvent(MotionEvent event) {
-		if(touchListener==null){
-			touchListener = new ITouchable() {
-
-				@Override
-				public boolean onTouchEvent(MotionEvent event) {
-					gameModel.onTouchEvent(event);
-					return false;
-				}
-
-				@Override
-				public void onTouchMoved(MotionEvent event) {
-					// TODO Auto-generated method stub
-
-				}
-
-				@Override
-				public void onTouchEnded(MotionEvent event) {
-					// TODO Auto-generated method stub
-
-				}
-
-				@Override
-				public void onTouchCancelled(MotionEvent event) {
-					// TODO Auto-generated method stub
-
-				}
-
-				@Override
-				public boolean onTouchBegan(MotionEvent event) {
-					// TODO Auto-generated method stub
-					return false;
-				}
-			};
-				
-			TouchDispatcher.getInstance().addToFirstStandardTouchDelegate(touchListener);
-		}
+//		if(touchListener==null){
+//			touchListener = new ITouchable() {
+//
+//				@Override
+//				public boolean onTouchEvent(MotionEvent event) {
+//					gameModel.onTouchEvent(event);
+//					return false;
+//				}
+//
+//				@Override
+//				public void onTouchMoved(MotionEvent event) {
+//					// TODO Auto-generated method stub
+//
+//				}
+//
+//				@Override
+//				public void onTouchEnded(MotionEvent event) {
+//					// TODO Auto-generated method stub
+//
+//				}
+//
+//				@Override
+//				public void onTouchCancelled(MotionEvent event) {
+//					// TODO Auto-generated method stub
+//
+//				}
+//
+//				@Override
+//				public boolean onTouchBegan(MotionEvent event) {
+//					// TODO Auto-generated method stub
+//					return false;
+//				}
+//			};
+//				
+//			TouchDispatcher.getInstance().addToFirstStandardTouchDelegate(touchListener);
+//		}
+//		
+//		TouchDispatcher.getInstance().onTouchEvent(event);
 		
-		TouchDispatcher.getInstance().onTouchEvent(event);
+		gameModel.onTouchEvent(event);
 	}
 
 	@Override

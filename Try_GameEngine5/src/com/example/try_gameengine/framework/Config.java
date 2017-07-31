@@ -1,5 +1,7 @@
 package com.example.try_gameengine.framework;
 
+import com.example.try_gameengine.Camera.Camera;
+
 import android.graphics.Color;
 
 public class Config {
@@ -14,6 +16,8 @@ public class Config {
 	public static float defaultScreenHeight = 1200;
 	public static float currentScreenWidth = 720;
 	public static float currentScreenHeight = 1200;
+	
+	public static Camera SystemCamera;
 	
 	public static enum DestanceType{
 		None,
