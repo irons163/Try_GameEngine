@@ -6,6 +6,7 @@ import java.util.ListIterator;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import android.R.bool;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View.OnTouchListener;
 
@@ -204,9 +205,10 @@ public class TouchDispatcher implements ISystemTouchDelegate{
 	public boolean dispatch(){
 		MotionEvent event = TouchEventManager.getInstance().getEvent();
 		if(event != null){
+			Log.e("event", "has");
 			return dispatch(event);
 		}
-		
+		Log.e("event", "no has");
 		return false;
 	}
 	

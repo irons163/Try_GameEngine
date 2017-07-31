@@ -7,6 +7,9 @@ import android.view.MotionEvent;
 
 public class TouchEventManager {
 	List<MotionEvent> eventList = new CopyOnWriteArrayList<MotionEvent>();
+	List<MotionEvent> moveEventList = new CopyOnWriteArrayList<MotionEvent>();
+	int maxMoveEventCount = 10;
+	int moveEventCount;
 	
 	private static class TouchEventManagerHolder{
 		public static TouchEventManager touchEventManager = new TouchEventManager();
@@ -21,7 +24,13 @@ public class TouchEventManager {
 	}
 	
 	public void addEvent(MotionEvent event){
-		eventList.add(MotionEvent.obtain(event));
+		MotionEvent motionEvent = MotionEvent.obtain(event);
+		eventList.add(motionEvent);
+		if(event.getAction() == MotionEvent.ACTION_MOVE){
+			if(moveEventList.size() >= maxMoveEventCount)
+				moveEventList.clear();
+			moveEventList.add(motionEvent);
+		}
 	}
 	
 	public MotionEvent getEvent(){
