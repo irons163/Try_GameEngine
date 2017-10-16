@@ -1641,6 +1641,7 @@ public abstract class ALayer implements ILayer, ILayerDelegate, ITouchable{
 		if(!checkSelfToAncestorIsEnableOrNot() || TouchDispatcher.getInstance().containStandardTouchDelegate(this))
 			return false;
 		
+		boolean isConsumeTouched = false;
 		float x;
 		float y;
 		
@@ -1806,6 +1807,7 @@ public abstract class ALayer implements ILayer, ILayerDelegate, ITouchable{
         		return false;
         }
 
+        isConsumeTouched = true;
 		boolean enablePerformClick = true;
 		
 		switch (event.getAction() & MotionEvent.ACTION_MASK) {
@@ -1870,9 +1872,13 @@ public abstract class ALayer implements ILayer, ILayerDelegate, ITouchable{
 					if(!isIndentify){
 						if (isTouched(f, a[0], a[1])) {
 							onTouched(event);
+						}else{
+							isConsumeTouched = false;
 						}
 					}else if (isTouched(f, x, y)) {
 						onTouched(event);
+					}else{
+						isConsumeTouched = false;
 					}
 					
 					if(!pressed){
@@ -1903,8 +1909,21 @@ public abstract class ALayer implements ILayer, ILayerDelegate, ITouchable{
 					isTouching = false;
 					
 					if(!pressed){
+						isConsumeTouched = false;
 						break;
 					}
+					
+//					if(!isIndentify){
+//						if (isTouched(f, a[0], a[1])) {
+//							onTouched(event);
+//						}else{
+//							isConsumeTouched = false;
+//						}
+//					}else if (isTouched(f, x, y)) {
+//						onTouched(event);
+//					}else{
+//						isConsumeTouched = false;
+//					}
 	
 					onTouched(event);
 					pressed = false;
@@ -2031,7 +2050,7 @@ public abstract class ALayer implements ILayer, ILayerDelegate, ITouchable{
 			break;
 		}
 
-		return true;
+		return isConsumeTouched;
 	}
 	
 	protected boolean isTouched(RectF f, float touchedPointX, float touchedPointY) {

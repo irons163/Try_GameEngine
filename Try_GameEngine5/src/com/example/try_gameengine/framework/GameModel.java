@@ -363,7 +363,7 @@ public class GameModel implements IGameModel{
 			resetTime();
 			gameThread.start();
 		}
-		isSurfaceCreated = true;
+		
 		if(isGameReallyStop){
 			isGameReallyStop = false;
 			resetTime();
