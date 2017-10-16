@@ -1760,7 +1760,7 @@ public abstract class ALayer implements ILayer, ILayerDelegate, ITouchable{
 			while(iterator.hasPrevious()){
 				ILayer child = iterator.previous();
 				if(!child.isAutoAdd()){
-					boolean consumedByChilde = child.onTouchEvent(event, commandTouchEventFlag);
+					boolean consumedByChilde = dispatchTouchEventToChild(child, event, commandTouchEventFlag);
 					if(consumedByChilde){
 						/*
 						if((touchEventFlag & TOUCH_EVENT_ONLY_ACTIVE_ON_CHILDREN)!=0)
@@ -2055,6 +2055,10 @@ public abstract class ALayer implements ILayer, ILayerDelegate, ITouchable{
 	
 	protected boolean isTouched(RectF f, float touchedPointX, float touchedPointY) {
 		return f.contains(touchedPointX, touchedPointY);
+	}
+	
+	protected boolean dispatchTouchEventToChild(ILayer child, MotionEvent event, int touchEventFlag) {
+		return child.onTouchEvent(event, touchEventFlag);
 	}
 	
 	@Override
