@@ -407,7 +407,7 @@ public abstract class EasyScene extends Scene implements ContactListener{
 		public void process() {
 			// TODO Auto-generated method stub
 //			super.process();
-			TouchDispatcher.getInstance().dispatch();
+//			TouchDispatcher.getInstance().dispatch();
 			EasyScene.this.process();
 			LayerManager.getInstance().processHUDLayers();
 		}
@@ -451,7 +451,7 @@ public abstract class EasyScene extends Scene implements ContactListener{
 				}
 			}
 			
-			if(Config.SystemCamera.getViewPort()!=null){
+			if(Config.SystemCamera !=null && Config.SystemCamera.getViewPort()!=null){
 				canvas.save(Canvas.MATRIX_SAVE_FLAG | Canvas.HAS_ALPHA_LAYER_SAVE_FLAG | Canvas.HAS_ALPHA_LAYER_SAVE_FLAG | Canvas.FULL_COLOR_LAYER_SAVE_FLAG | Canvas.CLIP_TO_LAYER_SAVE_FLAG);
 				canvas.setMatrix(Config.SystemCamera.getViewPort().getMatrix());
 				LayerManager.getInstance().drawHUDLayers(canvas, null);

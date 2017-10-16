@@ -30,7 +30,6 @@ public class GameModel implements IGameModel{
 	private SurfaceHolder surfaceHolder;
 	protected boolean isGameStop = false;
 	private boolean isGameReallyStop = false;
-	private boolean isSurfaceCreated = false;
 	private long startTime, endTime, previousStartTime;
 	private long interval;
 	private long startTimeForShowFPS;
@@ -44,15 +43,7 @@ public class GameModel implements IGameModel{
 	Camera camera;
 	Canvas canvas;
 	private List<ProcessBlock> processBlocks = new CopyOnWriteArrayList<ProcessBlock>();
-//	private Time time = new Time();
-//	
-//	public Time getTime(){
-//		return time;
-//	}
-//	
-//	public void setTime(Time time){
-//		this.time = time;
-//	}
+	private long frameInterval;
 	
 	/**
 	 * Contructor.
@@ -231,17 +222,7 @@ public class GameModel implements IGameModel{
 				canvas.drawText(String.format("%.1f", fps), 100, 50, paint);
 			}
 			
-			if(Config.enableFPSInterval){
-				interval = endTime - startTime; 
-				long frameInterval = (long) (1000.0f/Config.fps);
-				if (interval < frameInterval) {  
-		            try {  
-		                // because we render it before, so we should sleep twice time interval  
-		                Thread.sleep(frameInterval - interval);  
-		            } catch (final Exception e) {  
-		            }  
-				}
-			}
+
 		} 
 		catch (Exception e) {      
 	            if(!isGameStop){
@@ -269,8 +250,8 @@ public class GameModel implements IGameModel{
 	Thread gameThread = new Thread(new Runnable() {
 		
 		@Override
-		public void run() {
-//			time.time = System.currentTimeMillis();
+		public void run() {;
+			
 			while(isGameRun){
 				if(surfaceHolder==null) //when game scene start, the surfaceHolder may not stand by.
 					continue;
@@ -300,6 +281,18 @@ public class GameModel implements IGameModel{
 				process();
 				didProcess();
 				draw();
+				
+				while (TouchDispatcher.getInstance().dispatch()) {
+					
+				};
+				
+				if(checkIsFPSIntervalArrive()){
+		            try {  
+		                Thread.sleep(frameInterval - interval);  
+		            } catch (final Exception e) {  
+		            }  
+				}
+				
 				if(isGameStop){
 					synchronized (GameModel.this) {
 						try {
@@ -315,6 +308,18 @@ public class GameModel implements IGameModel{
 			}
 		}
 	});
+	
+	private boolean checkIsFPSIntervalArrive(){
+		if(Config.enableFPSInterval){
+			interval = endTime - startTime; 
+			frameInterval = (long) (1000.0f/Config.fps);
+			if (interval < frameInterval) {
+				return false;
+			}
+		}
+		
+		return true;
+	}
 	
 	public void resetTime(){
 //		Time.time = 0;
