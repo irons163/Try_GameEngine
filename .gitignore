@@ -1,0 +1,10 @@
+.gradle/
+.idea/
+local.properties
+build/
+*/build/
+*.iml
+
+# Legacy ADT build output
+Try_GameEngine5/bin/
+Try_GameEngine5/gen/

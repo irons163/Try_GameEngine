@@ -1,0 +1,103 @@
+@file:Suppress("unused", "FunctionName")
+package com.badlogic.gdx.physics.box2d.joints
+
+import com.badlogic.gdx.math.Vector2
+import com.badlogic.gdx.physics.box2d.Body
+import com.badlogic.gdx.physics.box2d.Joint
+import com.badlogic.gdx.physics.box2d.JointDef
+import com.badlogic.gdx.physics.box2d.World
+
+internal fun DistanceJointDef.getDampingRatio() = this.dampingRatio
+internal fun DistanceJointDef.getFrequencyHz() = this.frequencyHz
+internal fun DistanceJointDef.getLength() = this.length
+internal fun DistanceJointDef.getLocalAnchorA() = this.localAnchorA
+internal fun DistanceJointDef.getLocalAnchorB() = this.localAnchorB
+internal fun DistanceJointDef.setDampingRatio(value: Float) { this.dampingRatio = value }
+internal fun DistanceJointDef.setFrequencyHz(value: Float) { this.frequencyHz = value }
+internal fun DistanceJointDef.setLength(value: Float) { this.length = value }
+internal fun FrictionJointDef.getLocalAnchorA() = this.localAnchorA
+internal fun FrictionJointDef.getLocalAnchorB() = this.localAnchorB
+internal fun FrictionJointDef.getMaxForce() = this.maxForce
+internal fun FrictionJointDef.getMaxTorque() = this.maxTorque
+internal fun FrictionJointDef.setMaxForce(value: Float) { this.maxForce = value }
+internal fun FrictionJointDef.setMaxTorque(value: Float) { this.maxTorque = value }
+internal fun GearJointDef.getJoint1() = this.joint1
+internal fun GearJointDef.getJoint2() = this.joint2
+internal fun GearJointDef.getRatio() = this.ratio
+internal fun GearJointDef.setJoint1(value: Joint?) { this.joint1 = value }
+internal fun GearJointDef.setJoint2(value: Joint?) { this.joint2 = value }
+internal fun GearJointDef.setRatio(value: Float) { this.ratio = value }
+internal fun LineJointDef.getEnableLimit() = this.enableLimit
+internal fun LineJointDef.getEnableMotor() = this.enableMotor
+internal fun LineJointDef.getLocalAnchorA() = this.localAnchorA
+internal fun LineJointDef.getLocalAnchorB() = this.localAnchorB
+internal fun LineJointDef.getLocalAxisA() = this.localAxisA
+internal fun LineJointDef.getLowerTranslation() = this.lowerTranslation
+internal fun LineJointDef.getMaxMotorForce() = this.maxMotorForce
+internal fun LineJointDef.getMotorSpeed() = this.motorSpeed
+internal fun LineJointDef.getUpperTranslation() = this.upperTranslation
+internal fun LineJointDef.setEnableLimit(value: Boolean) { this.enableLimit = value }
+internal fun LineJointDef.setEnableMotor(value: Boolean) { this.enableMotor = value }
+internal fun LineJointDef.setLowerTranslation(value: Float) { this.lowerTranslation = value }
+internal fun LineJointDef.setMaxMotorForce(value: Float) { this.maxMotorForce = value }
+internal fun LineJointDef.setMotorSpeed(value: Float) { this.motorSpeed = value }
+internal fun LineJointDef.setUpperTranslation(value: Float) { this.upperTranslation = value }
+internal fun MouseJoint.getTmp() = this.tmp
+internal fun MouseJointDef.getDampingRatio() = this.dampingRatio
+internal fun MouseJointDef.getFrequencyHz() = this.frequencyHz
+internal fun MouseJointDef.getMaxForce() = this.maxForce
+internal fun MouseJointDef.getTarget() = this.target
+internal fun MouseJointDef.setDampingRatio(value: Float) { this.dampingRatio = value }
+internal fun MouseJointDef.setFrequencyHz(value: Float) { this.frequencyHz = value }
+internal fun MouseJointDef.setMaxForce(value: Float) { this.maxForce = value }
+internal fun PrismaticJointDef.getEnableLimit() = this.enableLimit
+internal fun PrismaticJointDef.getEnableMotor() = this.enableMotor
+internal fun PrismaticJointDef.getLocalAnchorA() = this.localAnchorA
+internal fun PrismaticJointDef.getLocalAnchorB() = this.localAnchorB
+internal fun PrismaticJointDef.getLocalAxis1() = this.localAxis1
+internal fun PrismaticJointDef.getLowerTranslation() = this.lowerTranslation
+internal fun PrismaticJointDef.getMaxMotorForce() = this.maxMotorForce
+internal fun PrismaticJointDef.getMotorSpeed() = this.motorSpeed
+internal fun PrismaticJointDef.getReferenceAngle() = this.referenceAngle
+internal fun PrismaticJointDef.getUpperTranslation() = this.upperTranslation
+internal fun PrismaticJointDef.setEnableLimit(value: Boolean) { this.enableLimit = value }
+internal fun PrismaticJointDef.setEnableMotor(value: Boolean) { this.enableMotor = value }
+internal fun PrismaticJointDef.setLowerTranslation(value: Float) { this.lowerTranslation = value }
+internal fun PrismaticJointDef.setMaxMotorForce(value: Float) { this.maxMotorForce = value }
+internal fun PrismaticJointDef.setMotorSpeed(value: Float) { this.motorSpeed = value }
+internal fun PrismaticJointDef.setReferenceAngle(value: Float) { this.referenceAngle = value }
+internal fun PrismaticJointDef.setUpperTranslation(value: Float) { this.upperTranslation = value }
+internal fun PulleyJointDef.getGroundAnchorA() = this.groundAnchorA
+internal fun PulleyJointDef.getGroundAnchorB() = this.groundAnchorB
+internal fun PulleyJointDef.getLengthA() = this.lengthA
+internal fun PulleyJointDef.getLengthB() = this.lengthB
+internal fun PulleyJointDef.getLocalAnchorA() = this.localAnchorA
+internal fun PulleyJointDef.getLocalAnchorB() = this.localAnchorB
+internal fun PulleyJointDef.getMaxLengthA() = this.maxLengthA
+internal fun PulleyJointDef.getMaxLengthB() = this.maxLengthB
+internal fun PulleyJointDef.getRatio() = this.ratio
+internal fun PulleyJointDef.setLengthA(value: Float) { this.lengthA = value }
+internal fun PulleyJointDef.setLengthB(value: Float) { this.lengthB = value }
+internal fun PulleyJointDef.setMaxLengthA(value: Float) { this.maxLengthA = value }
+internal fun PulleyJointDef.setMaxLengthB(value: Float) { this.maxLengthB = value }
+internal fun PulleyJointDef.setRatio(value: Float) { this.ratio = value }
+internal fun RevoluteJointDef.getEnableLimit() = this.enableLimit
+internal fun RevoluteJointDef.getEnableMotor() = this.enableMotor
+internal fun RevoluteJointDef.getLocalAnchorA() = this.localAnchorA
+internal fun RevoluteJointDef.getLocalAnchorB() = this.localAnchorB
+internal fun RevoluteJointDef.getLowerAngle() = this.lowerAngle
+internal fun RevoluteJointDef.getMaxMotorTorque() = this.maxMotorTorque
+internal fun RevoluteJointDef.getMotorSpeed() = this.motorSpeed
+internal fun RevoluteJointDef.getReferenceAngle() = this.referenceAngle
+internal fun RevoluteJointDef.getUpperAngle() = this.upperAngle
+internal fun RevoluteJointDef.setEnableLimit(value: Boolean) { this.enableLimit = value }
+internal fun RevoluteJointDef.setEnableMotor(value: Boolean) { this.enableMotor = value }
+internal fun RevoluteJointDef.setLowerAngle(value: Float) { this.lowerAngle = value }
+internal fun RevoluteJointDef.setMaxMotorTorque(value: Float) { this.maxMotorTorque = value }
+internal fun RevoluteJointDef.setMotorSpeed(value: Float) { this.motorSpeed = value }
+internal fun RevoluteJointDef.setReferenceAngle(value: Float) { this.referenceAngle = value }
+internal fun RevoluteJointDef.setUpperAngle(value: Float) { this.upperAngle = value }
+internal fun WeldJointDef.getLocalAnchorA() = this.localAnchorA
+internal fun WeldJointDef.getLocalAnchorB() = this.localAnchorB
+internal fun WeldJointDef.getReferenceAngle() = this.referenceAngle
+internal fun WeldJointDef.setReferenceAngle(value: Float) { this.referenceAngle = value }
